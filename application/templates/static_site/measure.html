@@ -4,7 +4,7 @@
 {% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
-    {"url": url_for("static_site.topic", topic_uri=topic_uri), "text": measure_page.parent.parent.title},
+    {"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_page.parent.parent.title},
   ]
   if not preview else
   none
@@ -30,9 +30,9 @@
 {% block content %}
   <meta itemprop="image" content="https://www.ethnicity-facts-figures.service.gov.uk/static/images/opengraph-image.png" />
   <meta itemscope itemprop="mainEntityOfPage"  itemType="https://schema.org/WebPage" itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_page',
-                          topic_uri=topic_uri,
-                          subtopic_uri=subtopic_uri,
-                          measure_uri=measure_page.uri,
+                          topic_slug=topic_slug,
+                          subtopic_slug=subtopic_slug,
+                          measure_slug=measure_page.slug,
                           version=version) }}"/>
 
 
@@ -53,9 +53,9 @@
           {% if measure_page.number_of_versions() > 1 %}
             {%  set latest_page = measure_page.latest_version() %}
             <span class="info"><a href="{{ url_for('cms.list_measure_page_versions',
-                                  topic_uri=topic_uri,
-                                  subtopic_uri=subtopic_uri,
-                                  measure_uri=measure_page.uri)}}">Version history</a></span>
+                                  topic_slug=topic_slug,
+                                  subtopic_slug=subtopic_slug,
+                                  measure_slug=measure_page.slug)}}">Version history</a></span>
 
           {% endif %}
 
@@ -66,15 +66,15 @@
         <span class="info">
           {% if measure_page.latest_version() %}
             <a href="{{ url_for('static_site.measure_page_markdown',
-             topic_uri=topic_uri,
-             subtopic_uri=subtopic_uri,
-             measure_uri=measure_page.uri,
+             topic_slug=topic_slug,
+             subtopic_slug=subtopic_slug,
+             measure_slug=measure_page.slug,
              version=measure_page.version) }}">Export</a>
           {% else %}
             <a href="{{ url_for('cms.list_measure_page_versions',
-                    topic_uri=topic_uri,
-                    subtopic_uri=subtopic_uri,
-                    measure_uri=measure_page.uri) }}">Export</a>
+                    topic_slug=topic_slug,
+                    subtopic_slug=subtopic_slug,
+                    measure_slug=measure_page.slug) }}">Export</a>
           {% endif %}
         </span>
 
@@ -83,15 +83,15 @@
 
             {% if measure_page.status == 'APPROVED' %}
               {% if current_user.can(CREATE_VERSION) %}
-                <a class="button" href="{{ url_for('cms.new_version', topic_uri=topic_uri, subtopic_uri=subtopic_uri, measure_uri=measure_page.uri, version=measure_page.version) }}">
+                <a class="button" href="{{ url_for('cms.new_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_page.slug, version=measure_page.version) }}">
                   Update
                 </a>
               {% endif %}
             {% else %}
               <a href="{{ url_for('cms.edit_measure_page',
-           topic_uri=topic_uri,
-           subtopic_uri=subtopic_uri,
-           measure_uri=measure_page.uri,
+           topic_slug=topic_slug,
+           subtopic_slug=subtopic_slug,
+           measure_slug=measure_page.slug,
            version=measure_page.version) }}" class="button">Edit</a>
             {% endif %}
           {% endif %}
@@ -100,7 +100,7 @@
         {% if measure_page.status == 'DRAFT' %}
 
 
-          <a class="button delete" href="{{ url_for('cms.confirm_delete_measure_page', topic_uri=topic_uri, subtopic_uri=subtopic_uri, measure_uri=measure_page.uri, version=measure_page.version) }}">Delete</a>
+          <a class="button delete" href="{{ url_for('cms.confirm_delete_measure_page', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_page.slug, version=measure_page.version) }}">Delete</a>
 
         {% endif %}
       </div>
@@ -121,9 +121,9 @@
     <div class="old-edition-notice">
       <h2 class="heading-large">There is a new version of this page</h2>
       <p>View the <a href="{{ url_for('static_site.measure_page',
-                            topic_uri=topic_uri,
-                            subtopic_uri=subtopic_uri,
-                            measure_uri=measure_page.uri,
+                            topic_slug=topic_slug,
+                            subtopic_slug=subtopic_slug,
+                            measure_slug=measure_page.slug,
                             version='latest') }}">latest version</a></p>
     </div>
   {% endif %}
@@ -331,25 +331,25 @@
                       {% if tabular_download_viable %}
                       <p class="chart-download">
                           {% if static_mode %}
-                              <a href="/{{ topic_uri }}/{{ subtopic_uri }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
+                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_page.slug }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
                                  download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_table_download',
-                                   topic_uri=topic_uri,
-                                   subtopic_uri=subtopic_uri,
-                                   measure_uri=measure_page.uri,
+                                   topic_slug=topic_slug,
+                                   subtopic_slug=subtopic_slug,
+                                   measure_slug=measure_page.slug,
                                    version=measure_page.version,
                                    dimension_guid=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}">Download table data (CSV)</a>
                           {% endif %}
 
                           {% if static_mode %}
-                              <a href="/{{ topic_uri }}/{{ subtopic_uri }}/{{ measure_page.uri }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
+                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_page.slug }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
                                  data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_download',
-                                   topic_uri=topic_uri,
-                                   subtopic_uri=subtopic_uri,
-                                   measure_uri=measure_page.uri,
+                                   topic_slug=topic_slug,
+                                   subtopic_slug=subtopic_slug,
+                                   measure_slug=measure_page.slug,
                                    version=measure_page.version,
                                    dimension_guid=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% endif %}
@@ -526,12 +526,12 @@
             {% for file in measure_page.uploads  %}
               {% if file.file_name %}
                 {% set measure_page_data_url =
-                  ("/" + topic_uri + "/"+  subtopic_uri + "/"+  measure_page.uri + "/"+  version + "/downloads/" + file.file_name)
+                  ("/" + topic_slug + "/"+  subtopic_slug + "/"+  measure_page.slug + "/"+  version + "/downloads/" + file.file_name)
                   if static_mode else
                   url_for('static_site.measure_page_file_download',
-                          topic_uri=topic_uri,
-                          subtopic_uri=subtopic_uri,
-                          measure_uri=measure_page.uri,
+                          topic_slug=topic_slug,
+                          subtopic_slug=subtopic_slug,
+                          measure_slug=measure_page.slug,
                           version=measure_page.version,
                           filename=file.file_name)
                 %}
@@ -640,9 +640,9 @@
                 {% for page_version in versions %}
                     <li>
                         <a href="{{ url_for('static_site.measure_page',
-                            topic_uri=topic_uri,
-                            subtopic_uri=subtopic_uri,
-                            measure_uri=page_version.uri,
+                            topic_slug=topic_slug,
+                            subtopic_slug=subtopic_slug,
+                            measure_slug=page_version.slug,
                             version=page_version.version) }}">{{ page_version.published_at|format_friendly_date }}</a>
                     </li>
                 {% endfor %}

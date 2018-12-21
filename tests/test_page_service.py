@@ -20,7 +20,7 @@ def test_create_page(db_session, stub_subtopic_page, test_app_editor):
     assert test_app_editor.email == test_app_editor.email
 
 
-def test_create_page_with_title_and_uri_already_exists_under_subtopic_raises_exception(
+def test_create_page_with_title_and_slug_already_exists_under_subtopic_raises_exception(
     db_session, stub_subtopic_page, test_app_editor
 ):
     created_page = page_service.create_page(
@@ -141,7 +141,7 @@ def test_reject_page(db_session, stub_measure_page, test_app_editor):
     assert page_from_db.status == "REJECTED"
 
 
-def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(
+def test_create_page_with_slug_already_exists_under_subtopic_raises_exception(
     db_session, stub_subtopic_page, test_app_editor
 ):
     existing_page = page_service.create_page(
@@ -166,31 +166,31 @@ def test_create_page_with_uri_already_exists_under_subtopic_raises_exception(
         )
 
 
-def test_page_can_be_created_if_uri_unique(db_session, stub_subtopic_page):
+def test_page_can_be_created_if_slug_unique(db_session, stub_subtopic_page):
     can_not_be_created, message = page_service.page_cannot_be_created(stub_subtopic_page.guid, "also-unique")
 
     assert can_not_be_created is False
-    assert "Page with parent subtopic_example and uri also-unique does not exist" == message
+    assert "Page with parent subtopic_example and slug also-unique does not exist" == message
 
 
-def test_page_can_be_created_if_subtopic_and_uri_unique(db_session, stub_measure_page):
-    non_clashing_uri = "%s-%s" % (stub_measure_page.uri, "something-new")
+def test_page_can_be_created_if_subtopic_and_slug_unique(db_session, stub_measure_page):
+    non_clashing_slug = "%s-%s" % (stub_measure_page.slug, "something-new")
 
-    can_not_be_created, message = page_service.page_cannot_be_created(stub_measure_page.parent_guid, non_clashing_uri)
+    can_not_be_created, message = page_service.page_cannot_be_created(stub_measure_page.parent_guid, non_clashing_slug)
 
     assert can_not_be_created is False
-    assert "Page with parent subtopic_example and uri test-measure-page-something-new does not exist" == message
+    assert "Page with parent subtopic_example and slug test-measure-page-something-new does not exist" == message
 
 
-def test_page_cannot_be_created_if_uri_is_not_unique_for_subtopic(db_session, stub_measure_page):
+def test_page_cannot_be_created_if_slug_is_not_unique_for_subtopic(db_session, stub_measure_page):
     can_not_be_created, message = page_service.page_cannot_be_created(
-        stub_measure_page.parent_guid, stub_measure_page.uri
+        stub_measure_page.parent_guid, stub_measure_page.slug
     )
 
     assert can_not_be_created is True
-    assert message == 'Page title "%s" and uri "%s" already exists under "subtopic_example"' % (
+    assert message == 'Page title "%s" and slug "%s" already exists under "subtopic_example"' % (
         stub_measure_page.title,
-        stub_measure_page.uri,
+        stub_measure_page.slug,
     )
 
 
@@ -303,7 +303,7 @@ def test_first_version_of_page_title_and_url_match(stub_subtopic_page, test_app_
     )
 
     assert "the title" == created_page.title
-    assert "the-title" == created_page.uri == created_page.uri
+    assert "the-title" == created_page.slug == created_page.slug
 
     updated_page = page_service.update_page(
         created_page,
@@ -313,7 +313,7 @@ def test_first_version_of_page_title_and_url_match(stub_subtopic_page, test_app_
     )
 
     assert "an updated title" == updated_page.title
-    assert "an-updated-title" == updated_page.uri
+    assert "an-updated-title" == updated_page.slug
 
 
 def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_changing(
@@ -328,7 +328,7 @@ def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_cha
     )
 
     assert "the title" == created_page.title
-    assert "the-title" == created_page.uri
+    assert "the-title" == created_page.slug
 
     page_service.update_page(
         created_page,
@@ -340,7 +340,7 @@ def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_cha
     copied_page = page_service.create_copy(created_page.guid, created_page.version, "minor", test_app_editor.email)
 
     assert "the title" == copied_page.title
-    assert "the-title" == copied_page.uri
+    assert "the-title" == copied_page.slug
 
     page_service.update_page(
         copied_page,
@@ -350,7 +350,7 @@ def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_cha
     )
 
     assert "the updated title" == copied_page.title
-    assert "the-title" == copied_page.uri
+    assert "the-title" == copied_page.slug
 
 
 def test_create_new_version_of_page_duplicates_dimensions(db, db_session, stub_page_with_dimension, mock_rdu_user):
@@ -424,7 +424,7 @@ def test_create_copy_of_page(stub_measure_page, mock_rdu_user):
     )
     first_copy_guid = first_copy.guid
     first_copy_title = first_copy.title
-    first_copy_uri = first_copy.uri
+    first_copy_slug = first_copy.slug
 
     assert first_copy.version == "1.0"
     assert first_copy.status == "DRAFT"
@@ -448,18 +448,18 @@ def test_create_copy_of_page(stub_measure_page, mock_rdu_user):
 
     assert first_copy_guid != second_copy.guid
     assert second_copy.title == f"COPY OF {first_copy_title}"
-    assert second_copy.uri == f"{first_copy_uri}-copy"
+    assert second_copy.slug == f"{first_copy_slug}-copy"
 
 
-def test_get_page_by_uri_and_type_only_allows_certain_types(stub_topic_page, stub_subtopic_page, stub_measure_page):
+def test_get_page_by_slug_and_type_only_allows_certain_types(stub_topic_page, stub_subtopic_page, stub_measure_page):
     with pytest.raises(NotImplementedError):
-        page_service.get_page_by_uri_and_type("", "homepage")
+        page_service.get_page_by_slug_and_type("", "homepage")
 
     with pytest.raises(NotImplementedError):
-        page_service.get_page_by_uri_and_type("test-measure-page", "measure")
+        page_service.get_page_by_slug_and_type("test-measure-page", "measure")
 
-    page1 = page_service.get_page_by_uri_and_type("test", "topic")
+    page1 = page_service.get_page_by_slug_and_type("test", "topic")
     assert page1 == stub_topic_page
 
-    page2 = page_service.get_page_by_uri_and_type("example", "subtopic")
+    page2 = page_service.get_page_by_slug_and_type("example", "subtopic")
     assert page2 == stub_subtopic_page

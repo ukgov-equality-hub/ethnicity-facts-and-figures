@@ -104,10 +104,10 @@ class ClassificationService:
         return [v.value for v in values]
 
     @staticmethod
-    def get_value_by_uri(uri):
+    def get_value_by_slug(slug):
         from slugify import slugify
 
-        value_list = [v for v in Ethnicity.query.all() if slugify(v.value) == uri]
+        value_list = [v for v in Ethnicity.query.all() if slugify(v.value) == slug]
         return value_list[0] if len(value_list) > 0 else None
 
     @staticmethod

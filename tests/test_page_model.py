@@ -250,7 +250,7 @@ def test_get_measure_page_versions_returns_pages_ordered_by_version(
     assert [
         page.version
         for page in page_service.get_measure_page_versions(
-            parent_guid=stub_measure_page.parent.guid, measure_uri="test-measure-page-2"
+            parent_guid=stub_measure_page.parent.guid, measure_slug="test-measure-page-2"
         )
     ] == expected_order
 
@@ -270,9 +270,9 @@ def test_get_latest_version_returns_latest_measure_page(
 
     assert (
         page_service.get_latest_version(
-            topic_uri=stub_measure_page.parent.parent.uri,
-            subtopic_uri=stub_measure_page.parent.uri,
-            measure_uri="test-measure-page-2",
+            topic_slug=stub_measure_page.parent.parent.slug,
+            subtopic_slug=stub_measure_page.parent.slug,
+            measure_slug="test-measure-page-2",
         ).version
         == expected_version
     )
@@ -326,12 +326,12 @@ def test_get_pages_by_type_returns_pages_ordered_by_title_and_version(
         (["2.0", "4.1", "3.0", "8.2", "1.0"], ["8.2", "4.1", "3.0", "2.0", "1.0"]),
     ),
 )
-def test_get_pages_by_uri_returns_pages_ordered_by_version(
+def test_get_pages_by_slug_returns_pages_ordered_by_version(
     db_session, page_service, stub_measure_page, page_versions, expected_order
 ):
     create_measure_page_versions(db_session, stub_measure_page, page_versions)
 
-    pages = page_service.get_pages_by_uri(stub_measure_page.parent.guid, "test-measure-page-2")
+    pages = page_service.get_pages_by_slug(stub_measure_page.parent.guid, "test-measure-page-2")
     assert [page.version for page in pages] == expected_order
 
 

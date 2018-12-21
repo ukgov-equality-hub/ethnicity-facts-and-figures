@@ -37,14 +37,14 @@ class PageService(Service):
     def create_page(self, page_type, parent, data, created_by, data_source_forms, version="1.0"):
         title = data.pop("title", "").strip()
         guid = str(uuid.uuid4())
-        uri = slugify(title)
+        slug = slugify(title)
 
         # we'll have to check if user selected another subtopic and did not use one passed via url
         subtopic = data.pop("subtopic", None)
         if subtopic is not None and subtopic != parent.guid:
             parent = page_service.get_page(subtopic)
 
-        cannot_be_created, message = self.page_cannot_be_created(parent.guid, uri)
+        cannot_be_created, message = self.page_cannot_be_created(parent.guid, slug)
         if cannot_be_created:
             raise PageExistsException(message)
         self.logger.info(message)
@@ -52,7 +52,7 @@ class PageService(Service):
         page = MeasureVersion(
             guid=guid,
             version=version,
-            uri=uri,
+            slug=slug,
             title=title,
             parent_id=parent.id,
             parent_guid=parent.guid,
@@ -93,9 +93,9 @@ class PageService(Service):
             subtopic = data.pop("subtopic", None)
             if subtopic is not None and page.parent.guid != subtopic:
                 new_subtopic = page_service.get_page(subtopic)
-                conflicting_url = [measure for measure in new_subtopic.children if measure.uri == page.uri]
+                conflicting_url = [measure for measure in new_subtopic.children if measure.slug == page.slug]
                 if conflicting_url:
-                    message = "A page with url %s already exists in %s" % (page.uri, new_subtopic.title)
+                    message = "A page with url %s already exists in %s" % (page.slug, new_subtopic.title)
                     raise PageExistsException(message)
                 else:
                     page.parent = new_subtopic
@@ -104,12 +104,12 @@ class PageService(Service):
             data.pop("guid", None)
             title = data.pop("title").strip()
             if page.version == "1.0":
-                uri = slugify(title)
+                slug = slugify(title)
 
-                if uri != page.uri and self.new_uri_invalid(page, uri):
-                    message = "The title '%s' and uri '%s' already exists under '%s'" % (title, uri, page.parent_guid)
+                if slug != page.slug and self.new_slug_invalid(page, slug):
+                    message = "The title '%s' and slug '%s' already exists under '%s'" % (title, slug, page.parent_guid)
                     raise PageExistsException(message)
-                page.uri = uri
+                page.slug = slug
 
             page.title = title
 
@@ -167,24 +167,24 @@ class PageService(Service):
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def get_page_by_uri_and_type(self, uri, page_type):
-        # This method is fundamentally broken because uri is not unique on page table, and measures with same uri
+    def get_page_by_slug_and_type(self, slug, page_type):
+        # This method is fundamentally broken because slug is not unique on page table, and measures with same slug
         # can theoretically exist under different subtopics.
         # It should be OK for now for topics and subtopics, as these can't be created through the UI
         # TODO: Replace this with something properly robust as part of page table refactor
         if page_type not in ("topic", "subtopic"):
             raise NotImplementedError("Only use this method for topic and subtopic 'pages'")
         try:
-            query = MeasureVersion.query.filter_by(uri=uri, page_type=page_type)
+            query = MeasureVersion.query.filter_by(slug=slug, page_type=page_type)
             return query.one()
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
 
     @staticmethod
-    def get_measure_page_versions(parent_guid, measure_uri):
+    def get_measure_page_versions(parent_guid, measure_slug):
         return (
-            MeasureVersion.query.filter_by(parent_guid=parent_guid, uri=measure_uri)
+            MeasureVersion.query.filter_by(parent_guid=parent_guid, slug=measure_slug)
             .order_by(desc(MeasureVersion.version))
             .all()
         )
@@ -203,18 +203,18 @@ class PageService(Service):
             raise PageNotFoundException()
 
     def get_measure_page_hierarchy(
-        self, topic_uri, subtopic_uri, measure_uri, version, dimension_guid=None, upload_guid=None
+        self, topic_slug, subtopic_slug, measure_slug, version, dimension_guid=None, upload_guid=None
     ):
         try:
-            topic_page = page_service.get_page_by_uri_and_type(topic_uri, "topic")
-            subtopic_page = page_service.get_page_by_uri_and_type(subtopic_uri, "subtopic")
+            topic_page = page_service.get_page_by_slug_and_type(topic_slug, "topic")
+            subtopic_page = page_service.get_page_by_slug_and_type(subtopic_slug, "subtopic")
             measure_page = MeasureVersion.query.filter_by(
-                page_type="measure", parent_guid=subtopic_page.guid, uri=measure_uri, version=version
+                page_type="measure", parent_guid=subtopic_page.guid, slug=measure_slug, version=version
             ).one()
             dimension_object = measure_page.get_dimension(dimension_guid) if dimension_guid else None
             upload_object = measure_page.get_upload(upload_guid) if upload_guid else None
         except (NoResultFound, PageNotFoundException):
-            self.logger.exception("Page id: {} not found".format(measure_uri))
+            self.logger.exception("Page id: {} not found".format(measure_slug))
             raise InvalidPageHierarchy
         except UploadNotFoundException:
             self.logger.exception("Upload id: {} not found".format(upload_guid))
@@ -274,12 +274,12 @@ class PageService(Service):
             message = 'Page "{}" can not be updated'.format(page.title)
         return message
 
-    def get_latest_version(self, topic_uri, subtopic_uri, measure_uri):
+    def get_latest_version(self, topic_slug, subtopic_slug, measure_slug):
         try:
-            topic = MeasureVersion.query.filter_by(uri=topic_uri).one()
-            subtopic = MeasureVersion.query.filter_by(uri=subtopic_uri, parent_guid=topic.guid).one()
+            topic = MeasureVersion.query.filter_by(slug=topic_slug).one()
+            subtopic = MeasureVersion.query.filter_by(slug=subtopic_slug, parent_guid=topic.guid).one()
             pages = (
-                MeasureVersion.query.filter_by(uri=measure_uri, parent_guid=subtopic.guid)
+                MeasureVersion.query.filter_by(slug=measure_slug, parent_guid=subtopic.guid)
                 .order_by(desc(MeasureVersion.version))
                 .all()
             )
@@ -303,18 +303,18 @@ class PageService(Service):
             previous_version.latest = False
         db.session.commit()
 
-    def page_cannot_be_created(self, parent, uri):
-        pages_by_uri = self.get_pages_by_uri(parent, uri)
-        if pages_by_uri:
-            message = 'Page title "%s" and uri "%s" already exists under "%s"' % (
-                pages_by_uri[0].title,
-                pages_by_uri[0].uri,
-                pages_by_uri[0].parent_guid,
+    def page_cannot_be_created(self, parent, slug):
+        pages_by_slug = self.get_pages_by_slug(parent, slug)
+        if pages_by_slug:
+            message = 'Page title "%s" and slug "%s" already exists under "%s"' % (
+                pages_by_slug[0].title,
+                pages_by_slug[0].slug,
+                pages_by_slug[0].parent_guid,
             )
             return True, message
 
         else:
-            message = "Page with parent %s and uri %s does not exist" % (parent, uri)
+            message = "Page with parent %s and slug %s does not exist" % (parent, slug)
             self.logger.info(message)
 
         return False, message
@@ -323,9 +323,9 @@ class PageService(Service):
         """
         WARNING: This method has side_effects: any existing references to the page being copied will point to
         references of the COPY after this function runs.
-        
+
         This function should be removed in the future. A tech improvement ticket has been generated here:
-        
+
         https://trello.com/c/DFmMmd9g/78
         """
         page = self.get_page_with_version(page_guid, page_version)
@@ -347,8 +347,8 @@ class PageService(Service):
             page.guid = str(uuid.uuid4())
             page.title = f"COPY OF {page.title}"
             # Duplicate (URI + version) in the same subtopic would mean we can't resolve preview URLs to a single page
-            while self.new_uri_invalid(page, page.uri):
-                page.uri = f"{page.uri}-copy"
+            while self.new_slug_invalid(page, page.slug):
+                page.slug = f"{page.slug}-copy"
         page.version = next_version
         page.status = "DRAFT"
         page.created_by = created_by
@@ -423,9 +423,9 @@ class PageService(Service):
         return filtered
 
     @staticmethod
-    def get_pages_by_uri(subtopic, measure):
+    def get_pages_by_slug(subtopic, measure):
         return (
-            MeasureVersion.query.filter_by(parent_guid=subtopic, uri=measure)
+            MeasureVersion.query.filter_by(parent_guid=subtopic, slug=measure)
             .order_by(desc(MeasureVersion.version))
             .all()
         )
@@ -490,8 +490,8 @@ class PageService(Service):
             db.session.commit()
 
     @staticmethod
-    def new_uri_invalid(page, uri):
-        existing_page = MeasureVersion.query.filter_by(uri=uri, parent_guid=page.parent_guid).first()
+    def new_slug_invalid(page, slug):
+        existing_page = MeasureVersion.query.filter_by(slug=slug, parent_guid=page.parent_guid).first()
         if existing_page:
             return True
         else:

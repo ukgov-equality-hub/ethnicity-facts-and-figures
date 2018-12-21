@@ -77,7 +77,7 @@ class User(db.Model, RoleFreeUserMixin):
             return True
         else:
             for page in self.pages:
-                if page.guid == page_id or page.uri == page_id:
+                if page.guid == page_id or page.slug == page_id:
                     return True
             else:
                 return False

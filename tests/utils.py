@@ -24,7 +24,7 @@ def create_measure_page_versions(db, example_measure_page, required_versions, re
             parent_guid=example_measure_page.parent.guid,
             parent_version=example_measure_page.parent.version,
             page_type="measure",
-            uri="test-measure-page-2",
+            slug="test-measure-page-2",
             title=page_title,
             status="APPROVED",
         )
