@@ -78,3 +78,20 @@ def test_unsuccessful_login_returns_to_login_page(test_app_client):
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.h1.string.strip() == "Login"
+
+
+def test_should_redirect_to_homepage_on_logout(test_app_client, mock_logged_in_rdu_user):
+    res = test_app_client.post("/auth/logout")
+    assert res.status_code == 302
+    assert res.location == url_for("static_site.index", _external=True)
+
+
+def test_should_expire_session_vars_on_logout(test_app_client, mock_logged_in_rdu_user):
+
+    with test_app_client.session_transaction() as session:
+        session["session_data"] = "Secret stuff"
+
+    test_app_client.post("/auth/logout")
+
+    with test_app_client.session_transaction() as session:
+        assert session.get("session_data") is None

@@ -20,7 +20,10 @@
         </div>
         <div class="right">
           {% if current_user.is_authenticated %}
-            <a href="{{ url_for('security.logout') }}">Sign out</a>
+          <form action="{{ url_for('auth.logout') }}" method="post">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <button class="link" name="logout">Sign out</button>
+          </form>
           {% endif %}
         </div>
       </div>

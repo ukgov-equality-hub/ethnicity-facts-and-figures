@@ -1,5 +1,6 @@
 import passwordmeter
-from flask import render_template, flash, redirect, url_for, current_app, abort
+from flask import render_template, flash, redirect, url_for, current_app, abort, session
+from flask_login import logout_user
 from flask_mail import Message
 from flask_security.decorators import anonymous_user_required
 from flask_security.utils import hash_password
@@ -84,3 +85,11 @@ def reset_password(token):
         return render_template("auth/password_updated.html", form=form, token=token, user=user)
 
     return render_template("auth/reset_password.html", form=form, token=token, user=user)
+
+
+@auth_blueprint.route("/logout", methods=["POST"])
+def logout():
+    session.clear()
+    from flask_security.views import logout as security_logout_view
+
+    return security_logout_view()

@@ -9,7 +9,7 @@ class LoginPageLocators:
 
 
 class NavigationLocators:
-    LOG_OUT_LINK = (By.LINK_TEXT, "Sign out")
+    LOG_OUT_LINK = (By.XPATH, "//button[text()='Sign out']")
 
 
 class HeaderLocators:
