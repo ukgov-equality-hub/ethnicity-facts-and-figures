@@ -4,8 +4,8 @@
 
 {% set breadcrumbs =
   [
-    {"url": url_for('static_site.topic', topic_uri=topic.uri), "text": topic.title},
-    {"url": url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version), "text": measure.title},
+    {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
+    {"url": url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version), "text": measure.title},
   ]
 %}
 
@@ -23,7 +23,7 @@
         <div class="column-two-thirds">
             {% block measure_form %}
                 <form id="dimension_form" method="POST"
-                      action="{{ url_for('cms.edit_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">
+                      action="{{ url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid ) }}">
                     {{ form.csrf_token }}
                     {% block fields %}
                         {{ super() }}
@@ -44,12 +44,12 @@
                                     <td>Chart</td>
                                     <td>{{ dimension.chart.title.text }}</td>
                                     <td><a id="edit_chart"
-                                           href="{{ url_for('cms.chartbuilder', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}">
+                                           href="{{ url_for('cms.chartbuilder', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure.available_actions() %}edit{% else %}
                                             view{% endif %}</a></td>
                                     <td>
                                     {% if 'UPDATE' in  measure.available_actions() %}
-                                        <form action="{{ url_for('cms.delete_chart', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}" method="post">
+                                        <form action="{{ url_for('cms.delete_chart', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid) }}" method="post">
                                             {{ form.csrf_token }}
                                             <button id="delete_chart" class="link">delete</button>
                                         </form>
@@ -62,12 +62,12 @@
                                     <td>Table</td>
                                     <td>{{ dimension.table.header }}</td>
                                     <td><a id="edit_table"
-                                           href="{{ url_for('cms.tablebuilder', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}">
+                                           href="{{ url_for('cms.tablebuilder', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure.available_actions() %}edit{% else %}
                                             view{% endif %}</a></td>
                                     <td>
                                         {% if 'UPDATE' in  measure.available_actions() %}
-                                        <form action="{{ url_for('cms.delete_table', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}" method="post">
+                                        <form action="{{ url_for('cms.delete_table', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid) }}" method="post">
                                             {{ form.csrf_token }}
                                             <button id="delete_table" class="link">delete</button>
                                         </form>
@@ -81,7 +81,7 @@
                                 {% if not dimension.chart or dimension.chart == '""' %}
                                 <p>
                                     <a id="create_chart"
-                                       href="{{ url_for('cms.chartbuilder', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}">
+                                       href="{{ url_for('cms.chartbuilder', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid) }}">
                                         Add chart
                                     </a>
                                 </p>
@@ -89,7 +89,7 @@
                                 {% if not dimension.table or dimension.table == '""' %}
                                 <p>
                                     <a id="create_table"
-                                       href="{{ url_for('cms.create_table', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid) }}">
+                                       href="{{ url_for('cms.create_table', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid) }}">
                                         Add table
                                     </a>
                                 </p>

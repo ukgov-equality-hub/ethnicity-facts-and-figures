@@ -25,9 +25,9 @@ def test_if_dimension_has_chart_download_chart_source_data(
         resp = test_app_client.get(
             url_for(
                 "static_site.dimension_file_download",
-                topic_uri=stub_topic_page.uri,
-                subtopic_uri=stub_subtopic_page.uri,
-                measure_uri=stub_page_with_dimension_and_chart.uri,
+                topic_slug=stub_topic_page.slug,
+                subtopic_slug=stub_subtopic_page.slug,
+                measure_slug=stub_page_with_dimension_and_chart.slug,
                 version=stub_page_with_dimension_and_chart.version,
                 dimension_guid=dimension.guid,
             )
@@ -68,9 +68,9 @@ def test_if_dimension_has_chart_and_table_download_table_source_data(
         resp = test_app_client.get(
             url_for(
                 "static_site.dimension_file_download",
-                topic_uri=stub_topic_page.uri,
-                subtopic_uri=stub_subtopic_page.uri,
-                measure_uri=stub_page_with_dimension_and_chart_and_table.uri,
+                topic_slug=stub_topic_page.slug,
+                subtopic_slug=stub_subtopic_page.slug,
+                measure_slug=stub_page_with_dimension_and_chart_and_table.slug,
                 version=stub_page_with_dimension_and_chart_and_table.version,
                 dimension_guid=dimension.guid,
             )

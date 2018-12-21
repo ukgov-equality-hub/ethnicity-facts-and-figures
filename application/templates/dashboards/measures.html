@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% set breadcrumbs = 
+{% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
   ]
@@ -30,9 +30,9 @@
                     {% for subtopic in topic.children %}
                         {% for measure in subtopic.children %}
                             <tr>
-                                <td><a href="{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">{{ measure.title }}</a></td>
+                                <td><a href="{{ url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">{{ measure.title }}</a></td>
                                 <td>{{ measure.internal_reference }}</td>
-                                <td><a href="{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">{{ measure.version }}</a></td>
+                                <td><a href="{{ url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">{{ measure.version }}</a></td>
                                 <td>{{ topic.title}}</td>
                                 <td>{{ subtopic.title }}</td>
                                 <td>{{ measure.status }}</td>

@@ -51,13 +51,13 @@ def index():
     return redirect(url_for("static_site.index"))
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/measure/new", methods=["GET", "POST"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/measure/new", methods=["GET", "POST"])
 @login_required
 @user_can(CREATE_MEASURE)
-def create_measure_page(topic_uri, subtopic_uri):
+def create_measure_page(topic_slug, subtopic_slug):
     try:
-        topic_page = page_service.get_page_by_uri_and_type(topic_uri, "topic")
-        subtopic_page = page_service.get_page_by_uri_and_type(subtopic_uri, "subtopic")
+        topic_page = page_service.get_page_by_slug_and_type(topic_slug, "topic")
+        subtopic_page = page_service.get_page_by_slug_and_type(subtopic_slug, "subtopic")
     except PageNotFoundException:
         abort(404)
 
@@ -97,9 +97,9 @@ def create_measure_page(topic_uri, subtopic_uri):
             return redirect(
                 url_for(
                     "cms.edit_measure_page",
-                    topic_uri=topic_page.uri,
-                    subtopic_uri=subtopic_page.uri,
-                    measure_uri=page.uri,
+                    topic_slug=topic_page.slug,
+                    subtopic_slug=subtopic_page.slug,
+                    measure_slug=page.slug,
                     version=page.version,
                 )
             )
@@ -108,7 +108,7 @@ def create_measure_page(topic_uri, subtopic_uri):
             flash(message, "error")
             current_app.logger.error(message)
             return redirect(
-                url_for("cms.create_measure_page", form=form, topic_uri=topic_uri, subtopic_uri=subtopic_uri)
+                url_for("cms.create_measure_page", form=form, topic_slug=topic_slug, subtopic_slug=subtopic_slug)
             )
 
     ordered_topics = sorted(page_service.get_pages_by_type("topic"), key=lambda topic: topic.title)
@@ -128,13 +128,13 @@ def create_measure_page(topic_uri, subtopic_uri):
 
 
 @cms_blueprint.route(
-    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/uploads/<upload_guid>/delete", methods=["POST"]
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/uploads/<upload_guid>/delete", methods=["POST"]
 )
 @login_required
 @user_has_access
-def delete_upload(topic_uri, subtopic_uri, measure_uri, version, upload_guid):
+def delete_upload(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
     *_, measure_page, upload_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, upload_guid=upload_guid
+        topic_slug, subtopic_slug, measure_slug, version, upload_guid=upload_guid
     )
 
     upload_service.delete_upload_obj(measure_page, upload_object)
@@ -146,22 +146,22 @@ def delete_upload(topic_uri, subtopic_uri, measure_uri, version, upload_guid):
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic_uri=topic_uri,
-            subtopic_uri=subtopic_uri,
-            measure_uri=measure_uri,
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
             version=version,
         )
     )
 
 
 @cms_blueprint.route(
-    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/uploads/<upload_guid>/edit", methods=["GET", "POST"]
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/uploads/<upload_guid>/edit", methods=["GET", "POST"]
 )
 @login_required
 @user_has_access
-def edit_upload(topic_uri, subtopic_uri, measure_uri, version, upload_guid):
+def edit_upload(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
     topic_page, subtopic_page, measure_page, upload_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, upload_guid=upload_guid
+        topic_slug, subtopic_slug, measure_slug, version, upload_guid=upload_guid
     )
 
     form = UploadForm(obj=upload_object)
@@ -177,9 +177,9 @@ def edit_upload(topic_uri, subtopic_uri, measure_uri, version, upload_guid):
                 return redirect(
                     url_for(
                         "cms.edit_measure_page",
-                        topic_uri=topic_uri,
-                        subtopic_uri=subtopic_uri,
-                        measure_uri=measure_uri,
+                        topic_slug=topic_slug,
+                        subtopic_slug=subtopic_slug,
+                        measure_slug=measure_slug,
                         version=version,
                     )
                 )
@@ -198,12 +198,12 @@ def edit_upload(topic_uri, subtopic_uri, measure_uri, version, upload_guid):
     return render_template("cms/edit_upload.html", **context)
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete", methods=["POST"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/delete", methods=["POST"])
 @login_required
 @user_has_access
-def delete_dimension(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def delete_dimension(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     dimension_service.delete_dimension(measure_page, dimension_object.guid)
@@ -215,9 +215,9 @@ def delete_dimension(topic_uri, subtopic_uri, measure_uri, version, dimension_gu
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic_uri=topic_uri,
-            subtopic_uri=subtopic_uri,
-            measure_uri=measure_uri,
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
             version=version,
         )
     )
@@ -239,11 +239,11 @@ def _diff_updates(form, page):
     return diffs
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/edit", methods=["GET", "POST"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit", methods=["GET", "POST"])
 @login_required
 @user_has_access
-def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
-    *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
+def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
+    *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
     topics = page_service.get_pages_by_type("topic")
     topics.sort(key=lambda page: page.title)
     diffs = {}
@@ -316,9 +316,9 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
         return redirect(
             url_for(
                 "cms.send_to_review",
-                topic_uri=measure_page.parent.parent.uri,
-                subtopic_uri=measure_page.parent.uri,
-                measure_uri=measure_page.uri,
+                topic_slug=measure_page.parent.parent.slug,
+                subtopic_slug=measure_page.parent.slug,
+                measure_slug=measure_page.slug,
                 version=measure_page.version,
             )
         )
@@ -326,9 +326,9 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
         return redirect(
             url_for(
                 "cms.edit_measure_page",
-                topic_uri=measure_page.parent.parent.uri,
-                subtopic_uri=measure_page.parent.uri,
-                measure_uri=measure_page.uri,
+                topic_slug=measure_page.parent.parent.slug,
+                subtopic_slug=measure_page.parent.slug,
+                measure_slug=measure_page.slug,
                 version=measure_page.version,
             )
         )
@@ -350,13 +350,13 @@ def edit_measure_page(topic_uri, subtopic_uri, measure_uri, version):
     return render_template("cms/edit_measure_page.html", **context)
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/upload", methods=["GET", "POST"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/upload", methods=["GET", "POST"])
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def create_upload(topic_uri, subtopic_uri, measure_uri, version):
+def create_upload(topic_slug, subtopic_slug, measure_slug, version):
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version
+        topic_slug, subtopic_slug, measure_slug, version
     )
 
     form = UploadForm()
@@ -369,7 +369,7 @@ def create_upload(topic_uri, subtopic_uri, measure_uri, version):
                     page=measure_page, upload=f, title=form.data["title"], description=form.data["description"]
                 )
 
-                message = 'Uploaded file "{}" to measure "{}"'.format(upload.title, measure_uri)
+                message = 'Uploaded file "{}" to measure "{}"'.format(upload.title, measure_slug)
                 current_app.logger.info(message)
                 flash(message, "info")
 
@@ -383,9 +383,9 @@ def create_upload(topic_uri, subtopic_uri, measure_uri, version):
             return redirect(
                 url_for(
                     "cms.edit_measure_page",
-                    topic_uri=topic_uri,
-                    subtopic_uri=subtopic_uri,
-                    measure_uri=measure_uri,
+                    topic_slug=topic_slug,
+                    subtopic_slug=subtopic_slug,
+                    measure_slug=measure_slug,
                     version=version,
                 )
             )
@@ -394,13 +394,13 @@ def create_upload(topic_uri, subtopic_uri, measure_uri, version):
     return render_template("cms/create_upload.html", **context)
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/send-to-review", methods=["GET"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/send-to-review", methods=["GET"])
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
+def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version
+        topic_slug, subtopic_slug, measure_slug, version
     )
 
     # in case user tries to directly GET this page
@@ -515,20 +515,20 @@ def send_to_review(topic_uri, subtopic_uri, measure_uri, version):
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic_uri=topic_uri,
-            subtopic_uri=subtopic_uri,
-            measure_uri=measure_uri,
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
             version=version,
         )
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/publish", methods=["GET"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/publish", methods=["GET"])
 @login_required
 @user_has_access
 @user_can(PUBLISH)
-def publish(topic_uri, subtopic_uri, measure_uri, version):
-    *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
+def publish(topic_slug, subtopic_slug, measure_slug, version):
+    *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
 
     if measure_page.status != "DEPARTMENT_REVIEW":
         abort(400)
@@ -540,20 +540,20 @@ def publish(topic_uri, subtopic_uri, measure_uri, version):
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic_uri=topic_uri,
-            subtopic_uri=subtopic_uri,
-            measure_uri=measure_uri,
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
             version=version,
         )
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/reject")
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/reject")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def reject_page(topic_uri, subtopic_uri, measure_uri, version):
-    *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
+def reject_page(topic_slug, subtopic_slug, measure_slug, version):
+    *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
 
     # Can only reject if currently under review
     if measure_page.status not in {"INTERNAL_REVIEW", "DEPARTMENT_REVIEW"}:
@@ -565,20 +565,20 @@ def reject_page(topic_uri, subtopic_uri, measure_uri, version):
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic_uri=topic_uri,
-            subtopic_uri=subtopic_uri,
-            measure_uri=measure_uri,
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
             version=version,
         )
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/unpublish")
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/unpublish")
 @login_required
 @user_has_access
 @user_can(PUBLISH)
-def unpublish_page(topic_uri, subtopic_uri, measure_uri, version):
-    *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
+def unpublish_page(topic_slug, subtopic_slug, measure_slug, version):
+    *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
 
     # Can only unpublish if currently published
     if measure_page.status != "APPROVED":
@@ -591,21 +591,21 @@ def unpublish_page(topic_uri, subtopic_uri, measure_uri, version):
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic_uri=topic_uri,
-            subtopic_uri=subtopic_uri,
-            measure_uri=measure_uri,
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
             version=version,
         )
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/draft")
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/draft")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def send_page_to_draft(topic_uri, subtopic_uri, measure_uri, version):
+def send_page_to_draft(topic_slug, subtopic_slug, measure_slug, version):
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version
+        topic_slug, subtopic_slug, measure_slug, version
     )
 
     message = page_service.send_page_to_draft(measure_page.guid, version)
@@ -614,33 +614,33 @@ def send_page_to_draft(topic_uri, subtopic_uri, measure_uri, version):
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic_uri=topic_uri,
-            subtopic_uri=subtopic_uri,
-            measure_uri=measure_uri,
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
             version=version,
         )
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/dimension/new", methods=["GET", "POST"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/dimension/new", methods=["GET", "POST"])
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def create_dimension(topic_uri, subtopic_uri, measure_uri, version):
+def create_dimension(topic_slug, subtopic_slug, measure_slug, version):
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version
+        topic_slug, subtopic_slug, measure_slug, version
     )
 
     form = DimensionForm()
     if request.method == "POST":
-        return _post_create_dimension(topic_uri, subtopic_uri, measure_uri, version)
+        return _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version)
     else:
-        return _get_create_dimension(topic_uri, subtopic_uri, measure_uri, version)
+        return _get_create_dimension(topic_slug, subtopic_slug, measure_slug, version)
 
 
-def _post_create_dimension(topic_uri, subtopic_uri, measure_uri, version):
+def _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version):
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version
+        topic_slug, subtopic_slug, measure_slug, version
     )
     form = DimensionForm(request.form)
 
@@ -663,9 +663,9 @@ def _post_create_dimension(topic_uri, subtopic_uri, measure_uri, version):
             return redirect(
                 url_for(
                     "cms.edit_dimension",
-                    topic_uri=topic_uri,
-                    subtopic_uri=subtopic_uri,
-                    measure_uri=measure_uri,
+                    topic_slug=topic_slug,
+                    subtopic_slug=subtopic_slug,
+                    measure_slug=measure_slug,
                     version=version,
                     dimension_guid=dimension.guid,
                 )
@@ -677,16 +677,16 @@ def _post_create_dimension(topic_uri, subtopic_uri, measure_uri, version):
             return redirect(
                 url_for(
                     "cms.create_dimension",
-                    topic_uri=topic_uri,
-                    subtopic_uri=subtopic_uri,
-                    measure_uri=measure_uri,
+                    topic_slug=topic_slug,
+                    subtopic_slug=subtopic_slug,
+                    measure_slug=measure_slug,
                     version=version,
                     messages=[{"message": "Dimension with code %s already exists" % form.data["title"]}],
                 )
             )
     else:
         flash("Please complete all fields in the form", "error")
-        return _get_create_dimension(topic_uri, subtopic_uri, measure_uri, version, form=form)
+        return _get_create_dimension(topic_slug, subtopic_slug, measure_slug, version, form=form)
 
 
 def _get_create_dimension(topic, subtopic, measure, version, form=None):
@@ -708,47 +708,47 @@ def _get_create_dimension(topic, subtopic, measure, version, form=None):
 
 
 @cms_blueprint.route(
-    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/edit", methods=["GET", "POST"]
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/edit", methods=["GET", "POST"]
 )
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def edit_dimension(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def edit_dimension(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     if request.method == "POST":
-        return _post_edit_dimension(request, topic_uri, subtopic_uri, measure_uri, dimension_guid, version)
+        return _post_edit_dimension(request, topic_slug, subtopic_slug, measure_slug, dimension_guid, version)
     else:
-        return _get_edit_dimension(topic_uri, subtopic_uri, measure_uri, dimension_guid, version)
+        return _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid, version)
 
 
-def _post_edit_dimension(request, topic_uri, subtopic_uri, measure_uri, dimension_guid, version):
+def _post_edit_dimension(request, topic_slug, subtopic_slug, measure_slug, dimension_guid, version):
 
     form = DimensionForm(request.form)
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     if form.validate():
         dimension_service.update_dimension(dimension=dimension_object, data=form.data)
-        message = 'Updated dimension "{}" of measure "{}"'.format(dimension_object.title, measure_uri)
+        message = 'Updated dimension "{}" of measure "{}"'.format(dimension_object.title, measure_slug)
 
         flash(message, "info")
         return redirect(
             url_for(
                 "cms.edit_dimension",
-                topic_uri=topic_uri,
-                subtopic_uri=subtopic_uri,
-                measure_uri=measure_uri,
+                topic_slug=topic_slug,
+                subtopic_slug=subtopic_slug,
+                measure_slug=measure_slug,
                 dimension_guid=dimension_guid,
                 version=version,
             )
         )
     else:
-        return _get_edit_dimension(topic_uri, subtopic_uri, measure_uri, dimension_guid, version, form=form)
+        return _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid, version, form=form)
 
 
-def _get_edit_dimension(topic_uri, subtopic_uri, measure_uri, dimension_guid, version, form=None):
+def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid, version, form=None):
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     dimension_classification = dimension_object.dimension_classification
@@ -774,13 +774,13 @@ def _get_edit_dimension(topic_uri, subtopic_uri, measure_uri, dimension_guid, ve
     return render_template("cms/edit_dimension.html", **context)
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/chartbuilder")
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/chartbuilder")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def chartbuilder(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def chartbuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     dimension_dict = dimension_object.to_dict()
@@ -789,9 +789,9 @@ def chartbuilder(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
         return redirect(
             url_for(
                 "cms.create_chart_original",
-                topic_uri=topic_uri,
-                subtopic_uri=subtopic_uri,
-                measure_uri=measure_uri,
+                topic_slug=topic_slug,
+                subtopic_slug=subtopic_slug,
+                measure_slug=measure_slug,
                 version=version,
                 dimension_guid=dimension_guid,
             )
@@ -800,22 +800,22 @@ def chartbuilder(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
     return redirect(
         url_for(
             "cms.create_chart",
-            topic_uri=topic_uri,
-            subtopic_uri=subtopic_uri,
-            measure_uri=measure_uri,
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
             version=version,
             dimension_guid=dimension_guid,
         )
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/create-chart")
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-chart")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def create_chart(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     dimension_dict = dimension_object.to_dict()
@@ -842,13 +842,13 @@ def __get_classification_finder_classifications():
     return [{"code": classification.get_id(), "name": classification.get_name()} for classification in classifications]
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/create-chart/advanced")
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-chart/advanced")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def create_chart_original(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def create_chart_original(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     context = {
@@ -861,13 +861,13 @@ def create_chart_original(topic_uri, subtopic_uri, measure_uri, version, dimensi
     return render_template("cms/create_chart.html", **context)
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/tablebuilder")
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/tablebuilder")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def tablebuilder(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def tablebuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     dimension_dict = dimension_object.to_dict()
@@ -876,9 +876,9 @@ def tablebuilder(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
         return redirect(
             url_for(
                 "cms.create_table_original",
-                topic_uri=topic_uri,
-                subtopic_uri=subtopic_uri,
-                measure_uri=measure_uri,
+                topic_slug=topic_slug,
+                subtopic_slug=subtopic_slug,
+                measure_slug=measure_slug,
                 version=version,
                 dimension_guid=dimension_guid,
             )
@@ -887,22 +887,22 @@ def tablebuilder(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
     return redirect(
         url_for(
             "cms.create_table",
-            topic_uri=topic_uri,
-            subtopic_uri=subtopic_uri,
-            measure_uri=measure_uri,
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
             version=version,
             dimension_guid=dimension_guid,
         )
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/create-table/advanced")
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-table/advanced")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def create_table_original(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def create_table_original(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     context = {
@@ -915,13 +915,13 @@ def create_table_original(topic_uri, subtopic_uri, measure_uri, version, dimensi
     return render_template("cms/create_table.html", **context)
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/create-table")
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-table")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def create_table(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     dimension_dict = dimension_object.to_dict()
@@ -944,14 +944,14 @@ def create_table(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
 
 
 @cms_blueprint.route(
-    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/save-chart", methods=["POST"]
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/save-chart", methods=["POST"]
 )
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def save_chart_to_page(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def save_chart_to_page(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     if measure_page.not_editable():
@@ -963,7 +963,7 @@ def save_chart_to_page(topic_uri, subtopic_uri, measure_uri, version, dimension_
 
     dimension_service.update_dimension_chart_or_table(dimension_object, chart_json)
 
-    message = 'Updated chart on dimension "{}" of measure "{}"'.format(dimension_object.title, measure_uri)
+    message = 'Updated chart on dimension "{}" of measure "{}"'.format(dimension_object.title, measure_slug)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -971,14 +971,14 @@ def save_chart_to_page(topic_uri, subtopic_uri, measure_uri, version, dimension_
 
 
 @cms_blueprint.route(
-    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete-chart", methods=["POST"]
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/delete-chart", methods=["POST"]
 )
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def delete_chart(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def delete_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     dimension_object.delete_chart()
@@ -990,9 +990,9 @@ def delete_chart(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
     return redirect(
         url_for(
             "cms.edit_dimension",
-            topic_uri=topic_uri,
-            subtopic_uri=subtopic_uri,
-            measure_uri=measure_uri,
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
             version=version,
             dimension_guid=dimension_object.guid,
         )
@@ -1000,14 +1000,14 @@ def delete_chart(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
 
 
 @cms_blueprint.route(
-    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/save-table", methods=["POST"]
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/save-table", methods=["POST"]
 )
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def save_table_to_page(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def save_table_to_page(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     if measure_page.not_editable():
@@ -1019,7 +1019,7 @@ def save_table_to_page(topic_uri, subtopic_uri, measure_uri, version, dimension_
 
     dimension_service.update_dimension_chart_or_table(dimension_object, table_json)
 
-    message = 'Updated table on dimension "{}" of measure "{}"'.format(dimension_object.title, measure_uri)
+    message = 'Updated table on dimension "{}" of measure "{}"'.format(dimension_object.title, measure_slug)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -1027,14 +1027,14 @@ def save_table_to_page(topic_uri, subtopic_uri, measure_uri, version, dimension_
 
 
 @cms_blueprint.route(
-    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/<dimension_guid>/delete-table", methods=["POST"]
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/delete-table", methods=["POST"]
 )
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
-def delete_table(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def delete_table(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     dimension_object.delete_table()
@@ -1046,19 +1046,19 @@ def delete_table(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
     return redirect(
         url_for(
             "cms.edit_dimension",
-            topic_uri=topic_uri,
-            subtopic_uri=subtopic_uri,
-            measure_uri=measure_uri,
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
             version=version,
             dimension_guid=dimension_object.guid,
         )
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/uploads", methods=["GET"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/uploads", methods=["GET"])
 @login_required
-def get_measure_page_uploads(topic_uri, subtopic_uri, measure_uri, version):
-    *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
+def get_measure_page_uploads(topic_slug, subtopic_slug, measure_slug, version):
+    *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
 
     uploads = upload_service.get_page_uploads(measure_page) or {}
     return json.dumps({"uploads": uploads}), 200
@@ -1115,22 +1115,22 @@ def set_dimension_order(topic, subtopic, measure):
         return json.dumps({"status": "INTERNAL SERVER ERROR", "status_code": 500}), 500
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/versions")
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/versions")
 @login_required
 @user_has_access
-def list_measure_page_versions(topic_uri, subtopic_uri, measure_uri):
+def list_measure_page_versions(topic_slug, subtopic_slug, measure_slug):
     try:
-        topic_page = page_service.get_page_by_uri_and_type(topic_uri, "topic")
-        subtopic_page = page_service.get_page_by_uri_and_type(subtopic_uri, "subtopic")
+        topic_page = page_service.get_page_by_slug_and_type(topic_slug, "topic")
+        subtopic_page = page_service.get_page_by_slug_and_type(subtopic_slug, "subtopic")
 
     except PageNotFoundException:
-        current_app.logger.exception("Page id: {} not found".format(measure_uri))
+        current_app.logger.exception("Page id: {} not found".format(measure_slug))
         abort(404)
 
-    measures = page_service.get_measure_page_versions(subtopic_page.guid, measure_uri)
+    measures = page_service.get_measure_page_versions(subtopic_page.guid, measure_slug)
     measures.sort(reverse=True)
     if not measures:
-        return redirect(url_for("static_site.topic", topic_uri=topic_uri))
+        return redirect(url_for("static_site.topic", topic_slug=topic_slug))
 
     measure_title = next(measure for measure in measures if measure.latest).title
     return render_template(
@@ -1142,23 +1142,23 @@ def list_measure_page_versions(topic_uri, subtopic_uri, measure_uri):
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/delete", methods=["GET"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/delete", methods=["GET"])
 @login_required
 @user_can(DELETE_MEASURE)
-def confirm_delete_measure_page(topic_uri, subtopic_uri, measure_uri, version):
+def confirm_delete_measure_page(topic_slug, subtopic_slug, measure_slug, version):
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version
+        topic_slug, subtopic_slug, measure_slug, version
     )
 
     return render_template("cms/delete_page.html", topic=topic_page, subtopic=subtopic_page, measure_page=measure_page)
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/delete", methods=["POST"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/delete", methods=["POST"])
 @login_required
 @user_can(DELETE_MEASURE)
-def delete_measure_page(topic_uri, subtopic_uri, measure_uri, version):
+def delete_measure_page(topic_slug, subtopic_slug, measure_slug, version):
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version
+        topic_slug, subtopic_slug, measure_slug, version
     )
 
     page_service.delete_measure_page(measure_page.guid, version)
@@ -1166,21 +1166,21 @@ def delete_measure_page(topic_uri, subtopic_uri, measure_uri, version):
         return redirect(
             url_for(
                 "cms.list_measure_page_versions",
-                topic_uri=topic_uri,
-                subtopic_uri=subtopic_uri,
-                measure_uri=measure_uri,
+                topic_slug=topic_slug,
+                subtopic_slug=subtopic_slug,
+                measure_slug=measure_slug,
             )
         )
     else:
-        return redirect(url_for("static_site.topic", topic_uri=topic_page.uri))
+        return redirect(url_for("static_site.topic", topic_slug=topic_page.slug))
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/new-version", methods=["GET", "POST"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/new-version", methods=["GET", "POST"])
 @login_required
 @user_can(CREATE_VERSION)
-def new_version(topic_uri, subtopic_uri, measure_uri, version):
+def new_version(topic_slug, subtopic_slug, measure_slug, version):
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version
+        topic_slug, subtopic_slug, measure_slug, version
     )
 
     form = NewVersionForm()
@@ -1195,21 +1195,21 @@ def new_version(topic_uri, subtopic_uri, measure_uri, version):
             return redirect(
                 url_for(
                     "cms.edit_measure_page",
-                    topic_uri=topic_page.uri,
-                    subtopic_uri=subtopic_page.uri,
-                    measure_uri=page.uri,
+                    topic_slug=topic_page.slug,
+                    subtopic_slug=subtopic_page.slug,
+                    measure_slug=page.slug,
                     version=page.version,
                 )
             )
         except UpdateAlreadyExists as e:
-            message = "Version %s of page %s is already being updated" % (version, measure_uri)
+            message = "Version %s of page %s is already being updated" % (version, measure_slug)
             flash(message, "error")
             return redirect(
                 url_for(
                     "cms.new_version",
-                    topic_uri=topic_uri,
-                    subtopic_uri=subtopic_uri,
-                    measure_uri=measure_uri,
+                    topic_slug=topic_slug,
+                    subtopic_slug=subtopic_slug,
+                    measure_slug=measure_slug,
                     version=version,
                     form=form,
                 )
@@ -1220,12 +1220,12 @@ def new_version(topic_uri, subtopic_uri, measure_uri, version):
     )
 
 
-@cms_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/copy", methods=["POST"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/copy", methods=["POST"])
 @login_required
 @user_can(COPY_MEASURE)
-def copy_measure_page(topic_uri, subtopic_uri, measure_uri, version):
+def copy_measure_page(topic_slug, subtopic_slug, measure_slug, version):
     topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
-        topic_uri, subtopic_uri, measure_uri, version
+        topic_slug, subtopic_slug, measure_slug, version
     )
 
     copied_page = page_service.create_copy(
@@ -1234,9 +1234,9 @@ def copy_measure_page(topic_uri, subtopic_uri, measure_uri, version):
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic_uri=topic_page.uri,
-            subtopic_uri=subtopic_page.uri,
-            measure_uri=copied_page.uri,
+            topic_slug=topic_page.slug,
+            subtopic_slug=subtopic_page.slug,
+            measure_slug=copied_page.slug,
             version=copied_page.version,
         )
     )

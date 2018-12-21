@@ -10,7 +10,7 @@
             <span><a href="https://www.ethnicity-facts-figures.service.gov.uk">Live website</a></span>
 
             {% if not current_user.is_anonymous and not preview %}
-              <span><a href="{{ url_for('static_site.topic', topic_uri='testing-space') }}">Testing space</a></span>
+              <span><a href="{{ url_for('static_site.topic', topic_slug='testing-space') }}">Testing space</a></span>
 
               {% if current_user.can(MANAGE_USERS) %}
                 <span><a href="{{ url_for('admin.index') }}">Admin</a></span>
@@ -20,7 +20,10 @@
         </div>
         <div class="right">
           {% if current_user.is_authenticated %}
-            <a href="{{ url_for('security.logout') }}">Sign out</a>
+          <form action="{{ url_for('auth.logout') }}" method="post">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <button class="link" name="logout">Sign out</button>
+          </form>
           {% endif %}
         </div>
       </div>

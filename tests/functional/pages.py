@@ -217,7 +217,7 @@ class CmsIndexPage(BasePage):
 
 class TopicPage(BasePage):
     def __init__(self, driver, live_server, page):
-        super().__init__(driver=driver, base_url="http://localhost:%s/%s" % (live_server.port, page.uri))
+        super().__init__(driver=driver, base_url="http://localhost:%s/%s" % (live_server.port, page.slug))
 
     def get(self):
         url = self.base_url
@@ -276,7 +276,7 @@ class SubtopicPage(BasePage):
     def __init__(self, driver, live_server, topic_page, subtopic_page):
         super().__init__(
             driver=driver,
-            base_url="http://localhost:%s/cms/%s/%s" % (live_server.port, topic_page.uri, subtopic_page.uri),
+            base_url="http://localhost:%s/cms/%s/%s" % (live_server.port, topic_page.slug, subtopic_page.slug),
         )
 
     def get(self):
@@ -308,7 +308,7 @@ class MeasureCreatePage(BasePage):
     def __init__(self, driver, live_server, topic, subtopic):
         super().__init__(
             driver=driver,
-            base_url="http://localhost:%s/cms/%s/%s/measure/new" % (live_server.port, topic.uri, subtopic.uri),
+            base_url="http://localhost:%s/cms/%s/%s/measure/new" % (live_server.port, topic.slug, subtopic.slug),
         )
 
     def get(self):
@@ -326,11 +326,11 @@ class MeasureCreatePage(BasePage):
 
 
 class MeasureVersionsPage(BasePage):
-    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page_uri):
+    def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page_slug):
         super().__init__(
             driver=driver,
             base_url="http://localhost:%s/cms/%s/%s/%s/versions"
-            % (live_server.port, topic_page.uri, subtopic_page.uri, measure_page_uri),
+            % (live_server.port, topic_page.slug, subtopic_page.slug, measure_page_slug),
         )
 
     def get(self):
@@ -901,7 +901,7 @@ class RandomMeasure:
     def __init__(self):
         factory = Faker()
         self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
-        self.uri = self.guid.replace("_", "-")
+        self.slug = self.guid.replace("_", "-")
         self.title = " ".join(factory.words(4))
         self.measure_summary = factory.text()
         self.summary = factory.text()
@@ -924,7 +924,7 @@ class RandomDimension:
     def __init__(self):
         factory = Faker()
         self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
-        self.uri = self.guid.replace("_", "-")
+        self.slug = self.guid.replace("_", "-")
         self.title = " ".join(factory.words(4))
         self.measure = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
         self.time_period = " ".join(factory.words(4))
@@ -957,7 +957,7 @@ class MinimalRandomMeasure:
     def __init__(self):
         factory = Faker()
         self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
-        self.uri = self.guid.replace("_", "-")
+        self.slug = self.guid.replace("_", "-")
         self.version = "1.0"
         self.published_at = factory.date("%d%m%Y")
         self.published = False

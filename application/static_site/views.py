@@ -78,11 +78,11 @@ def privacy_policy():
     return render_template("static_site/static_pages/privacy-policy.html")
 
 
-@static_site_blueprint.route("/<topic_uri>")
+@static_site_blueprint.route("/<topic_slug>")
 @login_required
-def topic(topic_uri):
+def topic(topic_slug):
     try:
-        topic = page_service.get_page_by_uri_and_type(topic_uri, "topic")
+        topic = page_service.get_page_by_slug_and_type(topic_slug, "topic")
     except PageNotFoundException:
         abort(404)
 
@@ -109,15 +109,15 @@ def topic(topic_uri):
     )
 
 
-@static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/export")
+@static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/export")
 @login_required
 @user_has_access
-def measure_page_markdown(topic_uri, subtopic_uri, measure_uri, version):
+def measure_page_markdown(topic_slug, subtopic_slug, measure_slug, version):
     try:
         if version == "latest":
-            measure_page = page_service.get_latest_version(topic_uri, subtopic_uri, measure_uri)
+            measure_page = page_service.get_latest_version(topic_slug, subtopic_slug, measure_slug)
         else:
-            *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
+            *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
     except PageNotFoundException:
         abort(404)
     if current_user.is_departmental_user():
@@ -127,22 +127,23 @@ def measure_page_markdown(topic_uri, subtopic_uri, measure_uri, version):
     dimensions = [dimension.to_dict() for dimension in measure_page.dimensions]
     return render_template(
         "static_site/export/measure_export.html",
-        topic_uri=topic_uri,
-        subtopic_uri=subtopic_uri,
+        topic_slug=topic_slug,
+        subtopic_slug=subtopic_slug,
         measure_page=measure_page,
         dimensions=dimensions,
     )
 
 
-@static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>")
+@static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>")
 @login_required
 @user_has_access
-def measure_page(topic_uri, subtopic_uri, measure_uri, version):
+def measure_page(topic_slug, subtopic_slug, measure_slug, version):
+
     try:
         if version == "latest":
-            measure_page = page_service.get_latest_version(topic_uri, subtopic_uri, measure_uri)
+            measure_page = page_service.get_latest_version(topic_slug, subtopic_slug, measure_slug)
         else:
-            *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
+            *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
     except PageNotFoundException:
         abort(404)
 
@@ -154,8 +155,8 @@ def measure_page(topic_uri, subtopic_uri, measure_uri, version):
 
     return render_template(
         "static_site/measure.html",
-        topic_uri=topic_uri,
-        subtopic_uri=subtopic_uri,
+        topic_slug=topic_slug,
+        subtopic_slug=subtopic_slug,
         measure_page=measure_page,
         dimensions=dimensions,
         versions=versions,
@@ -165,10 +166,10 @@ def measure_page(topic_uri, subtopic_uri, measure_uri, version):
     )
 
 
-@static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/downloads/<filename>")
-def measure_page_file_download(topic_uri, subtopic_uri, measure_uri, version, filename):
+@static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/downloads/<filename>")
+def measure_page_file_download(topic_slug, subtopic_slug, measure_slug, version, filename):
     try:
-        *_, measure_page = page_service.get_measure_page_hierarchy(topic_uri, subtopic_uri, measure_uri, version)
+        *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
         upload_obj = upload_service.get_upload(measure_page, filename)
         downloaded_file = upload_service.get_measure_download(upload_obj, filename, "source")
         content = get_csv_data_for_download(downloaded_file)
@@ -187,11 +188,13 @@ def measure_page_file_download(topic_uri, subtopic_uri, measure_uri, version, fi
         abort(404)
 
 
-@static_site_blueprint.route("/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/dimension/<dimension_guid>/download")
-def dimension_file_download(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+@static_site_blueprint.route(
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/dimension/<dimension_guid>/download"
+)
+def dimension_file_download(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     try:
         *_, dimension = page_service.get_measure_page_hierarchy(
-            topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+            topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
         )
         dimension_obj = DimensionObjectBuilder.build(dimension)
 
@@ -212,12 +215,12 @@ def dimension_file_download(topic_uri, subtopic_uri, measure_uri, version, dimen
 
 
 @static_site_blueprint.route(
-    "/<topic_uri>/<subtopic_uri>/<measure_uri>/<version>/dimension/<dimension_guid>/tabular-download"
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/dimension/<dimension_guid>/tabular-download"
 )
-def dimension_file_table_download(topic_uri, subtopic_uri, measure_uri, version, dimension_guid):
+def dimension_file_table_download(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     try:
         *_, dimension = page_service.get_measure_page_hierarchy(
-            topic_uri, subtopic_uri, measure_uri, version, dimension_guid=dimension_guid
+            topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
         )
         dimension_obj = DimensionObjectBuilder.build(dimension)
 

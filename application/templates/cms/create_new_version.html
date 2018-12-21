@@ -4,8 +4,8 @@
 
 {% set breadcrumbs =
   [
-    {"url": url_for('static_site.topic', topic_uri=topic.uri), "text": topic.title},
-    {"url": url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version), "text": measure.title},
+    {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
+    {"url": url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version), "text": measure.title},
   ]
 %}
 
@@ -21,12 +21,12 @@
     <div class="grid-row">
         <div class="column-two-thirds new-version">
             <p>Current version: <b>{{ measure.version }}</b>
-                <a href="{{ url_for('static_site.measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                <a href="{{ url_for('static_site.measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                     View page
                 </a>
             </p>
             <form method="POST"
-                  action="{{ url_for('cms.new_version', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                  action="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                 {{ form.csrf_token }}
                 <div class="version-type">New version type:</div>
                 {% for version in form.version_type %}

@@ -1,3 +1,21 @@
+"""empty message
+
+Revision ID: 18a2aea8ea85
+Revises: 20181214_published_unpublished
+Create Date: 2018-12-20 10:52:50.641092
+
+"""
+from alembic import op
+import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
+
+# revision identifiers, used by Alembic.
+revision = 'rename_uri_slug'
+down_revision = '20181220_measureid'
+branch_labels = None
+depends_on = None
+
+
 drop_all_dashboard_helper_views = """
     DROP INDEX IF EXISTS uix_pages_by_geography;
     DROP INDEX IF EXISTS uix_latest_published_pages;
@@ -7,13 +25,6 @@ drop_all_dashboard_helper_views = """
     DROP MATERIALIZED VIEW latest_published_pages;
     DROP MATERIALIZED VIEW ethnic_groups_by_dimension;
     DROP MATERIALIZED VIEW categorisations_by_dimension;
-"""
-
-refresh_all_dashboard_helper_views = """
-    REFRESH MATERIALIZED VIEW CONCURRENTLY latest_published_pages;
-    REFRESH MATERIALIZED VIEW CONCURRENTLY pages_by_geography;
-    REFRESH MATERIALIZED VIEW CONCURRENTLY ethnic_groups_by_dimension;
-    REFRESH MATERIALIZED VIEW CONCURRENTLY categorisations_by_dimension;
 """
 
 latest_published_pages_view = """
@@ -166,3 +177,23 @@ categorisations_by_dimension = """
 
      CREATE UNIQUE INDEX uix_categorisations_by_dimension ON categorisations_by_dimension (dimension_guid, categorisation_id);
 """  # noqa
+
+def upgrade():
+    op.execute(drop_all_dashboard_helper_views)
+    op.alter_column('measure_version', 'uri', new_column_name='slug')
+    op.alter_column('measure', 'uri', new_column_name='slug')
+    op.alter_column('topic', 'uri', new_column_name='slug')
+    op.alter_column('subtopic', 'uri', new_column_name='slug')
+
+    op.execute(latest_published_pages_view)
+    op.execute(pages_by_geography_view)
+    op.execute(ethnic_groups_by_dimension_view)
+    op.execute(categorisations_by_dimension)
+
+
+def downgrade():
+    op.alter_column('measure_version', 'slug', new_column_name='uri')
+    op.alter_column('measure', 'slug', new_column_name='uri')
+    op.alter_column('topic', 'slug', new_column_name='uri')
+    op.alter_column('subtopic', 'slug', new_column_name='uri')
+

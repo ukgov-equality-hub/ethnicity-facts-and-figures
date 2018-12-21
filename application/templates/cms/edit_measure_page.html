@@ -6,7 +6,7 @@
 
 {% set breadcrumbs =
   [
-    {"url": url_for('static_site.topic', topic_uri=topic.uri), "text": topic.title},
+    {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
   ]
 %}
 {% set form_disabled = not (measure.status == "DRAFT" or new) %}
@@ -15,7 +15,7 @@
 {% block pageTitle %}{{ page_title(measure.title, error=(form.errors|length > 0)) }}{% endblock %}
 
 {% block content %}
-    <form method="POST" action="{% if new %}{{ url_for('cms.create_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri) }}{% else %}{{ url_for('cms.edit_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}{% endif %}">
+    <form method="POST" action="{% if new %}{{ url_for('cms.create_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}{% else %}{{ url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}{% endif %}">
         {{ form.csrf_token }}
         {% call status_banner() %}
             <div class="version-info left">
@@ -46,16 +46,16 @@
               {% if not new and measure.number_of_versions() > 1 %}
                 {%  set latest_page = measure.latest_version() %}
                 <span class="info"><a href="{{ url_for('cms.list_measure_page_versions',
-                                      topic_uri=topic.uri,
-                                      subtopic_uri=subtopic.uri,
-                                      measure_uri=measure.uri)}}">Version history</a></span>
+                                      topic_slug=topic.slug,
+                                      subtopic_slug=subtopic.slug,
+                                      measure_slug=measure.slug)}}">Version history</a></span>
 
               {% endif %}
 
             </div>
             <div class="right">
                   {% if not new %}
-                      <a href="{{ url_for('static_site.measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}" name="preview">
+                      <a href="{{ url_for('static_site.measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}" name="preview">
                         {% if measure.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
                       </a>
                   {% endif %}
@@ -64,11 +64,11 @@
 
 
                 {% if measure.status == 'APPROVED' and measure.latest and current_user.can(CREATE_VERSION) %}
-                    <a class="button" href="{{ url_for('cms.new_version', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                    <a class="button" href="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                         Update
                     </a>
                     {% if current_user.can(PUBLISH) %}
-                        <a class="button warning" href="{{ url_for('cms.unpublish_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                        <a class="button warning" href="{{ url_for('cms.unpublish_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                             Unpublish
                         </a>
                     {% endif %}
@@ -80,9 +80,9 @@
 
                           {% if latest.status == 'DRAFT' or latest.status == 'INTERNAL_REVIEW' or latest.status == 'DEPARTMENT_REVIEW' %}
                             <a href="{{ url_for('cms.edit_measure_page',
-                                                topic_uri=topic.uri,
-                                                subtopic_uri=subtopic.uri,
-                                                measure_uri=latest.uri,
+                                                topic_slug=topic.slug,
+                                                subtopic_slug=subtopic.slug,
+                                                measure_slug=latest.slug,
                                                 version=latest.version) }}">Version {{ latest.version }}</a> of this page is in {{ latest.status | format_status | safe }}
                         {% endif %}
 
@@ -97,7 +97,7 @@
                 {% if "REJECT" in available_actions %}
                     <a class="button warning"
                        id="reject-measure"
-                       href="{{ url_for('cms.reject_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                       href="{{ url_for('cms.reject_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                         Reject
                     </a>
                 {% endif %}
@@ -105,7 +105,7 @@
                 {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
                     <a class="button"
                         id="send-back-to-draft"
-                        href="{{ url_for('cms.send_page_to_draft', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                        href="{{ url_for('cms.send_page_to_draft', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                         Send back to draft
                     </a>
                 {%  endif %}
@@ -117,17 +117,17 @@
                         </button>
                      {% elif next_approval_state == 'INTERNAL_REVIEW' %}
                         <a class="button neutral" id="send-to-internal-review"
-                           href="{{ url_for('cms.send_to_review', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                           href="{{ url_for('cms.send_to_review', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                             {{ next_approval_state | format_approve_button | safe }}
                         </a>
                     {% elif next_approval_state == 'DEPARTMENT_REVIEW' %}
                         <a class="button" id="send-to-department-review"
-                           href="{{ url_for('cms.send_to_review', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                           href="{{ url_for('cms.send_to_review', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                             {{ next_approval_state | format_approve_button | safe }}
                         </a>
                     {% elif next_approval_state == 'APPROVED' and current_user.can(PUBLISH) %}
                         <a class="button" id="send-to-approved"
-                           href="{{ url_for('cms.publish', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+                           href="{{ url_for('cms.publish', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                             {{ next_approval_state | format_approve_button | safe }}
                         </a>
                     {% endif %}
@@ -244,10 +244,10 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <a href="{{ url_for('cms.edit_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}">
+                                    <a href="{{ url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid ) }}">
                                         {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
                                 <td>{% if 'UPDATE' in available_actions %}
-                                    <form action="{{ url_for('cms.delete_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, dimension_guid=dimension.guid ) }}" method="post">
+                                    <form action="{{ url_for('cms.delete_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, dimension_guid=dimension.guid ) }}" method="post">
                                         {{ form.csrf_token }}
                                         <button class="link">delete</button>
                                     </form>
@@ -265,7 +265,7 @@
                 {% endif %}
 
                 {% if 'UPDATE' in available_actions %}
-                    <a href="{{ url_for('cms.create_dimension', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">Add
+                    <a href="{{ url_for('cms.create_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">Add
                         dimension</a><br/>
                 {% endif %}
 
@@ -284,16 +284,16 @@
                             {% for upload in measure.uploads %}
                                 <tr>
                                     <td>
-                                        <a href="{{ url_for('static_site.measure_page_file_download', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
+                                        <a href="{{ url_for('static_site.measure_page_file_download', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
                                     </td>
                                     <td>{{ upload.title }}</td>
                                     <td>
-                                        <a href="{{ url_for('cms.edit_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, upload_guid=upload.guid ) }}">
+                                        <a href="{{ url_for('cms.edit_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, upload_guid=upload.guid ) }}">
                                             {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a>
                                     </td>
                                     <td>
                                         {% if 'UPDATE' in available_actions %}
-                                            <form action="{{ url_for('cms.delete_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version, upload_guid=upload.guid ) }}" method="post">
+                                            <form action="{{ url_for('cms.delete_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, upload_guid=upload.guid ) }}" method="post">
                                                 {{ form.csrf_token }}
                                                 <button class="link">delete</button>
                                             </form>
@@ -304,7 +304,7 @@
                         </table>
                     {% endif %}
                     {% if 'UPDATE' in available_actions %}
-                        <a href="{{ url_for('cms.create_upload', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">Add the data</a><br/>
+                        <a href="{{ url_for('cms.create_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">Add the data</a><br/>
                     {% endif %}
                     {% if new %}
                         <p>Once this page is saved you will be able to add downloads</p>
@@ -316,7 +316,7 @@
     {% if current_user.can(COPY_MEASURE) %}
     <div class="grid-row">
         <div class="column-two-thirds">
-            <form id="measure-action-section__copy_measure_form-{{ measure.guid }}" method="POST" action="{{ url_for('cms.copy_measure_page', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version) }}">
+            <form id="measure-action-section__copy_measure_form-{{ measure.guid }}" method="POST" action="{{ url_for('cms.copy_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                 {{ form.csrf_token }}
                 <button class="button copy-button" type="submit">Create a copy of this measure</button>
             </form>
@@ -355,13 +355,13 @@
                 $.ajax({
                     type: 'GET',
                     dataType: 'json',
-                    url: "{{ url_for('cms.get_measure_page_uploads', topic_uri=topic.uri, subtopic_uri=subtopic.uri, measure_uri=measure.uri, version=measure.version)}}",
+                    url: "{{ url_for('cms.get_measure_page_uploads', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version)}}",
                     success: function (page) {
                         var fileListHtml = '';
                         for (i in page.uploads) {
                             fileListHtml = fileListHtml + '<tr>' +
                                 '<td>' + page.uploads[i] + '</td>' +
-                                '<td><a href="/cms/{{ topic.uri }}/{{ subtopic.uri }}/{{ measure.uri }}/{{ measure.version }}/uploads/' + page.uploads[i] + '/delete">Delete</a></td>' +
+                                '<td><a href="/cms/{{ topic.slug }}/{{ subtopic.slug }}/{{ measure.slug }}/{{ measure.version }}/uploads/' + page.uploads[i] + '/delete">Delete</a></td>' +
                                 '</tr>';
                         }
                         $('#fileList').html(fileListHtml);
@@ -399,9 +399,9 @@
             });
             $.ajax({
                 type: 'POST',
-                url: "{{ url_for('cms.set_dimension_order', topic=topic.uri,
-                                                                subtopic=subtopic.uri,
-                                                                measure=measure.uri) }}",
+                url: "{{ url_for('cms.set_dimension_order', topic=topic.slug,
+                                                                subtopic=subtopic.slug,
+                                                                measure=measure.slug) }}",
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify({"dimensions": dimensions}),
