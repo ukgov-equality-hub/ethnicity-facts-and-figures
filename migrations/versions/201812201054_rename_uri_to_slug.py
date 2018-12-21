@@ -1,6 +1,6 @@
 """empty message
 
-Revision ID: 18a2aea8ea85
+Revision ID: rename_uri_slug
 Revises: 20181214_published_unpublished
 Create Date: 2018-12-20 10:52:50.641092
 
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'rename_uri_slug'
-down_revision = '20181220_measureid'
+revision = "rename_uri_slug"
+down_revision = "20181220_measureid"
 branch_labels = None
 depends_on = None
 
@@ -178,12 +178,13 @@ categorisations_by_dimension = """
      CREATE UNIQUE INDEX uix_categorisations_by_dimension ON categorisations_by_dimension (dimension_guid, categorisation_id);
 """  # noqa
 
+
 def upgrade():
     op.execute(drop_all_dashboard_helper_views)
-    op.alter_column('measure_version', 'uri', new_column_name='slug')
-    op.alter_column('measure', 'uri', new_column_name='slug')
-    op.alter_column('topic', 'uri', new_column_name='slug')
-    op.alter_column('subtopic', 'uri', new_column_name='slug')
+    op.alter_column("measure_version", "uri", new_column_name="slug")
+    op.alter_column("measure", "uri", new_column_name="slug")
+    op.alter_column("topic", "uri", new_column_name="slug")
+    op.alter_column("subtopic", "uri", new_column_name="slug")
 
     op.execute(latest_published_pages_view)
     op.execute(pages_by_geography_view)
@@ -192,8 +193,7 @@ def upgrade():
 
 
 def downgrade():
-    op.alter_column('measure_version', 'slug', new_column_name='uri')
-    op.alter_column('measure', 'slug', new_column_name='uri')
-    op.alter_column('topic', 'slug', new_column_name='uri')
-    op.alter_column('subtopic', 'slug', new_column_name='uri')
-
+    op.alter_column("measure_version", "slug", new_column_name="uri")
+    op.alter_column("measure", "slug", new_column_name="uri")
+    op.alter_column("topic", "slug", new_column_name="uri")
+    op.alter_column("subtopic", "slug", new_column_name="uri")
