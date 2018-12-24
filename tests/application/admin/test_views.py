@@ -310,7 +310,9 @@ def test_admin_user_can_remove_share_of_page_with_dept_user(
         session["user_id"] = mock_admin_user.id
 
     resp = test_app_client.get(
-        url_for("admin.remove_shared_page_from_user", page_id=stub_measure_page.guid, user_id=mock_dept_user.id),
+        url_for(
+            "admin.remove_shared_page_from_user", measure_id=stub_measure_page.measure_id, user_id=mock_dept_user.id
+        ),
         follow_redirects=True,
     )
 
