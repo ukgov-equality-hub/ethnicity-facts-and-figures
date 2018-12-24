@@ -158,6 +158,8 @@ def upgrade():
         f"not match subtopic_measure join table ({count_subtopic_measures})"
     )
 
+    op.execute("DROP TABLE max_measure_version")
+
 
 def downgrade():
     op.execute("UPDATE measure_version SET measure_id = NULL WHERE page_type='measure'")
