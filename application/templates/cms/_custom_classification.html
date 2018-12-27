@@ -3,7 +3,7 @@
         <label for="custom_classification__selector">Custom classification</label>
         <select id="custom_classification__selector" class="form-control"
                 {% if form_disabled %}disabled="disabled"{% endif %}>
-            <option>[Required]</option>
+            <option>Please select</option>
             {% for classification_option in classification_options %}
                 <option value="{{ classification_option['code'] }}">
                     {{ classification_option['name'] }}

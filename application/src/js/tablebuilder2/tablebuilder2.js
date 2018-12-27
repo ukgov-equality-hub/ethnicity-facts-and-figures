@@ -810,7 +810,7 @@ function getTips() {
 var MISSING_FIELD_ERROR = 'Missing field error';
 
 function checkRequiredFields() {
-    if ($('#ethnicity_settings').val() === 'custom' && $('#custom_classification__selector').val() === '[Required]') {
+    if ($('#ethnicity_settings').val() === 'custom' && $('#custom_classification__selector').val() === 'Please select') {
         return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'custom_classification__selector' }]
     }
     
