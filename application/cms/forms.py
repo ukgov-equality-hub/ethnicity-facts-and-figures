@@ -266,9 +266,9 @@ class MeasurePageForm(FlaskForm):
 
 
 class DimensionForm(FlaskForm):
-    title = StringField(label="Title", validators=[DataRequired()])
-    time_period = StringField(label="Time period covered")
-    summary = TextAreaField(label="Summary")
+    title = RDUStringField(label="Title", validators=[DataRequired()])
+    time_period = RDUStringField(label="Time period covered")
+    summary = RDUTextAreaField(label="Summary")
 
     def __init__(self, *args, **kwargs):
         super(FlaskForm, self).__init__(*args, **kwargs)
