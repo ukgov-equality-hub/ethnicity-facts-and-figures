@@ -788,7 +788,7 @@ class TableBuilderPage(BasePage):
         self.driver.get(url)
 
     def is_current(self):
-        return self.source_contains("Create a table")
+        return self.source_contains("Format and view table")
 
     def paste_data(self, data):
         lines = ["|".join(line) for line in data]
