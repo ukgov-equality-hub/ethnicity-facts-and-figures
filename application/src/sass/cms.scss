@@ -12,6 +12,7 @@ $error-colour: #B10E1E;
 $border-colour: #BFC1C3;
 
 .rd_cms {
+  counter-reset: chart-table-builder-counter;
 
   body {
     font-size: 19px;
@@ -200,6 +201,11 @@ $border-colour: #BFC1C3;
     .full-width {
       width: 100%;
     }
+  }
+
+  .builder-section-number:before {
+    counter-increment: chart-table-builder-counter;
+    content: counter(chart-table-builder-counter) ". ";
   }
 
   .chart {

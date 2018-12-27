@@ -40,7 +40,7 @@
 #}
         <div id="data-panel" class="data-panel"{% if dimension.chart_2_source_data %} style="display:none"{% endif %}>
             <div class="column-full">
-                <h2 class="heading-medium no-top-border">1. Data</h2>
+                <h2 class="heading-medium no-top-border builder-section-number">Data</h2>
 
                 <div class="form-hint">
                     <p>Copy and paste your data here. You must:</p>
@@ -72,7 +72,7 @@
                 #}
                 <div id="tab_seperated_content" class="chart-builder-section grid-row">
                     <form onsubmit="return false;">
-                        <h2 class="heading-medium">1. Data</h2>
+                        <h2 class="heading-medium builder-section-number">Data</h2>
 
                         <div>
                             <p id="data-description">(no data)</p>
@@ -91,7 +91,7 @@
                         <div>
                             <div class="form-group">
                                 <label for="ethnicity_settings">
-                                    <h2 class="heading-medium">2. Ethnicity classification</h2>
+                                    <h2 class="heading-medium builder-section-number">Ethnicity classification</h2>
                                 </label>
                                 <select id="ethnicity_settings" class="form-control"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
@@ -109,7 +109,7 @@
                  #}
                 <div id="select_chart_type" class="chart-builder-section grid-row" style="display:none">
                     <label for="chart_type_selector">
-                        <h2 class="heading-medium">3. Select chart type</h2>
+                        <h2 class="heading-medium builder-section-number">Select chart type</h2>
                     </label>
                     <select class="form-control" id="chart_type_selector"
                             {% if form_disabled %}disabled="disabled"{% endif %}>
@@ -139,7 +139,7 @@
                 #}
                 <div id="bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
-                    <h2 class="heading-medium">4. Bar chart options</h2>
+                    <h2 class="heading-medium builder-section-number">Bar chart options</h2>
                     <p>No settings needed</p>
                 </div>
 
@@ -151,7 +151,7 @@
                 #}
                 <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
-                    <h2 class="heading-medium">4. Grouped bar chart options</h2>
+                    <h2 class="heading-medium builder-section-number">Grouped bar chart options</h2>
                     <form>
                         {#
                             Select style
@@ -199,7 +199,7 @@
                 #}
                 <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
-                    <h2 class="heading-medium">4. Panel chart options</h2>
+                    <h2 class="heading-medium builder-section-number">Panel chart options</h2>
                     <form>
                         {#
                             Select style
@@ -261,7 +261,7 @@
                 #}
                 <div id="line_graph_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
-                    <h2 class="heading-medium">4. Line chart options</h2>
+                    <h2 class="heading-medium builder-section-number">Line chart options</h2>
                     <form>
                         <div>
                             <label for="line__x-axis_column">Select a value for the horizontal (X) Axis.<br>Choose 'Time' for time-series data.</label>
@@ -279,7 +279,7 @@
                 #}
                 <div id="panel_line_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
-                    <h2 class="heading-medium">4. Panel line chart options</h2>
+                    <h2 class="heading-medium builder-section-number">Panel line chart options</h2>
                     <form>
 
                         <div>
@@ -298,7 +298,7 @@
                 #}
                 <div id="component_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
-                    <h2 class="heading-medium">4. Component chart options</h2>
+                    <h2 class="heading-medium builder-section-number">Component chart options</h2>
                     <form>
                         {#
                             Select style
@@ -356,7 +356,7 @@
 
                 <div id="chart_format_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
-                    <h2 class="heading-medium">5. Chart format options</h2>
+                    <h2 class="heading-medium builder-section-number">Chart format options</h2>
                     <form>
                         <div class="form-group">
                             <label for="number_format">Number format</label>
@@ -404,7 +404,7 @@
                     </div>
                 </div>
                 <div id="preview_container">
-                    <h2 class="heading-medium">6. Chart title</h2>
+                    <h2 class="heading-medium builder-section-number">Chart title</h2>
                     <div class="chart-builder-section">
                       <span class="form-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
                       {% include 'forms/extended_hints/_chart_and_table_title.html' %}
@@ -412,12 +412,12 @@
                                {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.chart_2_source_data %}{{ dimension.chart_2_source_data.chartFormat.chart_title }}{% endif %}</textarea>
                     </div>
 
-                    <h2 class="heading-medium">7. Preview</h2>
+                    <h2 class="heading-medium builder-section-number">Preview</h2>
                     <div id="container" class="chart-container"></div>
 
                     <div id="save_section" class="chart-builder-section" style="display:none">
                         {% if 'UPDATE' in measure.available_actions() %}
-                            <h2 class="heading-medium">8. Save chart</h2>
+                            <h2 class="heading-medium builder-section-number">Save chart</h2>
                         {% endif %}
                         <div>
                             {% if 'UPDATE' in measure.available_actions() %}

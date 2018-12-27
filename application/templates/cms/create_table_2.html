@@ -39,7 +39,7 @@
         #}
         <div id="data-panel" class="data-panel {% if dimension.table_2_source_data %}hidden{% endif %}">
             <div class="column-full">
-                <h2 class="heading-medium no-top-border">1. Data</h2>
+                <h2 class="heading-medium no-top-border">Data</h2>
 
                 <div class="form-hint">
                     <p>Copy and paste your data here. You must:</p>
@@ -71,7 +71,7 @@
                 #}
                 <div id="tab_seperated_content" class="chart-builder-section">
                     <form onsubmit="return false;">
-                        <h2 class="heading-medium">1. Data</h2>
+                        <h2 class="heading-medium builder-section-number">Data</h2>
                         <div>
                             <p id="data-description">(no data)</p>
                             <button type="button" class="btn button btn-primary" id="edit-data">Edit</button>
@@ -89,7 +89,7 @@
                         <div>
                             <div class="">
                                 <label for="ethnicity_settings">
-                                    <h2 class="heading-medium">2. Ethnicity classification</h2>
+                                    <h2 class="heading-medium builder-section-number">Ethnicity classification</h2>
                                 </label>
                                 <select id="ethnicity_settings" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>None</option>
@@ -101,7 +101,7 @@
                 </div>
 
 
-                <h2 class="heading-medium">3. Columns</h2>
+                <h2 class="heading-medium builder-section-number">Columns</h2>
                 <form>
                     <div class="form-group">
                         <label for="table_column_1">First column</label>
@@ -148,7 +148,7 @@
                     Ethnicity must be one of the two
                 #}
                 <div id="complex_table_options" class="chart-builder-section chart-option-group hidden">
-                    <h2 class="heading-medium">4. Complex table options</h2>
+                    <h2 class="heading-medium builder-section-number">Table options</h2>
                     <form>
                         {#
                             Select style
@@ -201,7 +201,7 @@
                     </form>
                 </div>
 
-            <h2 class="heading-medium">5. Options</h2>
+            <h2 class="heading-medium builder-section-number">Options</h2>
                 <form onsubmit="return false;">
                     <div class="form-group">
                         <label for="index_column_name">First column title</label>
@@ -233,7 +233,7 @@
                     </div>
                 </div>
                 <div id="preview_container">
-                    <h2 class="heading-medium">6. Table title</h2>
+                    <h2 class="heading-medium builder-section-number">Table title</h2>
                     <div class="chart-builder-section">
                       <span class="form-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
                       {% include 'forms/extended_hints/_chart_and_table_title.html' %}
@@ -241,14 +241,14 @@
                                {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.table_2_source_data %}{{ dimension.table_2_source_data.tableValues.table_title }}{% endif %}</textarea>
                     </div>
 
-                    <h2 class="heading-medium">7. Preview</h2>
+                    <h2 class="heading-medium builder-section-number">Preview</h2>
                     <div class="chart-builder-section">
                     </div>
                     <div id="container"></div>
 
                     <div id="save_section" class="chart-builder-section" class="hidden">
                         {% if 'UPDATE' in measure.available_actions() %}
-                            <h2 class="heading-medium">8. Save table</h2>
+                            <h2 class="heading-medium builder-section-number">Save table</h2>
                         {% endif %}
                         <div>
                           {% if 'UPDATE' in measure.available_actions() %}
