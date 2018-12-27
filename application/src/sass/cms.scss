@@ -183,6 +183,10 @@ $border-colour: #BFC1C3;
     .form-group {
       margin-bottom: 0;
     }
+    select + label {
+      display: inline-block;
+      margin-top: 10px;
+    }
     .text-form-control {
       margin-bottom: 0;
     }
@@ -193,8 +197,7 @@ $border-colour: #BFC1C3;
       margin: 12px 0 0 0;
     }
 
-    .interactive-text-input {
-      border-width: 0px;
+    .full-width {
       width: 100%;
     }
   }

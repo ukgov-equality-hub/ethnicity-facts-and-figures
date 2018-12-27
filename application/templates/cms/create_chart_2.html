@@ -30,7 +30,7 @@
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-medium">
-                Create a chart
+                Format and view chart
             </h1>
         </div>
 
@@ -41,6 +41,17 @@
         <div id="data-panel" class="data-panel"{% if dimension.chart_2_source_data %} style="display:none"{% endif %}>
             <div class="column-full">
                 <h2 class="heading-medium no-top-border">1. Data</h2>
+
+                <div class="form-hint">
+                    <p>Copy and paste your data here. You must:</p>
+                    <ul>
+                        <li>only select the columns and rows you need for this chart or table</li>
+                        <li>not paste any empty rows</li>
+                        <li>include columns for ‘Ethnicity’ and ‘Value’</li>
+                        <li>not format numbers (for example, by adding a % sign to percentages)</li>
+                    </ul>
+                </div>
+
                 <form onsubmit="return false;">
                     <div class="form-group">
                         <textarea class="form-control" id="data_text_area" rows="10"
@@ -62,6 +73,7 @@
                 <div id="tab_seperated_content" class="chart-builder-section grid-row">
                     <form onsubmit="return false;">
                         <h2 class="heading-medium">1. Data</h2>
+
                         <div>
                             <p id="data-description">(no data)</p>
                             <button class="btn button btn-primary" id="edit-data">Edit</button>
@@ -79,7 +91,7 @@
                         <div>
                             <div class="form-group">
                                 <label for="ethnicity_settings">
-                                    <h2 class="heading-medium">2. Ethnicity</h2>
+                                    <h2 class="heading-medium">2. Ethnicity classification</h2>
                                 </label>
                                 <select id="ethnicity_settings" class="form-control"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
@@ -102,12 +114,12 @@
                     <select class="form-control" id="chart_type_selector"
                             {% if form_disabled %}disabled="disabled"{% endif %}>
                         <option value="none">Select a chart type</option>
-                        <option value="line_graph">Line chart</option>
                         <option value="bar_chart">Bar chart</option>
                         <option value="grouped_bar_chart">Grouped bar chart</option>
-                        <option value="component_chart">Component chart</option>
                         <option value="panel_bar_chart">Panel bar chart</option>
+                        <option value="line_graph">Line chart</option>
                         <option value="panel_line_chart">Panel line chart</option>
+                        <option value="component_chart">Component chart</option>
                     </select>
                 </div>
 
@@ -117,23 +129,6 @@
                     Builder 1 was data agnostic so had plenty of settings to standardise, order and display data
                     Builder 2 recognises all charts are BY ETHNICITY so makes the necessary assumptions
                 #}
-                {#
-                    LINE CHARTS _______________________________
-                    Must have ETHNICITY as their series - we only need to set a column for the x-axis
-                #}
-                <div id="line_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
-                    <h2 class="heading-medium">4. Line chart options</h2>
-                    <form>
-                        <div>
-                            <label for="line__x-axis_column">X-Axis</label>
-                            <select id="line__x-axis_column" class="form-control">
-                                <option>Time</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-
                 {#
                     BAR CHARTS _______________________________
                     Builder 2 recognises a bar chart will have Ethnicity for bars,
@@ -190,69 +185,6 @@
                                 <select id="grouped-bar__groups_column" class="form-control"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                {#
-                    COMPONENT CHARTS _______________________________
-                    Here you require two columns to set up the charts
-                    Ethnicity must be one of the two
-                #}
-                <div id="component_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
-                    <h2 class="heading-medium">4. Component chart options</h2>
-                    <form>
-                        {#
-                            Select style
-                        #}
-                        <select class="form-control" id="component__data_style"
-                                {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_bar" selected>Use ethnicity for bars</option>
-                            <option value="ethnicity_as_sections">Use ethnicity for bar sections</option>
-                        </select>
-
-
-                        {#
-                            Style 1 - Ethnicity for the bars
-                        #}
-                        <div class="indented-option-block grid-row" id="component__ethnicity_is_bar">
-                            <div class="form-group">
-                                <label for="component__section_column">Sections</label>
-                                <select id="component__section_column" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>Please select</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="component__section_order">Order</label>
-                                <select id="component__section_order" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[None]</option>
-                                </select>
-                            </div>
-                        </div>
-
-
-                        {#
-                            Style 2 - Ethnicity for the sections
-                        #}
-                        <div class="indented-option-block grid-row" id="component__ethnicity_is_sections"
-                             style="display:none">
-                            <div class="form-group">
-                                <label for="component__bar_column">Bars</label>
-                                <select id="component__bar_column" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>Please select</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="component__bar_order">Order</label>
-                                <select id="component__bar_order" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[None]</option>
                                 </select>
                             </div>
                         </div>
@@ -324,6 +256,23 @@
                 </div>
 
                 {#
+                    LINE CHARTS _______________________________
+                    Must have ETHNICITY as their series - we only need to set a column for the x-axis
+                #}
+                <div id="line_graph_options" class="chart-builder-section chart-option-group grid-row"
+                     style="display:none">
+                    <h2 class="heading-medium">4. Line chart options</h2>
+                    <form>
+                        <div>
+                            <label for="line__x-axis_column">Select a value for the horizontal (X) Axis.<br>Choose 'Time' for time-series data.</label>
+                            <select id="line__x-axis_column" class="form-control">
+                                <option>Time</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+                {#
                     PANEL LINE CHARTS _______________________________
                     Are not more complex than regular line charts
                     Must have ETHNICITY as their panels - we only need to set a column for the x-axis
@@ -334,10 +283,73 @@
                     <form>
 
                         <div>
-                            <label for="panel-line__x-axis_column">X-Axis</label>
+                            <label for="panel-line__x-axis_column">Select a value for the horizontal (X) Axis.<br>Choose 'Time' for time-series data.</label>
                             <select id="panel-line__x-axis_column" class="form-control">
                                 <option>Time</option>
                             </select>
+                        </div>
+                    </form>
+                </div>
+
+                {#
+                    COMPONENT CHARTS _______________________________
+                    Here you require two columns to set up the charts
+                    Ethnicity must be one of the two
+                #}
+                <div id="component_chart_options" class="chart-builder-section chart-option-group grid-row"
+                     style="display:none">
+                    <h2 class="heading-medium">4. Component chart options</h2>
+                    <form>
+                        {#
+                            Select style
+                        #}
+                        <select class="form-control" id="component__data_style"
+                                {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="ethnicity_as_bar" selected>Use ethnicity for bars</option>
+                            <option value="ethnicity_as_sections">Use ethnicity for bar sections</option>
+                        </select>
+
+
+                        {#
+                            Style 1 - Ethnicity for the bars
+                        #}
+                        <div class="indented-option-block grid-row" id="component__ethnicity_is_bar">
+                            <div class="form-group">
+                                <label for="component__section_column">Sections</label>
+                                <select id="component__section_column" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>Please select</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="component__section_order">Order</label>
+                                <select id="component__section_order" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        {#
+                            Style 2 - Ethnicity for the sections
+                        #}
+                        <div class="indented-option-block grid-row" id="component__ethnicity_is_sections"
+                             style="display:none">
+                            <div class="form-group">
+                                <label for="component__bar_column">Bars</label>
+                                <select id="component__bar_column" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>Please select</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="component__bar_order">Order</label>
+                                <select id="component__bar_order" class="form-control"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -350,18 +362,18 @@
                             <label for="number_format">Number format</label>
                             <select id="number_format" class="form-control"
                                     {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <option value="none" selected>[None]</option>
-                                <option value="percent">Percentage</option>
+                                <option value="none" selected>None</option>
+                                <option value="percent">Percentage (%)</option>
                                 <option value="other">Other</option>
                             </select>
                             <div id="other_number_format" class="form-group" style="display:none">
-                                <label for="number_format_prefix">Prefix</label>
+                                <label for="number_format_prefix">Prefix (for example, £)</label>
                                 <input id="number_format_prefix" {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <label for="number_format_suffix">Suffix</label>
+                                <label for="number_format_suffix">Suffix (for example, %)</label>
                                 <input id="number_format_suffix" {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <label for="number_format_min">Minimum</label>
+                                <label for="number_format_min">Vertical axis: Minimum value</label>
                                 <input id="number_format_min" {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <label for="number_format_max">Maximum</label>
+                                <label for="number_format_max">Vertical axis: Maximum value</label>
                                 <input id="number_format_max" {% if form_disabled %}disabled="disabled"{% endif %}>
                             </div>
                         </div>
@@ -392,17 +404,20 @@
                     </div>
                 </div>
                 <div id="preview_container">
-                    <h2 class="heading-medium">Preview</h2>
+                    <h2 class="heading-medium">6. Chart title</h2>
                     <div class="chart-builder-section">
-                        <textarea id="chart_title" class="heading-small interactive-text-input" rows="2" data-module="autoresize no-newlines"
-                               placeholder="[Click to add chart title]"
+                      <span class="form-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
+                      {% include 'forms/extended_hints/_chart_and_table_title.html' %}
+                        <textarea id="chart_title" class="heading-small full-width" rows="2" data-module="autoresize no-newlines"
                                {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.chart_2_source_data %}{{ dimension.chart_2_source_data.chartFormat.chart_title }}{% endif %}</textarea>
                     </div>
+
+                    <h2 class="heading-medium">7. Preview</h2>
                     <div id="container" class="chart-container"></div>
 
                     <div id="save_section" class="chart-builder-section" style="display:none">
                         {% if 'UPDATE' in measure.available_actions() %}
-                            <h2 class="heading-medium">7. Save chart</h2>
+                            <h2 class="heading-medium">8. Save chart</h2>
                         {% endif %}
                         <div>
                             {% if 'UPDATE' in measure.available_actions() %}

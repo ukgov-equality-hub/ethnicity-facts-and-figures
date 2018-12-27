@@ -608,7 +608,7 @@ class ChartBuilderPage(BasePage):
         return (
             self.url_contains(self.dimension_url[0:-5])
             and self.url_contains("create-chart")
-            and self.source_contains("Create a chart")
+            and self.source_contains("Format and view chart")
         )
 
     def paste_data(self, data):

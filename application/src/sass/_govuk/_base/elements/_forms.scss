@@ -127,6 +127,10 @@ textarea {
 
   margin-top: -2px;
   padding-bottom: 2px;
+
+  p, li {
+    color: $secondary-text-colour;
+  }
 }
 
 .form-label .form-hint,
