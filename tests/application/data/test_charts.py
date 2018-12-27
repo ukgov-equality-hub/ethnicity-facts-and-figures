@@ -67,11 +67,11 @@ def test_bar_chart_takes_data_points_from_chart_object():
 
 
 """
-LINE GRAPH FUNCTIONALITY
+LINE CHART FUNCTIONALITY
 """
 
 
-def test_line_graph_has_x_axis_set():
+def test_line_chart_has_x_axis_set():
     # GIVEN
     #
     from tests.test_data.chart_convert import line, line_source
@@ -87,7 +87,7 @@ def test_line_graph_has_x_axis_set():
     assert upgraded_line["chartOptions"]["x_axis_column"] == "Time"
 
 
-def test_line_graph_has_data_points_ethnicity_x_axis_value():
+def test_line_chart_has_data_points_ethnicity_x_axis_value():
     # GIVEN
     #
     from tests.test_data.chart_convert import line, line_source
@@ -102,7 +102,7 @@ def test_line_graph_has_data_points_ethnicity_x_axis_value():
     assert upgraded_line["data"][0] == ["Ethnicity", "Time", "Value"]
 
 
-def test_line_graph_takes_data_points_from_chart():
+def test_line_chart_takes_data_points_from_chart():
     # GIVEN
     #
     from tests.test_data.chart_convert import line, line_source
@@ -393,11 +393,11 @@ def test_panel_bar_chart_takes_data_points_from_chart_if_panels_are_ethnicity():
 
 
 """
-PANEL LINE GRAPH FUNCTIONALITY
+PANEL LINE CHART FUNCTIONALITY
 """
 
 
-def test_panel_line_graph_has_x_axis_set():
+def test_panel_line_chart_has_x_axis_set():
     # GIVEN
     #
     from tests.test_data.chart_convert import panel_line_chart, panel_line_chart_source
@@ -413,7 +413,7 @@ def test_panel_line_graph_has_x_axis_set():
     assert upgraded_line["chartOptions"]["x_axis_column"] == "Time"
 
 
-def test_panel_line_graph_has_data_points_with_header_line():
+def test_panel_line_chart_has_data_points_with_header_line():
     # GIVEN
     #
     from tests.test_data.chart_convert import panel_line_chart, panel_line_chart_source
@@ -428,7 +428,7 @@ def test_panel_line_graph_has_data_points_with_header_line():
     assert upgraded_line["data"][0] == ["Ethnicity", "Time", "Value"]
 
 
-def test_panel_line_graph_takes_data_points_from_chart():
+def test_panel_line_chart_takes_data_points_from_chart():
     # GIVEN
     #
     from tests.test_data.chart_convert import panel_line_chart, panel_line_chart_source

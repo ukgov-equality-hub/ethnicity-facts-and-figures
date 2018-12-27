@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "dashboards/graphs.html" import render_line_graph %}
+{% from "dashboards/graphs.html" import render_line_chart %}
 
 {% set breadcrumbs =
   [
@@ -36,7 +36,7 @@
       </div>
       <div class="column-two-thirds">
 
-          {{ render_line_graph(data=data,
+          {{ render_line_chart(data=data,
                                graph_height=220,
                                graph_width=630,
                                left_margin=20,
