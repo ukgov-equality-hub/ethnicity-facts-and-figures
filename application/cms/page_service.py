@@ -499,7 +499,11 @@ class PageService(Service):
 
     @staticmethod
     def get_pages_to_unpublish():
-        return MeasureVersion.query.filter_by(status="UNPUBLISH").all()
+        return (
+            MeasureVersion.query.filter_by(status="UNPUBLISH")
+            .order_by(MeasureVersion.title, desc(MeasureVersion.version))
+            .all()
+        )
 
     @staticmethod
     def mark_pages_unpublished(pages):
