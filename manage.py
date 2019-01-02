@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 import ast
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta
 import sys
 
 import os
@@ -10,17 +11,20 @@ from flask_script import Manager, Server
 from flask_security import SQLAlchemyUserDatastore
 from flask_security.utils import hash_password
 from sqlalchemy import desc, func
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 
+from application import db
 from application.admin.forms import is_gov_email
-from application.auth.models import *
+from application.auth.models import User, TypeOfUser, CAPABILITIES
 from application.cms.classification_service import classification_service
-from application.cms.models import *
 from application.config import Config, DevConfig
 from application.data.ethnicity_classification_synchroniser import EthnicityClassificationSynchroniser
 from application.factory import create_app
-from application.redirects.models import *
-from application.sitebuilder.models import Build, BuildStatus
+from application.redirects.models import Redirect
 from application.sitebuilder.build import build_and_upload_error_pages
+from application.sitebuilder.exceptions import StalledBuildException
+from application.sitebuilder.models import Build, BuildStatus
 from application.utils import create_and_send_activation_email, send_email, TimedExecution
 
 if os.environ.get("ENVIRONMENT", "DEVELOPMENT").lower().startswith("dev"):
@@ -277,16 +281,33 @@ def report_stalled_build():
     )
 
     if stalled:
-        message = "Build stalled for more than 30 minutes in application %s. Build id %s created at %s" % (
-            app.config["ENVIRONMENT"],
-            stalled.id,
-            stalled.created_at,
+        message = (
+            f"Build stalled for more than 30 minutes in application {app.config['ENVIRONMENT']}.<br>"
+            f"Build id {stalled.id} created at {stalled.created_at}<br><br>"
+            f"Acknowledge with:<br>"
+            f"<strong><code>"
+            f'heroku run "./manage.py acknowledge_build_issue --build_id {stalled.id}" -a APP_NAME'
+            f"</code></strong>"
         )
         subject = "Build stalled in application %s on %s" % (app.config["ENVIRONMENT"], date.today())
         recipients = db.session.query(User).filter(User.user_type == TypeOfUser.DEV_USER.name).all()
         for r in recipients:
             send_email(app.config["RDU_EMAIL"], r.email, message, subject)
         print(message)
+
+        # Do a little dance to send this exception to Sentry, if configured, otherwise just let it bubble up.
+        try:
+            raise StalledBuildException(
+                f"Build {stalled.id} has stalled. Acknowledge with:\n\n"
+                f'heroku run "./manage.py acknowledge_build_issue --build_id {stalled.id}" -a APP_NAME'
+            )
+
+        except StalledBuildException as e:
+            if "sentry" in app.extensions:
+                app.extensions["sentry"].captureException()
+            else:
+                raise e
+
     else:
         print("No stalled builds")
 
@@ -329,7 +350,7 @@ def acknowledge_build_issue(build_id):
         db.session.add(build)
         db.session.commit()
         print("Build id", build_id, "set to superseded")
-    except sqlalchemy.orm.exc.NoResultFound:
+    except NoResultFound:
         print("No build found with id", build_id)
 
 
@@ -356,7 +377,7 @@ def run_data_migration(migration=None):
             try:
                 db.session.execute(migration_sql)
                 db.session.commit()
-            except sqlalchemy.exc.IntegrityError as e:
+            except IntegrityError as e:
                 print(f"Unable to apply data migration: {e}")
             else:
                 print(f"Applied data migration: {migration}")
@@ -382,7 +403,7 @@ def delete_redirect_rule(from_uri):
         db.session.delete(redirect)
         db.session.commit()
         print("Redirect rule with from_uri", from_uri, "deleted")
-    except NoResultFound as e:
+    except NoResultFound:
         print("Could not delete a redirect rule with from_uri ", from_uri)
 
 
