@@ -123,7 +123,10 @@ def test_remove_value_from_classification_removes_value(db_session):
 def test_add_parent_value_to_classification_appends_new_parent(db_session):
     # given a setup with one classification
     people = ["Tom", "Frankie", "Caroline", "Adam", "Cath", "Marcus", "Sylvia", "Katerina"]
-    rdu = classification_service.create_classification_with_values("G1", "Teams", "Race Disparity Unit", values=people)
+
+    # Create classifications (also commits them to the database).
+    classification_service.create_classification_with_values("G1", "Teams", "Race Disparity Unit", values=people)
+
     rdu_by_tribe = classification_service.create_classification_with_values(
         "G2", "Teams", "Race Disparity Unit by Tribe", values=people
     )

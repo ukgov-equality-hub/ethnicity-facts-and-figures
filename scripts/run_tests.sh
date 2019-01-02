@@ -28,6 +28,9 @@ display_result $? 3 "JS tests"
 black --check .
 display_result $? 1 "Code style check"
 
+flake8 .
+display_result $? 4 "Python code lint check"
+
 npx gulp
 display_result $? 2 "Frontend asset build check"
 

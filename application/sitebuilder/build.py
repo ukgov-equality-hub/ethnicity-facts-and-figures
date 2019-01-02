@@ -1,21 +1,20 @@
 #! /usr/bin/env python
-from datetime import datetime
 import glob
 import os
 import shutil
 import subprocess
+from datetime import datetime
 from uuid import uuid4
 
 from flask import current_app, render_template
 from git import Repo
 from slugify import slugify
 
-from application.data.dimensions import DimensionObjectBuilder
 from application.cms.models import MeasureVersion
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
+from application.data.dimensions import DimensionObjectBuilder
 from application.utils import get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv
-
 
 BUILD_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S.%f"
 
@@ -107,7 +106,7 @@ def build_and_upload_error_pages(application):
 
         print("Deploy site (error pages) to S3: ", application.config["DEPLOY_SITE"])
         if application.config["DEPLOY_SITE"]:
-            from application.sitebuilder.build_service import s3_deployer, _upload_dir_to_s3
+            from application.sitebuilder.build_service import _upload_dir_to_s3
             from application.cms.file_service import S3FileSystem
 
             s3 = S3FileSystem(

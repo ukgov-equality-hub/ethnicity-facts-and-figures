@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import os
 
@@ -7,16 +8,32 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 import pytest
 import requests_mock
+import sqlalchemy
 
 from application import db as app_db
-from application.auth.models import *
-from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
-from application.cms.models import *
+from application.auth.models import User, TypeOfUser, CAPABILITIES
 from application.cms.classification_service import ClassificationService
+from application.cms.models import (
+    Chart,
+    Classification,
+    DataSource,
+    Dimension,
+    FrequencyOfRelease,
+    LowestLevelOfGeography,
+    Measure,
+    MeasureVersion,
+    Organisation,
+    Subtopic,
+    Table,
+    Topic,
+    TypeOfStatistic,
+    Upload,
+)
+from application.cms.page_service import PageService
 from application.cms.scanner_service import ScannerService
 from application.cms.upload_service import UploadService
-from application.cms.page_service import PageService
 from application.config import TestConfig
+from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.factory import create_app
 from manage import refresh_materialized_views
 from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
@@ -264,6 +281,7 @@ def stub_sandbox_topic_page(db_session):
     measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
 
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
     return page
 
@@ -732,7 +750,7 @@ def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
 
 
 @pytest.fixture(scope="function")
-def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
+def stub_page_with_multi_series_bar_chart(db_session, stub_measure_page):
     db_dimension = Dimension(
         guid="stub_dimension",
         title="stub dimension",
