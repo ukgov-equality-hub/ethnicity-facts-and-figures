@@ -19,6 +19,7 @@ from application.config import Config, DevConfig
 from application.data.ethnicity_classification_synchroniser import EthnicityClassificationSynchroniser
 from application.factory import create_app
 from application.redirects.models import *
+from application.sitebuilder.exceptions import StalledBuildException
 from application.sitebuilder.models import Build, BuildStatus
 from application.sitebuilder.build import build_and_upload_error_pages
 from application.utils import create_and_send_activation_email, send_email, TimedExecution
@@ -277,16 +278,33 @@ def report_stalled_build():
     )
 
     if stalled:
-        message = "Build stalled for more than 30 minutes in application %s. Build id %s created at %s" % (
-            app.config["ENVIRONMENT"],
-            stalled.id,
-            stalled.created_at,
+        message = (
+            f"Build stalled for more than 30 minutes in application {app.config['ENVIRONMENT']}.<br>"
+            f"Build id {stalled.id} created at {stalled.created_at}<br><br>"
+            f"Acknowledge with:<br>"
+            f"<strong><code>"
+            f'heroku run "./manage.py acknowledge_build_issue --build_id {stalled.id}" -a APP_NAME'
+            f"</code></strong>"
         )
         subject = "Build stalled in application %s on %s" % (app.config["ENVIRONMENT"], date.today())
         recipients = db.session.query(User).filter(User.user_type == TypeOfUser.DEV_USER.name).all()
         for r in recipients:
             send_email(app.config["RDU_EMAIL"], r.email, message, subject)
         print(message)
+
+        # Do a little dance to send this exception to Sentry, if configured, otherwise just let it bubble up.
+        try:
+            raise StalledBuildException(
+                f"Build {stalled.id} has stalled. Acknowledge with:\n\n"
+                f'heroku run "./manage.py acknowledge_build_issue --build_id {stalled.id}" -a APP_NAME'
+            )
+
+        except StalledBuildException as e:
+            if "sentry" in app.extensions:
+                app.extensions["sentry"].captureException()
+            else:
+                raise e
+
     else:
         print("No stalled builds")
 
