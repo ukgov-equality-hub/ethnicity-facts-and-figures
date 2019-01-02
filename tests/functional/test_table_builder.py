@@ -277,7 +277,8 @@ def run_complex_table_by_column_scenario(table_builder_page, driver):
     table_builder_page.wait_for_seconds(1)
 
     """
-    AND a complex table exists with ethnicities across the columns, gender on the left, and sub-columns of value and gender.
+    AND a complex table exists with ethnicities across the columns, gender on the left, and sub-columns of value
+    and gender.
     """
     assert table_builder_page.table_headers() == ["", "Asian", "Black", "Mixed", "White", "Other"]
     assert table_builder_page.table_secondary_headers() == [

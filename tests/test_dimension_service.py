@@ -1,5 +1,5 @@
 from application.cms.dimension_service import DimensionService
-from application.cms.models import Chart, Dimension, DimensionClassification, Table
+from application.cms.models import Chart, Dimension, DimensionClassification
 from application import db
 from datetime import datetime
 
@@ -103,9 +103,9 @@ def test_update_dimension_does_not_call_update_dimension_classification_by_defau
     updated_dimension = stub_measure_page.dimensions[0]
     assert updated_dimension.dimension_classification is not None
     assert updated_dimension.dimension_classification.classification_id == "5A"
-    assert updated_dimension.dimension_classification.includes_parents == False
-    assert updated_dimension.dimension_classification.includes_all == True
-    assert updated_dimension.dimension_classification.includes_unknown == True
+    assert updated_dimension.dimension_classification.includes_parents is False
+    assert updated_dimension.dimension_classification.includes_all is True
+    assert updated_dimension.dimension_classification.includes_unknown is True
 
 
 def test_update_dimension_does_call_update_dimension_classification_if_told_to(
@@ -284,9 +284,9 @@ def test_adding_table_with_custom_data_classification(stub_measure_page, two_cla
     # And the dimension itself should have the same metadata values as there’s no chart
     assert dimension.dimension_classification is not None
     assert dimension.dimension_classification.classification_id == "2A"
-    assert dimension.dimension_classification.includes_parents == True
-    assert dimension.dimension_classification.includes_all == True
-    assert dimension.dimension_classification.includes_unknown == True
+    assert dimension.dimension_classification.includes_parents is True
+    assert dimension.dimension_classification.includes_all is True
+    assert dimension.dimension_classification.includes_unknown is True
 
 
 def test_adding_chart_with_custom_data_classification(stub_measure_page, two_classifications_2A_5A):
@@ -330,9 +330,9 @@ def test_adding_chart_with_custom_data_classification(stub_measure_page, two_cla
     # And the dimension itself should have the same metadata values as there’s no table
     assert dimension.dimension_classification is not None
     assert dimension.dimension_classification.classification_id == "2A"
-    assert dimension.dimension_classification.includes_parents == True
-    assert dimension.dimension_classification.includes_all == True
-    assert dimension.dimension_classification.includes_unknown == True
+    assert dimension.dimension_classification.includes_parents is True
+    assert dimension.dimension_classification.includes_all is True
+    assert dimension.dimension_classification.includes_unknown is True
 
 
 def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_measure_page, two_classifications_2A_5A):
@@ -392,9 +392,9 @@ def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_mea
     # And the dimension itself should have the same metadata as the chart
     assert dimension.dimension_classification is not None
     assert dimension.dimension_classification.classification_id == "5A"
-    assert dimension.dimension_classification.includes_parents == True
-    assert dimension.dimension_classification.includes_all == False
-    assert dimension.dimension_classification.includes_unknown == False
+    assert dimension.dimension_classification.includes_parents is True
+    assert dimension.dimension_classification.includes_all is False
+    assert dimension.dimension_classification.includes_unknown is False
 
 
 def test_adding_table_with_custom_data_and_existing_less_detailed_chart(stub_measure_page, two_classifications_2A_5A):
@@ -454,9 +454,9 @@ def test_adding_table_with_custom_data_and_existing_less_detailed_chart(stub_mea
     # And the dimension itself should have the same metadata as the newly saved table
     assert dimension.dimension_classification is not None
     assert dimension.dimension_classification.classification_id == "5A"
-    assert dimension.dimension_classification.includes_parents == False
-    assert dimension.dimension_classification.includes_all == True
-    assert dimension.dimension_classification.includes_unknown == True
+    assert dimension.dimension_classification.includes_parents is False
+    assert dimension.dimension_classification.includes_all is True
+    assert dimension.dimension_classification.includes_unknown is True
 
 
 def test_add_or_update_dimensions_to_measure_page_preserves_order(stub_measure_page):

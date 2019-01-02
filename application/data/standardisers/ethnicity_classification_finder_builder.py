@@ -88,11 +88,6 @@ def ethnicity_classification_collection_from_classification_list(classifications
 
 
 def ethnicity_classification_from_data(id, name, data_rows, long_name=None):
-    if long_name is None:
-        classification_long_name = name
-    else:
-        classification_long_name = long_name
-
     classification = EthnicityClassification(id=id, name=name, long_name=name)
     for row in data_rows:
         standard_value = row[EthnicityClassificationDataColumn.STANDARD_VALUE]

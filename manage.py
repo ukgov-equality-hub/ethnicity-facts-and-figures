@@ -143,8 +143,8 @@ def pull_prod_data(default_user_password=None):
     db.session.execute(
         """
         UPDATE users
-        SET email = ROUND(RANDOM() * 1000000000000)::TEXT || '@anon.invalid', 
-            password = NULL, 
+        SET email = ROUND(RANDOM() * 1000000000000)::TEXT || '@anon.invalid',
+            password = NULL,
             active = FALSE
         """
     )

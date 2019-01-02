@@ -7,17 +7,7 @@ from typing import Optional, Iterable
 from dictalchemy import DictableModel
 import sqlalchemy
 from bidict import bidict
-from sqlalchemy import (
-    inspect,
-    ForeignKeyConstraint,
-    PrimaryKeyConstraint,
-    UniqueConstraint,
-    ForeignKey,
-    not_,
-    Index,
-    asc,
-    text,
-)
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, Index, asc, text
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -376,14 +366,14 @@ class MeasureVersion(db.Model):
         try:
             dimension = Dimension.query.filter_by(guid=guid, page=self).one()
             return dimension
-        except NoResultFound as e:
+        except NoResultFound:
             raise DimensionNotFoundException
 
     def get_upload(self, guid):
         try:
             upload = Upload.query.filter_by(guid=guid).one()
             return upload
-        except NoResultFound as e:
+        except NoResultFound:
             raise UploadNotFoundException
 
     def publish_status(self, numerical=False):
@@ -581,7 +571,8 @@ class Dimension(db.Model):
     __tablename__ = "dimension"
 
     # This is a database expression to get the current timestamp in UTC.
-    # Possibly specific to PostgreSQL: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-ZONECONVERT
+    # Possibly specific to PostgreSQL:
+    #   https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-ZONECONVERT
     __SQL_CURRENT_UTC_TIME = "timezone('utc', CURRENT_TIMESTAMP)"
 
     guid = db.Column(db.String(255), primary_key=True)
@@ -916,7 +907,12 @@ class ChartAndTableMixin(object):
         return new_object
 
     def __str__(self):
-        return f"{self.id} {self.classification_id} includes_parents:{self.includes_parents} includes_all:{self.includes_all} includes_unknown:{self.includes_unknown}"
+        return (
+            f"{self.id} {self.classification_id} "
+            f"includes_parents:{self.includes_parents} "
+            f"includes_all:{self.includes_all} "
+            f"includes_unknown:{self.includes_unknown}"
+        )
 
 
 class Chart(db.Model, ChartAndTableMixin):

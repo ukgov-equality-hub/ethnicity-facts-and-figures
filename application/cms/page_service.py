@@ -24,13 +24,11 @@ from application.cms.models import (
     Subtopic,
     Topic,
     publish_status,
-    TypeOfData,
-    UKCountry,
     DataSource,
 )
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
-from application.utils import generate_review_token, create_guid, get_bool
+from application.utils import generate_review_token, create_guid
 
 
 class PageService(Service):
@@ -564,7 +562,7 @@ class PageService(Service):
     def _set_main_fields(self, page, data):
         try:
             self.set_lowest_level_of_geography(page, data)
-        except NoResultFound as e:
+        except NoResultFound:
             message = "There was an error setting lowest level of geography"
             self.logger.exception(message)
             raise PageUnEditable(message)

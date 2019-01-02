@@ -21,7 +21,7 @@ class ChartObjectDataBuilder:
         else:
             return None
 
-    @staticmethod
+    @staticmethod  # noqa: C901 (complexity)
     def upgrade_v1_to_v2(chart_object, chart_settings):
 
         v2 = ChartObjectDataBuilder.get_v2_chart_type(chart_settings)
@@ -280,7 +280,6 @@ class PanelLineChartObjectDataBuilder:
 
             rows = []
             for panel in panels:
-                panel_name = panel["title"]["text"]
                 panel_rows = LineChartObjectDataBuilder.build(panel)["data"][1:]
                 for row in panel_rows:
                     rows = rows + [row]

@@ -108,7 +108,7 @@ class DimensionService(Service):
     def get_dimension_with_guid(guid):
         try:
             return Dimension.query.filter_by(guid=guid).one()
-        except NoResultFound as e:
+        except NoResultFound:
             raise DimensionNotFoundException()
 
     @staticmethod
@@ -116,10 +116,10 @@ class DimensionService(Service):
         try:
             Dimension.query.filter_by(page=page, title=title).one()
             return False
-        except NoResultFound as e:
+        except NoResultFound:
             return True
 
-    def update_dimension(self, dimension, data, update_classification=False):
+    def update_dimension(self, dimension, data, update_classification=False):  # noqa: C901 (complexity)
         dimension.title = data["title"] if "title" in data else dimension.title
         dimension.time_period = data["time_period"] if "time_period" in data else dimension.time_period
         dimension.summary = data["summary"] if "summary" in data else dimension.summary

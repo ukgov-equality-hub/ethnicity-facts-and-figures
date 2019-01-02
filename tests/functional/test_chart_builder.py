@@ -9,18 +9,16 @@ from tests.functional.data_sets import (
     granular_with_parent_data,
 )
 from tests.functional.pages import (
-    LogInPage,
     HomePage,
     TopicPage,
     MeasureEditPage,
-    MeasureCreatePage,
     DimensionAddPage,
     DimensionEditPage,
     ChartBuilderPage,
     MinimalRandomMeasure,
     MinimalRandomDimension,
 )
-from tests.functional.utils import spaceless, go_to_page, assert_page_contains, create_measure, login, shuffle_table
+from tests.functional.utils import spaceless, create_measure, login, shuffle_table
 
 pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
 

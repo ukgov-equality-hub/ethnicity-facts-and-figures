@@ -8,7 +8,7 @@ from enum import Enum
 
 from flask import render_template
 from markupsafe import Markup
-from wtforms.fields import SelectMultipleField, RadioField, StringField, SelectField
+from wtforms.fields import SelectMultipleField, RadioField, StringField
 from wtforms.widgets import HTMLString, html_params
 
 

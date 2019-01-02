@@ -215,7 +215,7 @@ class UploadService(Service):
         try:
             Upload.query.filter_by(page=page, title=title).one()
             return False
-        except NoResultFound as e:
+        except NoResultFound:
             return True
 
 

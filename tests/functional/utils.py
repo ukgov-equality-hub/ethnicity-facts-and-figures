@@ -157,13 +157,6 @@ def create_measure(driver, live_server, page, topic, subtopic):
     create_measure_page.click_save()
 
 
-def login(driver, live_server, test_app_editor):
-    login_page = LogInPage(driver, live_server)
-    login_page.get()
-    if login_page.is_current():
-        login_page.login(test_app_editor.email, test_app_editor.password)
-
-
 def shuffle_table(table):
     table_body = table[1:]
     shuffle(table_body)

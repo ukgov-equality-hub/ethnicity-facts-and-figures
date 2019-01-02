@@ -1,6 +1,4 @@
-from unittest import mock
-
-from flask import session, request, current_app, flash, get_flashed_messages, url_for, render_template
+from flask import session, request, current_app, flash, render_template
 from flask_wtf import FlaskForm
 from lxml import html
 import pytest

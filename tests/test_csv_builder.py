@@ -100,6 +100,7 @@ def test_table_object_data_builder_does_build_data_from_grouped_table(stub_group
         ["Women", "White", "12.8", "0.128"],
         ["Women", "Other", "10.0", "0.100"],
     ]
+    assert data == expected_data
 
 
 def test_table_object_table_builder_does_build_headings_from_grouped_table(stub_grouped_table_object):
