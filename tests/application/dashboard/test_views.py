@@ -1,5 +1,7 @@
 import pytest
 
+from manage import refresh_materialized_views
+
 
 @pytest.mark.parametrize(
     "dashboard_url",
@@ -24,6 +26,7 @@ def test_dashboard_pages_return_200(
     dashboard_url,
     two_classifications_2A_5A,
 ):
+    refresh_materialized_views()
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
