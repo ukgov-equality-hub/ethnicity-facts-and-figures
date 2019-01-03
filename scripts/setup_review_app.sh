@@ -16,7 +16,7 @@ function display_result {
 psql -d $DATABASE_URL -c "drop schema public cascade;"
 display_result $? 1 "Drop schema as PR may have migrations not yet applied to master"
 
-pg_dump -F custom --no-acl --no-owner -d $HEROKU_POSTGRESQL_RED_URL | pg_restore -c -d $DATABASE_URL
+pg_dump -F custom --no-acl --no-owner -d $HEROKU_POSTGRESQL_MAROON_URL | pg_restore -c -d $DATABASE_URL
 display_result $? 1 "Copy over db from dev/master"
 
 ./manage.py db upgrade

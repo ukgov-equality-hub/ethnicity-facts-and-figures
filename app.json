@@ -51,7 +51,7 @@
     "HEROKU_API_KEY": {
       "required": true
     },
-    "HEROKU_POSTGRESQL_RED_URL": {
+    "HEROKU_POSTGRESQL_MAROON_URL": {
       "required": true
     },
     "HTML_CONTENT_REPO": {
