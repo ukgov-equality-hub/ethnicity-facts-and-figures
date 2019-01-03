@@ -335,7 +335,6 @@ def stub_organisations(db_session):
 @pytest.fixture(scope="function")
 def stub_data_source(db_session, stub_organisations, stub_type_of_statistic):
     data_source = DataSource(
-        id=1,
         title="DWP Stats",
         type_of_data=["SURVEY"],
         type_of_statistic_id=stub_type_of_statistic.id,
