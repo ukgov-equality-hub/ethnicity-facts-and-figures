@@ -1,9 +1,24 @@
 from unittest.mock import patch
 
+import pytest
+import stopit
+
 from application.sitebuilder.build import do_it
-from application.sitebuilder.build_service import request_build
+from application.sitebuilder.build_service import build_site, request_build
 from manage import refresh_materialized_views
-from tests.utils import UnexpectedMockInvocationException
+from tests.utils import GeneralTestException, UnexpectedMockInvocationException
+
+
+def test_build_exceptions_not_suppressed(app):
+    with patch("application.sitebuilder.build_service.do_it") as do_it_patch:
+        do_it_patch.side_effect = GeneralTestException("build error")
+
+        request_build()
+
+        with pytest.raises(GeneralTestException) as e, stopit.SignalTimeout(1):
+            build_site(app)
+
+        assert str(e.value) == "build error"
 
 
 def test_static_site_build(

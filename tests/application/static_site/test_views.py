@@ -1,14 +1,50 @@
-from datetime import datetime
-from bs4 import BeautifulSoup
-from flask import url_for
 import re
+from datetime import datetime
 
 import pytest
+from bs4 import BeautifulSoup
+from flask import url_for
 
 from application.cms.models import MeasureVersion
 from application.cms.page_service import PageService
+from application.config import Config
 
 page_service = PageService()
+
+
+def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_rdu_user, app):
+
+    # Set the user_id for the session to the logged-in user
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_rdu_user.id
+
+    response = test_app_client.get(url_for("static_site.index"))
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.get_data(as_text=True), "html.parser")
+
+    assert page.select_one(
+        "form[action=" + app.config["NEWSLETTER_SUBSCRIBE_URL"] + "]"
+    ), "Mailing list subscription form should be present"
+
+    assert page.find_all("label", text="Email address")[0], "E-mail address label should be present"
+    assert page.select_one("input[name=EMAIL]"), "E-mail address field should be present"
+    assert page.find_all("button", text="Subscribe")[0], "Subscribe button should be present"
+
+
+def test_homepage_search_links_to_google_custom_url_before_javascript(
+    test_app_client, mock_admin_user, stub_topic_page
+):
+    resp = test_app_client.get(url_for("static_site.search"))
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.get_data(as_text=True), "html.parser")
+
+    search_forms = page.header.select("#search-form")
+    assert len(search_forms) == 1
+
+    assert search_forms[0]["action"] == "https://cse.google.com/cse/publicurl"
+    assert search_forms[0].select("[name=cx]")[0]["value"] == Config.GOOGLE_CUSTOM_SEARCH_ID
 
 
 def test_rdu_user_can_see_page_if_not_shared(
@@ -701,3 +737,84 @@ def test_previous_version_adds_noindex_for_robots(
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     robots_tags = page.find_all("meta", attrs={"name": "robots"}, content=lambda value: value and "noindex" in value)
     assert len(robots_tags) == 1
+
+
+class TestMeasurePage:
+    """
+    This class includes a set of tests that check download links for source data of a measure page.
+    Unfortunately, without a refactor of how dimensions are passed into the measure page template, we aren't
+    able to test how the static site renders these links. The static site builder passes in a specially-formatted
+    set of dimensions that aren't available in 'static-mode style requests' to the CMS.
+
+    Tech improvement ticket: https://trello.com/c/U4rMSk0w/70
+    """
+
+    @pytest.mark.parametrize(
+        "static_mode, expected_url",
+        (
+            # ("yes", "<some_url>"),
+            ("no", "/test/example/test-measure-page/1.0/dimension/stub_dimension/tabular-download"),
+        ),
+    )
+    def test_measure_page_download_table_tabular_data_link_correct(
+        self,
+        test_app_client,
+        mock_logged_in_rdu_user,
+        stub_page_with_upload_and_dimension_and_chart_and_table,
+        static_mode,
+        expected_url,
+    ):
+        resp = test_app_client.get(
+            f"/test/example/test-measure-page/latest?static_mode={static_mode}", follow_redirects=False
+        )
+        page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+        data_links = page.findAll("a", href=True, text="Download table data (CSV)")
+        assert len(data_links) == 1
+        assert data_links[0].attrs["href"] == expected_url
+
+    @pytest.mark.parametrize(
+        "static_mode, expected_url",
+        (
+            # ("yes", "<some_url>"),
+            ("no", "/test/example/test-measure-page/1.0/dimension/stub_dimension/download"),
+        ),
+    )
+    def test_measure_page_download_table_source_data_link_correct(
+        self,
+        test_app_client,
+        mock_logged_in_rdu_user,
+        stub_page_with_upload_and_dimension_and_chart_and_table,
+        static_mode,
+        expected_url,
+    ):
+        resp = test_app_client.get(
+            f"/test/example/test-measure-page/latest?static_mode={static_mode}", follow_redirects=False
+        )
+        page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+        data_links = page.findAll("a", href=True, text="Source data (CSV)")
+        assert len(data_links) == 1
+        assert data_links[0].attrs["href"] == expected_url
+
+    @pytest.mark.parametrize(
+        "static_mode, expected_url",
+        (
+            # ("yes", "<some_url>"),
+            ("no", "/test/example/test-measure-page/1.0/downloads/test-measure-page-data.csv"),
+        ),
+    )
+    def test_measure_page_download_measure_source_data_link_correct(
+        self,
+        test_app_client,
+        mock_logged_in_rdu_user,
+        stub_page_with_upload_and_dimension_and_chart_and_table,
+        static_mode,
+        expected_url,
+    ):
+        resp = test_app_client.get("/test/example/test-measure-page/latest", follow_redirects=False)
+        page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+        data_links = page.findAll("a", href=True, text=re.compile(r"Test measure page data\s+-\s+Spreadsheet"))
+        assert len(data_links) == 1
+        assert data_links[0].attrs["href"] == expected_url

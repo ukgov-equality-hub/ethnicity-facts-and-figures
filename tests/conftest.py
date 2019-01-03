@@ -35,7 +35,6 @@ from application.cms.upload_service import UploadService
 from application.config import TestConfig
 from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.factory import create_app
-from manage import refresh_materialized_views
 from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
 from tests.utils import UnmockedRequestException
 
@@ -123,17 +122,17 @@ def db(app):
     db.get_engine(app).dispose()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="function", autouse=True)
 def db_session(db):
     db.session.remove()
 
-    # Remove data from all tables - because our structural migrations insert some records - then refresh/wipe
-    # materialized views
+    # Remove data from all tables so we have a clean slate at the start of every test
+    # This ignores materialized views, which need to be refreshed _inside_ a test function definition so that all of the
+    # pytest fixtures in use are captured.
     for tbl in reversed(db.metadata.sorted_tables):
         if tbl.name not in sqlalchemy.inspect(db.engine).get_view_names():
             db.engine.execute(tbl.delete())
 
-    refresh_materialized_views()
     db.session.commit()
 
     yield db
@@ -336,7 +335,6 @@ def stub_organisations(db_session):
 @pytest.fixture(scope="function")
 def stub_data_source(db_session, stub_organisations, stub_type_of_statistic):
     data_source = DataSource(
-        id=1,
         title="DWP Stats",
         type_of_data=["SURVEY"],
         type_of_statistic_id=stub_type_of_statistic.id,
