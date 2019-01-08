@@ -28,9 +28,7 @@
 {% block content %}
     <div class="grid-row">
         <div class="column-full">
-            <h1 class="heading-medium">
-                Create a table
-            </h1>
+            <h1 id="builder-title" class="heading-medium">{% if dimension.table_2_source_data %}Format and view{% else %}Create a{% endif %} table</h1>
         </div>
 
         {#
@@ -39,15 +37,26 @@
         #}
         <div id="data-panel" class="data-panel {% if dimension.table_2_source_data %}hidden{% endif %}">
             <div class="column-full">
-                <h2 class="heading-medium no-top-border">Data</h2>
-                <form onsubmit="return false;">
-                    <div class="form-group">
-                        <textarea class="form-control" id="data_text_area" rows="10"
-                                  {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
-                    </div>
-                    <button type="button" class="btn button btn-primary" id="confirm-data">OK</button>
-                    <button type="button" class="btn button btn-primary" id="cancel-edit-data">Cancel</button>
-                </form>
+                <h2 class="heading-medium no-top-border builder-section-number">Data</h2>
+
+                <div class="form-hint">
+                    <p>Copy and paste your data here. You must:</p>
+                    <ul>
+                        <li>only select the columns and rows you need for this chart or table</li>
+                        <li>not paste any empty rows</li>
+                        <li>include columns for ‘Ethnicity’ and ‘Value’</li>
+                        <li>not format numbers (for example, by adding a % sign to percentages)</li>
+                    </ul>
+                </div>
+
+                <div class="form-group">
+                  <form onsubmit="return false;">
+                          <textarea class="form-control" id="data_text_area" rows="10"
+                                    {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
+                      <button type="button" class="btn button btn-primary" id="confirm-data">OK</button>
+                  </form>
+                </div>
+                <a id="cancel-edit-data" href="#">Cancel</a>
             </div>
         </div>
 
@@ -59,13 +68,11 @@
                     and columns with an option to return to the DATA ENTRY PANEL
                 #}
                 <div id="tab_seperated_content" class="chart-builder-section">
-                    <form onsubmit="return false;">
-                        <h2 class="heading-medium">Data</h2>
-                        <div>
-                            <p id="data-description">(no data)</p>
-                            <button type="button" class="btn button btn-primary" id="edit-data">Edit</button>
-                        </div>
-                    </form>
+                      <h2 class="heading-medium builder-section-number">Data</h2>
+                      <div>
+                          <p id="data-description">(no data)</p>
+                          <a class="link" id="edit-data">Edit</a>
+                      </div>
                 </div>
 
                 {#
@@ -78,16 +85,57 @@
                         <div>
                             <div class="">
                                 <label for="ethnicity_settings">
-                                    <h2 class="heading-medium">Ethnicity</h2>
+                                    <h2 class="heading-medium builder-section-number">Ethnicity classification</h2>
                                 </label>
-                                <select id="ethnicity_settings" class="form-control"
-                                        {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[None]</option>
+                                <select id="ethnicity_settings" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>None</option>
                                 </select>
                                 {% include "cms/_custom_classification.html" %}
                             </div>
                         </div>
                     </form>
+                </div>
+
+
+                <div id="column_settings_section" class="chart-builder-section">
+                  <h2 class="heading-medium builder-section-number">Columns</h2>
+                  <form>
+                      <div class="form-group">
+                          <label for="table_column_1">First column</label>
+                          <select id="table_column_1" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                              <option value="none">[None]</option>
+                          </select>
+                          <label for="table_column_1_name">Heading</label>
+                          <input id="table_column_1_name" class="column_option_picker_name margin-top-small">
+
+                          <label for="table_column_2">Second column</label>
+                          <select id="table_column_2" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                              <option value="none">[None]</option>
+                          </select>
+                          <label for="table_column_2_name">Heading</label>
+                          <input id="table_column_2_name" class="column_option_picker_name margin-top-small">
+
+                          <label for="table_column_3">Third column</label>
+                          <select id="table_column_3" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                              <option value="none">[None]</option>
+                          </select>
+                          <label for="table_column_3_name">Heading</label>
+                          <input id="table_column_3_name" class="column_option_picker_name margin-top-small">
+                          <label for="table_column_4">Fourth column</label>
+                          <select id="table_column_4" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                              <option value="none">[None]</option>
+                          </select>
+                          <label for="table_column_4_name">Heading</label>
+                          <input id="table_column_4_name" class="column_option_picker_name margin-top-small">
+
+                          <label for="table_column_5">Fifth column</label>
+                          <select id="table_column_5" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                              <option value="none">[None]</option>
+                          </select>
+                          <label for="table_column_5_name">Heading</label>
+                          <input id="table_column_5_name" class="column_option_picker_name margin-top-small">
+                      </div>
+                  </form>
                 </div>
 
                 {#
@@ -103,7 +151,7 @@
                     Ethnicity must be one of the two
                 #}
                 <div id="complex_table_options" class="chart-builder-section chart-option-group hidden">
-                    <h2 class="heading-medium">Complex table options</h2>
+                    <h2 class="heading-medium builder-section-number">Table options</h2>
                     <form>
                         {#
                             Select style
@@ -156,42 +204,7 @@
                     </form>
                 </div>
 
-
-                <h2 class="heading-medium">Data</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="table_column_1">Column 1</label>
-                        <select id="table_column_1" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="none">[None]</option>
-                        </select>
-                        <input id="table_column_1_name" class="column_option_picker_name margin-top-small">
-
-                        <label for="table_column_2">Column 2</label>
-                        <select id="table_column_2" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="none">[None]</option>
-                        </select>
-                        <input id="table_column_2_name" class="column_option_picker_name margin-top-small">
-
-                        <label for="table_column_3">Column 3</label>
-                        <select id="table_column_3" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="none">[None]</option>
-                        </select>
-                        <input id="table_column_3_name" class="column_option_picker_name margin-top-small">
-                        <label for="table_column_4">Column 4</label>
-                        <select id="table_column_4" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="none">[None]</option>
-                        </select>
-                        <input id="table_column_4_name" class="column_option_picker_name margin-top-small">
-
-                        <label for="table_column_5">Column 5</label>
-                        <select id="table_column_5" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="none">[None]</option>
-                        </select>
-                        <input id="table_column_5_name" class="column_option_picker_name margin-top-small">
-                    </div>
-                </form>
-
-            <h2 class="heading-medium">Options</h2>
+            <h2 class="heading-medium builder-section-number">Options</h2>
                 <form onsubmit="return false;">
                     <div class="form-group">
                         <label for="index_column_name">First column title</label>
@@ -223,24 +236,27 @@
                     </div>
                 </div>
                 <div id="preview_container">
-                    <h2 class="heading-medium">Preview</h2>
+                    <h2 class="heading-medium builder-section-number">Table title</h2>
                     <div class="chart-builder-section">
-                        <textarea id="table_title" class="heading-small interactive-text-input" rows="2" data-module="autoresize no-newlines"
-                               placeholder="[Click to add table title]"
+                      <span class="form-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
+                      {% include 'forms/extended_hints/_chart_and_table_title.html' %}
+                        <textarea id="table_title" class="full-width" rows="2" data-module="autoresize no-newlines"
                                {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.table_2_source_data %}{{ dimension.table_2_source_data.tableValues.table_title }}{% endif %}</textarea>
+                    </div>
+
+                    <h2 class="heading-medium builder-section-number">Preview</h2>
+                    <div class="chart-builder-section">
                     </div>
                     <div id="container"></div>
 
+                    {% if 'UPDATE' in measure.available_actions() %}
+                    <br>
                     <div id="save_section" class="chart-builder-section" class="hidden">
-                        {% if 'UPDATE' in measure.available_actions() %}
-                            <h2 class="heading-medium">Save table</h2>
-                        {% endif %}
                         <div>
-                          {% if 'UPDATE' in measure.available_actions() %}
-                          <button class="button" id="save">Save</button>
-                          {% endif %}
+                            <button class="button" id="save">Save</button>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
