@@ -260,7 +260,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayTips(tips) {
-        console.log('display tips')
         document.getElementById('tips_container').classList.remove('hidden')
         document.getElementById('preview_container').classList.add('hidden')
 
