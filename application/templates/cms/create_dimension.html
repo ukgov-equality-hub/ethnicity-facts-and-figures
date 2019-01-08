@@ -14,8 +14,8 @@
 %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
-{% block pageTitle %}{{ page_title("Create dimension", error=(form.errors|length > 0) )}}{% endblock %}
 
+{% block pageTitle %}{{ page_title("Create dimension", error=(form.errors|length > 0) )}}{% endblock %}
 {% block content %}
     <div class="grid-row">
         <div class="column-full">
@@ -25,25 +25,28 @@
 
     <div class="grid-row">
         <div class="column-two-thirds">
-        {% block measure_form %}
+          {% block measure_form %}
+          <div class="form-group">
             <form method="POST" action="{{ url_for('cms.create_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version )}}">
                 {{ form.csrf_token }}
                 {% block fields %}
 
-                    {{ render_field(form.title, disabled=form_disabled, hint="For example, ‘Employment by ethnicity and gender’") }}
+                    {{ form.title(disabled=form_disabled) }}
 
-                    {{ render_field(form.time_period, disabled=form_disabled, hint="For example, ‘2015/16’") }}
+                    {{ form.time_period(disabled=form_disabled) }}
 
-                    {{ render_textarea_field(form.summary, rows='7', cols='100', disabled=form_disabled) }}
+                    {{ form.summary(disabled=form_disabled) }}
 
                 {% endblock fields %}
 
                 <button type="submit" class="button" name="save">
                     Save
                 </button>
-
             </form>
-        {% endblock %}
+          </div>
+          {% endblock %}
+
+        <a href="{{ url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">Cancel</a>
     </div>
   </div>
 {% endblock %}

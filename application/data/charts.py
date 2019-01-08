@@ -43,7 +43,7 @@ class ChartObjectDataBuilder:
         elif v2["type"] == "line_graph":
             x_axis_column = chart_settings["chartOptions"]["x_axis_column"]
             v2["chartOptions"] = {"x_axis_column": x_axis_column}
-            v2["data"] = ChartObjectDataBuilder.get_line_graph_data(chart_object, x_axis_column)
+            v2["data"] = ChartObjectDataBuilder.get_line_chart_data(chart_object, x_axis_column)
 
         elif v2["type"] == "grouped_bar_chart":
             if ChartObjectDataBuilder.is_ethnicity_column(chart_settings["chartOptions"]["primary_column"]):
@@ -98,12 +98,12 @@ class ChartObjectDataBuilder:
         elif v2["type"] == "panel_line_chart":
             x_axis_column = chart_settings["chartOptions"]["panel_line_x_axis"]
             v2["chartOptions"] = {"x_axis_column": x_axis_column}
-            v2["data"] = ChartObjectDataBuilder.get_panel_line_graph_data(chart_object, x_axis_column)
+            v2["data"] = ChartObjectDataBuilder.get_panel_line_chart_data(chart_object, x_axis_column)
 
         return v2
 
     @staticmethod
-    def get_panel_line_graph_data(chart_object, x_axis_column):
+    def get_panel_line_chart_data(chart_object, x_axis_column):
         data = [["Ethnicity", x_axis_column, "Value"]]
         for panel in chart_object["panels"]:
             series = panel["series"][0]
@@ -180,7 +180,7 @@ class ChartObjectDataBuilder:
         return data
 
     @staticmethod
-    def get_line_graph_data(chart_object, x_axis_column):
+    def get_line_chart_data(chart_object, x_axis_column):
         data = [["Ethnicity", x_axis_column, "Value"]]
         x_axis_values = chart_object["xAxis"]["categories"]
         for series in chart_object["series"]:
