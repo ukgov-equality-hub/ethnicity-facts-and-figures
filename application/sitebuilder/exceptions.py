@@ -1,0 +1,2 @@
+class StalledBuildException(Exception):
+    pass

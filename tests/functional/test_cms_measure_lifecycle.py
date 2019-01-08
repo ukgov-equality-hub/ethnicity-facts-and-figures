@@ -1,17 +1,10 @@
 import pytest
 
-from flask import current_app
-
 from tests.functional.utils import (
     EXPECTED_STATUSES,
-    assert_page_correct,
-    assert_page_status,
-    assert_page_details,
     create_measure_starting_at_topic_page,
     navigate_to_topic_page,
-    navigate_to_preview_page,
     navigate_to_edit_page,
-    navigate_to_view_form,
     login,
 )
 

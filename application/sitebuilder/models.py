@@ -2,7 +2,7 @@ from datetime import datetime
 import enum
 
 from sqlalchemy import PrimaryKeyConstraint
-from sqlalchemy.dialects.postgresql import ENUM, UUID
+from sqlalchemy.dialects.postgresql import UUID
 from application import db
 
 

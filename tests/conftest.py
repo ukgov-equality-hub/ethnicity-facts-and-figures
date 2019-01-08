@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import os
 
@@ -7,18 +8,33 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 import pytest
 import requests_mock
+import sqlalchemy
 
 from application import db as app_db
-from application.auth.models import *
-from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
-from application.cms.models import *
+from application.auth.models import User, TypeOfUser, CAPABILITIES
 from application.cms.classification_service import ClassificationService
+from application.cms.models import (
+    Chart,
+    Classification,
+    DataSource,
+    Dimension,
+    FrequencyOfRelease,
+    LowestLevelOfGeography,
+    Measure,
+    MeasureVersion,
+    Organisation,
+    Subtopic,
+    Table,
+    Topic,
+    TypeOfStatistic,
+    Upload,
+)
+from application.cms.page_service import PageService
 from application.cms.scanner_service import ScannerService
 from application.cms.upload_service import UploadService
-from application.cms.page_service import PageService
 from application.config import TestConfig
+from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.factory import create_app
-from manage import refresh_materialized_views
 from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
 from tests.utils import UnmockedRequestException
 
@@ -106,17 +122,17 @@ def db(app):
     db.get_engine(app).dispose()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="function", autouse=True)
 def db_session(db):
     db.session.remove()
 
-    # Remove data from all tables - because our structural migrations insert some records - then refresh/wipe
-    # materialized views
+    # Remove data from all tables so we have a clean slate at the start of every test
+    # This ignores materialized views, which need to be refreshed _inside_ a test function definition so that all of the
+    # pytest fixtures in use are captured.
     for tbl in reversed(db.metadata.sorted_tables):
         if tbl.name not in sqlalchemy.inspect(db.engine).get_view_names():
             db.engine.execute(tbl.delete())
 
-    refresh_materialized_views()
     db.session.commit()
 
     yield db
@@ -185,10 +201,20 @@ def stub_topic_page(db_session, stub_home_page):
         version="1.0",
     )
 
+    topic = Topic(
+        id=page.id,
+        slug=page.slug,
+        title=page.title,
+        description=page.description,
+        additional_description=page.additional_description,
+    )
+
     page.page_json = json.dumps({"guid": "topic_test", "title": "Test topic page"})
 
     db_session.session.add(page)
+    db_session.session.add(topic)
     db_session.session.commit()
+
     return page
 
 
@@ -206,11 +232,20 @@ def stub_subtopic_page(db_session, stub_topic_page):
         title="Test subtopic page",
         version="1.0",
     )
+    subtopic = Subtopic(
+        id=page.id,
+        slug=page.slug,
+        title=page.title,
+        position=page.position,
+        topic_id=Topic.query.get(stub_topic_page.id).id,
+    )
 
     page.page_json = json.dumps({"guid": "subtopic_example", "title": "Test subtopic page"})
 
     db_session.session.add(page)
+    db_session.session.add(subtopic)
     db_session.session.commit()
+
     return page
 
 
@@ -242,8 +277,10 @@ def stub_sandbox_topic_page(db_session):
         title="Test sandbox topic page",
         version="1.0",
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
 
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
     return page
 
@@ -298,7 +335,6 @@ def stub_organisations(db_session):
 @pytest.fixture(scope="function")
 def stub_data_source(db_session, stub_organisations, stub_type_of_statistic):
     data_source = DataSource(
-        id=1,
         title="DWP Stats",
         type_of_data=["SURVEY"],
         type_of_statistic_id=stub_type_of_statistic.id,
@@ -336,6 +372,9 @@ def stub_measure_page(
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
+    measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
+    page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
 
     for key, val in stub_measure_data.items():
         if key == "published_at":
@@ -345,7 +384,9 @@ def stub_measure_page(
     page.data_sources = [stub_data_source]
 
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
+
     return page
 
 
@@ -370,6 +411,9 @@ def stub_published_measure_page(
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
+    measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
+    page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
 
     for key, val in stub_measure_data.items():
         if key == "published_at":
@@ -379,7 +423,9 @@ def stub_published_measure_page(
     page.data_sources = [stub_data_source]
 
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
+
     return page
 
 
@@ -433,6 +479,10 @@ def stub_measure_page_one_of_three(
         lowest_level_of_geography=stub_geography,
         latest=False,
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
+    measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
+    page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
+
     for key, val in stub_measure_data.items():
         if key == "published_at":
             val = datetime.strptime(val, "%Y-%m-%d")
@@ -440,6 +490,7 @@ def stub_measure_page_one_of_three(
 
     page.data_sources = [stub_data_source]
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
     return page
 
@@ -465,6 +516,10 @@ def stub_measure_page_two_of_three(
         lowest_level_of_geography=stub_geography,
         latest=False,
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
+    measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
+    page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
+
     for key, val in stub_measure_data.items():
         if key == "published_at":
             val = datetime.strptime(val, "%Y-%m-%d")
@@ -472,7 +527,9 @@ def stub_measure_page_two_of_three(
 
     page.data_sources = [stub_data_source]
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
+
     return page
 
 
@@ -497,6 +554,10 @@ def stub_measure_page_three_of_three(
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
+    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
+    measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
+    page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
+
     for key, val in stub_measure_data.items():
         if key == "published_at":
             val = datetime.strptime(val, "%Y-%m-%d")
@@ -504,7 +565,9 @@ def stub_measure_page_three_of_three(
 
     page.data_sources = [stub_data_source]
     db_session.session.add(page)
+    db_session.session.add(measure)
     db_session.session.commit()
+
     return page
 
 
@@ -685,7 +748,7 @@ def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
 
 
 @pytest.fixture(scope="function")
-def stub_page_with_single_series_bar_chart(db_session, stub_measure_page):
+def stub_page_with_multi_series_bar_chart(db_session, stub_measure_page):
     db_dimension = Dimension(
         guid="stub_dimension",
         title="stub dimension",

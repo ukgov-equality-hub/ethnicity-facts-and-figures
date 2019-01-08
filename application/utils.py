@@ -1,20 +1,18 @@
 import csv
 import hashlib
 import json
-import sys
-import os
 import logging
-from datetime import date
+import os
+import sys
 import time
-
-from flask import has_request_context, current_app
-from flask_mail import Message
+from datetime import date
 from functools import wraps
-
 from io import StringIO
-from flask import abort, current_app, url_for, render_template, flash
+
+from flask import abort, current_app, flash, has_request_context, render_template, url_for
 from flask_login import current_user
-from itsdangerous import TimestampSigner, SignatureExpired, URLSafeTimedSerializer
+from flask_mail import Message
+from itsdangerous import SignatureExpired, TimestampSigner, URLSafeTimedSerializer
 from slugify import slugify
 
 from application import mail
@@ -87,7 +85,7 @@ def get_csv_data_for_download(filename):
             for row in reader:
                 rows.append(row)
 
-    except UnicodeDecodeError as e:
+    except UnicodeDecodeError:
         rows = []  # Reset rows to be empty before attempting to read the file again, to avoid duplication
         with open(filename, "r", encoding="iso-8859-1") as f:
             reader = csv.reader(f, delimiter=",")

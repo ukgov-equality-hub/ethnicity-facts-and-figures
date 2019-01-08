@@ -1,18 +1,8 @@
 import pytest
 
 from application.cms.page_service import PageService
-from flask import current_app
 
-from tests.functional.pages import (
-    LogInPage,
-    HomePage,
-    CmsIndexPage,
-    TopicPage,
-    SubtopicPage,
-    MeasureEditPage,
-    MeasureCreatePage,
-    RandomMeasure,
-)
+from tests.functional.pages import LogInPage, HomePage, TopicPage, MeasureEditPage, MeasureCreatePage, RandomMeasure
 
 pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
 

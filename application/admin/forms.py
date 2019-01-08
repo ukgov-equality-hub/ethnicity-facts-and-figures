@@ -3,7 +3,7 @@ import os
 import ast
 
 from flask_wtf import FlaskForm
-from wtforms import ValidationError, RadioField, SelectField
+from wtforms import ValidationError, RadioField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import Length, DataRequired, Email
 

@@ -33,6 +33,7 @@ from application.cms.models import (
     Organisation,
     LowestLevelOfGeography,
     MeasureVersion,
+    Measure,
 )
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
@@ -239,7 +240,9 @@ def _diff_updates(form, page):
     return diffs
 
 
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit", methods=["GET", "POST"])
+@cms_blueprint.route(  # noqa: C901 (complexity)
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit", methods=["GET", "POST"]
+)
 @login_required
 @user_has_access
 def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
@@ -631,7 +634,6 @@ def create_dimension(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    form = DimensionForm()
     if request.method == "POST":
         return _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version)
     else:
@@ -644,7 +646,6 @@ def _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version):
     )
     form = DimensionForm(request.form)
 
-    messages = []
     if form.validate():
         try:
             dimension = dimension_service.create_dimension(
@@ -1111,7 +1112,7 @@ def set_dimension_order(topic, subtopic, measure):
     try:
         dimension_service.set_dimension_positions(dimensions)
         return json.dumps({"status": "OK", "status_code": 200}), 200
-    except Exception as e:
+    except Exception:
         return json.dumps({"status": "INTERNAL SERVER ERROR", "status_code": 500}), 500
 
 
@@ -1201,7 +1202,7 @@ def new_version(topic_slug, subtopic_slug, measure_slug, version):
                     version=page.version,
                 )
             )
-        except UpdateAlreadyExists as e:
+        except UpdateAlreadyExists:
             message = "Version %s of page %s is already being updated" % (version, measure_slug)
             flash(message, "error")
             return redirect(
@@ -1253,6 +1254,11 @@ def set_measure_order():
             pages = MeasureVersion.query.filter_by(guid=p["guid"], parent_guid=p["subtopic"]).all()
             for page in pages:
                 page.position = p["position"]
+
+            if pages:
+                measure = Measure.query.get(pages[0].measure_id)
+                measure.position = p["position"]
+
         db.session.commit()
         request_build()
         return json.dumps({"status": "OK", "status_code": 200}), 200

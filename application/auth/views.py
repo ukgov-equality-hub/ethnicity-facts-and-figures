@@ -1,6 +1,5 @@
 import passwordmeter
 from flask import render_template, flash, redirect, url_for, current_app, abort, session
-from flask_login import logout_user
 from flask_mail import Message
 from flask_security.decorators import anonymous_user_required
 from flask_security.utils import hash_password

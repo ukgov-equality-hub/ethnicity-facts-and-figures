@@ -20,14 +20,15 @@ from application.cms.exceptions import (
 from application.cms.models import (
     LowestLevelOfGeography,
     MeasureVersion,
+    Measure,
+    Subtopic,
+    Topic,
     publish_status,
-    TypeOfData,
-    UKCountry,
     DataSource,
 )
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
-from application.utils import generate_review_token, create_guid, get_bool
+from application.utils import generate_review_token, create_guid
 
 
 class PageService(Service):
@@ -63,6 +64,13 @@ class PageService(Service):
             position=len([c for c in parent.children if c.latest]),
         )
 
+        topic = Topic.query.filter_by(slug=parent.parent.slug).one()
+        measure = Measure(slug=page.slug, position=page.position)
+        measure.subtopics = [Subtopic.query.filter_by(topic_id=topic.id, slug=parent.slug).one()]
+        db.session.add(measure)
+        db.session.flush()  # Flush to DB will generate PK for the newly-created instance
+        page.measure_id = measure.id
+
         self._set_main_fields(page=page, data=data)
         self._set_data_sources(page=page, data_source_forms=data_source_forms)
 
@@ -84,6 +92,8 @@ class PageService(Service):
         elif page_service.is_stale_update(data, page):
             raise StaleUpdateException("")
         else:
+            measure = Measure.query.get(page.measure_id)
+
             # Possibly temporary to work out issue with data deletions
             message = "EDIT MEASURE: Current state of page: %s" % page.to_dict()
             self.logger.info(message)
@@ -101,6 +111,10 @@ class PageService(Service):
                     page.parent = new_subtopic
                     page.position = len(new_subtopic.children)
 
+                    topic = Topic.query.filter_by(slug=page.parent.parent.slug).one()
+                    measure.subtopics = [Subtopic.query.filter_by(topic_id=topic.id, slug=new_subtopic.slug).one()]
+                    measure.position = page.position
+
             data.pop("guid", None)
             title = data.pop("title").strip()
             if page.version == "1.0":
@@ -115,6 +129,11 @@ class PageService(Service):
 
             self._set_main_fields(page=page, data=data)
             self._set_data_sources(page=page, data_source_forms=data_source_forms)
+
+            # Copy data to normalised `measure`
+            if "internal_reference" in data:
+                reference = data["internal_reference"]
+                measure.reference = reference if reference else None
 
             if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
                 new_status = publish_status.inv[1]
@@ -478,7 +497,11 @@ class PageService(Service):
 
     @staticmethod
     def get_pages_to_unpublish():
-        return MeasureVersion.query.filter_by(status="UNPUBLISH").all()
+        return (
+            MeasureVersion.query.filter_by(status="UNPUBLISH")
+            .order_by(MeasureVersion.title, desc(MeasureVersion.version))
+            .all()
+        )
 
     @staticmethod
     def mark_pages_unpublished(pages):
@@ -539,7 +562,7 @@ class PageService(Service):
     def _set_main_fields(self, page, data):
         try:
             self.set_lowest_level_of_geography(page, data)
-        except NoResultFound as e:
+        except NoResultFound:
             message = "There was an error setting lowest level of geography"
             self.logger.exception(message)
             raise PageUnEditable(message)
