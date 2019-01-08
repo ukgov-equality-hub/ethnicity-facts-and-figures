@@ -176,10 +176,10 @@ class DataSourceInMeasureVersion(db.Model):
     )
 
 
-user_page = db.Table(
-    "user_page",
+user_measure = db.Table(
+    "user_measure",
     db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
-    db.Column("page_id", db.String, primary_key=True),
+    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id"), primary_key=True),
 )
 
 
@@ -310,9 +310,9 @@ class MeasureVersion(db.Model):
     shared_with = db.relationship(
         "User",
         lazy="subquery",
-        secondary=user_page,
-        primaryjoin="MeasureVersion.guid == user_page.columns.page_id",
-        secondaryjoin="User.id == user_page.columns.user_id",
+        secondary=user_measure,
+        primaryjoin="MeasureVersion.measure_id == user_measure.columns.measure_id",
+        secondaryjoin="User.id == user_measure.columns.user_id",
         backref=db.backref("pages", lazy=True),
     )
 
