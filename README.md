@@ -59,11 +59,6 @@ Install the Python server requirements:
 pip install -r requirements-test.txt
 ```
 
-Install the git hooks for enforcing formatting.
-```
-./scripts/install_hooks.sh
-```
-
 Install the Node.js requirements (for front end assets):
 ```
 npm install
