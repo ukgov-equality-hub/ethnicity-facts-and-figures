@@ -80,6 +80,7 @@ def build_static_site():
         build_site(app)
     else:
         print("Build is disabled at the moment. Set BUILD_SITE to true to enable")
+        print("change 1")
 
 
 @manager.command
