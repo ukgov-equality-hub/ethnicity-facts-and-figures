@@ -28,9 +28,7 @@
 {% block content %}
     <div class="grid-row">
         <div class="column-full">
-            <h1 class="heading-medium">
-                Format and view table
-            </h1>
+            <h1 id="builder-title" class="heading-medium">{% if dimension.table_2_source_data %}Format and view{% else %}Create a{% endif %} table</h1>
         </div>
 
         {#
@@ -39,7 +37,7 @@
         #}
         <div id="data-panel" class="data-panel {% if dimension.table_2_source_data %}hidden{% endif %}">
             <div class="column-full">
-                <h2 class="heading-medium no-top-border">Data</h2>
+                <h2 class="heading-medium no-top-border builder-section-number">Data</h2>
 
                 <div class="form-hint">
                     <p>Copy and paste your data here. You must:</p>
@@ -51,14 +49,14 @@
                     </ul>
                 </div>
 
-                <form onsubmit="return false;">
-                    <div class="form-group">
-                        <textarea class="form-control" id="data_text_area" rows="10"
-                                  {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
-                    </div>
-                    <button type="button" class="btn button btn-primary" id="confirm-data">OK</button>
-                    <button type="button" class="btn button btn-primary" id="cancel-edit-data">Cancel</button>
-                </form>
+                <div class="form-group">
+                  <form onsubmit="return false;">
+                          <textarea class="form-control" id="data_text_area" rows="10"
+                                    {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
+                      <button type="button" class="btn button btn-primary" id="confirm-data">OK</button>
+                  </form>
+                </div>
+                <a id="cancel-edit-data" href="#">Cancel</a>
             </div>
         </div>
 
@@ -251,16 +249,14 @@
                     </div>
                     <div id="container"></div>
 
+                    {% if 'UPDATE' in measure.available_actions() %}
+                    <br>
                     <div id="save_section" class="chart-builder-section" class="hidden">
-                        {% if 'UPDATE' in measure.available_actions() %}
-                            <h2 class="heading-medium builder-section-number">Save table</h2>
-                        {% endif %}
                         <div>
-                          {% if 'UPDATE' in measure.available_actions() %}
-                          <button class="button" id="save">Save</button>
-                          {% endif %}
+                            <button class="button" id="save">Save</button>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

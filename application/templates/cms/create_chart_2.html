@@ -29,9 +29,7 @@
 {% block content %}
     <div class="grid-row">
         <div class="column-full">
-            <h1 class="heading-medium">
-                Format and view chart
-            </h1>
+            <h1 id="builder-title" class="heading-medium">{% if dimension.chart_2_source_data %}Format and view{% else %}Create a{% endif %} chart</h1>
         </div>
 
         {#
@@ -52,14 +50,14 @@
                     </ul>
                 </div>
 
-                <form onsubmit="return false;">
-                    <div class="form-group">
-                        <textarea class="form-control" id="data_text_area" rows="10"
-                                  {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
-                    </div>
-                    <button class="btn button btn-primary" id="confirm-data">OK</button>
-                    <button class="btn button btn-primary" id="cancel-edit-data">Cancel</button>
-                </form>
+                <div class="form-group">
+                  <form onsubmit="return false;">
+                          <textarea class="form-control" id="data_text_area" rows="10"
+                                    {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
+                      <button class="btn button btn-primary" id="confirm-data">OK</button>
+                  </form>
+                </div>
+                <a id="cancel-edit-data" href="#">Cancel</a>
             </div>
         </div>
 
@@ -150,6 +148,7 @@
                 <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
                     <h2 class="heading-medium builder-section-number">Grouped bar chart options</h2>
+                    <p>Use ethnicity for sub-groups if your data only includes 2 ethnic groups (for example, White and Other).</p>
                     <form>
                         {#
                             Select style
@@ -198,6 +197,9 @@
                 <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
                      style="display:none">
                     <h2 class="heading-medium builder-section-number">Panel chart options</h2>
+                    <p>Most of the time you should use ethnicity for bars.</p>
+                    <p>Only use ethnicity for panels if you’re comparing outcomes within an ethnic group, rather than between groups.</p>
+                    <p>Don’t have more than 16 panels or 10 bars within a panel.</p>
                     <form>
                         {#
                             Select style
@@ -413,16 +415,14 @@
                     <h2 class="heading-medium builder-section-number">Preview</h2>
                     <div id="container" class="chart-container"></div>
 
-                    <div id="save_section" class="chart-builder-section" style="display:none">
-                        {% if 'UPDATE' in measure.available_actions() %}
-                            <h2 class="heading-medium builder-section-number">Save chart</h2>
-                        {% endif %}
+                    {% if 'UPDATE' in measure.available_actions() %}
+                    <br>
+                    <div id="save_section" class="chart-builder-section" class="hidden">
                         <div>
-                            {% if 'UPDATE' in measure.available_actions() %}
-                                <button class="button" id="save">Save</button>
-                            {% endif %}
+                            <button class="button" id="save">Save</button>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

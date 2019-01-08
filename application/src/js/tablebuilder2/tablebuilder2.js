@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById('data-panel').classList.add('hidden')
         document.getElementById('edit-panel').classList.remove('hidden')
+        document.getElementById('builder-title').innerHTML = 'Format and view table';
     }
 
     function editTableData(evt) {
@@ -92,12 +93,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('data-panel').classList.remove('hidden')
         document.getElementById('data_text_area').focus()
         document.getElementById('edit-panel').classList.add('hidden')
+        document.getElementById('builder-title').innerHTML = 'Create a table';
     }
 
     function cancelEditData(evt) {
         document.getElementById('data_text_area').value = current_data;
         document.getElementById('data-panel').classList.add('hidden')
         document.getElementById('edit-panel').classList.remove('hidden')
+        document.getElementById('builder-title').innerHTML = 'Format and view table';
     }
 
 
@@ -685,11 +688,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         preview(evt)
     }
-    
+
     function setRowOrdering(evt) {
         $('#ethnicity-as-column__row-order').val($('#ethnicity-as-column__rows').val())
     }
-    
+
     function setColumnOrdering(evt) {
         $('#ethnicity-as-row__column-order').val($('#ethnicity-as-row__columns').val())
     }
@@ -724,13 +727,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('table_title').dispatchEvent(new Event("input"));
 
         $('#complex-table__data-style').val(settings.tableOptions.data_style);
-        
+
         /*
         If a table has no explicit row ordering, there are some circumstances in which the live table can have data cells
         transposed - resulting in an inaccurate table. We will prevent this by enforcing an explicit row order. If one
         hasn't been provided previously, we'll assume the table should be sorted (alphabetically) by the current
         row/column selection.
-        https://trello.com/c/mrtsskDU/1103 
+        https://trello.com/c/mrtsskDU/1103
         */
         if (settings.tableOptions.order == NONE_VALUE) {
             settings.tableOptions.order = settings.tableOptions.selection
@@ -813,7 +816,7 @@ function checkRequiredFields() {
     if ($('#ethnicity_settings').val() === 'custom' && $('#custom_classification__selector').val() === 'Please select') {
         return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'custom_classification__selector' }]
     }
-    
+
     if (getIsSimpleData(table_data) === false) {
         if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
             if ($('#ethnicity-as-row__columns').val() === unselectedOptionString) {

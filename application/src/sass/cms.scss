@@ -143,6 +143,8 @@ $border-colour: #BFC1C3;
       display: block;
       width: calc(100% - 24px);
     }
+
+
   }
 
   /* Specific */
@@ -184,9 +186,8 @@ $border-colour: #BFC1C3;
     .form-group {
       margin-bottom: 0;
     }
-    select + label {
-      display: inline-block;
-      margin-top: 10px;
+    label + select {
+      margin-bottom: 10px;
     }
     .text-form-control {
       margin-bottom: 0;

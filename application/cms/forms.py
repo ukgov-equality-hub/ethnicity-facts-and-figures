@@ -266,8 +266,10 @@ class MeasurePageForm(FlaskForm):
 
 
 class DimensionForm(FlaskForm):
-    title = RDUStringField(label="Title", validators=[DataRequired()])
-    time_period = RDUStringField(label="Time period covered")
+    title = RDUStringField(
+        label="Title", hint="For example, ‘Employment by ethnicity and gender’", validators=[DataRequired()]
+    )
+    time_period = RDUStringField(label="Time period covered", hint="For example, ‘2015/16’")
     summary = RDUTextAreaField(label="Summary", extended_hint="_dimension_summary.html")
 
     def __init__(self, *args, **kwargs):

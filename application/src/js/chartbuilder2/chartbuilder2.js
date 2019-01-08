@@ -53,6 +53,7 @@ $(document).ready(function () {
         });
         $('#data-panel').hide();
         $('#edit-panel').show();
+        $('#builder-title').html('Format and view chart');
     }
 
     function editChartData(evt) {
@@ -60,12 +61,14 @@ $(document).ready(function () {
         current_settings = getChartPageSettings();
         $('#data-panel').show();
         $('#edit-panel').hide();
+        $('#builder-title').html('Create a chart');
     }
 
     function cancelEditData(evt) {
         $('#data_text_area').val(current_data);
         $('#data-panel').hide();
         $('#edit-panel').show();
+        document.getElementById('builder-title').innerHTML = 'Format and view chart';
     }
 
 
@@ -296,7 +299,7 @@ $(document).ready(function () {
 
             $('#save_section').show();
         }
-        
+
         document.getElementById('chart_title').dispatchEvent(new Event("input"));
     }
 
@@ -896,7 +899,7 @@ function checkRequiredFields() {
     if ($('#ethnicity_settings').val() === 'custom' && $('#custom_classification__selector').val() === 'Please select') {
         return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'custom_classification__selector' }]
     }
-    
+
     var chartType = $('#chart_type_selector').val();
 
     switch (chartType) {
