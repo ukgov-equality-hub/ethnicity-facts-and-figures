@@ -12,6 +12,7 @@ $error-colour: #B10E1E;
 $border-colour: #BFC1C3;
 
 .rd_cms {
+  counter-reset: chart-table-builder-counter;
 
   body {
     font-size: 19px;
@@ -142,6 +143,8 @@ $border-colour: #BFC1C3;
       display: block;
       width: calc(100% - 24px);
     }
+
+
   }
 
   /* Specific */
@@ -183,6 +186,9 @@ $border-colour: #BFC1C3;
     .form-group {
       margin-bottom: 0;
     }
+    label + select {
+      margin-bottom: 10px;
+    }
     .text-form-control {
       margin-bottom: 0;
     }
@@ -193,10 +199,14 @@ $border-colour: #BFC1C3;
       margin: 12px 0 0 0;
     }
 
-    .interactive-text-input {
-      border-width: 0px;
+    .full-width {
       width: 100%;
     }
+  }
+
+  .builder-section-number:before {
+    counter-increment: chart-table-builder-counter;
+    content: counter(chart-table-builder-counter) ". ";
   }
 
   .chart {
