@@ -92,6 +92,7 @@ def request_static_build():
         print("A build has been requested. It could be up to ten minutes before the request is processed")
     else:
         print("Build is disabled at the moment. Set BUILD_SITE to true to enable")
+        print("change 2")
 
 
 @manager.command
