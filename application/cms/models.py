@@ -371,7 +371,7 @@ class MeasureVersion(db.Model):
 
     def get_upload(self, guid):
         try:
-            upload = Upload.query.filter_by(guid=guid).one()
+            upload = Upload.query.filter_by(guid=guid, page=self).one()
             return upload
         except NoResultFound:
             raise UploadNotFoundException
