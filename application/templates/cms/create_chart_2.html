@@ -36,7 +36,7 @@
         DATA ENTRY PANEL
         This panel appears on create or when editing data
 #}
-        <div id="data-panel" class="data-panel"{% if dimension.chart_2_source_data %} style="display:none"{% endif %}>
+        <div id="data-panel" class="data-panel {% if dimension.chart_2_source_data %}hidden{% endif %}">
             <div class="column-full">
                 <h2 class="heading-medium no-top-border builder-section-number">Data</h2>
 
@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <div id="edit-panel" class="edit-panel"{% if not dimension.chart_2_source_data %} style="display:none"{% endif %}>
+        <div id="edit-panel" class="edit-panel {% if not dimension.chart_2_source_data %}hidden{% endif %}">
             <div class='column-one-third'>
                 {#
                     DATA DISPLAY
@@ -103,7 +103,7 @@
                     CHART TYPE
                     Option list to pick a chart type
                  #}
-                <div id="select_chart_type" class="chart-builder-section grid-row" style="display:none">
+                <div id="select_chart_type" class="chart-builder-section grid-row hidden">
                     <label for="chart_type_selector">
                         <h2 class="heading-medium builder-section-number">Select chart type</h2>
                     </label>
@@ -133,8 +133,7 @@
                     it knows about parent-child relationships
                     simple bar charts require no settings at all
                 #}
-                <div id="bar_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
+                <div id="bar_chart_options" class="chart-builder-section chart-option-group grid-row hidden">
                     <h2 class="heading-medium builder-section-number">Bar chart options</h2>
                     <p>No settings needed</p>
                 </div>
@@ -145,8 +144,7 @@
                     Here you require two columns to set up the charts
                     Ethnicity must be one of the two
                 #}
-                <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
+                <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group grid-row hidden">
                     <h2 class="heading-medium builder-section-number">Grouped bar chart options</h2>
                     <p>Use ethnicity for sub-groups if your data only includes 2 ethnic groups (for example, White and Other).</p>
                     <form>
@@ -175,8 +173,7 @@
                         {#
                             Style 2  - Ethnicity for sub-groups
                         #}
-                        <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_bar"
-                             style="display:none">
+                        <div class="indented-option-block grid-row hidden" id="grouped-bar__ethnicity_is_bar">
                             <div class="form-group">
                                 <label for="grouped-bar__groups_column">Major grouping</label>
                                 <select id="grouped-bar__groups_column" class="form-control"
@@ -194,8 +191,7 @@
                     Here you require two columns to set up the charts
                     Ethnicity must be one of the two
                 #}
-                <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
+                <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group grid-row hidden">
                     <h2 class="heading-medium builder-section-number">Panel chart options</h2>
                     <p>Most of the time you should use ethnicity for bars.</p>
                     <p>Only use ethnicity for panels if you’re comparing outcomes within an ethnic group, rather than between groups.</p>
@@ -235,8 +231,7 @@
                         {#
                             Style 2 - Ethnicity for the panels
                         #}
-                        <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_panels"
-                             style="display:none">
+                        <div class="indented-option-block grid-row hidden" id="panel-bar__ethnicity_as_panels">
                             <div class="form-group">
                                 <label for="panel-bar__bar_column">Bars</label>
                                 <select id="panel-bar__bar_column" class="form-control"
@@ -259,8 +254,7 @@
                     LINE CHARTS _______________________________
                     Must have ETHNICITY as their series - we only need to set a column for the x-axis
                 #}
-                <div id="line_graph_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
+                <div id="line_graph_options" class="chart-builder-section chart-option-group grid-row hidden">
                     <h2 class="heading-medium builder-section-number">Line chart options</h2>
                     <form>
                         <div>
@@ -277,8 +271,7 @@
                     Are not more complex than regular line charts
                     Must have ETHNICITY as their panels - we only need to set a column for the x-axis
                 #}
-                <div id="panel_line_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
+                <div id="panel_line_chart_options" class="chart-builder-section chart-option-group grid-row hidden">
                     <h2 class="heading-medium builder-section-number">Panel line chart options</h2>
                     <form>
 
@@ -296,8 +289,7 @@
                     Here you require two columns to set up the charts
                     Ethnicity must be one of the two
                 #}
-                <div id="component_chart_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
+                <div id="component_chart_options" class="chart-builder-section chart-option-group grid-row hidden">
                     <h2 class="heading-medium builder-section-number">Component chart options</h2>
                     <form>
                         {#
@@ -334,8 +326,7 @@
                         {#
                             Style 2 - Ethnicity for the sections
                         #}
-                        <div class="indented-option-block grid-row" id="component__ethnicity_is_sections"
-                             style="display:none">
+                        <div class="indented-option-block grid-row hidden" id="component__ethnicity_is_sections">
                             <div class="form-group">
                                 <label for="component__bar_column">Bars</label>
                                 <select id="component__bar_column" class="form-control"
@@ -354,8 +345,7 @@
                     </form>
                 </div>
 
-                <div id="chart_format_options" class="chart-builder-section chart-option-group grid-row"
-                     style="display:none">
+                <div id="chart_format_options" class="chart-builder-section chart-option-group grid-row hidden">
                     <h2 class="heading-medium builder-section-number">Chart format options</h2>
                     <form>
                         <div class="form-group">
@@ -366,7 +356,7 @@
                                 <option value="percent">Percentage (%)</option>
                                 <option value="other">Other</option>
                             </select>
-                            <div id="other_number_format" class="form-group" style="display:none">
+                            <div id="other_number_format" class="form-group hidden">
                                 <label for="number_format_prefix">Prefix (for example, £)</label>
                                 <input id="number_format_prefix" {% if form_disabled %}disabled="disabled"{% endif %}>
                                 <label for="number_format_suffix">Suffix (for example, %)</label>
@@ -384,22 +374,22 @@
             <div class="column-two-thirds">
 
 
-                <div id="tips_container" style="display:none">
-                    <div id="notes_container" style="display:none">
+                <div id="tips_container" class="hidden">
+                    <div id="notes_container" class="hidden">
                         <h2 class="heading-medium">Note</h2>
                         <ul>
                             <li class="tip" id="tip__required-settings">Please complete all required settings</li>
                         </ul>
                     </div>
-                    <div id="errors_container" style="display:none">
+                    <div id="errors_container" class="hidden">
                         <h2 class="heading-medium">Error</h2>
                         <ul id="tip-list">
-                            <li class="tip" id="tip__ethnicity-column" style="display:none">Your data is missing an ethnicity column</li>
-                            <li class="tip" id="tip__value-column" style="display:none">Your data is missing a value column</li>
-                            <li class="tip" id="tip__rectangular-data" style="display:none">Your data is not a table</li>
-                            <li class="tip" id="tip__complex-data" style="display:none">Your data has some repeating values, so please choose either grouped bar chart, component bar chart, panel bar chart or panel line chart</li>
-                            <li class="tip" id="tip__duplicate-data" style="display:none">There are rows duplicated in your data</li>
-                            <li class="tip" id="tip__missing-data" style="display:none">There are rows missing from your data</li>
+                            <li class="tip hidden" id="tip__ethnicity-column">Your data is missing an ethnicity column</li>
+                            <li class="tip hidden" id="tip__value-column">Your data is missing a value column</li>
+                            <li class="tip hidden" id="tip__rectangular-data">Your data is not a table</li>
+                            <li class="tip hidden" id="tip__complex-data">Your data has some repeating values, so please choose either grouped bar chart, component bar chart, panel bar chart or panel line chart</li>
+                            <li class="tip hidden" id="tip__duplicate-data">There are rows duplicated in your data</li>
+                            <li class="tip hidden" id="tip__missing-data">There are rows missing from your data</li>
                         </ul>
                     </div>
                 </div>
@@ -417,7 +407,7 @@
 
                     {% if 'UPDATE' in measure.available_actions() %}
                     <br>
-                    <div id="save_section" class="chart-builder-section" class="hidden">
+                    <div id="save_section" class="chart-builder-section hidden">
                         <div>
                             <button class="button" id="save">Save</button>
                         </div>
