@@ -898,7 +898,7 @@ def stub_subtopic(db_session, stub_topic):
 
 
 @pytest.fixture(scope="function")
-def stub_measure_1(db_session, stub_subtopic):
+def stub_measure_1(db_session):
     measure = Measure(slug="test-measure-1", position=1, reference="RDU TEST 1")
 
     db_session.session.add(measure)
@@ -907,9 +907,30 @@ def stub_measure_1(db_session, stub_subtopic):
 
 
 @pytest.fixture(scope="function")
-def stub_measure_2(db_session, stub_subtopic):
+def stub_measure_2(db_session):
     measure = Measure(slug="test-measure-2", position=2, reference="RDU TEST 2")
 
     db_session.session.add(measure)
     db_session.session.commit()
     return measure
+
+
+@pytest.fixture(scope="function")
+def stub_measure_version(db_session, stub_subtopic, stub_measure_1):
+    measure_version = MeasureVersion(
+        id=100,
+        guid="test-measure-version",
+        measure_id=stub_measure_1.id,
+        slug="test-measure-version",
+        status="DRAFT",
+        version="1.0",
+        internal_edit_summary="internal_edit_summary",
+        external_edit_summary="external_edit_summary",
+        area_covered=["ENGLAND"],
+        latest=True,
+    )
+
+    db_session.session.add(measure_version)
+    db_session.session.commit()
+
+    return measure_version
