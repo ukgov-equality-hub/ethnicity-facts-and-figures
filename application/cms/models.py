@@ -107,24 +107,44 @@ class CopyableModel(DictableModel):
 
 
 class FrequencyOfRelease(db.Model):
+    # metadata
     __tablename__ = "frequency_of_release"
 
+    # columns
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
     position = db.Column(db.Integer, nullable=False)
 
+    # relationships
+    data_sources = db.relationship("DataSource", back_populates="frequency_of_release")
+
 
 class TypeOfStatistic(db.Model):
+    # metadata
     __tablename__ = "type_of_statistic"
 
+    # columns
     id = db.Column(db.Integer, primary_key=True)
     internal = db.Column(db.String(), nullable=False)
     external = db.Column(db.String(), nullable=False)
     position = db.Column(db.Integer, nullable=False)
 
+    # relationships
+    data_sources = db.relationship("DataSource", back_populates="type_of_statistic")
+
 
 class DataSource(db.Model, CopyableModel):
+    # metadata
     __tablename__ = "data_source"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["type_of_statistic_id"], ["type_of_statistic.id"], name="data_source_type_of_statistic_id_fkey"
+        ),
+        ForeignKeyConstraint(["publisher_id"], ["organisation.id"], name="data_source_publisher_id_fkey"),
+        ForeignKeyConstraint(
+            ["frequency_of_release_id"], ["frequency_of_release.id"], name="data_source_frequency_of_release_id_fkey"
+        ),
+    )
 
     # columns
     id = db.Column(db.Integer, primary_key=True)
@@ -144,29 +164,19 @@ class DataSource(db.Model, CopyableModel):
     purpose = db.Column(db.TEXT, nullable=True)
 
     # relationships
-    type_of_statistic = db.relationship("TypeOfStatistic", foreign_keys=[type_of_statistic_id])
-    publisher = db.relationship("Organisation", foreign_keys=[publisher_id], backref="data_sources")
-    frequency_of_release = db.relationship("FrequencyOfRelease", foreign_keys=[frequency_of_release_id])
-
-    __table_args__ = (
-        ForeignKeyConstraint(
-            ["type_of_statistic_id"], ["type_of_statistic.id"], name="data_source_type_of_statistic_id_fkey"
-        ),
-        ForeignKeyConstraint(["publisher_id"], ["organisation.id"], name="data_source_publisher_id_fkey"),
-        ForeignKeyConstraint(
-            ["frequency_of_release_id"], ["frequency_of_release.id"], name="data_source_frequency_of_release_id_fkey"
-        ),
+    type_of_statistic = db.relationship(
+        "TypeOfStatistic", foreign_keys=[type_of_statistic_id], back_populates="data_sources"
     )
+    publisher = db.relationship("Organisation", foreign_keys=[publisher_id], back_populates="data_sources")
+    frequency_of_release = db.relationship(
+        "FrequencyOfRelease", foreign_keys=[frequency_of_release_id], back_populates="data_sources"
+    )
+    pages = db.relationship("MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources")
 
 
 class DataSourceInMeasureVersion(db.Model):
+    # metadata
     __tablename__ = "data_source_in_measure_version"
-
-    data_source_id = db.Column(db.Integer, primary_key=True)
-    measure_version_id = db.Column(db.Integer, primary_key=True)
-    page_guid = db.Column(db.String(255), nullable=False)
-    page_version = db.Column(db.String(255), nullable=False)
-
     __table_args__ = (
         ForeignKeyConstraint(["data_source_id"], ["data_source.id"], name="data_source_in_page_data_source_id_fkey"),
         ForeignKeyConstraint(
@@ -174,6 +184,11 @@ class DataSourceInMeasureVersion(db.Model):
             ["measure_version.id", "measure_version.guid", "measure_version.version"],
         ),
     )
+
+    data_source_id = db.Column(db.Integer, primary_key=True)
+    measure_version_id = db.Column(db.Integer, primary_key=True)
+    page_guid = db.Column(db.String(255), nullable=False)
+    page_version = db.Column(db.String(255), nullable=False)
 
 
 user_measure = db.Table(
@@ -197,7 +212,16 @@ class MeasureVersion(db.Model):
     coupled with `version`.
     """
 
+    # metadata
     __tablename__ = "measure_version"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["parent_id", "parent_guid", "parent_version"],
+            ["measure_version.id", "measure_version.guid", "measure_version.version"],
+        ),
+        Index("ix_page_type_uri", "page_type", "slug"),
+        ForeignKeyConstraint(["measure_id"], ["measure.id"]),
+    )
 
     def __eq__(self, other):
         return self.id == other.id
@@ -213,9 +237,7 @@ class MeasureVersion(db.Model):
         else:
             return False
 
-    # PAGE ORGANISATION, LIFECYCLE AND METADATA
-    # =========================================
-
+    # columns
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     measure_id = db.Column(db.Integer, nullable=True)  # FK to `measure` table
     guid = db.Column(db.String(255), nullable=False, primary_key=True)  # identifier for a measure (but not a page)
@@ -258,35 +280,12 @@ class MeasureVersion(db.Model):
     parent_id = db.Column(db.Integer)
     parent_guid = db.Column(db.String(255))
     parent_version = db.Column(db.String())  # version number of the parent page, as guid+version is PK
-    parent = db.relationship(
-        "MeasureVersion",
-        foreign_keys=[parent_id, parent_guid, parent_version],
-        remote_side=[id, guid, version],
-        backref=db.backref("children", order_by="MeasureVersion.position"),
-    )
-
-    __table_args__ = (
-        ForeignKeyConstraint(
-            ["parent_id", "parent_guid", "parent_version"],
-            ["measure_version.id", "measure_version.guid", "measure_version.version"],
-        ),
-        Index("ix_page_type_uri", page_type, slug),
-        ForeignKeyConstraint(["measure_id"], ["measure.id"]),
-        {},
-    )
 
     db_version_id = db.Column(db.Integer, nullable=False)  # used to detect and prevent stale updates
     __mapper_args__ = {"version_id_col": db_version_id}
 
-    # Uploads and dimensions belonging to this measure can be discovered through these relationships
-    uploads = db.relationship("Upload", backref="page", lazy="dynamic", cascade="all,delete")
-    dimensions = db.relationship(
-        "Dimension", backref="page", lazy="dynamic", order_by="Dimension.position", cascade="all,delete"
-    )
-
     # MEASURE-PAGE DATA
     # =================
-
     title = db.Column(db.String(255))  # <h1> on measure page
     summary = db.Column(db.TEXT)  # "The main facts and figures show that..." bullets at top of measure page
     need_to_know = db.Column(db.TEXT)  # "Things you need to know" on a measure page
@@ -304,17 +303,6 @@ class MeasureVersion(db.Model):
     lowest_level_of_geography_id = db.Column(
         db.String(255), ForeignKey("lowest_level_of_geography.name"), nullable=True
     )
-    lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="pages")
-
-    # Departmental users can only access measure pages that have been shared with them, as defined by this relationship
-    shared_with = db.relationship(
-        "User",
-        lazy="subquery",
-        secondary=user_measure,
-        primaryjoin="MeasureVersion.measure_id == user_measure.columns.measure_id",
-        secondaryjoin="User.id == user_measure.columns.user_id",
-        backref=db.backref("pages", lazy=True),
-    )
 
     # Methodology section
     # -------------------
@@ -325,9 +313,28 @@ class MeasureVersion(db.Model):
     qmi_url = db.Column(db.TEXT)  # "Quality and methodology information"
     further_technical_information = db.Column(db.TEXT)  # "Further technical information"
 
-    # DATA SOURCES
+    # relationships
+    parent = db.relationship(
+        "MeasureVersion",
+        foreign_keys=[parent_id, parent_guid, parent_version],
+        remote_side=[id, guid, version],
+        backref=db.backref("children", order_by="MeasureVersion.position"),
+    )
+    lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="pages")
+    uploads = db.relationship("Upload", back_populates="page", lazy="dynamic", cascade="all,delete")
+    dimensions = db.relationship(
+        "Dimension", back_populates="page", lazy="dynamic", order_by="Dimension.position", cascade="all,delete"
+    )
+    shared_with = db.relationship(  # Departmental users can only access measure pages that have been shared with them
+        "User",
+        lazy="subquery",
+        secondary=user_measure,
+        primaryjoin="MeasureVersion.id == user_measure.columns.measure_id",
+        secondaryjoin="User.id == user_measure.columns.user_id",
+        back_populates="pages",
+    )
     data_sources = db.relationship(
-        "DataSource", secondary="data_source_in_measure_version", backref="pages", order_by=asc(DataSource.id)
+        "DataSource", secondary="data_source_in_measure_version", back_populates="pages", order_by=asc(DataSource.id)
     )
 
     @property
@@ -568,13 +575,22 @@ class MeasureVersion(db.Model):
 
 
 class Dimension(db.Model):
+    # metadata
     __tablename__ = "dimension"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["measure_version_id", "page_id", "page_version"],
+            ["measure_version.id", "measure_version.guid", "measure_version.version"],
+        ),
+        {},
+    )
 
     # This is a database expression to get the current timestamp in UTC.
     # Possibly specific to PostgreSQL:
     #   https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-ZONECONVERT
     __SQL_CURRENT_UTC_TIME = "timezone('utc', CURRENT_TIMESTAMP)"
 
+    # columns
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     time_period = db.Column(db.String(255))
@@ -602,19 +618,12 @@ class Dimension(db.Model):
     chart_id = db.Column(db.Integer, ForeignKey("dimension_chart.id", name="dimension_chart_id_fkey"))
     table_id = db.Column(db.Integer, ForeignKey("dimension_table.id", name="dimension_table_id_fkey"))
 
+    # relationships
     dimension_chart = db.relationship("Chart")
     dimension_table = db.relationship("Table")
-
-    __table_args__ = (
-        ForeignKeyConstraint(
-            ["measure_version_id", "page_id", "page_version"],
-            [MeasureVersion.id, MeasureVersion.guid, MeasureVersion.version],
-        ),
-        {},
-    )
-
+    page = db.relationship("MeasureVersion", back_populates="dimensions")
     classification_links = db.relationship(
-        "DimensionClassification", backref="dimension", lazy="dynamic", cascade="all,delete"
+        "DimensionClassification", back_populates="dimension", lazy="dynamic", cascade="all,delete"
     )
 
     @property
@@ -765,8 +774,17 @@ class Dimension(db.Model):
 
 
 class Upload(db.Model):
+    # metadata
     __tablename__ = "upload"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["measure_version_id", "page_id", "page_version"],
+            ["measure_version.id", "measure_version.guid", "measure_version.version"],
+        ),
+        {},
+    )
 
+    # columns
     guid = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     file_name = db.Column(db.String(255))
@@ -777,13 +795,8 @@ class Upload(db.Model):
     page_id = db.Column(db.String(255), nullable=False)
     page_version = db.Column(db.String(), nullable=False)
 
-    __table_args__ = (
-        ForeignKeyConstraint(
-            ["measure_version_id", "page_id", "page_version"],
-            [MeasureVersion.id, MeasureVersion.guid, MeasureVersion.version],
-        ),
-        {},
-    )
+    # relationships
+    page = db.relationship("MeasureVersion", back_populates="uploads")
 
     def extension(self):
         return self.file_name.split(".")[-1]
@@ -812,23 +825,25 @@ parent_association_table = db.Table(
 
 
 class Classification(db.Model):
+    # metadata
+    __tablename__ = "classification"
+    __table_args__ = (UniqueConstraint("id", name="uq_classification_code"),)
 
+    # columns
     id = db.Column(db.String(255), primary_key=True)
     title = db.Column(db.String(255))
     long_title = db.Column(db.String(255))
     subfamily = db.Column(db.String(255))
     position = db.Column(db.Integer)
 
+    # relationships
     dimension_links = db.relationship(
-        "DimensionClassification", backref="classification", lazy="dynamic", cascade="all,delete"
+        "DimensionClassification", back_populates="classification", lazy="dynamic", cascade="all,delete"
     )
-
     ethnicities = db.relationship("Ethnicity", secondary=association_table, back_populates="classifications")
     parent_values = db.relationship(
         "Ethnicity", secondary=parent_association_table, back_populates="classifications_as_parent"
     )
-
-    __table_args__ = (UniqueConstraint(id, name="uq_classification_code"),)
 
     @property
     def ethnicities_count(self):
@@ -846,11 +861,15 @@ class Classification(db.Model):
 
 
 class Ethnicity(db.Model):
+    # metadata
+    __tablename__ = "ethnicity"
 
+    # columns
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
     position = db.Column(db.Integer())
 
+    # relationships
     classifications = db.relationship("Classification", secondary=association_table, back_populates="ethnicities")
     classifications_as_parent = db.relationship(
         "Classification", secondary=parent_association_table, back_populates="parent_values"
@@ -858,8 +877,15 @@ class Ethnicity(db.Model):
 
 
 class DimensionClassification(db.Model):
+    # metadata
     __tablename__ = "dimension_categorisation"
+    __table_args__ = (
+        ForeignKeyConstraint(["dimension_guid"], ["dimension.guid"]),
+        ForeignKeyConstraint(["classification_id"], ["classification.id"]),
+        {},
+    )
 
+    # columns
     dimension_guid = db.Column(db.String(255), primary_key=True)
     classification_id = db.Column("classification_id", db.Integer, primary_key=True)
 
@@ -867,16 +893,13 @@ class DimensionClassification(db.Model):
     includes_all = db.Column(db.Boolean, nullable=False)
     includes_unknown = db.Column(db.Boolean, nullable=False)
 
-    __table_args__ = (
-        ForeignKeyConstraint(["dimension_guid"], [Dimension.guid]),
-        ForeignKeyConstraint(["classification_id"], [Classification.id]),
-        {},
-    )
+    # relationships
+    classification = db.relationship("Classification", back_populates="dimension_links")
+    dimension = db.relationship("Dimension", back_populates="classification_links")
 
 
 # This encapsulates common fields and functionality for chart and table models
 class ChartAndTableMixin(object):
-
     id = db.Column(db.Integer, primary_key=True)
     classification_id = db.Column("classification_id", db.Integer, nullable=False)
     includes_parents = db.Column(db.Boolean, nullable=False)
@@ -893,7 +916,7 @@ class ChartAndTableMixin(object):
 
     @declared_attr
     def __table_args__(cls):
-        return (ForeignKeyConstraint([cls.classification_id], [Classification.id]), {})
+        return (ForeignKeyConstraint([cls.classification_id], ["classification.id"]), {})
 
     # Note that this copy() function does not commit the new object to the database.
     # It it up to the caller to add and commit the copied object.
@@ -916,21 +939,28 @@ class ChartAndTableMixin(object):
 
 
 class Chart(db.Model, ChartAndTableMixin):
+    # metadata
     __tablename__ = "dimension_chart"
 
 
 class Table(db.Model, ChartAndTableMixin):
+    # metadata
     __tablename__ = "dimension_table"
 
 
 class Organisation(db.Model):
+    # metadata
     __tablename__ = "organisation"
 
+    # columns
     id = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     other_names = db.Column(ARRAY(db.String), default=[])
     abbreviations = db.Column(ARRAY(db.String), default=[])
     organisation_type = db.Column(db.Enum(TypeOfOrganisation, name="type_of_organisation_types"), nullable=False)
+
+    # relationships
+    data_sources = db.relationship("DataSource", back_populates="publisher")
 
     @classmethod
     def select_options_by_type(cls):
@@ -948,39 +978,46 @@ class Organisation(db.Model):
 
 
 class LowestLevelOfGeography(db.Model):
+    # metadata
     __tablename__ = "lowest_level_of_geography"
 
+    # columns
     name = db.Column(db.String(255), primary_key=True)
     description = db.Column(db.String(255), nullable=True)
     position = db.Column(db.Integer, nullable=False)
 
+    # relationships
     pages = db.relationship("MeasureVersion", back_populates="lowest_level_of_geography")
 
 
 class Topic(db.Model):
+    # metadata
     __tablename__ = "topic"
 
+    # columns
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(64), nullable=False)
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)  # a sentence below topic heading on homepage
     additional_description = db.Column(db.TEXT, nullable=True)  # short paragraph displayed on topic page
 
-    # Find a list of subtopics that belong to this topic using this relationship
+    # relationships
     subtopics = db.relationship("Subtopic", back_populates="topic")
 
 
 class Subtopic(db.Model):
+    # metadata
     __tablename__ = "subtopic"
 
+    # columns
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(64), nullable=False)
     title = db.Column(db.String(255), nullable=False)
     position = db.Column(db.Integer, default=0)  # for ordering on the page
     topic_id = db.Column(db.Integer, ForeignKey("topic.id"), nullable=True)
 
-    topic = db.relationship("Topic")
-
+    # relationships
+    topic = db.relationship("Topic", back_populates="subtopics")
     measures = db.relationship("Measure", secondary="subtopic_measure", back_populates="subtopics")
 
 
@@ -992,17 +1029,20 @@ subtopic_measure = db.Table(
 
 
 class Measure(db.Model):
+    # metadata
     __tablename__ = "measure"
 
+    # columns
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(255), nullable=False)
     position = db.Column(db.Integer, default=0)  # for ordering on the page
     reference = db.Column(db.String(32), nullable=True)  # optional internal reference
 
+    # relationships
     subtopics = db.relationship("Subtopic", secondary="subtopic_measure", back_populates="measures")
 
     # Departmental users can only access measures that have been shared with them, as defined by this relationship
-    # TODO: Uncomment this once user_measure table exists
+    # TODO: Uncomment this and use back_populates (relationship declared both sides) once user_measure table exists
     # shared_with = db.relationship(
     #     "User",
     #     lazy="subquery",
