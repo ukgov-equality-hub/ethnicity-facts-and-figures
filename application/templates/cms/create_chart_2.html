@@ -41,7 +41,7 @@
                 <h2 class="heading-medium no-top-border builder-section-number">Data</h2>
 
                 <div class="form-hint">
-                    <p>Copy and paste your data here. You must:</p>
+                    <p>Copy and paste your data here. You should:</p>
                     <ul>
                         <li>only select the columns and rows you need for this chart or table</li>
                         <li>not paste any empty rows</li>
@@ -54,7 +54,7 @@
                   <form onsubmit="return false;">
                           <textarea class="form-control" id="data_text_area" rows="10"
                                     {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
-                      <button class="btn button btn-primary" id="confirm-data">OK</button>
+                      <button class="btn button btn-primary" id="confirm-data">Next</button>
                   </form>
                 </div>
                 <a id="cancel-edit-data" href="#">Cancel</a>
@@ -91,7 +91,7 @@
                                 </label>
                                 <select id="ethnicity_settings" class="form-control"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
-                                    <option>[None]</option>
+                                    <option>Please select</option>
                                 </select>
                                 {% include "cms/_custom_classification.html" %}
                             </div>
@@ -107,6 +107,7 @@
                     <label for="chart_type_selector">
                         <h2 class="heading-medium builder-section-number">Select chart type</h2>
                     </label>
+                    <p class="form-hint">Choose the chart type that will make it easiest for the user to see and understand the data. See guidance on <a href="https://guide.ethnicity-facts-figures.service.gov.uk/data-style-guide#types-of-chart" target="_blank" rel="noopener noreferrer">which chart type to use</a> (this will open a new page).</p>
                     <select class="form-control" id="chart_type_selector"
                             {% if form_disabled %}disabled="disabled"{% endif %}>
                         <option value="none">Select a chart type</option>
@@ -264,7 +265,7 @@
                     <h2 class="heading-medium builder-section-number">Line chart options</h2>
                     <form>
                         <div>
-                            <label for="line__x-axis_column">Select a value for the horizontal (X) Axis.<br>Choose 'Time' for time-series data.</label>
+                            <label for="line__x-axis_column" class="form-hint">Select a value for the horizontal (X) axis.<br>Choose 'Time' for time series data.</label>
                             <select id="line__x-axis_column" class="form-control">
                                 <option>Time</option>
                             </select>
@@ -283,7 +284,7 @@
                     <form>
 
                         <div>
-                            <label for="panel-line__x-axis_column">Select a value for the horizontal (X) Axis.<br>Choose 'Time' for time-series data.</label>
+                            <label for="panel-line__x-axis_column" class="form-hint">Select a value for the horizontal (X) axis.<br>Choose 'Time' for time series data.</label>
                             <select id="panel-line__x-axis_column" class="form-control">
                                 <option>Time</option>
                             </select>
