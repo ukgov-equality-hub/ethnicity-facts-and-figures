@@ -35,6 +35,8 @@ from application.cms.upload_service import UploadService
 from application.config import TestConfig
 from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.factory import create_app
+
+from tests.models import MeasureVersionFactory
 from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
 from tests.utils import UnmockedRequestException
 
@@ -136,6 +138,19 @@ def db_session(db):
     db.session.commit()
 
     yield db
+
+
+@pytest.fixture(scope="function", autouse=True)
+def _configure_factory_sessions(db_session):
+    from tests.models import ALL_FACTORIES
+
+    for factory in ALL_FACTORIES:
+        factory._meta.sqlalchemy_session = db_session.session
+
+    yield
+
+    for factory in ALL_FACTORIES:
+        factory._meta.sqlalchemy_session = None
 
 
 @pytest.fixture(scope="function")
@@ -872,3 +887,10 @@ def page_service(app):
     page_service = PageService()
     page_service.init_app(app)
     return page_service
+
+
+@pytest.fixture(scope="function")
+def random_measure_version(db_session, _configure_factory_sessions):
+    measure_version = MeasureVersionFactory()
+    db_session.session.commit()
+    return measure_version
