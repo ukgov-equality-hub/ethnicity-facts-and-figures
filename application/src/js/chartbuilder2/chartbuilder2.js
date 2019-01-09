@@ -35,11 +35,10 @@ var current_settings = null;
 $(document).ready(function () {
 
     // add events to buttons
-    $('#preview').click(preview);
-    $('#confirm-data').click(setChartData);
-    $('#edit-data').click(editChartData);
-    $('#cancel-edit-data').click(cancelEditData);
-    $('#save').click(saveChart);
+    document.getElementById('confirm-data').addEventListener('click', setChartData)
+    document.getElementById('edit-data').addEventListener('click', editChartData)
+    document.getElementById('cancel-edit-data').addEventListener('click', cancelEditData)
+    document.getElementById('save').addEventListener('click', saveChart)
 
     /*
     Events from the DATA ENTRY PANEL
@@ -53,7 +52,7 @@ $(document).ready(function () {
         });
         $('#data-panel').hide();
         $('#edit-panel').show();
-        $('#builder-title').html('Format and view chart');
+        document.getElementById('builder-title').textContent = 'Format and view chart'
     }
 
     function editChartData(evt) {
@@ -61,14 +60,14 @@ $(document).ready(function () {
         current_settings = getChartPageSettings();
         $('#data-panel').show();
         $('#edit-panel').hide();
-        $('#builder-title').html('Create a chart');
+        document.getElementById('builder-title').textContent = 'Create a chart'
     }
 
     function cancelEditData(evt) {
         $('#data_text_area').val(current_data);
         $('#data-panel').hide();
         $('#edit-panel').show();
-        document.getElementById('builder-title').innerHTML = 'Format and view chart';
+        document.getElementById('builder-title').textContent = 'Format and view chart'
     }
 
 
@@ -86,7 +85,8 @@ $(document).ready(function () {
         if (chart_data.length > 0) {
             message = chart_data.length - 1 + ' rows by ' + chart_data[0].length + ' columns'
         }
-        $('#data-description').html(message);
+
+        document.getElementById('data-description').innerHTML = message;
 
         // update options in drop-downs
         var headers = chart_data[0];
@@ -154,24 +154,22 @@ $(document).ready(function () {
         var listWithNone = dropdownHtmlWithDefault(headers, '[None]');
         var listWithRequired = dropdownHtmlWithDefault(headers, 'Please select');
 
-        $('#line__x-axis_column').html(listWithRequired);
+        document.getElementById('line__x-axis_column').innerHTML = listWithRequired
 
-        $('#grouped-bar__bar_column').html(listWithRequired);
-        $('#grouped-bar__bar_order').html(listWithNone);
-        $('#grouped-bar__groups_column').html(listWithRequired);
-        $('#grouped-bar__groups_order').html(listWithNone);
+        document.getElementById('grouped-bar__bar_column').innerHTML = listWithRequired
+        document.getElementById('grouped-bar__groups_column').innerHTML = listWithRequired
 
-        $('#component__bar_column').html(listWithRequired);
-        $('#component__bar_order').html(listWithNone);
-        $('#component__section_column').html(listWithRequired);
-        $('#component__section_order').html(listWithNone);
+        document.getElementById('component__bar_column').innerHTML = listWithRequired
+        document.getElementById('component__bar_order').innerHTML = listWithNone
+        document.getElementById('component__section_column').innerHTML = listWithRequired
+        document.getElementById('component__section_order').innerHTML = listWithNone
 
-        $('#panel-bar__panel_column').html(listWithRequired);
-        $('#panel-bar__panel_order').html(listWithNone);
-        $('#panel-bar__bar_column').html(listWithRequired);
-        $('#panel-bar__bar_order').html(listWithNone);
+        document.getElementById('panel-bar__panel_column').innerHTML = listWithRequired
+        document.getElementById('panel-bar__panel_order').innerHTML = listWithNone
+        document.getElementById('panel-bar__bar_column').innerHTML = listWithRequired
+        document.getElementById('panel-bar__bar_order').innerHTML = listWithNone
 
-        $('#panel-line__x-axis_column').html(listWithRequired);
+        document.getElementById('panel-line__x-axis_column').innerHTML = listWithRequired
     }
 
     function selectDropdown(dropdown_id, value) {
@@ -201,7 +199,7 @@ $(document).ready(function () {
                 html = html + '<option value="' + preset_id + '" >' + preset_name + '</option>';
             }
         }
-        $('#ethnicity_settings').html(html);
+        document.getElementById('ethnicity_settings').innerHTML = html
     }
 
     function strippedHeaders(headers) {
@@ -291,9 +289,6 @@ $(document).ready(function () {
 
         var chartObject = buildChartObject();
         if (chartObject) {
-            if (chartObject.title && chartObject.title.text) {
-                $('#title-container').html('<h3 class="heading-small">' + chartObject.title.text + '</h3>');
-            }
             chartObject.title = '';
             drawChart('container', chartObject);
 
