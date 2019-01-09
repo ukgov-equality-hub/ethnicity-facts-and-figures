@@ -58,10 +58,10 @@ class NewPageService(Service):
             raise PageNotFoundException()
 
     @staticmethod
-    def get_measure_by_id(measure_id):
+    def get_measure_from_measure_version_id(measure_version_id):
         try:
             # TODO: Use `query.get` instead of `query.filter_by` after removing guid+version from MeasureVersion PK
-            return MeasureVersion.query.filter_by(id=measure_id).one().measure
+            return MeasureVersion.query.filter_by(id=measure_version_id).one().measure
         except NoResultFound:
             raise PageNotFoundException()
 

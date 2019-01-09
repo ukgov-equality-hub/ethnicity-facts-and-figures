@@ -51,3 +51,10 @@ class TestNewPageService:
             new_page_service.get_measure_version(
                 stub_topic.slug, "not-the-right-subtopic", stub_measure_1.slug, stub_measure_version.version
             )
+
+    def test_get_measure_from_measure_version_id(self, stub_measure_1, stub_measure_version):
+        assert new_page_service.get_measure_from_measure_version_id(stub_measure_version.id) == stub_measure_1
+
+    def test_get_measure_from_measure_version_id_raises_if_not_found(self, stub_measure_1, stub_measure_version):
+        with pytest.raises(PageNotFoundException):
+            new_page_service.get_measure_from_measure_version_id(stub_measure_version.id + 314159265)

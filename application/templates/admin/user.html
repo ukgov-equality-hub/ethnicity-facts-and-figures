@@ -65,7 +65,7 @@
                 <div class="form-group">
                     <select class="form-control" name="measure-picker" id="measure-picker">
                         <option value="" selected>Select a measure</option>
-                        {% for measure_version in measure_versions %}
+                        {% for measure_version in latest_measure_versions %}
                             <option value="{{ measure_version.id }}">{{ measure_version.title }}</option>
                         {% endfor %}
                     </select>

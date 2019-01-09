@@ -34,13 +34,13 @@ def users():
 def user_by_id(user_id):
     user = User.query.filter_by(id=user_id).one()
     if user.user_type == TypeOfUser.DEPT_USER:
-        measure_versions = MeasureVersion.query.filter_by(latest=True).order_by(MeasureVersion.title).all()
+        latest_measure_versions = MeasureVersion.query.filter_by(latest=True).order_by(MeasureVersion.title).all()
         shared = user.measures
     else:
-        measure_versions = []
+        latest_measure_versions = []
         shared = []
 
-    return render_template("admin/user.html", user=user, measure_versions=measure_versions, shared=shared)
+    return render_template("admin/user.html", user=user, latest_measure_versions=latest_measure_versions, shared=shared)
 
 
 @admin_blueprint.route("/users/<int:user_id>/share", methods=["POST"])
@@ -48,7 +48,7 @@ def user_by_id(user_id):
 @user_can(MANAGE_USERS)
 def share_page_with_user(user_id):
     measure_id = request.form.get("measure-picker")
-    measure = new_page_service.get_measure_by_id(measure_id)
+    measure = new_page_service.get_measure_from_measure_version_id(measure_id)
     user = User.query.get(user_id)
     if not user.is_departmental_user():
         flash("User %s is not a departmental user" % user.email, "error")
