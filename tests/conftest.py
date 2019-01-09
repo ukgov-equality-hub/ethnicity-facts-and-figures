@@ -934,3 +934,30 @@ def stub_measure_version(db_session, stub_subtopic, stub_measure_1):
     db_session.session.commit()
 
     return measure_version
+
+
+@pytest.fixture(scope="function")
+def stub_upload(db_session, stub_measure_version):
+    upload = Upload(
+        guid="test-upload",
+        title="Test measure version data",
+        file_name="test-measure-version-data.csv",
+        description="This is a test upload",
+        size="1024",
+        page=stub_measure_version,
+    )
+
+    db_session.session.add(upload)
+    db_session.session.commit()
+    return upload
+
+
+@pytest.fixture(scope="function")
+def stub_dimension(db_session, stub_measure_version):
+    dimension = Dimension(
+        guid="test-dimension", title="Test dimension", time_period="timeperiod", page=stub_measure_version
+    )
+
+    db_session.session.add(dimension)
+    db_session.session.commit()
+    return dimension
