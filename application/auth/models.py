@@ -56,12 +56,21 @@ class User(db.Model, RoleFreeUserMixin):
     capabilities = db.Column(MutableList.as_mutable(ARRAY(db.String)), default=[])
 
     # relationships
+    # TODO: Remove the pages relationship once all swapped over
     pages = db.relationship(
         "MeasureVersion",
         lazy=True,
         secondary="user_measure",
         primaryjoin="User.id == user_measure.columns.user_id",
         secondaryjoin="MeasureVersion.measure_id == user_measure.columns.measure_id",
+        back_populates="shared_with",
+    )
+    measures = db.relationship(
+        "Measure",
+        lazy="subquery",
+        secondary="user_measure",
+        primaryjoin="User.id == user_measure.columns.user_id",
+        secondaryjoin="Measure.id == user_measure.columns.measure_id",
         back_populates="shared_with",
     )
 

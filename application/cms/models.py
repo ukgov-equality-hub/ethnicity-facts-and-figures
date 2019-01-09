@@ -7,7 +7,7 @@ from typing import Optional, Iterable
 from dictalchemy import DictableModel
 import sqlalchemy
 from bidict import bidict
-from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, Index, asc, text
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, Index, asc, text, desc
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -320,11 +320,13 @@ class MeasureVersion(db.Model):
         remote_side=[id, guid, version],
         backref=db.backref("children", order_by="MeasureVersion.position"),
     )
+    measure = db.relationship("Measure", back_populates="versions")
     lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="pages")
     uploads = db.relationship("Upload", back_populates="page", lazy="dynamic", cascade="all,delete")
     dimensions = db.relationship(
         "Dimension", back_populates="page", lazy="dynamic", order_by="Dimension.position", cascade="all,delete"
     )
+    # TODO: Delete this relationship once everything using Measure.shared_with
     shared_with = db.relationship(  # Departmental users can only access measure pages that have been shared with them
         "User",
         lazy="subquery",
@@ -1002,7 +1004,7 @@ class Topic(db.Model):
     additional_description = db.Column(db.TEXT, nullable=True)  # short paragraph displayed on topic page
 
     # relationships
-    subtopics = db.relationship("Subtopic", back_populates="topic")
+    subtopics = db.relationship("Subtopic", back_populates="topic", order_by=asc("Subtopic.position"))
 
 
 class Subtopic(db.Model):
@@ -1018,7 +1020,13 @@ class Subtopic(db.Model):
 
     # relationships
     topic = db.relationship("Topic", back_populates="subtopics")
-    measures = db.relationship("Measure", secondary="subtopic_measure", back_populates="subtopics")
+    measures = db.relationship(
+        "Measure", secondary="subtopic_measure", back_populates="subtopics", order_by=asc("Measure.position")
+    )
+
+    @property
+    def has_published_measures(self):
+        return any(measure.has_published_version for measure in self.measures)
 
 
 subtopic_measure = db.Table(
@@ -1040,25 +1048,22 @@ class Measure(db.Model):
 
     # relationships
     subtopics = db.relationship("Subtopic", secondary="subtopic_measure", back_populates="measures")
+    versions = db.relationship("MeasureVersion", back_populates="measure", order_by=desc(MeasureVersion.version))
 
     # Departmental users can only access measures that have been shared with them, as defined by this relationship
-    # TODO: Uncomment this and use back_populates (relationship declared both sides) once user_measure table exists
-    # shared_with = db.relationship(
-    #     "User",
-    #     lazy="subquery",
-    #     secondary=user_measure,
-    #     primaryjoin="Measure.id == user_measure.columns.measure_id",
-    #     secondaryjoin="User.id == user_measure.columns.user_id",
-    #     backref=db.backref("measures", lazy=True),
-    # )
+    shared_with = db.relationship(
+        "User",
+        lazy="subquery",
+        secondary="user_measure",
+        primaryjoin="Measure.id == user_measure.columns.measure_id",
+        secondaryjoin="User.id == user_measure.columns.user_id",
+        back_populates="measures",
+    )
 
-    # TODO: Uncomment these once MeasureVersion exists
-    # def get_versions(self):
-    #     return (
-    #         MeasureVersion.query.filter(MeasureVersion.measure_id == self.id)
-    #         .order_by(desc(MeasureVersion.version))
-    #         .all()
-    #     )
-    #
-    # def latest_published_version_id(self):
-    #     return self.get_versions()[0].id
+    @property
+    def has_published_version(self):
+        return any(mv.published for mv in self.versions)
+
+    @property
+    def latest_version(self):
+        return MeasureVersion.query.filter(MeasureVersion.measure_id == self.id, MeasureVersion.latest == True).one()

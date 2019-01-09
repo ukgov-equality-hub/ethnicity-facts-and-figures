@@ -11,6 +11,7 @@ from slugify import slugify
 from application.data.dimensions import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, UploadNotFoundException
 from application.cms.models import MeasureVersion
+from application.cms.new_page_service import new_page_service
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
@@ -81,30 +82,30 @@ def privacy_policy():
 @static_site_blueprint.route("/<topic_slug>")
 @login_required
 def topic(topic_slug):
-    try:
-        topic = page_service.get_page_by_slug_and_type(topic_slug, "topic")
-    except PageNotFoundException:
-        abort(404)
+    topic = new_page_service.get_topic(topic_slug)
 
     # We want to avoid passing measures into the template that the current user should not be able to see listed.
     # Departmental users should not be able to see unpublished measures that have not been explicitly shared with them.
     def user_can_see_measure(measure):
-        if measure.published or current_user in measure.shared_with or not current_user.is_departmental_user():
+        if (
+            any(measure_version.published for measure_version in measure.versions)
+            or current_user in measure.shared_with
+            or not current_user.is_departmental_user()
+        ):
             return True
         else:
             return False
 
-    subtopics = topic.children
-    measures = {
-        subtopic.guid: list(filter(user_can_see_measure, page_service.get_latest_measures(subtopic)))
-        for subtopic in subtopics
+    subtopics = topic.subtopics
+    measures_by_subtopic = {
+        subtopic.id: list(filter(user_can_see_measure, subtopic.measures)) for subtopic in subtopics
     }
 
     return render_template(
         "static_site/topic.html",
         topic=topic,
         subtopics=subtopics,
-        measures=measures,
+        measures_by_subtopic=measures_by_subtopic,
         static_mode=get_bool(request.args.get("static_mode", False)),
     )
 

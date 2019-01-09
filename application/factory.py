@@ -30,6 +30,7 @@ from application.cms.filters import (
     yesno,
 )
 from application.cms.dimension_service import dimension_service
+from application.cms.new_page_service import new_page_service
 from application.cms.page_service import page_service
 from application.cms.scanner_service import scanner_service
 from application.cms.upload_service import upload_service
@@ -77,6 +78,7 @@ def create_app(config_object):
     app.file_service.init_app(app)
 
     csrf.init_app(app)
+    new_page_service.init_app(app)
     page_service.init_app(app)
     upload_service.init_app(app)
     scanner_service.init_app(app)
