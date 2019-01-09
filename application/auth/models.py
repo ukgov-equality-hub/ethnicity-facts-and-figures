@@ -56,15 +56,6 @@ class User(db.Model, RoleFreeUserMixin):
     capabilities = db.Column(MutableList.as_mutable(ARRAY(db.String)), default=[])
 
     # relationships
-    # TODO: Remove the pages relationship once all swapped over
-    pages = db.relationship(
-        "MeasureVersion",
-        lazy=True,
-        secondary="user_measure",
-        primaryjoin="User.id == user_measure.columns.user_id",
-        secondaryjoin="MeasureVersion.measure_id == user_measure.columns.measure_id",
-        back_populates="shared_with",
-    )
     measures = db.relationship(
         "Measure",
         lazy="subquery",
@@ -91,12 +82,13 @@ class User(db.Model, RoleFreeUserMixin):
     def can(self, capability):
         return capability in self.capabilities
 
-    def can_access(self, page_id):
+    def can_access(self, measure_slug):
         if self.user_type != TypeOfUser.DEPT_USER:
             return True
         else:
-            for page in self.pages:
-                if page.guid == page_id or page.slug == page_id:
+            print(measure_slug, self.measures)
+            for measure in self.measures:
+                if measure.slug == measure_slug:
                     return True
             else:
                 return False

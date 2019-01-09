@@ -326,15 +326,6 @@ class MeasureVersion(db.Model):
     dimensions = db.relationship(
         "Dimension", back_populates="page", lazy="dynamic", order_by="Dimension.position", cascade="all,delete"
     )
-    # TODO: Delete this relationship once everything using Measure.shared_with
-    shared_with = db.relationship(  # Departmental users can only access measure pages that have been shared with them
-        "User",
-        lazy="subquery",
-        secondary=user_measure,
-        primaryjoin="MeasureVersion.measure_id == user_measure.columns.measure_id",
-        secondaryjoin="User.id == user_measure.columns.user_id",
-        back_populates="pages",
-    )
     data_sources = db.relationship(
         "DataSource", secondary="data_source_in_measure_version", back_populates="pages", order_by=asc(DataSource.id)
     )
@@ -1004,7 +995,7 @@ class Topic(db.Model):
     additional_description = db.Column(db.TEXT, nullable=True)  # short paragraph displayed on topic page
 
     # relationships
-    subtopics = db.relationship("Subtopic", back_populates="topic", order_by=asc("Subtopic.position"))
+    subtopics = db.relationship("Subtopic", back_populates="topic", order_by="asc(Subtopic.position)")
 
 
 class Subtopic(db.Model):
@@ -1021,7 +1012,7 @@ class Subtopic(db.Model):
     # relationships
     topic = db.relationship("Topic", back_populates="subtopics")
     measures = db.relationship(
-        "Measure", secondary="subtopic_measure", back_populates="subtopics", order_by=asc("Measure.position")
+        "Measure", secondary="subtopic_measure", back_populates="subtopics", order_by="asc(Measure.position)"
     )
 
     @property
@@ -1047,7 +1038,9 @@ class Measure(db.Model):
     reference = db.Column(db.String(32), nullable=True)  # optional internal reference
 
     # relationships
-    subtopics = db.relationship("Subtopic", secondary="subtopic_measure", back_populates="measures")
+    subtopics = db.relationship(
+        "Subtopic", secondary="subtopic_measure", back_populates="measures", order_by="asc(Subtopic.id)"
+    )
     versions = db.relationship("MeasureVersion", back_populates="measure", order_by=desc(MeasureVersion.version))
 
     # Departmental users can only access measures that have been shared with them, as defined by this relationship
@@ -1067,3 +1060,11 @@ class Measure(db.Model):
     @property
     def latest_version(self):
         return MeasureVersion.query.filter(MeasureVersion.measure_id == self.id, MeasureVersion.latest == True).one()
+
+    @property
+    def subtopic(self):
+        return self.subtopics[0]
+
+    @property
+    def title(self):
+        return self.latest_version.title

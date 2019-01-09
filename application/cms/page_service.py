@@ -124,6 +124,7 @@ class PageService(Service):
                     message = "The title '%s' and slug '%s' already exists under '%s'" % (title, slug, page.parent_guid)
                     raise PageExistsException(message)
                 page.slug = slug
+                page.measure.slug = slug
 
             page.title = title
 

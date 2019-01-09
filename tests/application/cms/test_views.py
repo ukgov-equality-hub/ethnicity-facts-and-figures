@@ -817,7 +817,7 @@ def test_dept_user_should_be_able_to_edit_shared_page(
     db_session, test_app_client, stub_measure_page, mock_logged_in_dept_user
 ):
     stub_measure_page.title = "this will be updated"
-    stub_measure_page.shared_with.append(mock_logged_in_dept_user)
+    stub_measure_page.measure.shared_with.append(mock_logged_in_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
 
@@ -844,7 +844,7 @@ def test_dept_user_should_be_able_to_send_shared_page_to_review(
     db_session, test_app_client, stub_measure_page, mock_dept_user
 ):
     stub_measure_page.title = "the page to review"
-    stub_measure_page.shared_with.append(mock_dept_user)
+    stub_measure_page.measure.shared_with.append(mock_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
 
@@ -872,7 +872,7 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
 
     stub_measure_page.title = "try to publish"
     stub_measure_page.status = "DEPARTMENT_REVIEW"
-    stub_measure_page.shared_with.append(mock_dept_user)
+    stub_measure_page.measure.shared_with.append(mock_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
 

@@ -50,8 +50,8 @@ def test_homepage_search_links_to_google_custom_url_before_javascript(
 def test_rdu_user_can_see_page_if_not_shared(
     test_app_client, db_session, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-    assert stub_measure_page.shared_with == []
-    assert mock_rdu_user.pages == []
+    assert stub_measure_page.measure.shared_with == []
+    assert mock_rdu_user.measures == []
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
@@ -77,8 +77,8 @@ def test_departmental_user_cannot_see_page_unless_shared(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id
 
-    assert stub_measure_page.shared_with == []
-    assert mock_dept_user.pages == []
+    assert stub_measure_page.measure.shared_with == []
+    assert mock_dept_user.measures == []
 
     resp = test_app_client.get(
         url_for(
@@ -92,7 +92,7 @@ def test_departmental_user_cannot_see_page_unless_shared(
 
     assert resp.status_code == 403
 
-    stub_measure_page.shared_with.append(mock_dept_user)
+    stub_measure_page.measure.shared_with.append(mock_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
 
@@ -110,8 +110,8 @@ def test_departmental_user_cannot_see_page_unless_shared(
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.h1.text.strip() == "Test Measure Page"
 
-    stub_measure_page.shared_with = []
-    mock_dept_user.pages = []
+    stub_measure_page.measure.shared_with = []
+    mock_dept_user.measures = []
     db_session.session.add(mock_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
@@ -575,7 +575,7 @@ def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_d
         session["user_id"] = mock_dept_user.id
 
     if measure_shared:
-        stub_measure_page.shared_with.append(mock_dept_user)
+        stub_measure_page.measure.shared_with.append(mock_dept_user)
         db_session.session.add(stub_measure_page)
 
     stub_measure_page.published = measure_published
@@ -607,8 +607,8 @@ def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
 def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(
     test_app_client, db_session, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-    assert stub_measure_page.shared_with == []
-    assert mock_rdu_user.pages == []
+    assert stub_measure_page.measure.shared_with == []
+    assert mock_rdu_user.measures == []
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
