@@ -641,7 +641,13 @@ $(document).ready(function () {
 
     function selectChartType(chart_type) {
         $('#chart_type_selector').val(chart_type);
-        $('.chart-option-group').hide();
+
+        var chartOptionGroupDivs = document.getElementsByClassName('chart-option-group')
+
+        for (var i = 0; i < chartOptionGroupDivs.length; i++) {
+            chartOptionGroupDivs[i].classList.add('hidden')
+        }
+
         if (chart_type !== 'none') {
             document.getElementById(chart_type + '_options').classList.remove('hidden')
             document.getElementById('chart_format_options').classList.remove('hidden')
@@ -738,9 +744,9 @@ $(document).ready(function () {
     // Show-hide NUMBER-FORMAT__OTHER panel
     $('#number_format').change(function () {
         if ($(this).val() === 'other') {
-            document.getElementById('other_number_format').show()
+            document.getElementById('other_number_format').classList.remove('hidden')
         } else {
-            document.getElementById('other_number_format').hide()
+            document.getElementById('other_number_format').classList.add('hidden')
         }
         preview();
     });
