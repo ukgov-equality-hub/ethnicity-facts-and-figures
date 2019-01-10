@@ -329,7 +329,7 @@ class MeasureVersion(db.Model):
         "User",
         lazy="subquery",
         secondary=user_measure,
-        primaryjoin="MeasureVersion.id == user_measure.columns.measure_id",
+        primaryjoin="MeasureVersion.measure_id == user_measure.columns.measure_id",
         secondaryjoin="User.id == user_measure.columns.user_id",
         back_populates="pages",
     )

@@ -61,7 +61,7 @@ class User(db.Model, RoleFreeUserMixin):
         lazy=True,
         secondary="user_measure",
         primaryjoin="User.id == user_measure.columns.user_id",
-        secondaryjoin="MeasureVersion.id == user_measure.columns.measure_id",
+        secondaryjoin="MeasureVersion.measure_id == user_measure.columns.measure_id",
         back_populates="shared_with",
     )
 
