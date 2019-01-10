@@ -116,21 +116,23 @@ def topic(topic_slug):
 def measure_page_markdown(topic_slug, subtopic_slug, measure_slug, version):
     try:
         if version == "latest":
-            measure_page = page_service.get_latest_version(topic_slug, subtopic_slug, measure_slug)
+            measure_version = page_service.get_latest_version(topic_slug, subtopic_slug, measure_slug)
         else:
-            *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
+            *_, measure_version = new_page_service.get_measure_page_hierarchy(
+                topic_slug, subtopic_slug, measure_slug, version
+            )
     except PageNotFoundException:
         abort(404)
     if current_user.is_departmental_user():
-        if measure_page.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
+        if measure_version.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html")
 
-    dimensions = [dimension.to_dict() for dimension in measure_page.dimensions]
+    dimensions = [dimension.to_dict() for dimension in measure_version.dimensions]
     return render_template(
         "static_site/export/measure_export.html",
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
-        measure_page=measure_page,
+        measure_page=measure_version,
         dimensions=dimensions,
     )
 
@@ -142,23 +144,25 @@ def measure_page(topic_slug, subtopic_slug, measure_slug, version):
 
     try:
         if version == "latest":
-            measure_page = page_service.get_latest_version(topic_slug, subtopic_slug, measure_slug)
+            measure_version = page_service.get_latest_version(topic_slug, subtopic_slug, measure_slug)
         else:
-            *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
+            *_, measure_version = new_page_service.get_measure_page_hierarchy(
+                topic_slug, subtopic_slug, measure_slug, version
+            )
     except PageNotFoundException:
         abort(404)
 
-    versions = page_service.get_previous_major_versions(measure_page)
-    edit_history = page_service.get_previous_minor_versions(measure_page)
-    first_published_date = page_service.get_first_published_date(measure_page)
+    versions = page_service.get_previous_major_versions(measure_version)
+    edit_history = page_service.get_previous_minor_versions(measure_version)
+    first_published_date = page_service.get_first_published_date(measure_version)
 
-    dimensions = [dimension.to_dict() for dimension in measure_page.dimensions]
+    dimensions = [dimension.to_dict() for dimension in measure_version.dimensions]
 
     return render_template(
         "static_site/measure.html",
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
-        measure_page=measure_page,
+        measure_page=measure_version,
         dimensions=dimensions,
         versions=versions,
         first_published_date=first_published_date,
@@ -170,8 +174,10 @@ def measure_page(topic_slug, subtopic_slug, measure_slug, version):
 @static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/downloads/<filename>")
 def measure_page_file_download(topic_slug, subtopic_slug, measure_slug, version, filename):
     try:
-        *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
-        upload_obj = upload_service.get_upload(measure_page, filename)
+        *_, measure_version = new_page_service.get_measure_page_hierarchy(
+            topic_slug, subtopic_slug, measure_slug, version
+        )
+        upload_obj = upload_service.get_upload(measure_version, filename)
         downloaded_file = upload_service.get_measure_download(upload_obj, filename, "source")
         content = get_csv_data_for_download(downloaded_file)
         if os.path.exists(downloaded_file):
@@ -194,7 +200,7 @@ def measure_page_file_download(topic_slug, subtopic_slug, measure_slug, version,
 )
 def dimension_file_download(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     try:
-        *_, dimension = page_service.get_measure_page_hierarchy(
+        *_, dimension = new_page_service.get_measure_page_hierarchy(
             topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
         )
         dimension_obj = DimensionObjectBuilder.build(dimension)
@@ -220,7 +226,7 @@ def dimension_file_download(topic_slug, subtopic_slug, measure_slug, version, di
 )
 def dimension_file_table_download(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     try:
-        *_, dimension = page_service.get_measure_page_hierarchy(
+        *_, dimension = new_page_service.get_measure_page_hierarchy(
             topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
         )
         dimension_obj = DimensionObjectBuilder.build(dimension)

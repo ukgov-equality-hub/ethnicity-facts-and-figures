@@ -35,6 +35,7 @@ from application.cms.models import (
     MeasureVersion,
     Measure,
 )
+from application.cms.new_page_service import new_page_service
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.utils import copy_form_errors, flash_message_with_form_errors, get_data_source_forms
@@ -134,11 +135,11 @@ def create_measure_page(topic_slug, subtopic_slug):
 @login_required
 @user_has_access
 def delete_upload(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
-    *_, measure_page, upload_object = page_service.get_measure_page_hierarchy(
+    *_, measure_version, upload_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, upload_guid=upload_guid
     )
 
-    upload_service.delete_upload_obj(measure_page, upload_object)
+    upload_service.delete_upload_obj(measure_version, upload_object)
 
     message = "Deleted upload ‘{}’".format(upload_object.title)
     current_app.logger.info(message)
@@ -161,7 +162,7 @@ def delete_upload(topic_slug, subtopic_slug, measure_slug, version, upload_guid)
 @login_required
 @user_has_access
 def edit_upload(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
-    topic_page, subtopic_page, measure_page, upload_object = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version, upload_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, upload_guid=upload_guid
     )
 
@@ -172,16 +173,16 @@ def edit_upload(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
         if form.validate():
             f = form.upload.data if form.upload.data else None
             try:
-                upload_service.edit_upload(measure=measure_page, upload=upload_object, file=f, data=form.data)
+                upload_service.edit_upload(measure=measure_version, upload=upload_object, file=f, data=form.data)
                 message = "Updated upload {}".format(upload_object.title)
                 flash(message, "info")
                 return redirect(
                     url_for(
                         "cms.edit_measure_page",
-                        topic_slug=topic_slug,
-                        subtopic_slug=subtopic_slug,
-                        measure_slug=measure_slug,
-                        version=version,
+                        topic_slug=topic.slug,
+                        subtopic_slug=subtopic.slug,
+                        measure_slug=measure.slug,
+                        version=measure_version.version,
                     )
                 )
             except UploadCheckError as e:
@@ -189,13 +190,7 @@ def edit_upload(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
                 current_app.logger.exception(e)
                 flash(message, "error")
 
-    context = {
-        "form": form,
-        "topic": topic_page,
-        "subtopic": subtopic_page,
-        "measure": measure_page,
-        "upload": upload_object,
-    }
+    context = {"form": form, "topic": topic, "subtopic": subtopic, "measure": measure_version, "upload": upload_object}
     return render_template("cms/edit_upload.html", **context)
 
 
@@ -203,11 +198,11 @@ def edit_upload(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
 @login_required
 @user_has_access
 def delete_dimension(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    *_, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    dimension_service.delete_dimension(measure_page, dimension_object.guid)
+    dimension_service.delete_dimension(measure_version, dimension_object.guid)
 
     message = "Deleted dimension ‘{}’".format(dimension_object.title)
     current_app.logger.info(message)
@@ -246,18 +241,18 @@ def _diff_updates(form, page):
 @login_required
 @user_has_access
 def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
-    *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
+    *_, measure_version = new_page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
     topics = page_service.get_pages_by_type("topic")
     topics.sort(key=lambda page: page.title)
     diffs = {}
 
-    data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=measure_page)
+    data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=measure_version)
 
-    if measure_page.area_covered is not None:
-        england = True if UKCountry.ENGLAND in measure_page.area_covered else False
-        wales = True if UKCountry.WALES in measure_page.area_covered else False
-        scotland = True if UKCountry.SCOTLAND in measure_page.area_covered else False
-        northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_page.area_covered else False
+    if measure_version.area_covered is not None:
+        england = True if UKCountry.ENGLAND in measure_version.area_covered else False
+        wales = True if UKCountry.WALES in measure_version.area_covered else False
+        scotland = True if UKCountry.SCOTLAND in measure_version.area_covered else False
+        northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_version.area_covered else False
     else:
         england = wales = scotland = northern_ireland = False
 
@@ -269,7 +264,7 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
         "lowest_level_of_geography_choices": LowestLevelOfGeography,
     }
     if request.method == "GET":
-        form = MeasurePageForm(obj=measure_page, **form_kwargs)
+        form = MeasurePageForm(obj=measure_version, **form_kwargs)
     elif request.method == "POST":
         form = MeasurePageForm(**form_kwargs)
 
@@ -279,22 +274,22 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
             form_data = form.data
             form_data["subtopic"] = request.form.get("subtopic", None)
             page_service.update_page(
-                measure_page,
+                measure_version,
                 data=form_data,
                 last_updated_by=current_user.email,
                 data_source_forms=(data_source_form, data_source_2_form),
             )
-            message = 'Updated page "{}"'.format(measure_page.title)
+            message = 'Updated page "{}"'.format(measure_version.title)
             current_app.logger.info(message)
             flash(message, "info")
             saved = True
         except PageExistsException as e:
             current_app.logger.info(e)
             flash(str(e), "error")
-            form.title.data = measure_page.title
+            form.title.data = measure_version.title
         except StaleUpdateException as e:
             current_app.logger.error(e)
-            diffs = _diff_updates(form, measure_page)
+            diffs = _diff_updates(form, measure_version)
             if diffs:
                 flash("Your update will overwrite the latest content. Resolve the conflicts below", "error")
             else:
@@ -309,37 +304,37 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
             forms=(form, data_source_form, data_source_2_form),
         )
 
-    current_status = measure_page.status
-    available_actions = measure_page.available_actions()
+    current_status = measure_version.status
+    available_actions = measure_version.available_actions()
     if "APPROVE" in available_actions:
-        numerical_status = measure_page.publish_status(numerical=True)
+        numerical_status = measure_version.publish_status(numerical=True)
         approval_state = publish_status.inv[(numerical_status + 1) % 6]
 
     if saved and "save-and-review" in request.form:
         return redirect(
             url_for(
                 "cms.send_to_review",
-                topic_slug=measure_page.parent.parent.slug,
-                subtopic_slug=measure_page.parent.slug,
-                measure_slug=measure_page.slug,
-                version=measure_page.version,
+                topic_slug=measure_version.parent.parent.slug,
+                subtopic_slug=measure_version.parent.slug,
+                measure_slug=measure_version.slug,
+                version=measure_version.version,
             )
         )
     elif saved:
         return redirect(
             url_for(
                 "cms.edit_measure_page",
-                topic_slug=measure_page.parent.parent.slug,
-                subtopic_slug=measure_page.parent.slug,
-                measure_slug=measure_page.slug,
-                version=measure_page.version,
+                topic_slug=measure_version.parent.parent.slug,
+                subtopic_slug=measure_version.parent.slug,
+                measure_slug=measure_version.slug,
+                version=measure_version.version,
             )
         )
     context = {
         "form": form,
-        "topic": measure_page.parent.parent,
-        "subtopic": measure_page.parent,
-        "measure": measure_page,
+        "topic": measure_version.parent.parent,
+        "subtopic": measure_version.parent,
+        "measure": measure_version,
         "data_source_form": data_source_form,
         "data_source_2_form": data_source_2_form,
         "status": current_status,
@@ -358,7 +353,7 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_upload(topic_slug, subtopic_slug, measure_slug, version):
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
     )
 
@@ -369,7 +364,7 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
             f = form.upload.data
             try:
                 upload = upload_service.create_upload(
-                    page=measure_page, upload=f, title=form.data["title"], description=form.data["description"]
+                    page=measure_version, upload=f, title=form.data["title"], description=form.data["description"]
                 )
 
                 message = 'Uploaded file "{}" to measure "{}"'.format(upload.title, measure_slug)
@@ -380,20 +375,20 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
                 message = "Error uploading file. {}".format(str(e))
                 current_app.logger.exception(e)
                 flash(message, "error")
-                context = {"form": form, "topic": topic_page, "subtopic": subtopic_page, "measure": measure_page}
+                context = {"form": form, "topic": topic, "subtopic": subtopic, "measure": measure_version}
                 return render_template("cms/create_upload.html", **context)
 
             return redirect(
                 url_for(
                     "cms.edit_measure_page",
-                    topic_slug=topic_slug,
-                    subtopic_slug=subtopic_slug,
-                    measure_slug=measure_slug,
-                    version=version,
+                    topic_slug=topic.slug,
+                    subtopic_slug=subtopic.slug,
+                    measure_slug=measure.slug,
+                    version=measure_version.version,
                 )
             )
 
-    context = {"form": form, "topic": topic_page, "subtopic": subtopic_page, "measure": measure_page}
+    context = {"form": form, "topic": topic, "subtopic": subtopic, "measure": measure_version}
     return render_template("cms/create_upload.html", **context)
 
 
@@ -402,24 +397,24 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
     )
 
     # in case user tries to directly GET this page
-    if measure_page.status == "DEPARTMENT_REVIEW":
+    if measure_version.status == "DEPARTMENT_REVIEW":
         abort(400)
 
-    if measure_page.area_covered is not None:
-        england = True if UKCountry.ENGLAND in measure_page.area_covered else False
-        wales = True if UKCountry.WALES in measure_page.area_covered else False
-        scotland = True if UKCountry.SCOTLAND in measure_page.area_covered else False
-        northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_page.area_covered else False
+    if measure_version.area_covered is not None:
+        england = True if UKCountry.ENGLAND in measure_version.area_covered else False
+        wales = True if UKCountry.WALES in measure_version.area_covered else False
+        scotland = True if UKCountry.SCOTLAND in measure_version.area_covered else False
+        northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_version.area_covered else False
     else:
         england = wales = scotland = northern_ireland = False
 
     measure_page_form_to_validate = MeasurePageForm(
-        obj=measure_page,
+        obj=measure_version,
         meta={"csrf": False},
         england=england,
         wales=wales,
@@ -430,12 +425,12 @@ def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
     )
 
     data_source_form_to_validate, data_source_2_form_to_validate = get_data_source_forms(
-        request, measure_page=measure_page, sending_to_review=True
+        request, measure_page=measure_version, sending_to_review=True
     )
 
     invalid_dimensions = []
 
-    for dimension in measure_page.dimensions:
+    for dimension in measure_version.dimensions:
         dimension_form = DimensionRequiredForm(obj=dimension, meta={"csrf": False})
         if not dimension_form.validate():
             invalid_dimensions.append(dimension)
@@ -461,7 +456,7 @@ def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
 
         # Recreate form with csrf token for next update
         measure_page_form = MeasurePageForm(
-            obj=measure_page,
+            obj=measure_version,
             england=england,
             wales=wales,
             scotland=scotland,
@@ -469,7 +464,7 @@ def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
             lowest_level_of_geography_choices=LowestLevelOfGeography,
         )
 
-        data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=measure_page)
+        data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=measure_version)
 
         copy_form_errors(from_form=measure_page_form_to_validate, to_form=measure_page_form)
         copy_form_errors(from_form=data_source_form_to_validate, to_form=data_source_form)
@@ -489,19 +484,19 @@ def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
                 )
                 flash(message, "dimension-error")
 
-        current_status = measure_page.status
-        available_actions = measure_page.available_actions()
+        current_status = measure_version.status
+        available_actions = measure_version.available_actions()
         if "APPROVE" in available_actions:
-            numerical_status = measure_page.publish_status(numerical=True)
+            numerical_status = measure_version.publish_status(numerical=True)
             approval_state = publish_status.inv[numerical_status + 1]
 
         context = {
             "form": measure_page_form,
             "data_source_form": data_source_form,
             "data_source_2_form": data_source_2_form,
-            "topic": topic_page,
-            "subtopic": subtopic_page,
-            "measure": measure_page,
+            "topic": topic,
+            "subtopic": subtopic,
+            "measure": measure_version,
             "status": current_status,
             "available_actions": available_actions,
             "next_approval_state": approval_state if "APPROVE" in available_actions else None,
@@ -511,7 +506,7 @@ def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
 
         return render_template("cms/edit_measure_page.html", **context)
 
-    message = page_service.next_state(measure_page, updated_by=current_user.email)
+    message = page_service.next_state(measure_version, updated_by=current_user.email)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -531,14 +526,14 @@ def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
 @user_has_access
 @user_can(PUBLISH)
 def publish(topic_slug, subtopic_slug, measure_slug, version):
-    *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
+    *_, measure_version = new_page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
 
-    if measure_page.status != "DEPARTMENT_REVIEW":
+    if measure_version.status != "DEPARTMENT_REVIEW":
         abort(400)
 
-    message = page_service.next_state(measure_page, current_user.email)
+    message = page_service.next_state(measure_version, current_user.email)
     current_app.logger.info(message)
-    _build_if_necessary(measure_page)
+    _build_if_necessary(measure_version)
     flash(message, "info")
     return redirect(
         url_for(
@@ -556,13 +551,13 @@ def publish(topic_slug, subtopic_slug, measure_slug, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def reject_page(topic_slug, subtopic_slug, measure_slug, version):
-    *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
+    *_, measure_version = new_page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
 
     # Can only reject if currently under review
-    if measure_page.status not in {"INTERNAL_REVIEW", "DEPARTMENT_REVIEW"}:
+    if measure_version.status not in {"INTERNAL_REVIEW", "DEPARTMENT_REVIEW"}:
         abort(400)
 
-    message = page_service.reject_page(measure_page.guid, version)
+    message = page_service.reject_page(measure_version.guid, version)
     flash(message, "info")
     current_app.logger.info(message)
     return redirect(
@@ -581,13 +576,13 @@ def reject_page(topic_slug, subtopic_slug, measure_slug, version):
 @user_has_access
 @user_can(PUBLISH)
 def unpublish_page(topic_slug, subtopic_slug, measure_slug, version):
-    *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
+    *_, measure_version = new_page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
 
     # Can only unpublish if currently published
-    if measure_page.status != "APPROVED":
+    if measure_version.status != "APPROVED":
         abort(400)
 
-    page, message = page_service.unpublish(measure_page.guid, version, current_user.email)
+    page, message = page_service.unpublish(measure_version.guid, version, current_user.email)
     _build_if_necessary(page)
     flash(message, "info")
     current_app.logger.info(message)
@@ -607,20 +602,20 @@ def unpublish_page(topic_slug, subtopic_slug, measure_slug, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def send_page_to_draft(topic_slug, subtopic_slug, measure_slug, version):
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    message = page_service.send_page_to_draft(measure_page.guid, version)
+    message = page_service.send_page_to_draft(measure_version.guid, version)
     flash(message, "info")
     current_app.logger.info(message)
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic_slug=topic_slug,
-            subtopic_slug=subtopic_slug,
-            measure_slug=measure_slug,
-            version=version,
+            topic_slug=topic.slug,
+            subtopic_slug=subtopic.slug,
+            measure_slug=measure.slug,
+            version=measure_version.version,
         )
     )
 
@@ -630,18 +625,18 @@ def send_page_to_draft(topic_slug, subtopic_slug, measure_slug, version):
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_dimension(topic_slug, subtopic_slug, measure_slug, version):
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
     )
 
     if request.method == "POST":
-        return _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version)
+        return _post_create_dimension(topic.slug, subtopic.slug, measure.slug, measure_version.version)
     else:
-        return _get_create_dimension(topic_slug, subtopic_slug, measure_slug, version)
+        return _get_create_dimension(topic.slug, subtopic.slug, measure.slug, measure_version.version)
 
 
 def _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version):
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
     )
     form = DimensionForm(request.form)
@@ -649,7 +644,7 @@ def _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version):
     if form.validate():
         try:
             dimension = dimension_service.create_dimension(
-                page=measure_page,
+                page=measure_version,
                 title=form.data["title"],
                 time_period=form.data["time_period"],
                 summary=form.data["summary"],
@@ -671,7 +666,7 @@ def _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version):
                     dimension_guid=dimension.guid,
                 )
             )
-        except (DimensionAlreadyExists):
+        except DimensionAlreadyExists:
             message = 'Dimension with title "{}" already exists'.format(form.data["title"])
             flash(message, "error")
             current_app.logger.error(message)
@@ -696,15 +691,11 @@ def _get_create_dimension(topic, subtopic, measure, version, form=None):
     else:
         context_form = form
 
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(topic, subtopic, measure, version)
+    topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
+        topic, subtopic, measure, version
+    )
 
-    context = {
-        "form": context_form,
-        "create": True,
-        "topic": topic_page,
-        "subtopic": subtopic_page,
-        "measure": measure_page,
-    }
+    context = {"form": context_form, "create": True, "topic": topic, "subtopic": subtopic, "measure": measure_version}
     return render_template("cms/create_dimension.html", **context)
 
 
@@ -724,7 +715,7 @@ def edit_dimension(topic_slug, subtopic_slug, measure_slug, version, dimension_g
 def _post_edit_dimension(request, topic_slug, subtopic_slug, measure_slug, dimension_guid, version):
 
     form = DimensionForm(request.form)
-    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
@@ -744,11 +735,13 @@ def _post_edit_dimension(request, topic_slug, subtopic_slug, measure_slug, dimen
             )
         )
     else:
-        return _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid, version, form=form)
+        return _get_edit_dimension(
+            topic.slug, subtopic.slug, measure.slug, dimension_object.guid, measure_version.version, form=form
+        )
 
 
 def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid, version, form=None):
-    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
@@ -759,9 +752,9 @@ def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid,
 
     context = {
         "form": form,
-        "topic": topic_page,
-        "subtopic": subtopic_page,
-        "measure": measure_page,
+        "topic": topic,
+        "subtopic": subtopic,
+        "measure": measure_version,
         "dimension": dimension_object,
         "ethnicity_classification": dimension_classification.classification.long_title
         if dimension_classification
@@ -780,7 +773,7 @@ def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid,
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def chartbuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
@@ -790,22 +783,22 @@ def chartbuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         return redirect(
             url_for(
                 "cms.create_chart_original",
-                topic_slug=topic_slug,
-                subtopic_slug=subtopic_slug,
-                measure_slug=measure_slug,
-                version=version,
-                dimension_guid=dimension_guid,
+                topic_slug=topic.slug,
+                subtopic_slug=subtopic.slug,
+                measure_slug=measure.slug,
+                version=measure_version.version,
+                dimension_guid=dimension_object.guid,
             )
         )
 
     return redirect(
         url_for(
             "cms.create_chart",
-            topic_slug=topic_slug,
-            subtopic_slug=subtopic_slug,
-            measure_slug=measure_slug,
-            version=version,
-            dimension_guid=dimension_guid,
+            topic_slug=topic.slug,
+            subtopic_slug=subtopic.slug,
+            measure_slug=measure.slug,
+            version=measure_version.version,
+            dimension_guid=dimension_object.guid,
         )
     )
 
@@ -815,7 +808,7 @@ def chartbuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
@@ -827,9 +820,9 @@ def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         )
 
     context = {
-        "topic": topic_page,
-        "subtopic": subtopic_page,
-        "measure": measure_page,
+        "topic": topic,
+        "subtopic": subtopic,
+        "measure": measure_version,
         "dimension": dimension_dict,
         "classification_options": __get_classification_finder_classifications(),
     }
@@ -848,14 +841,14 @@ def __get_classification_finder_classifications():
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_chart_original(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     context = {
-        "topic": topic_page,
-        "subtopic": subtopic_page,
-        "measure": measure_page,
+        "topic": topic,
+        "subtopic": subtopic,
+        "measure": measure_version,
         "dimension": dimension_object.to_dict(),
     }
 
@@ -867,7 +860,7 @@ def create_chart_original(topic_slug, subtopic_slug, measure_slug, version, dime
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def tablebuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
@@ -877,22 +870,22 @@ def tablebuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         return redirect(
             url_for(
                 "cms.create_table_original",
-                topic_slug=topic_slug,
-                subtopic_slug=subtopic_slug,
-                measure_slug=measure_slug,
-                version=version,
-                dimension_guid=dimension_guid,
+                topic_slug=topic.slug,
+                subtopic_slug=subtopic.slug,
+                measure_slug=measure.slug,
+                version=measure_version.version,
+                dimension_guid=dimension_object.guid,
             )
         )
 
     return redirect(
         url_for(
             "cms.create_table",
-            topic_slug=topic_slug,
-            subtopic_slug=subtopic_slug,
-            measure_slug=measure_slug,
-            version=version,
-            dimension_guid=dimension_guid,
+            topic_slug=topic.slug,
+            subtopic_slug=subtopic.slug,
+            measure_slug=measure.slug,
+            version=measure_version.version,
+            dimension_guid=dimension_object.guid,
         )
     )
 
@@ -902,14 +895,14 @@ def tablebuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_table_original(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     context = {
-        "topic": topic_page,
-        "subtopic": subtopic_page,
-        "measure": measure_page,
+        "topic": topic,
+        "subtopic": subtopic,
+        "measure": measure_version,
         "dimension": dimension_object.to_dict(),
     }
 
@@ -921,7 +914,7 @@ def create_table_original(topic_slug, subtopic_slug, measure_slug, version, dime
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic_page, subtopic_page, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
@@ -934,9 +927,9 @@ def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         )
 
     context = {
-        "topic": topic_page,
-        "subtopic": subtopic_page,
-        "measure": measure_page,
+        "topic": topic,
+        "subtopic": subtopic,
+        "measure": measure_version,
         "dimension": dimension_dict,
         "classification_options": __get_classification_finder_classifications(),
     }
@@ -951,12 +944,12 @@ def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def save_chart_to_page(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    *_, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    if measure_page.not_editable():
-        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_page.guid)
+    if measure_version.not_editable():
+        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_version.guid)
         current_app.logger.exception(message)
         raise PageUnEditable(message)
 
@@ -978,13 +971,13 @@ def save_chart_to_page(topic_slug, subtopic_slug, measure_slug, version, dimensi
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def delete_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    *_, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     dimension_object.delete_chart()
 
-    message = "Deleted chart from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_page.title)
+    message = "Deleted chart from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_version.title)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -994,7 +987,7 @@ def delete_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
             topic_slug=topic_slug,
             subtopic_slug=subtopic_slug,
             measure_slug=measure_slug,
-            version=version,
+            version=measure_version.version,
             dimension_guid=dimension_object.guid,
         )
     )
@@ -1007,12 +1000,12 @@ def delete_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def save_table_to_page(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    *_, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    if measure_page.not_editable():
-        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_page.guid)
+    if measure_version.not_editable():
+        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_version.guid)
         current_app.logger.exception(message)
         raise PageUnEditable(message)
 
@@ -1034,13 +1027,13 @@ def save_table_to_page(topic_slug, subtopic_slug, measure_slug, version, dimensi
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def delete_table(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    *_, measure_page, dimension_object = page_service.get_measure_page_hierarchy(
+    *_, measure_version, dimension_object = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
     dimension_object.delete_table()
 
-    message = "Deleted table from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_page.title)
+    message = "Deleted table from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_version.title)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -1050,7 +1043,7 @@ def delete_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
             topic_slug=topic_slug,
             subtopic_slug=subtopic_slug,
             measure_slug=measure_slug,
-            version=version,
+            version=measure_version.version,
             dimension_guid=dimension_object.guid,
         )
     )
@@ -1059,9 +1052,9 @@ def delete_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/uploads", methods=["GET"])
 @login_required
 def get_measure_page_uploads(topic_slug, subtopic_slug, measure_slug, version):
-    *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
+    *_, measure_version = new_page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
 
-    uploads = upload_service.get_page_uploads(measure_page) or {}
+    uploads = upload_service.get_page_uploads(measure_version) or {}
     return json.dumps({"uploads": uploads}), 200
 
 
@@ -1147,40 +1140,40 @@ def list_measure_page_versions(topic_slug, subtopic_slug, measure_slug):
 @login_required
 @user_can(DELETE_MEASURE)
 def confirm_delete_measure_page(topic_slug, subtopic_slug, measure_slug, version):
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    return render_template("cms/delete_page.html", topic=topic_page, subtopic=subtopic_page, measure_page=measure_page)
+    return render_template("cms/delete_page.html", topic=topic, subtopic=subtopic, measure_page=measure_version)
 
 
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/delete", methods=["POST"])
 @login_required
 @user_can(DELETE_MEASURE)
 def delete_measure_page(topic_slug, subtopic_slug, measure_slug, version):
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    page_service.delete_measure_page(measure_page.guid, version)
+    page_service.delete_measure_page(measure_version.guid, version)
     if request.referrer.endswith("/versions"):
         return redirect(
             url_for(
                 "cms.list_measure_page_versions",
-                topic_slug=topic_slug,
-                subtopic_slug=subtopic_slug,
-                measure_slug=measure_slug,
+                topic_slug=topic.slug,
+                subtopic_slug=subtopic.slug,
+                measure_slug=measure.slug,
             )
         )
     else:
-        return redirect(url_for("static_site.topic", topic_slug=topic_page.slug))
+        return redirect(url_for("static_site.topic", topic_slug=topic.slug))
 
 
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/new-version", methods=["GET", "POST"])
 @login_required
 @user_can(CREATE_VERSION)
 def new_version(topic_slug, subtopic_slug, measure_slug, version):
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
     )
 
@@ -1188,18 +1181,18 @@ def new_version(topic_slug, subtopic_slug, measure_slug, version):
     if form.validate_on_submit():
         version_type = form.data["version_type"]
         try:
-            page = page_service.create_copy(
-                measure_page.guid, measure_page.version, version_type, created_by=current_user.email
+            new_measure_version = page_service.create_copy(
+                measure_version.guid, measure_version.version, version_type, created_by=current_user.email
             )
-            message = "Added a new %s version %s" % (version_type, page.version)
+            message = "Added a new %s version %s" % (version_type, new_measure_version.version)
             flash(message)
             return redirect(
                 url_for(
                     "cms.edit_measure_page",
-                    topic_slug=topic_page.slug,
-                    subtopic_slug=subtopic_page.slug,
-                    measure_slug=page.slug,
-                    version=page.version,
+                    topic_slug=topic.slug,
+                    subtopic_slug=subtopic.slug,
+                    measure_slug=new_measure_version.slug,
+                    version=new_measure_version.version,
                 )
             )
         except UpdateAlreadyExists:
@@ -1208,16 +1201,16 @@ def new_version(topic_slug, subtopic_slug, measure_slug, version):
             return redirect(
                 url_for(
                     "cms.new_version",
-                    topic_slug=topic_slug,
-                    subtopic_slug=subtopic_slug,
-                    measure_slug=measure_slug,
-                    version=version,
+                    topic_slug=topic.slug,
+                    subtopic_slug=subtopic.slug,
+                    measure_slug=measure.slug,
+                    version=measure_version.version,
                     form=form,
                 )
             )
 
     return render_template(
-        "cms/create_new_version.html", topic=topic_page, subtopic=subtopic_page, measure=measure_page, form=form
+        "cms/create_new_version.html", topic=topic, subtopic=subtopic, measure=measure_version, form=form
     )
 
 
@@ -1225,20 +1218,19 @@ def new_version(topic_slug, subtopic_slug, measure_slug, version):
 @login_required
 @user_can(COPY_MEASURE)
 def copy_measure_page(topic_slug, subtopic_slug, measure_slug, version):
-    topic_page, subtopic_page, measure_page = page_service.get_measure_page_hierarchy(
+    topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
     )
-
-    copied_page = page_service.create_copy(
-        measure_page.guid, measure_page.version, version_type="copy", created_by=current_user.email
+    copied_measure_version = page_service.create_copy(
+        measure_version.guid, measure_version.version, version_type="copy", created_by=current_user.email
     )
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic_slug=topic_page.slug,
-            subtopic_slug=subtopic_page.slug,
-            measure_slug=copied_page.slug,
-            version=copied_page.version,
+            topic_slug=topic.slug,
+            subtopic_slug=subtopic.slug,
+            measure_slug=measure.slug,
+            version=copied_measure_version.version,
         )
     )
 
