@@ -631,12 +631,19 @@ class TestMeasureVersion:
         assert minor_version.number_of_versions() == 3
         assert major_version_2.number_of_versions() == 3
 
-    def test_page_has_later_published_versions(self, db, db_session):
-
-        major_version_1 = MeasureVersion(guid="test_page", version="1.0", status="APPROVED")
-        minor_version_2 = MeasureVersion(guid="test_page", version="1.1", status="APPROVED")
-        minor_version_3 = MeasureVersion(guid="test_page", version="1.2", status="APPROVED")
-        minor_version_4 = MeasureVersion(guid="test_page", version="1.3", status="DRAFT")
+    def test_page_has_later_published_versions(self, db, db_session, stub_measure_1):
+        major_version_1 = MeasureVersion(
+            guid="test_page", version="1.0", published=True, status="APPROVED", measure_id=stub_measure_1.id
+        )
+        minor_version_2 = MeasureVersion(
+            guid="test_page", version="1.1", published=True, status="APPROVED", measure_id=stub_measure_1.id
+        )
+        minor_version_3 = MeasureVersion(
+            guid="test_page", version="1.2", published=True, status="APPROVED", measure_id=stub_measure_1.id
+        )
+        minor_version_4 = MeasureVersion(
+            guid="test_page", version="1.3", published=False, status="DRAFT", measure_id=stub_measure_1.id
+        )
 
         db.session.add(major_version_1)
         db.session.add(minor_version_2)

@@ -155,15 +155,19 @@ class MeasurePageForm(FlaskForm):
         label="Title",
         validators=[DataRequired(), Length(max=255)],
         hint="For example, ‘Self-harm by young people in custody’",
+        strip_whitespace=True,
     )
     internal_reference = RDUStringField(
-        label="Measure code (optional)", hint="This is for internal use by the Race Disparity Unit"
+        label="Measure code (optional)",
+        hint="This is for internal use by the Race Disparity Unit",
+        strip_whitespace=True,
     )
     published_at = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
     time_covered = RDUStringField(
         label="Time period covered",
         validators=[RequiredForReviewValidator()],
         hint="For example, ‘2016 to 2017’, or ‘2014/15 to 2016/17’",
+        strip_whitespace=True,
     )
 
     area_covered = RDUCheckboxField(label="Areas covered", enum=UKCountry, validators=[RequiredForReviewValidator()])
@@ -177,9 +181,12 @@ class MeasurePageForm(FlaskForm):
         label="Suppression rules and disclosure control (optional)",
         hint="If any data has been excluded from the analysis, explain why",
         extended_hint="_suppression_and_disclosure.html",
+        strip_whitespace=True,
     )
     estimation = RDUTextAreaField(
-        label="Rounding (optional)", hint="For example, ‘Percentages are rounded to one decimal place’"
+        label="Rounding (optional)",
+        hint="For example, ‘Percentages are rounded to one decimal place’",
+        strip_whitespace=True,
     )
 
     summary = RDUTextAreaField(
@@ -187,6 +194,7 @@ class MeasurePageForm(FlaskForm):
         validators=[RequiredForReviewValidator()],
         hint="Summarise the main findings and highlight any serious caveats in the quality of the data",
         extended_hint="_summary.html",
+        strip_whitespace=True,
     )
 
     measure_summary = RDUTextAreaField(
@@ -196,6 +204,7 @@ class MeasurePageForm(FlaskForm):
             "Explain what the data is analysing, what’s included in categories labelled as ‘Other’ and define any "
             "terms users might not understand"
         ),
+        strip_whitespace=True,
     )
 
     need_to_know = RDUTextAreaField(
@@ -203,6 +212,7 @@ class MeasurePageForm(FlaskForm):
         validators=[RequiredForReviewValidator()],
         hint="Outline how the data was collected and explain any limitations",
         extended_hint="_things_you_need_to_know.html",
+        strip_whitespace=True,
     )
 
     ethnicity_definition_summary = RDUTextAreaField(
@@ -214,6 +224,7 @@ class MeasurePageForm(FlaskForm):
             '<a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z#ethnic-categories" target="_blank">'
             "Style guide A to Z</a> (this will open a new page)."
         ),
+        strip_whitespace=True,
     )
 
     methodology = RDUTextAreaField(
@@ -221,12 +232,15 @@ class MeasurePageForm(FlaskForm):
         validators=[RequiredForReviewValidator()],
         hint="Explain your methods in clear, simple language",
         extended_hint="_methodology.html",
+        strip_whitespace=True,
     )
     related_publications = RDUTextAreaField(
-        label="Related publications (optional)", extended_hint="_related_publications.html"
+        label="Related publications (optional)", extended_hint="_related_publications.html", strip_whitespace=True
     )
-    qmi_url = RDUURLField(label="Link to quality and methodology information")
-    further_technical_information = RDUTextAreaField(label="Further technical information (optional)")
+    qmi_url = RDUURLField(label="Link to quality and methodology information", strip_whitespace=True)
+    further_technical_information = RDUTextAreaField(
+        label="Further technical information (optional)", strip_whitespace=True
+    )
 
     # Edit summaries
     external_edit_summary = RDUTextAreaField(
@@ -237,10 +251,12 @@ class MeasurePageForm(FlaskForm):
             "what’s changed in the latest version (for example, ‘Updated with new data’ or ‘Minor changes for style "
             "and accuracy’)."
         ),
+        strip_whitespace=True,
     )
     internal_edit_summary = RDUTextAreaField(
         label="Notes (for internal use - optional)",
         hint="Include any additional information someone might need if they’re working on this page in the future",
+        strip_whitespace=True,
     )
 
     def __init__(self, sending_to_review=False, *args, **kwargs):

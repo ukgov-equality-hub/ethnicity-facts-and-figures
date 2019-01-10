@@ -645,6 +645,7 @@ def test_latest_version_does_not_add_noindex_for_robots(
     stub_subtopic_page,
     stub_measure_page_one_of_three,
     stub_measure_page_two_of_three,
+    stub_measure_page_three_of_three,
 ):
     # GIVEN the latest version of a page
     latest_version_of_page = stub_measure_page_two_of_three
@@ -658,7 +659,7 @@ def test_latest_version_does_not_add_noindex_for_robots(
             "static_site.measure_page",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=latest_version_of_page.slug,
+            measure_slug=latest_version_of_page.measure.slug,
             version=latest_version_of_page.version,
         )
     )
@@ -694,7 +695,7 @@ def test_latest_version_does_not_add_noindex_for_robots_when_newer_draft_exists(
             "static_site.measure_page",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=latest_published_version_of_page.slug,
+            measure_slug=latest_published_version_of_page.measure.slug,
             version=latest_published_version_of_page.version,
         )
     )
@@ -715,6 +716,7 @@ def test_previous_version_adds_noindex_for_robots(
     stub_subtopic_page,
     stub_measure_page_one_of_three,
     stub_measure_page_two_of_three,
+    stub_measure_page_three_of_three,
 ):
     # GIVEN a page with a later published version
     outdated_page = stub_measure_page_one_of_three
@@ -728,7 +730,7 @@ def test_previous_version_adds_noindex_for_robots(
             "static_site.measure_page",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=outdated_page.slug,
+            measure_slug=outdated_page.measure.slug,
             version=outdated_page.version,
         )
     )

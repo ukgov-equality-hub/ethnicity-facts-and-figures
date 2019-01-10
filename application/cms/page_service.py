@@ -32,55 +32,6 @@ class PageService(Service):
     def __init__(self):
         super().__init__()
 
-    def create_page(self, page_type, parent, data, created_by, data_source_forms, version="1.0"):
-        title = data.pop("title", "").strip()
-        guid = str(uuid.uuid4())
-        slug = slugify(title)
-
-        # we'll have to check if user selected another subtopic and did not use one passed via url
-        subtopic = data.pop("subtopic", None)
-        if subtopic is not None and subtopic != parent.guid:
-            parent = page_service.get_page(subtopic)
-
-        cannot_be_created, message = self.page_cannot_be_created(parent.guid, slug)
-        if cannot_be_created:
-            raise PageExistsException(message)
-        self.logger.info(message)
-
-        page = MeasureVersion(
-            guid=guid,
-            version=version,
-            slug=slug,
-            title=title,
-            parent_id=parent.id,
-            parent_guid=parent.guid,
-            parent_version=parent.version,
-            page_type=page_type,
-            status=publish_status.inv[1],
-            created_by=created_by,
-            position=len([c for c in parent.children if c.latest]),
-        )
-
-        topic = Topic.query.filter_by(slug=parent.parent.slug).one()
-        measure = Measure(slug=page.slug, position=page.position)
-        measure.subtopics = [Subtopic.query.filter_by(topic_id=topic.id, slug=parent.slug).one()]
-        db.session.add(measure)
-        db.session.flush()  # Flush to DB will generate PK for the newly-created instance
-        page.measure_id = measure.id
-
-        self._set_main_fields(page=page, data=data)
-        self._set_data_sources(page=page, data_source_forms=data_source_forms)
-
-        db.session.add(page)
-        db.session.commit()
-
-        previous_version = page.get_previous_version()
-        if previous_version is not None:
-            previous_version.latest = False
-            db.session.commit()
-
-        return page
-
     def update_page(self, page, data, last_updated_by, data_source_forms=None):
         if page.not_editable():
             message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
@@ -309,6 +260,7 @@ class PageService(Service):
         dimensions = [dimension for dimension in page.dimensions]
         uploads = [upload for upload in page.uploads]
         data_sources = [data_source for data_source in page.data_sources]
+        subtopics = page.measure.subtopics
 
         db.session.expunge(page)
         make_transient(page)
@@ -330,6 +282,11 @@ class PageService(Service):
         page.internal_edit_summary = None
         page.external_edit_summary = None
         page.latest = True
+
+        page.measure = Measure(slug=page.slug, position=len(subtopics[0].measures), reference=page.internal_reference)
+        page.measure.subtopics = subtopics
+
+        db.session.add(page.measure)
 
         for data_source in data_sources:
             page.data_sources.append(data_source.copy())

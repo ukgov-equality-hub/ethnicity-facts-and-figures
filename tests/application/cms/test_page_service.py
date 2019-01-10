@@ -1,59 +1,10 @@
 import pytest
 from datetime import datetime
-from application.cms.exceptions import PageExistsException, PageUnEditable, PageNotFoundException
-from application.cms.models import MeasureVersion, DimensionClassification, Measure
+from application.cms.exceptions import PageUnEditable, PageNotFoundException
+from application.cms.models import MeasureVersion, DimensionClassification
 from application.cms.page_service import PageService
 
 page_service = PageService()
-
-
-def test_create_page(db_session, stub_subtopic_page, test_app_editor):
-    created_page = page_service.create_page(
-        "measure",
-        stub_subtopic_page,
-        data={"title": "Who cares", "published_at": datetime.now().date()},
-        created_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    assert "Who cares" == created_page.title
-    assert test_app_editor.email == test_app_editor.email
-
-
-def test_create_page_creates_measure_entry(db_session, stub_subtopic_page, test_app_editor):
-    created_page = page_service.create_page(
-        "measure",
-        stub_subtopic_page,
-        data={"title": "Who cares", "published_at": datetime.now().date()},
-        created_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    measure = Measure.query.get(created_page.measure_id)
-    assert measure.slug == created_page.slug
-    assert measure.position == created_page.position
-    assert measure.reference == created_page.internal_reference
-
-
-def test_create_page_with_title_and_slug_already_exists_under_subtopic_raises_exception(
-    db_session, stub_subtopic_page, test_app_editor
-):
-    created_page = page_service.create_page(
-        "measure",
-        stub_subtopic_page,
-        data={"title": "Who cares", "published_at": datetime.now().date()},
-        created_by=test_app_editor.email,
-        data_source_forms=[],
-    )  # noqa
-
-    with pytest.raises(PageExistsException):
-        page_service.create_page(
-            "measure",
-            stub_subtopic_page,
-            data={"title": created_page.title, "published_at": created_page.published_at},
-            created_by=test_app_editor.email,
-            data_source_forms=[],
-        )  # noqa
 
 
 def test_get_pages_by_type(stub_topic_page, stub_subtopic_page, stub_measure_page):
@@ -156,31 +107,6 @@ def test_reject_page(db_session, stub_measure_page, test_app_editor):
     assert page_from_db.status == "REJECTED"
 
 
-def test_create_page_with_slug_already_exists_under_subtopic_raises_exception(
-    db_session, stub_subtopic_page, test_app_editor
-):
-    existing_page = page_service.create_page(
-        "measure",
-        stub_subtopic_page,
-        data={"title": "Who cares", "guid": "who_cares", "published_at": datetime.now().date()},
-        created_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    with pytest.raises(PageExistsException):
-        page_service.create_page(
-            "measure",
-            stub_subtopic_page,
-            data={
-                "title": existing_page.title,
-                "guid": "who_cares but does not clash",
-                "published_at": datetime.now().date(),
-            },
-            created_by=test_app_editor.email,
-            data_source_forms=[],
-        )
-
-
 def test_page_can_be_created_if_slug_unique(db_session, stub_subtopic_page):
     can_not_be_created, message = page_service.page_cannot_be_created(stub_subtopic_page.guid, "also-unique")
 
@@ -265,19 +191,6 @@ def test_create_new_version_of_page(db, db_session, stub_measure_page, mock_rdu_
     assert next_version.latest
 
 
-def test_create_page_trims_whitespace(db_session, stub_subtopic_page, test_app_editor):
-    page = page_service.create_page(
-        "measure",
-        stub_subtopic_page,
-        data={"title": "\n\t   Who cares\n", "published_at": datetime.now().date(), "methodology": "\n\n\n\n\n\n"},
-        created_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    assert page.title == "Who cares"
-    assert page.methodology is None
-
-
 def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_editor):
     page = page_service.update_page(
         stub_measure_page,
@@ -306,66 +219,6 @@ def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_ed
 
     page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.ethnicity_definition_summary == "How about some more whitespace?"
-
-
-def test_first_version_of_page_title_and_url_match(stub_subtopic_page, test_app_editor):
-    created_page = page_service.create_page(
-        "measure",
-        stub_subtopic_page,
-        data={"title": "the title", "published_at": datetime.now().date()},
-        created_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    assert "the title" == created_page.title
-    assert "the-title" == created_page.slug == created_page.slug
-
-    updated_page = page_service.update_page(
-        created_page,
-        data={"title": "an updated title", "db_version_id": created_page.db_version_id},
-        last_updated_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    assert "an updated title" == updated_page.title
-    assert "an-updated-title" == updated_page.slug
-
-
-def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_changing(
-    stub_subtopic_page, test_app_editor
-):
-    created_page = page_service.create_page(
-        "measure",
-        stub_subtopic_page,
-        data={"title": "the title", "published_at": datetime.now().date()},
-        created_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    assert "the title" == created_page.title
-    assert "the-title" == created_page.slug
-
-    page_service.update_page(
-        created_page,
-        data={"title": "the title", "status": "APPROVED", "db_version_id": created_page.db_version_id},
-        last_updated_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    copied_page = page_service.create_copy(created_page.guid, created_page.version, "minor", test_app_editor.email)
-
-    assert "the title" == copied_page.title
-    assert "the-title" == copied_page.slug
-
-    page_service.update_page(
-        copied_page,
-        data={"title": "the updated title", "db_version_id": copied_page.db_version_id},
-        last_updated_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    assert "the updated title" == copied_page.title
-    assert "the-title" == copied_page.slug
 
 
 def test_create_new_version_of_page_duplicates_dimensions(db, db_session, stub_page_with_dimension, mock_rdu_user):

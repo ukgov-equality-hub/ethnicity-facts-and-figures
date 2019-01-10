@@ -58,13 +58,9 @@ def index():
 @user_can(CREATE_MEASURE)
 def create_measure_page(topic_slug, subtopic_slug):
     try:
-        topic_page = page_service.get_page_by_slug_and_type(topic_slug, "topic")
-        subtopic_page = page_service.get_page_by_slug_and_type(subtopic_slug, "subtopic")
+        topic = new_page_service.get_topic(topic_slug)
+        subtopic = new_page_service.get_subtopic(topic_slug, subtopic_slug)
     except PageNotFoundException:
-        abort(404)
-
-    # Check the subtopic belongs to the topic
-    if subtopic_page.parent != topic_page:
         abort(404)
 
     form = MeasurePageForm(
@@ -78,31 +74,23 @@ def create_measure_page(topic_slug, subtopic_slug):
 
     if form.validate_on_submit() and data_source_form.validate_on_submit() and data_source_2_form.validate_on_submit():
         try:
-            form_data = form.data
-            form_data["subtopic"] = request.form.get("subtopic", None)
-
-            # new measure does not have db_version_id pop it here as it seems like
-            # WTForms will add one if not in page.
-            form_data.pop("db_version_id", None)
-
-            page = page_service.create_page(
-                page_type="measure",
-                parent=subtopic_page,
-                data=form_data,
-                created_by=current_user.email,
+            new_measure_version = new_page_service.create_measure(
+                subtopic=subtopic,
+                measure_page_form=form,
                 data_source_forms=(data_source_form, data_source_2_form),
+                created_by_email=current_user.email,
             )
 
-            message = "Created page {}".format(page.title)
+            message = "Created page {}".format(new_measure_version.title)
             flash(message, "info")
             current_app.logger.info(message)
             return redirect(
                 url_for(
                     "cms.edit_measure_page",
-                    topic_slug=topic_page.slug,
-                    subtopic_slug=subtopic_page.slug,
-                    measure_slug=page.slug,
-                    version=page.version,
+                    topic_slug=topic.slug,
+                    subtopic_slug=subtopic.slug,
+                    measure_slug=new_measure_version.measure.slug,
+                    version=new_measure_version.version,
                 )
             )
         except PageExistsException as e:
@@ -110,7 +98,7 @@ def create_measure_page(topic_slug, subtopic_slug):
             flash(message, "error")
             current_app.logger.error(message)
             return redirect(
-                url_for("cms.create_measure_page", form=form, topic_slug=topic_slug, subtopic_slug=subtopic_slug)
+                url_for("cms.create_measure_page", form=form, topic_slug=topic.slug, subtopic_slug=subtopic.slug)
             )
 
     ordered_topics = sorted(page_service.get_pages_by_type("topic"), key=lambda topic: topic.title)
@@ -120,8 +108,8 @@ def create_measure_page(topic_slug, subtopic_slug):
         form=form,
         data_source_form=data_source_form,
         data_source_2_form=data_source_2_form,
-        topic=topic_page,
-        subtopic=subtopic_page,
+        topic=topic,
+        subtopic=subtopic,
         measure={},
         new=True,
         organisations_by_type=Organisation.select_options_by_type(),
@@ -332,8 +320,8 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
         )
     context = {
         "form": form,
-        "topic": measure_version.parent.parent,
-        "subtopic": measure_version.parent,
+        "topic": measure_version.measure.subtopic.topic,
+        "subtopic": measure_version.measure.subtopic,
         "measure": measure_version,
         "data_source_form": data_source_form,
         "data_source_2_form": data_source_2_form,
@@ -1227,9 +1215,9 @@ def copy_measure_page(topic_slug, subtopic_slug, measure_slug, version):
     return redirect(
         url_for(
             "cms.edit_measure_page",
-            topic_slug=topic.slug,
-            subtopic_slug=subtopic.slug,
-            measure_slug=measure.slug,
+            topic_slug=copied_measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=copied_measure_version.measure.subtopic.slug,
+            measure_slug=copied_measure_version.measure.slug,
             version=copied_measure_version.version,
         )
     )

@@ -384,9 +384,9 @@ class MeasureVersion(db.Model):
             return current_status
 
     def available_actions(self):
-
-        if self.parent.parent.guid == "topic_testingspace":
+        if self.measure.subtopic.topic.slug == "testing-space":
             return ["UPDATE"]
+
         if self.status == "DRAFT":
             return ["APPROVE", "UPDATE"]
 
@@ -494,9 +494,11 @@ class MeasureVersion(db.Model):
         return versions[0] if versions else None
 
     def has_no_later_published_versions(self):
-        updates = self.minor_updates() + self.major_updates()
-        published = [page for page in updates if page.status == "APPROVED"]
-        return len(published) == 0
+        latest_published_version = self.measure.latest_published_version
+        if latest_published_version is None:
+            return True
+
+        return latest_published_version.version <= self.version
 
     @property
     def is_published_measure_or_parent_of(self):
@@ -1060,6 +1062,17 @@ class Measure(db.Model):
     @property
     def latest_version(self):
         return MeasureVersion.query.filter(MeasureVersion.measure_id == self.id, MeasureVersion.latest == True).one()
+
+    @property
+    def latest_published_version(self):
+        published_versions = MeasureVersion.query.filter(
+            MeasureVersion.measure_id == self.id, MeasureVersion.published == True
+        ).all()
+
+        if published_versions:
+            return max(published_versions, key=lambda x: x.version)
+
+        return None
 
     @property
     def subtopic(self):

@@ -1,11 +1,17 @@
+import uuid
+
+from slugify import slugify
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
 
+from application import db
+from application.cms.models import publish_status, DataSource
 from application.cms.exceptions import (
     PageNotFoundException,
     InvalidPageHierarchy,
     UploadNotFoundException,
     DimensionNotFoundException,
+    PageExistsException,
 )
 from application.cms.models import Measure, MeasureVersion, Subtopic, Topic
 from application.cms.service import Service
@@ -34,11 +40,12 @@ class NewPageService(Service):
     @staticmethod
     def get_measure(topic_slug, subtopic_slug, measure_slug):
         try:
-            measures_with_matching_slug = Measure.query.filter(Measure.slug == measure_slug).all()
-            for measure in measures_with_matching_slug:
-                if measure.subtopic.topic.slug == topic_slug and measure.subtopic.slug == subtopic_slug:
-                    return measure
-            raise PageNotFoundException()
+            measure = Measure.query.filter(
+                Measure.subtopics.any(Subtopic.topic.has(Topic.slug == topic_slug)),
+                Measure.subtopics.any(Subtopic.slug == subtopic_slug),
+                Measure.slug == measure_slug,
+            ).one()
+            return measure
         except NoResultFound:
             raise PageNotFoundException()
 
@@ -77,7 +84,7 @@ class NewPageService(Service):
             dimension_object = measure_version.get_dimension(dimension_guid) if dimension_guid else None
             upload_object = measure_version.get_upload(upload_guid) if upload_guid else None
         except PageNotFoundException:
-            self.logger.exception("Page id: {} not found".format(measure_slug))
+            self.logger.exception("Page slug: {} not found".format(measure_slug))
             raise InvalidPageHierarchy
         except UploadNotFoundException:
             self.logger.exception("Upload id: {} not found".format(upload_guid))
@@ -94,7 +101,8 @@ class NewPageService(Service):
 
         return (item for item in return_items)
 
-    def get_latest_version_of_all_measures(self, include_drafts=False):
+    @staticmethod
+    def get_latest_version_of_all_measures(include_drafts=False):
         measure_query = MeasureVersion.query
 
         cte = (
@@ -111,6 +119,83 @@ class NewPageService(Service):
         )
 
         return measure_query.order_by(MeasureVersion.title).all()
+
+    def _set_data_sources(self, page, data_source_forms):
+        current_data_sources = page.data_sources
+        page.data_sources = []
+
+        for i, data_source_form in enumerate(data_source_forms):
+            existing_source = len(current_data_sources) > i
+
+            if data_source_form.remove_data_source.data or not any(
+                value for key, value in data_source_form.data.items() if key != "csrf_token"
+            ):
+                if existing_source:
+                    db.session.delete(current_data_sources[i])
+
+            else:
+                data_source = current_data_sources[i] if existing_source else DataSource()
+                data_source_form.populate_obj(data_source)
+
+                source_has_truthy_values = any(
+                    getattr(getattr(data_source_form, column.name), "data")
+                    for column in DataSource.__table__.columns
+                    if column.name != "id"
+                )
+
+                if existing_source or source_has_truthy_values:
+                    page.data_sources.append(data_source)
+
+    def create_measure(self, subtopic, measure_page_form, data_source_forms, created_by_email):
+        title = measure_page_form.data.pop("title", "").strip()
+        guid = str(uuid.uuid4())
+        slug = slugify(title)
+
+        if Measure.query.filter(Measure.slug == slug, Measure.subtopics.contains(subtopic)).all():
+            raise PageExistsException(
+                f'Measure with title "{title}" already exists under the "{subtopic.title}" subtopic.'
+            )
+
+        measure = Measure(
+            slug=slug, position=len(subtopic.measures), reference=measure_page_form.data.get("internal_reference", None)
+        )
+        measure.subtopics = [subtopic]
+        db.session.add(measure)
+        db.session.flush()
+
+        # TODO: Remove me. A bit of a hack to tie a measure version up to a subtopic measure version, so that `.parent`
+        # references resolve. This eases the development process.
+        subtopic_page = MeasureVersion.query.filter(
+            MeasureVersion.page_type == "subtopic", MeasureVersion.slug == subtopic.slug
+        ).one()
+
+        measure_version = MeasureVersion(
+            guid=guid,
+            version="1.0",
+            slug=slug,
+            title=title,
+            measure_id=measure.id,
+            status=publish_status.inv[1],
+            created_by=created_by_email,
+            position=len(subtopic.measures),
+            parent_id=subtopic_page.id,
+            parent_guid=subtopic_page.guid,
+            parent_version=subtopic_page.version,
+        )
+
+        measure_page_form.populate_obj(measure_version)
+
+        self._set_data_sources(page=measure_version, data_source_forms=data_source_forms)
+
+        db.session.add(measure_version)
+        db.session.commit()
+
+        previous_version = measure_version.get_previous_version()
+        if previous_version is not None:
+            previous_version.latest = False
+            db.session.commit()
+
+        return measure_version
 
 
 new_page_service = NewPageService()

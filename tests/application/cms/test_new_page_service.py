@@ -1,12 +1,16 @@
+from datetime import datetime
 import uuid
 
 import pytest
 
+from application.cms.forms import MeasurePageForm
 from application.cms.models import Topic, Subtopic, Measure, MeasureVersion
 from application.cms.new_page_service import NewPageService
-from application.cms.exceptions import PageNotFoundException, InvalidPageHierarchy
+from application.cms.page_service import PageService
+from application.cms.exceptions import PageNotFoundException, InvalidPageHierarchy, PageExistsException
 
 new_page_service = NewPageService()
+page_service = PageService()
 
 
 class TestNewPageService:
@@ -192,3 +196,118 @@ class TestNewPageService:
             measure_1_version_2_1,
             measure_2_version_2_0,
         ]
+
+    def test_create_page(self, db_session, stub_subtopic, stub_subtopic_page, test_app_editor):
+        created_page = new_page_service.create_measure(
+            subtopic=stub_subtopic,
+            measure_page_form=MeasurePageForm(title="I care", published_at=datetime.now().date()),
+            data_source_forms=[],
+            created_by_email=test_app_editor.email,
+        )
+
+        assert created_page.title == "I care"
+        assert created_page.created_by == test_app_editor.email
+
+    def test_create_page_creates_measure_entry(self, db_session, stub_subtopic, stub_subtopic_page, test_app_editor):
+        created_measure_version = new_page_service.create_measure(
+            subtopic=stub_subtopic,
+            measure_page_form=MeasurePageForm(
+                title="I care", published_at=datetime.now().date(), internal_reference="abc123"
+            ),
+            data_source_forms=[],
+            created_by_email=test_app_editor.email,
+        )
+
+        created_measure = Measure.query.get(created_measure_version.measure_id)
+        assert created_measure.slug == created_measure_version.slug
+        assert created_measure.position == len(stub_subtopic.measures) - 1
+        assert created_measure.reference == "abc123"
+        assert created_measure_version.slug == "i-care"
+        assert created_measure_version.internal_reference == "abc123"
+
+    def test_create_page_with_title_and_slug_already_exists_under_subtopic_raises_exception(
+        self, db_session, stub_subtopic, stub_subtopic_page, test_app_editor
+    ):
+        created_page = new_page_service.create_measure(
+            subtopic=stub_subtopic,
+            measure_page_form=MeasurePageForm(title="I care", published_at=datetime.now().date()),
+            data_source_forms=[],
+            created_by_email=test_app_editor.email,
+        )
+
+        with pytest.raises(PageExistsException):
+            new_page_service.create_measure(
+                subtopic=stub_subtopic,
+                measure_page_form=MeasurePageForm(title=created_page.title, published_at=created_page.published_at),
+                data_source_forms=[],
+                created_by_email=test_app_editor.email,
+            )
+
+    def test_create_page_trims_whitespace(self, db_session, stub_subtopic, stub_subtopic_page, test_app_editor):
+        page = new_page_service.create_measure(
+            subtopic=stub_subtopic,
+            measure_page_form=MeasurePageForm(
+                title="\n\t   I care\n", published_at=datetime.now().date(), methodology="\n\n\n\n\n\n"
+            ),
+            created_by_email=test_app_editor.email,
+            data_source_forms=[],
+        )
+
+        assert page.title == "I care"
+        assert page.methodology is None
+
+    def test_first_version_of_page_title_and_url_match(self, stub_subtopic, stub_subtopic_page, test_app_editor):
+        created_page = new_page_service.create_measure(
+            subtopic=stub_subtopic,
+            measure_page_form=MeasurePageForm(title="the title", published_at=datetime.now().date()),
+            created_by_email=test_app_editor.email,
+            data_source_forms=[],
+        )
+
+        assert "the title" == created_page.title
+        assert "the-title" == created_page.slug == created_page.slug
+
+        updated_page = page_service.update_page(
+            created_page,
+            data={"title": "an updated title", "db_version_id": created_page.db_version_id},
+            last_updated_by=test_app_editor.email,
+            data_source_forms=[],
+        )
+
+        assert "an updated title" == updated_page.title
+        assert "an-updated-title" == updated_page.slug
+
+    def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_changing(
+        self, stub_subtopic, stub_subtopic_page, test_app_editor
+    ):
+        created_page = new_page_service.create_measure(
+            subtopic=stub_subtopic,
+            measure_page_form=MeasurePageForm(title="the title", published_at=datetime.now().date()),
+            created_by_email=test_app_editor.email,
+            data_source_forms=[],
+        )
+
+        assert "the title" == created_page.title
+        assert "the-title" == created_page.slug
+
+        page_service.update_page(
+            created_page,
+            data={"title": "the title", "status": "APPROVED", "db_version_id": created_page.db_version_id},
+            last_updated_by=test_app_editor.email,
+            data_source_forms=[],
+        )
+
+        copied_page = page_service.create_copy(created_page.guid, created_page.version, "minor", test_app_editor.email)
+
+        assert "the title" == copied_page.title
+        assert "the-title" == copied_page.slug
+
+        page_service.update_page(
+            copied_page,
+            data={"title": "the updated title", "db_version_id": copied_page.db_version_id},
+            last_updated_by=test_app_editor.email,
+            data_source_forms=[],
+        )
+
+        assert "the updated title" == copied_page.title
+        assert "the-title" == copied_page.slug

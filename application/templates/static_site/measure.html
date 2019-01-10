@@ -4,7 +4,7 @@
 {% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
-    {"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_page.parent.parent.title},
+    {"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_page.measure.subtopic.topic.title},
   ]
   if not preview else
   none

@@ -173,6 +173,7 @@ class TestRDUStringField:
         string_field_invalid = RDUStringField(
             label="string_field", hint="string_field hint", validators=[DataRequired(message="failed validation")]
         )
+        string_field_strip = RDUStringField(label="string_field_strip", strip_whitespace=True)
 
     def setup(self):
         self.form = self.FormForTest()
@@ -218,6 +219,22 @@ class TestRDUStringField:
         self.form.populate_obj(obj)
 
         assert obj.string_field == "some data"
+
+    def test_populates_obj_with_none_if_value_is_empty_string(self):
+        formdata = ImmutableMultiDict({"string_field": ""})
+        self.form.process(formdata=formdata)
+        obj = mock.Mock()
+
+        self.form.populate_obj(obj)
+
+        assert obj.string_field is None
+
+    def test_can_strip_whitespace(self):
+        formdata = ImmutableMultiDict({"string_field": "   blah   ", "string_field_strip": "   blah   "})
+        self.form.process(formdata=formdata)
+
+        assert self.form.string_field.data == "   blah   "
+        assert self.form.string_field_strip.data == "blah"
 
 
 class TestRDUURLField:
