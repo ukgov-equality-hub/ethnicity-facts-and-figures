@@ -40,7 +40,7 @@
                 <h2 class="heading-medium no-top-border builder-section-number">Data</h2>
 
                 <div class="form-hint">
-                    <p>Copy and paste your data here. You must:</p>
+                    <p>Copy and paste your data here. You should:</p>
                     <ul>
                         <li>only select the columns and rows you need for this chart or table</li>
                         <li>not paste any empty rows</li>
@@ -53,7 +53,7 @@
                   <form onsubmit="return false;">
                           <textarea class="form-control" id="data_text_area" rows="10"
                                     {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
-                      <button type="button" class="btn button btn-primary" id="confirm-data">OK</button>
+                      <button type="button" class="btn button btn-primary" id="confirm-data">Next</button>
                   </form>
                 </div>
                 <a id="cancel-edit-data" href="#">Cancel</a>
@@ -94,48 +94,6 @@
                             </div>
                         </div>
                     </form>
-                </div>
-
-
-                <div id="column_settings_section" class="chart-builder-section">
-                  <h2 class="heading-medium builder-section-number">Columns</h2>
-                  <form>
-                      <div class="form-group">
-                          <label for="table_column_1">First column</label>
-                          <select id="table_column_1" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                              <option value="none">[None]</option>
-                          </select>
-                          <label for="table_column_1_name">Heading</label>
-                          <input id="table_column_1_name" class="column_option_picker_name margin-top-small">
-
-                          <label for="table_column_2">Second column</label>
-                          <select id="table_column_2" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                              <option value="none">[None]</option>
-                          </select>
-                          <label for="table_column_2_name">Heading</label>
-                          <input id="table_column_2_name" class="column_option_picker_name margin-top-small">
-
-                          <label for="table_column_3">Third column</label>
-                          <select id="table_column_3" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                              <option value="none">[None]</option>
-                          </select>
-                          <label for="table_column_3_name">Heading</label>
-                          <input id="table_column_3_name" class="column_option_picker_name margin-top-small">
-                          <label for="table_column_4">Fourth column</label>
-                          <select id="table_column_4" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                              <option value="none">[None]</option>
-                          </select>
-                          <label for="table_column_4_name">Heading</label>
-                          <input id="table_column_4_name" class="column_option_picker_name margin-top-small">
-
-                          <label for="table_column_5">Fifth column</label>
-                          <select id="table_column_5" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                              <option value="none">[None]</option>
-                          </select>
-                          <label for="table_column_5_name">Heading</label>
-                          <input id="table_column_5_name" class="column_option_picker_name margin-top-small">
-                      </div>
-                  </form>
                 </div>
 
                 {#
@@ -204,13 +162,55 @@
                     </form>
                 </div>
 
-            <h2 class="heading-medium builder-section-number">Options</h2>
+                <h2 class="heading-medium builder-section-number">Options</h2>
                 <form onsubmit="return false;">
                     <div class="form-group">
-                        <label for="index_column_name">First column title</label>
+                        <label for="index_column_name">Row title</label>
                         <input id="index_column_name" class="margin-top-small">
                     </div>
                 </form>
+
+
+                <div id="column_settings_section" class="chart-builder-section">
+                  <h2 class="heading-medium builder-section-number">Columns</h2>
+                  <form>
+                      <div class="form-group">
+                          <label for="table_column_1">First column</label>
+                          <select id="table_column_1" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                              <option value="none">[None]</option>
+                          </select>
+                          <label for="table_column_1_name">Heading</label>
+                          <input id="table_column_1_name" class="column_option_picker_name margin-top-small">
+
+                          <label for="table_column_2">Second column</label>
+                          <select id="table_column_2" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                              <option value="none">[None]</option>
+                          </select>
+                          <label for="table_column_2_name">Heading</label>
+                          <input id="table_column_2_name" class="column_option_picker_name margin-top-small">
+
+                          <label for="table_column_3">Third column</label>
+                          <select id="table_column_3" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                              <option value="none">[None]</option>
+                          </select>
+                          <label for="table_column_3_name">Heading</label>
+                          <input id="table_column_3_name" class="column_option_picker_name margin-top-small">
+                          <label for="table_column_4">Fourth column</label>
+                          <select id="table_column_4" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                              <option value="none">[None]</option>
+                          </select>
+                          <label for="table_column_4_name">Heading</label>
+                          <input id="table_column_4_name" class="column_option_picker_name margin-top-small">
+
+                          <label for="table_column_5">Fifth column</label>
+                          <select id="table_column_5" class="form-control column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
+                              <option value="none">[None]</option>
+                          </select>
+                          <label for="table_column_5_name">Heading</label>
+                          <input id="table_column_5_name" class="column_option_picker_name margin-top-small">
+                      </div>
+                  </form>
+                </div>
             </div>
 
             <div class="column-two-thirds">
