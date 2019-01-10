@@ -11,8 +11,8 @@
   "license": "MIT",
   "repository": "racedisparityaudit/rd_cms",
   "engines": {
-    "node": "~10.4.0",
-    "npm": "~6.1.0"
+    "node": "~10.15.0",
+    "npm": "~6.5.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
