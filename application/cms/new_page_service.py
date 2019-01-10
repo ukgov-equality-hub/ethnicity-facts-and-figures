@@ -1,4 +1,5 @@
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy import func
 
 from application.cms.exceptions import (
     PageNotFoundException,
@@ -92,6 +93,24 @@ class NewPageService(Service):
             return_items.append(upload_object)
 
         return (item for item in return_items)
+
+    def get_latest_version_of_all_measures(self, include_drafts=False):
+        measure_query = MeasureVersion.query
+
+        cte = (
+            MeasureVersion.query.with_entities(
+                MeasureVersion.measure_id, func.max(MeasureVersion.version).label("max_version")
+            )
+            .filter(MeasureVersion.published == (not include_drafts))
+            .group_by(MeasureVersion.measure_id)
+            .cte("max_measure_version")
+        )
+
+        measure_query = measure_query.filter(
+            MeasureVersion.measure_id == cte.c.measure_id, MeasureVersion.version == cte.c.max_version
+        )
+
+        return measure_query.order_by(MeasureVersion.title).all()
 
 
 new_page_service = NewPageService()

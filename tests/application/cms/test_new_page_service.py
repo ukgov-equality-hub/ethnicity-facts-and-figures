@@ -1,5 +1,8 @@
+import uuid
+
 import pytest
 
+from application.cms.models import Topic, Subtopic, Measure, MeasureVersion
 from application.cms.new_page_service import NewPageService
 from application.cms.exceptions import PageNotFoundException, InvalidPageHierarchy
 
@@ -116,3 +119,76 @@ class TestNewPageService:
             new_page_service.get_measure_page_hierarchy(
                 stub_topic.slug, stub_subtopic.slug, stub_measure_1.slug, stub_measure_version.version
             )
+
+    def test_get_latest_version_of_all_measures(self, db_session):
+        topic = Topic(slug="topic-1", title="Topic 1")
+        db_session.session.add(topic)
+        db_session.session.flush()
+
+        subtopic = Subtopic(slug="subtopic-1", title="Subtopic 1", topic_id=topic.id)
+        db_session.session.add(subtopic)
+        db_session.session.flush()
+
+        measure_1 = Measure(slug="measure-1")
+        measure_1.subtopics = [subtopic]
+        db_session.session.add(measure_1)
+        db_session.session.flush()
+
+        measure_2 = Measure(slug="measure-2")
+        measure_2.subtopics = [subtopic]
+        db_session.session.add(measure_2)
+        db_session.session.flush()
+
+        measure_1_version_1_0 = MeasureVersion(
+            guid=str(uuid.uuid4()),
+            version="1.0",
+            title="Measure 1 version 1.0",
+            published=True,
+            measure_id=measure_1.id,
+        )
+        measure_1_version_2_0 = MeasureVersion(
+            guid=str(uuid.uuid4()),
+            version="2.0",
+            title="Measure 1 version 2.0",
+            published=True,
+            measure_id=measure_1.id,
+        )
+        measure_1_version_2_1 = MeasureVersion(
+            guid=str(uuid.uuid4()),
+            version="2.1",
+            title="Measure 1 version 2.1",
+            published=False,
+            measure_id=measure_1.id,
+        )
+
+        measure_2_version_1_0 = MeasureVersion(
+            guid=str(uuid.uuid4()),
+            version="1.0",
+            title="Measure 2 version 1.0",
+            published=True,
+            measure_id=measure_2.id,
+        )
+        measure_2_version_2_0 = MeasureVersion(
+            guid=str(uuid.uuid4()),
+            version="2.0",
+            title="Measure 2 version 2.0",
+            published=False,
+            measure_id=measure_2.id,
+        )
+
+        db_session.session.add(measure_1_version_1_0)
+        db_session.session.add(measure_1_version_2_0)
+        db_session.session.add(measure_1_version_2_1)
+        db_session.session.add(measure_2_version_1_0)
+        db_session.session.add(measure_2_version_2_0)
+        db_session.session.commit()
+
+        assert new_page_service.get_latest_version_of_all_measures(include_drafts=False) == [
+            measure_1_version_2_0,
+            measure_2_version_1_0,
+        ]
+
+        assert new_page_service.get_latest_version_of_all_measures(include_drafts=True) == [
+            measure_1_version_2_1,
+            measure_2_version_2_0,
+        ]
