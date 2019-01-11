@@ -1102,26 +1102,14 @@ def set_dimension_order(topic, subtopic, measure):
 @user_has_access
 def list_measure_page_versions(topic_slug, subtopic_slug, measure_slug):
     try:
-        topic_page = page_service.get_page_by_slug_and_type(topic_slug, "topic")
-        subtopic_page = page_service.get_page_by_slug_and_type(subtopic_slug, "subtopic")
-
+        topic = new_page_service.get_topic(topic_slug)
+        subtopic = new_page_service.get_subtopic(topic_slug, subtopic_slug)
+        measure = new_page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
     except PageNotFoundException:
-        current_app.logger.exception("Page id: {} not found".format(measure_slug))
+        current_app.logger.exception(f"Measure '{topic_slug}/{subtopic_slug}/{measure_slug}' not found")
         abort(404)
 
-    measures = page_service.get_measure_page_versions(subtopic_page.guid, measure_slug)
-    measures.sort(reverse=True)
-    if not measures:
-        return redirect(url_for("static_site.topic", topic_slug=topic_slug))
-
-    measure_title = next(measure for measure in measures if measure.latest).title
-    return render_template(
-        "cms/measure_page_versions.html",
-        topic=topic_page,
-        subtopic=subtopic_page,
-        measures=measures,
-        measure_title=measure_title,
-    )
+    return render_template("cms/measure_page_versions.html", topic=topic, subtopic=subtopic, measure=measure)
 
 
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/delete", methods=["GET"])

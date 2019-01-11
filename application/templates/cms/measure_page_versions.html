@@ -10,7 +10,7 @@
 %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
-{% block pageTitle %}Version history: {{ measure_title }}{% endblock %}
+{% block pageTitle %}Version history: {{ measure.title }}{% endblock %}
 
 {% block content %}
     <div class='grid-row'>
@@ -19,7 +19,7 @@
               Version history
               <span class="heading-secondary">
                 <span class="visually-hidden">of </span>
-                {{ measure_title }}
+                {{ measure.title }}
               </span>
             </h1>
         </div>
@@ -47,7 +47,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for measure in measures %}
+                {% for measure in measure.versions %}
                     <tr>
                         <td>
                           <a class="measure-link" href="{{ url_for('static_site.measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">

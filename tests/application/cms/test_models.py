@@ -4,7 +4,7 @@ from flask import url_for
 
 from application.cms.exceptions import RejectionImpossible
 from application.cms.models import Dimension, DimensionClassification, MeasureVersion, UKCountry
-from tests.utils import create_measure_page_versions
+from tests.utils import create_measure_versions
 
 
 class TestDimensionModel:
@@ -683,17 +683,11 @@ class TestMeasureVersion:
             (["2.0", "4.1", "3.0", "8.2", "1.0"], ["8.2", "4.1", "3.0", "2.0", "1.0"]),
         ),
     )
-    def test_get_measure_page_versions_returns_pages_ordered_by_version(
-        self, db_session, page_service, stub_measure_page, page_versions, expected_order
+    def test_measure_versions_returns_pages_ordered_by_version(
+        self, db_session, stub_measure_page, stub_measure_1, page_versions, expected_order
     ):
-        create_measure_page_versions(db_session, stub_measure_page, page_versions)
-
-        assert [
-            page.version
-            for page in page_service.get_measure_page_versions(
-                parent_guid=stub_measure_page.parent.guid, measure_slug="test-measure-page-2"
-            )
-        ] == expected_order
+        create_measure_versions(db_session, stub_measure_page, page_versions, parent_measure=stub_measure_1)
+        assert [mv.version for mv in stub_measure_1.versions] == expected_order
 
     @pytest.mark.parametrize(
         "page_versions, expected_version",
@@ -706,7 +700,7 @@ class TestMeasureVersion:
     def test_get_latest_version_returns_latest_measure_page(
         self, db_session, page_service, stub_measure_page, page_versions, expected_version
     ):
-        create_measure_page_versions(db_session, stub_measure_page, page_versions)
+        create_measure_versions(db_session, stub_measure_page, page_versions)
 
         assert (
             page_service.get_latest_version(
@@ -748,7 +742,7 @@ class TestMeasureVersion:
         expected_version_order,
         expected_title_order,
     ):
-        create_measure_page_versions(db_session, stub_measure_page, page_versions, page_titles)
+        create_measure_versions(db_session, stub_measure_page, page_versions, page_titles)
         db_session.session.delete(stub_measure_page)
         db_session.session.commit()
 
@@ -768,7 +762,7 @@ class TestMeasureVersion:
     def test_get_pages_by_slug_returns_pages_ordered_by_version(
         self, db_session, page_service, stub_measure_page, page_versions, expected_order
     ):
-        create_measure_page_versions(db_session, stub_measure_page, page_versions)
+        create_measure_versions(db_session, stub_measure_page, page_versions)
 
         pages = page_service.get_pages_by_slug(stub_measure_page.parent.guid, "test-measure-page-2")
         assert [page.version for page in pages] == expected_order

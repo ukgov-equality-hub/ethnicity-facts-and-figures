@@ -317,17 +317,3 @@ def test_create_copy_of_page(stub_measure_page, mock_rdu_user):
     assert first_copy_guid != second_copy.guid
     assert second_copy.title == f"COPY OF {first_copy_title}"
     assert second_copy.slug == f"{first_copy_slug}-copy"
-
-
-def test_get_page_by_slug_and_type_only_allows_certain_types(stub_topic_page, stub_subtopic_page, stub_measure_page):
-    with pytest.raises(NotImplementedError):
-        page_service.get_page_by_slug_and_type("", "homepage")
-
-    with pytest.raises(NotImplementedError):
-        page_service.get_page_by_slug_and_type("test-measure-page", "measure")
-
-    page1 = page_service.get_page_by_slug_and_type("test", "topic")
-    assert page1 == stub_topic_page
-
-    page2 = page_service.get_page_by_slug_and_type("example", "subtopic")
-    assert page2 == stub_subtopic_page
