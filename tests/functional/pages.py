@@ -414,7 +414,6 @@ class MeasureEditPage(BasePage):
         element.send_keys(value)
 
     def set_auto_complete_field(self, locator, value):
-        body = self.driver.find_element_by_tag_name("body")
         element = self.wait_for_element(locator)
 
         element.send_keys(Keys.CONTROL + "a")
@@ -609,7 +608,7 @@ class ChartBuilderPage(BasePage):
         return (
             self.url_contains(self.dimension_url[0:-5])
             and self.url_contains("create-chart")
-            and self.source_contains("Create a chart")
+            and (self.source_contains("Create a chart") or self.source_contains("Format and view chart"))
         )
 
     def paste_data(self, data):
@@ -789,7 +788,7 @@ class TableBuilderPage(BasePage):
         self.driver.get(url)
 
     def is_current(self):
-        return self.source_contains("Create a table")
+        return self.source_contains("Create a table") or self.source_contains("Format and view table")
 
     def paste_data(self, data):
         lines = ["|".join(line) for line in data]

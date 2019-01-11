@@ -9,7 +9,7 @@
                        version='latest') }}">{{ page.title }}</a>
         </td>
         <td>
-            <a href="{{ url_for('admin.remove_shared_page_from_user', user_id=user.id, page_id=page.guid) }}">Remove</a>
+            <a href="{{ url_for('admin.remove_shared_page_from_user', user_id=user.id, measure_id=page.measure_id) }}">Remove</a>
         </td>
     </tr>
     {% endfor %}

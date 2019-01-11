@@ -7,7 +7,7 @@ from application.cms.exceptions import ClassificationNotFoundException
 
 from application.cms.models import Classification, Ethnicity, DimensionClassification
 
-from application.utils import setup_module_logging, get_bool
+from application.utils import setup_module_logging
 
 logger = logging.Logger(__name__)
 
@@ -39,7 +39,7 @@ class ClassificationService:
 
         try:
             classification = self.get_classification_by_id(id_str)
-        except ClassificationNotFoundException as e:
+        except ClassificationNotFoundException:
             classification = Classification(
                 id=id_str, title=title, subfamily=subfamily, long_title=classification_long_title, position=position
             )
@@ -76,7 +76,7 @@ class ClassificationService:
     def get_classification_by_id(classification_id):
         try:
             return Classification.query.filter_by(id=classification_id).one()
-        except NoResultFound as e:
+        except NoResultFound:
             raise ClassificationNotFoundException("Classification with id %s not found" % classification_id)
 
     @staticmethod

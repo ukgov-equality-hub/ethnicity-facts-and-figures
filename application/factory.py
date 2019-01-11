@@ -103,7 +103,7 @@ def create_app(config_object):
     Security(app, user_datastore)
 
     if os.environ.get("SENTRY_DSN") is not None:
-        sentry = Sentry(app, dsn=os.environ["SENTRY_DSN"])
+        Sentry(app, dsn=os.environ["SENTRY_DSN"])
 
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(static_site_blueprint)

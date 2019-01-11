@@ -9,18 +9,16 @@ from tests.functional.data_sets import (
     granular_with_parent_data,
 )
 from tests.functional.pages import (
-    LogInPage,
     HomePage,
     TopicPage,
     MeasureEditPage,
-    MeasureCreatePage,
     DimensionAddPage,
     DimensionEditPage,
     ChartBuilderPage,
     MinimalRandomMeasure,
     MinimalRandomDimension,
 )
-from tests.functional.utils import spaceless, go_to_page, assert_page_contains, create_measure, login, shuffle_table
+from tests.functional.utils import spaceless, create_measure, login, shuffle_table
 
 pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
 
@@ -36,7 +34,7 @@ def test_can_build_charts(
 
     run_bar_chart_scenarios(chart_builder_page, driver)
 
-    run_line_graph_scenarios(chart_builder_page, driver)
+    run_line_chart_scenarios(chart_builder_page, driver)
 
     run_component_charts_scenarios(chart_builder_page, driver)
 
@@ -44,7 +42,7 @@ def test_can_build_charts(
 
     run_panel_bar_charts_scenarios(chart_builder_page, driver)
 
-    run_panel_line_graph_scenarios(chart_builder_page, driver)
+    run_panel_line_chart_scenarios(chart_builder_page, driver)
 
     run_parent_child_bar_chart_scenarios(chart_builder_page, driver)
 
@@ -406,13 +404,13 @@ def run_component_charts_scenarios(chart_builder_page, driver):
     assert ethnicities == ["Asian", "Black", "Mixed", "White", "Other"]
 
 
-def run_line_graph_scenarios(chart_builder_page, driver):
+def run_line_chart_scenarios(chart_builder_page, driver):
     """
 
-    CHART BUILDER CAN BUILD LINE GRAPHS
+    CHART BUILDER CAN BUILD LINE CHARTS
     """
     """
-    GIVEN some basic data appropriate for building line graphs
+    GIVEN some basic data appropriate for building line charts
     """
     chart_builder_page.refresh()
     inject_data(driver, ethnicity_by_time_data)
@@ -420,12 +418,12 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     """
     WHEN we add basic line chart settings
     """
-    chart_builder_page.select_chart_type("Line graph")
+    chart_builder_page.select_chart_type("Line chart")
     chart_builder_page.wait_for_seconds(1)
     chart_builder_page.select_line_x_axis_column("Time")
     chart_builder_page.wait_for_seconds(1)
     """
-    THEN a line graph exists with times on the x-axis and ethnicity names as the series
+    THEN a line chart exists with times on the x-axis and ethnicity names as the series
     """
     times = chart_builder_page.chart_x_axis()
     assert times == ["1", "2", "3"]
@@ -433,10 +431,10 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     assert ethnicities == ["Asian", "Black", "Mixed", "White", "Other"]
     """
 
-    CHART BUILDER ORDERS LINE GRAPH SERIES according to classifications
+    CHART BUILDER ORDERS LINE CHART SERIES according to classifications
     """
     """
-    GIVEN some shuffled up data appropriate for building line graphs
+    GIVEN some shuffled up data appropriate for building line charts
     """
     chart_builder_page.refresh()
     inject_data(driver, shuffle_table(ethnicity_by_time_data))
@@ -444,7 +442,7 @@ def run_line_graph_scenarios(chart_builder_page, driver):
     """
     WHEN we add basic line chart settings
     """
-    chart_builder_page.select_chart_type("Line graph")
+    chart_builder_page.select_chart_type("Line chart")
     chart_builder_page.wait_for_seconds(1)
     chart_builder_page.select_line_x_axis_column("Time")
     chart_builder_page.wait_for_seconds(1)
@@ -508,13 +506,13 @@ def run_panel_bar_charts_scenarios(chart_builder_page, driver):
     assert genders == {"M", "F"}
 
 
-def run_panel_line_graph_scenarios(chart_builder_page, driver):
+def run_panel_line_chart_scenarios(chart_builder_page, driver):
     """
-    CHART BUILDER CAN BUILD LINE GRAPHS
+    CHART BUILDER CAN BUILD LINE CHARTS
     """
 
     """
-    GIVEN some basic data appropriate for building line graphs
+    GIVEN some basic data appropriate for building line charts
     """
     chart_builder_page.refresh()
     inject_data(driver, ethnicity_by_time_data)
@@ -529,7 +527,7 @@ def run_panel_line_graph_scenarios(chart_builder_page, driver):
     chart_builder_page.select_ethnicity_settings("ONS 2011 - 5+1")
     chart_builder_page.wait_for_seconds(2)
     """
-    THEN a line graph exists with times on the x-axis and ethnicity names as the series
+    THEN a line chart exists with times on the x-axis and ethnicity names as the series
 
     note: highcharts optimises x-axes and particularly on panel line charts - we aren't going to check up on these
     """

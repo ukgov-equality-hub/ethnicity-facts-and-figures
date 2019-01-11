@@ -4,12 +4,7 @@ from datetime import date, timedelta
 
 from flask import url_for
 from slugify import slugify
-from sqlalchemy import not_
 from trello.exceptions import TokenError
-
-from itertools import groupby
-
-from operator import itemgetter
 
 from application.cms.classification_service import classification_service
 from application.cms.models import MeasureVersion, LowestLevelOfGeography

@@ -7,7 +7,7 @@ from application import db
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS
-from application.cms.models import MeasureVersion, user_page
+from application.cms.models import MeasureVersion, user_measure
 from application.utils import create_and_send_activation_email, user_can
 
 
@@ -65,11 +65,13 @@ def share_page_with_user(user_id):
     return redirect(url_for("admin.user_by_id", user_id=user_id, _anchor="departmental-sharing"))
 
 
-@admin_blueprint.route("/users/<int:user_id>/remove-share/<page_id>")
+@admin_blueprint.route("/users/<int:user_id>/remove-share/<measure_id>")
 @login_required
 @user_can(MANAGE_USERS)
-def remove_shared_page_from_user(user_id, page_id):
-    db.session.execute(user_page.delete().where(user_page.c.user_id == user_id).where(user_page.c.page_id == page_id))
+def remove_shared_page_from_user(user_id, measure_id):
+    db.session.execute(
+        user_measure.delete().where(user_measure.c.user_id == user_id).where(user_measure.c.measure_id == measure_id)
+    )
     db.session.commit()
     return redirect(url_for("admin.user_by_id", user_id=user_id, _anchor="departmental-sharing"))
 
@@ -145,7 +147,9 @@ def delete_user(user_id):
         user = User.query.get(user_id)
         for page in user.pages:
             db.session.execute(
-                user_page.delete().where(user_page.c.user_id == user.id).where(user_page.c.page_id == page.guid)
+                user_measure.delete()
+                .where(user_measure.c.user_id == user.id)
+                .where(user_measure.c.measure_id == page.measure_id)
             )
             db.session.commit()
         db.session.delete(user)

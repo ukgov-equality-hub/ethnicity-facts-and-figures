@@ -14,11 +14,11 @@ It is a Python app, based on the [Flask framework](http://flask.pocoo.org/).
 
 ## Licence
 
-Unless stated otherwise, the codebase is released under the MIT License. 
+Unless stated otherwise, the codebase is released under the MIT License.
 
-One notable exception to this is that charts are rendered using the 
-[Highcharts library](https://www.highcharts.com/), which has its 
-[own licensing](https://github.com/highcharts/highcharts/blob/master/license.txt). 
+One notable exception to this is that charts are rendered using the
+[Highcharts library](https://www.highcharts.com/), which has its
+[own licensing](https://github.com/highcharts/highcharts/blob/master/license.txt).
 
 ## Developer setup
 
@@ -59,11 +59,6 @@ Install the Python server requirements:
 pip install -r requirements-test.txt
 ```
 
-Install the git hooks for enforcing formatting.
-```
-./scripts/install_hooks.sh
-```
-
 Install the Node.js requirements (for front end assets):
 ```
 npm install
@@ -72,6 +67,11 @@ npm install
 Then generate the assets using:
 ```
 gulp make
+```
+
+Then setup [pre-commit hooks](https://pre-commit.com/) to ensure a basic level of code quality:
+```
+pre-commit install --install-hooks
 ```
 
 
@@ -250,7 +250,7 @@ The static site build process can be run manually via the following script:
 ./manage.py force_build_static_site
 ```
 
-In order to initiate builds automatically in response to user actions in the CMS (eg publishing a new page), a `build` 
+In order to initiate builds automatically in response to user actions in the CMS (eg publishing a new page), a `build`
 table acts as a basic job queue. New rows are added to this table whenever a build is requested.
 
 To actually run these requested builds, the following script needs to be run at regular intervals:
@@ -259,15 +259,15 @@ To actually run these requested builds, the following script needs to be run at 
 ./manage.py build_static_site
 ```
 
-This will check for any requested builds in the `build` table, and if there is one, setting that row’s `status` to 
-`STARTED`. When the job is finished, the status will be updated to `DONE`, and a timestamp set in the `succeeded_at` 
+This will check for any requested builds in the `build` table, and if there is one, setting that row’s `status` to
+`STARTED`. When the job is finished, the status will be updated to `DONE`, and a timestamp set in the `succeeded_at`
 column. If the build fails for any reason, the `status` will set to `FAILED`, a timestamp set in the `failed_at` column,
  and a full stack trace saved to the `failure_reason` column.
 
-If there is more than one requested build in the the table, then only the most-recently added one will be run, and the 
+If there is more than one requested build in the the table, then only the most-recently added one will be run, and the
 status of the other rows set to `SUPERSEDED`.
 
-As well as builds being requested whenever a page is published, they can also be requested manually via the following 
+As well as builds being requested whenever a page is published, they can also be requested manually via the following
 script. This can also be run as a post-deploy step.
 
 ```bash
@@ -280,13 +280,13 @@ The build process consists of the following steps:
 
 #### 1. The website is saved to the local filesystem
 
-The website, include all HTML files, images, CSS, javascript and CSV files, is saved as static files within a folder 
-with a name based on the current timestamp. This folder will be generated at the location specified by the 
+The website, include all HTML files, images, CSS, javascript and CSV files, is saved as static files within a folder
+with a name based on the current timestamp. This folder will be generated at the location specified by the
 `STATIC_BUILD_DIR` environment variable (note: this must be a full filesystem path, eg `/app/site`).
 
 #### 2. The website is pushed to a remote Git repo (optional for local builds)
 
-The static site will be pushed to Github once the local build completes if the environment variable `PUSH_SITE` 
+The static site will be pushed to Github once the local build completes if the environment variable `PUSH_SITE`
 is set to `True`.
 
 In production this step acts as a kind of backup, and provides a full history of every change to the public website.
@@ -300,10 +300,10 @@ The following environment variables will need to be set for this step to work:
 
 #### 3. The website is pushed to a remote Amazon S3 bucket (optional for local builds)
 
-The static site will be pushed to S3 once the local build completes if the environment variable `DEPLOY_SITE` 
+The static site will be pushed to S3 once the local build completes if the environment variable `DEPLOY_SITE`
 is set to `True`.
 
-This step enables the static files to be served by S3 as an actual website (either directly via S3 static hosting), or 
+This step enables the static files to be served by S3 as an actual website (either directly via S3 static hosting), or
 via Cloudfront using S3 as a source.
 
 The following environment variables will need to be set for this step to work:

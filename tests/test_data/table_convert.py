@@ -176,7 +176,10 @@ def v1_settings_ethnicity_as_rows():
                     "sort_values": [86, 87, 90, 91, 92, 90],
                 },
             ],
-            "header": "Percentage of pupils going into sustained education, employment or training after key stage 4, by ethnicity over time",
+            "header": (
+                "Percentage of pupils going into sustained education, employment or training after key stage 4, "
+                "by ethnicity over time",
+            ),
             "subtitle": "",
             "footer": "",
             "groups": [
@@ -3981,7 +3984,10 @@ def v1_settings_ethnicity_as_rows():
                 ],
             ],
             "tableOptions": {
-                "table_title": "Percentage of pupils going into sustained education, employment or training after key stage 4, by ethnicity over time",
+                "table_title": (
+                    "Percentage of pupils going into sustained education, employment or training after key stage 4, "
+                    "by ethnicity over time",
+                ),
                 "table_subtitle": "",
                 "table_footer": "",
                 "table_category_column": "Standard Ethnicity",

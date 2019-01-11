@@ -61,14 +61,13 @@ function getIsSimpleData(data) {
     return values.length === data.length - 1
 }
 
-$(document).ready(function () {
+document.addEventListener('DOMContentLoaded', function() {
 
     // add events to buttons
-    $('#preview').click(preview);
-    $('#confirm-data').click(setTableData);
-    $('#edit-data').click(editTableData);
-    $('#cancel-edit-data').click(cancelEditData);
-    $('#save').click(saveTable);
+    document.getElementById('confirm-data').addEventListener('click', setTableData)
+    document.getElementById('edit-data').addEventListener('click', editTableData)
+    document.getElementById('cancel-edit-data').addEventListener('click', cancelEditData)
+    document.getElementById('save').addEventListener('click', saveTable)
 
     /*
         Events from the DATA ENTRY PANEL
@@ -81,22 +80,27 @@ $(document).ready(function () {
             }
             preview()
         });
-        $('#data-panel').hide();
-        $('#edit-panel').show();
+
+        document.getElementById('data-panel').classList.add('hidden')
+        document.getElementById('edit-panel').classList.remove('hidden')
+        document.getElementById('builder-title').innerHTML = 'Format and view table';
     }
 
     function editTableData(evt) {
-        current_data = $('#data_text_area').val();
+        current_data = document.getElementById('data_text_area').value
         current_settings = getTablePageSettings();
-        $('#data-panel').show();
-        $('#data_text_area').focus();
-        $('#edit-panel').hide();
+
+        document.getElementById('data-panel').classList.remove('hidden')
+        document.getElementById('data_text_area').focus()
+        document.getElementById('edit-panel').classList.add('hidden')
+        document.getElementById('builder-title').innerHTML = 'Create a table';
     }
 
     function cancelEditData(evt) {
-        $('#data_text_area').val(current_data);
-        $('#data-panel').hide();
-        $('#edit-panel').show();
+        document.getElementById('data_text_area').value = current_data;
+        document.getElementById('data-panel').classList.add('hidden')
+        document.getElementById('edit-panel').classList.remove('hidden')
+        document.getElementById('builder-title').innerHTML = 'Format and view table';
     }
 
 
@@ -107,14 +111,14 @@ $(document).ready(function () {
     function handleNewData(on_success) {
 
         // get the data
-        var tabbedData = $("#data_text_area").val();
+        var tabbedData = document.getElementById('data_text_area').value
 
         // set the DATA DISPLAY content
         table_data = textToData(tabbedData);
         if (table_data.length > 0) {
             message = table_data.length - 1 + ' rows by ' + table_data[0].length + ' columns'
         }
-        $('#data-description').html(message);
+        document.getElementById('data-description').innerHTML = message;
 
         // update options in drop-downs
         var headers = table_data[0];
@@ -136,14 +140,12 @@ $(document).ready(function () {
                 populateEthnicityPresets(presets);
 
                 // show the presets (step 2) and table type (step 3) section
-                $('#ethnicity_settings_section').show();
+                document.getElementById('ethnicity_settings_section').classList.remove('hidden')
 
                 if (getIsSimpleData(table_data)) {
-                    $('#simple_table_options').show();
-                    $('#complex_table_options').hide();
+                    document.getElementById('complex_table_options').classList.add('hidden')
                 } else {
-                    $('#simple_table_options').hide();
-                    $('#complex_table_options').show();
+                    document.getElementById('complex_table_options').classList.remove('hidden')
                 }
 
                 // any further processing
@@ -193,9 +195,9 @@ $(document).ready(function () {
 
     function showHideCustomEthnicityPanel() {
         if ($('#ethnicity_settings').val() === 'custom') {
-            $('#custom_classification__panel').show()
+            document.getElementById('custom_classification__panel').classList.remove('hidden')
         } else {
-            $('#custom_classification__panel').hide()
+            document.getElementById('custom_classification__panel').classList.add('hidden')
         }
     }
 
@@ -261,32 +263,35 @@ $(document).ready(function () {
     }
 
     function displayTips(tips) {
-        $('#tips_container').show();
-        $('#preview_container').hide();
+        document.getElementById('tips_container').classList.remove('hidden')
+        document.getElementById('preview_container').classList.add('hidden')
 
-        $("#notes_container").hide();
-        $("#errors_container").hide();
+        document.getElementById('notes_container').classList.add('hidden')
+        document.getElementById('errors_container').classList.add('hidden')
 
-        $("#tip-list").children().hide();
+        var tip_list = document.getElementById('tip-list')
+        for (var i = 0; i < tip_list.children.length; i++) {
+            tip_list.children[i].classList.add('hidden')
+        }
 
         if (tipsOfType(tips, MISSING_FIELD_ERROR).length > 0) {
-            $("#notes_container").show();
+            document.getElementById('notes_container').classList.remove('hidden')
         }
         if (tipsOfType(tips, ETHNICITY_ERROR).length > 0) {
-            $("#errors_container").show();
-            $('#tip__ethnicity-column').show();
+            document.getElementById('errors_container').classList.remove('hidden')
+            document.getElementById('tip__ethnicity-column').classList.remove('hidden')
         }
         if (tipsOfType(tips, RECTANGLE_ERROR).length > 0) {
-            $("#errors_container").show();
-            $('#tip__rectangular-data').show();
+            document.getElementById('errors_container').classList.remove('hidden')
+            document.getElementById('tip__rectangular-data').classList.remove('hidden')
         }
         if (tipsOfType(tips, DATA_ERROR_DUPLICATION).length > 0) {
-            $("#errors_container").show();
-            $('#tip__duplicate-data').show();
+            document.getElementById('errors_container').classList.remove('hidden')
+            document.getElementById('tip__duplicate-data').classList.remove('hidden')
         }
         if (tipsOfType(tips, DATA_ERROR_MISSING_DATA).length > 0) {
-            $("#errors_container").show();
-            $('#tip__missing-data').show();
+            document.getElementById('errors_container').classList.remove('hidden')
+            document.getElementById('tip__missing-data').classList.remove('hidden')
         }
 
     }
@@ -298,8 +303,8 @@ $(document).ready(function () {
     }
 
     function displayTable() {
-        $('#tips_container').hide();
-        $('#preview_container').show();
+        document.getElementById('tips_container').classList.add('hidden')
+        document.getElementById('preview_container').classList.remove('hidden')
 
         var tableObject = innerBuildTableObject();
         if (tableObject) {
@@ -309,7 +314,7 @@ $(document).ready(function () {
             tableObject.title = '';
             drawTable('container', tableObject);
 
-            $('#save_section').show();
+            document.getElementById('save_section').classList.remove('hidden')
         }
         document.getElementById('table_title').dispatchEvent(new Event("input"));
     }
@@ -630,7 +635,7 @@ $(document).ready(function () {
         modifyIndexColumnNameAndPreview();
     });
     $('#ethnicity-as-column__row-order').change(preview);
-    
+
     $('#grouped-bar__bar_order').change(preview);
     $('#grouped-bar__groups_order').change(preview);
 
@@ -649,11 +654,11 @@ $(document).ready(function () {
 
     function selectDataStyle() {
         if ($('#complex-table__data-style').val() === "ethnicity_as_row") {
-            $('#complex-table__ethnicity-is-row').show();
-            $('#complex-table__ethnicity-is-column').hide();
+            document.getElementById('complex-table__ethnicity-is-row').classList.remove('hidden')
+            document.getElementById('complex-table__ethnicity-is-column').classList.add('hidden')
         } else {
-            $('#complex-table__ethnicity-is-row').hide();
-            $('#complex-table__ethnicity-is-column').show();
+            document.getElementById('complex-table__ethnicity-is-row').classList.add('hidden')
+            document.getElementById('complex-table__ethnicity-is-column').classList.remove('hidden')
         }
     }
 
@@ -661,9 +666,9 @@ $(document).ready(function () {
     // Show-hide NUMBER-FORMAT__OTHER panel
     $('#number_format').change(function () {
         if ($(this).val() === 'other') {
-            $('#other_number_format').show()
+            document.getElementById('other_number_format').classList.remove('hidden')
         } else {
-            $('#other_number_format').hide()
+            document.getElementById('other_number_format').classList.add('hidden')
         }
         preview();
     });
@@ -683,11 +688,11 @@ $(document).ready(function () {
 
         preview(evt)
     }
-    
+
     function setRowOrdering(evt) {
         $('#ethnicity-as-column__row-order').val($('#ethnicity-as-column__rows').val())
     }
-    
+
     function setColumnOrdering(evt) {
         $('#ethnicity-as-row__column-order').val($('#ethnicity-as-row__columns').val())
     }
@@ -700,8 +705,8 @@ $(document).ready(function () {
             $('#data_text_area').val(data_text);
 
             handleNewData(function () {
-                $('#data-panel').hide();
-                $('#edit-panel').show();
+                document.getElementById('data-panel').classList.add('hidden')
+                document.getElementById('edit-panel').classList.remove('hidden')
                 setupTablebuilderWithSettings(settings);
                 preview()
             })
@@ -722,13 +727,13 @@ $(document).ready(function () {
         document.getElementById('table_title').dispatchEvent(new Event("input"));
 
         $('#complex-table__data-style').val(settings.tableOptions.data_style);
-        
+
         /*
         If a table has no explicit row ordering, there are some circumstances in which the live table can have data cells
         transposed - resulting in an inaccurate table. We will prevent this by enforcing an explicit row order. If one
         hasn't been provided previously, we'll assume the table should be sorted (alphabetically) by the current
         row/column selection.
-        https://trello.com/c/mrtsskDU/1103 
+        https://trello.com/c/mrtsskDU/1103
         */
         if (settings.tableOptions.order == NONE_VALUE) {
             settings.tableOptions.order = settings.tableOptions.selection
@@ -808,10 +813,10 @@ function getTips() {
 var MISSING_FIELD_ERROR = 'Missing field error';
 
 function checkRequiredFields() {
-    if ($('#ethnicity_settings').val() === 'custom' && $('#custom_classification__selector').val() === '[Required]') {
+    if ($('#ethnicity_settings').val() === 'custom' && $('#custom_classification__selector').val() === 'Please select') {
         return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'custom_classification__selector' }]
     }
-    
+
     if (getIsSimpleData(table_data) === false) {
         if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
             if ($('#ethnicity-as-row__columns').val() === unselectedOptionString) {

@@ -10,7 +10,7 @@ class EthnicityDictionaryLookup:
 
     It adds extra fields using a lookup csv with two primary keys Ethnicity and Ethnicity Type.
     This needs to be kept up to date with appropriate values for data being used on the platform
-    
+
     By default this can be found in application/data/static/standardisers/dictionary_lookup.csv
     """
 

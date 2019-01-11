@@ -53,6 +53,7 @@ $(document).ready(function () {
         });
         $('#data-panel').hide();
         $('#edit-panel').show();
+        $('#builder-title').html('Format and view chart');
     }
 
     function editChartData(evt) {
@@ -60,12 +61,14 @@ $(document).ready(function () {
         current_settings = getChartPageSettings();
         $('#data-panel').show();
         $('#edit-panel').hide();
+        $('#builder-title').html('Create a chart');
     }
 
     function cancelEditData(evt) {
         $('#data_text_area').val(current_data);
         $('#data-panel').hide();
         $('#edit-panel').show();
+        document.getElementById('builder-title').innerHTML = 'Format and view chart';
     }
 
 
@@ -149,7 +152,7 @@ $(document).ready(function () {
 
     function populateChartOptions(headers) {
         var listWithNone = dropdownHtmlWithDefault(headers, '[None]');
-        var listWithRequired = dropdownHtmlWithDefault(headers, '[Required]');
+        var listWithRequired = dropdownHtmlWithDefault(headers, 'Please select');
 
         $('#line__x-axis_column').html(listWithRequired);
 
@@ -296,7 +299,7 @@ $(document).ready(function () {
 
             $('#save_section').show();
         }
-        
+
         document.getElementById('chart_title').dispatchEvent(new Event("input"));
     }
 
@@ -893,10 +896,10 @@ function getTips() {
 var MISSING_FIELD_ERROR = 'Missing field error';
 
 function checkRequiredFields() {
-    if ($('#ethnicity_settings').val() === 'custom' && $('#custom_classification__selector').val() === '[Required]') {
+    if ($('#ethnicity_settings').val() === 'custom' && $('#custom_classification__selector').val() === 'Please select') {
         return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'custom_classification__selector' }]
     }
-    
+
     var chartType = $('#chart_type_selector').val();
 
     switch (chartType) {
@@ -905,19 +908,19 @@ function checkRequiredFields() {
             ;
             break;
         case 'line_graph':
-            if ($('#line__x-axis_column').val() === '[Required]') {
+            if ($('#line__x-axis_column').val() === 'Please select') {
                 return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'line__x-axis_column' }]
             }
             ;
             break;
         case 'grouped_bar_chart':
             if ($('#grouped-bar__data_style').val() === 'ethnicity_as_group') {
-                if ($('#grouped-bar__bar_column').val() === '[Required]') {
+                if ($('#grouped-bar__bar_column').val() === 'Please select') {
                     return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'grouped-bar__bar_column' }]
                 }
                 ;
             } else {
-                if ($('#grouped-bar__groups_column').val() === '[Required]') {
+                if ($('#grouped-bar__groups_column').val() === 'Please select') {
                     return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'grouped-bar__groups_column' }]
                 }
                 ;
@@ -925,12 +928,12 @@ function checkRequiredFields() {
             break;
         case 'component_chart':
             if ($('#component__data_style').val() === 'ethnicity_as_sections') {
-                if ($('#component__bar_column').val() === '[Required]') {
+                if ($('#component__bar_column').val() === 'Please select') {
                     return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'component__bar_column' }]
                 }
                 ;
             } else {
-                if ($('#component__section_column').val() === '[Required]') {
+                if ($('#component__section_column').val() === 'Please select') {
                     return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'component__section_column' }]
                 }
                 ;
@@ -938,19 +941,19 @@ function checkRequiredFields() {
             break;
         case 'panel_bar_chart':
             if ($('#panel-bar__data_style').val() === 'ethnicity_as_panels') {
-                if ($('#panel-bar__bar_column').val() === '[Required]') {
+                if ($('#panel-bar__bar_column').val() === 'Please select') {
                     return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'panel-bar__bar_column' }]
                 }
                 ;
             } else {
-                if ($('#panel-bar__panel_column').val() === '[Required]') {
+                if ($('#panel-bar__panel_column').val() === 'Please select') {
                     return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'panel-bar__panel_column' }]
                 }
                 ;
             }
             break;
         case 'panel_line_chart':
-            if ($('#panel-line__x-axis_column').val() === '[Required]') {
+            if ($('#panel-line__x-axis_column').val() === 'Please select') {
                 return [{ 'errorType': MISSING_FIELD_ERROR, 'field': 'panel-line__x-axis_column' }]
             }
             ;

@@ -184,7 +184,7 @@ def measure_page_file_download(topic_slug, subtopic_slug, measure_slug, version,
 
         return send_file(outfile.name, as_attachment=True, mimetype="text/csv", attachment_filename=filename)
 
-    except (UploadNotFoundException, FileNotFoundError, ClientError) as e:
+    except (UploadNotFoundException, FileNotFoundError, ClientError):
         abort(404)
 
 
@@ -210,7 +210,7 @@ def dimension_file_download(topic_slug, subtopic_slug, measure_slug, version, di
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
         return response
 
-    except DimensionNotFoundException as e:
+    except DimensionNotFoundException:
         abort(404)
 
 
@@ -236,7 +236,7 @@ def dimension_file_table_download(topic_slug, subtopic_slug, measure_slug, versi
         response.headers["Content-Disposition"] = 'attachment; filename="%s"' % filename
         return response
 
-    except DimensionNotFoundException as e:
+    except DimensionNotFoundException:
         abort(404)
 
 
