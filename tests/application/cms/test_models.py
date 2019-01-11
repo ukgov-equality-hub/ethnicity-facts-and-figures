@@ -688,27 +688,25 @@ class TestMeasureVersion:
         create_measure_versions(db_session, stub_measure_page, page_versions, parent_measure=stub_measure_1)
         assert [mv.version for mv in stub_measure_1.versions] == expected_order
 
-    @pytest.mark.parametrize(
-        "page_versions, expected_version",
-        (
-            (["1.0", "1.1", "1.2", "2.0"], "2.0"),
-            (["2.0", "1.2", "1.1", "1.0"], "2.0"),
-            (["2.0", "4.1", "3.0", "8.2", "1.0"], "8.2"),
-        ),
-    )
-    def test_get_latest_version_returns_latest_measure_page(
-        self, db_session, page_service, stub_measure_page, page_versions, expected_version
-    ):
-        create_measure_versions(db_session, stub_measure_page, page_versions)
+    def test_measure_latest_version_returns_latest_measure_version(self, db_session, stub_measure_1):
+        version_1_0 = MeasureVersion(version="1.0", guid=stub_measure_1.id, latest=False)
+        version_3_1 = MeasureVersion(version="3.1", guid=stub_measure_1.id, latest=True)
+        version_2_0 = MeasureVersion(version="2.0", guid=stub_measure_1.id, latest=False)
+        version_3_0 = MeasureVersion(version="3.0", guid=stub_measure_1.id, latest=False)
 
-        assert (
-            page_service.get_latest_version(
-                topic_slug=stub_measure_page.parent.parent.slug,
-                subtopic_slug=stub_measure_page.parent.slug,
-                measure_slug="test-measure-page-2",
-            ).version
-            == expected_version
-        )
+        stub_measure_1.versions = [version_1_0, version_3_1, version_2_0, version_3_0]
+
+        assert stub_measure_1.latest_version.version == "3.1"
+
+    def test_measure_latest_published_version_returns_latest_published_version(self, db_session, stub_measure_1):
+        version_1_0 = MeasureVersion(version="1.0", guid=stub_measure_1.id, latest=False, published=True)
+        version_3_1 = MeasureVersion(version="3.1", guid=stub_measure_1.id, latest=True, published=False)
+        version_2_0 = MeasureVersion(version="2.0", guid=stub_measure_1.id, latest=False, published=True)
+        version_3_0 = MeasureVersion(version="3.0", guid=stub_measure_1.id, latest=False, published=True)
+
+        stub_measure_1.versions = [version_1_0, version_3_1, version_2_0, version_3_0]
+
+        assert stub_measure_1.latest_published_version.version == "3.0"
 
     @pytest.mark.parametrize(
         "page_versions, page_titles, expected_version_order, expected_title_order",

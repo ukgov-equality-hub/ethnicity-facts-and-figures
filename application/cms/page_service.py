@@ -175,23 +175,6 @@ class PageService(Service):
             message = 'Page "{}" can not be updated'.format(page.title)
         return message
 
-    def get_latest_version(self, topic_slug, subtopic_slug, measure_slug):
-        try:
-            topic = MeasureVersion.query.filter_by(slug=topic_slug).one()
-            subtopic = MeasureVersion.query.filter_by(slug=subtopic_slug, parent_guid=topic.guid).one()
-            pages = (
-                MeasureVersion.query.filter_by(slug=measure_slug, parent_guid=subtopic.guid)
-                .order_by(desc(MeasureVersion.version))
-                .all()
-            )
-            if len(pages) > 0:
-                return pages[0]
-            else:
-                raise NoResultFound()
-        except NoResultFound as e:
-            self.logger.exception(e)
-            raise PageNotFoundException()
-
     def mark_page_published(self, page):
         if page.published_at is None:
             page.published_at = date.today()
