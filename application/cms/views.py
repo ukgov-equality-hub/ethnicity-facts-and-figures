@@ -26,6 +26,7 @@ from application.cms.exceptions import (
 )
 from application.cms.forms import DimensionForm, DimensionRequiredForm, MeasurePageForm, NewVersionForm, UploadForm
 from application.cms.models import (
+    NewVersionType,
     publish_status,
     FrequencyOfRelease,
     TypeOfStatistic,
@@ -1158,7 +1159,10 @@ def new_version(topic_slug, subtopic_slug, measure_slug, version):
         version_type = form.data["version_type"]
         try:
             new_measure_version = page_service.create_copy(
-                measure_version.guid, measure_version.version, version_type, created_by=current_user.email
+                measure_version.guid,
+                measure_version.version,
+                NewVersionType(version_type),
+                created_by=current_user.email,
             )
             message = "Added a new %s version %s" % (version_type, new_measure_version.version)
             flash(message)
@@ -1197,8 +1201,8 @@ def copy_measure_page(topic_slug, subtopic_slug, measure_slug, version):
     topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
     )
-    copied_measure_version = page_service.create_copy(
-        measure_version.guid, measure_version.version, version_type="copy", created_by=current_user.email
+    copied_measure_version = new_page_service.create_new_measure_version(
+        measure_version, update_type=NewVersionType.NEW_MEASURE, user=current_user
     )
     return redirect(
         url_for(

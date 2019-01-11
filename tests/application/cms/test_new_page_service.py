@@ -4,7 +4,7 @@ import uuid
 import pytest
 
 from application.cms.forms import MeasurePageForm
-from application.cms.models import Topic, Subtopic, Measure, MeasureVersion
+from application.cms.models import Topic, Subtopic, Measure, MeasureVersion, NewVersionType, DimensionClassification
 from application.cms.new_page_service import NewPageService
 from application.cms.page_service import PageService
 from application.cms.exceptions import PageNotFoundException, InvalidPageHierarchy, PageExistsException
@@ -68,7 +68,7 @@ class TestNewPageService:
 
     def test_get_measure_from_measure_version_id_raises_if_not_found(self, stub_measure_1, stub_measure_version):
         with pytest.raises(PageNotFoundException):
-            new_page_service.get_measure_from_measure_version_id(stub_measure_version.id + 314159265)
+            new_page_service.get_measure_from_measure_version_id(stub_measure_version.id + 314_159_265)
 
     def test_get_measure_page_hierarchy_gets_if_hierarchy_is_good(
         self, stub_topic, stub_subtopic, stub_measure_1, stub_measure_version, stub_dimension, stub_upload
@@ -297,7 +297,9 @@ class TestNewPageService:
             data_source_forms=[],
         )
 
-        copied_page = page_service.create_copy(created_page.guid, created_page.version, "minor", test_app_editor.email)
+        copied_page = new_page_service.create_new_measure_version(
+            created_page, NewVersionType.MINOR_UPDATE, user=test_app_editor
+        )
 
         assert "the title" == copied_page.title
         assert "the-title" == copied_page.slug
@@ -311,3 +313,135 @@ class TestNewPageService:
 
         assert "the updated title" == copied_page.title
         assert "the-title" == copied_page.slug
+
+    def test_create_new_version_of_page(self, db_session, stub_measure_version, mock_rdu_user):
+        assert stub_measure_version.latest is True
+
+        new_version = new_page_service.create_new_measure_version(
+            stub_measure_version, NewVersionType.MINOR_UPDATE, user=mock_rdu_user
+        )
+
+        assert new_version.version == "1.1"
+        assert new_version.status == "DRAFT"
+        assert new_version.internal_edit_summary is None
+        assert new_version.external_edit_summary is None
+        assert new_version.published_at is None
+        assert new_version.published is False
+        assert mock_rdu_user.email == new_version.created_by
+        assert new_version.latest is True
+
+        assert new_version.get_previous_version().latest is False
+
+        next_version = new_page_service.create_new_measure_version(
+            stub_measure_version, NewVersionType.MAJOR_UPDATE, user=mock_rdu_user
+        )
+
+        assert next_version.get_previous_version().latest is False
+
+        assert next_version.version == "2.0"
+        assert next_version.status == "DRAFT"
+        assert next_version.internal_edit_summary is None
+        assert next_version.external_edit_summary is None
+        assert next_version.published_at is None
+        assert next_version.published is False
+        assert mock_rdu_user.email == new_version.created_by
+        assert next_version.latest is True
+
+    def test_create_new_version_of_page_duplicates_dimensions(
+        self, db_session, stub_measure_version, stub_dimension, mock_rdu_user
+    ):
+        # given an existing page with a dimension
+        assert stub_measure_version.latest
+        assert stub_measure_version.dimensions.count() > 0
+        old_dimension = stub_measure_version.dimensions[0]
+        original_guid = old_dimension.guid
+        original_version = old_dimension.page_version
+
+        # when we copy the page
+        new_version = new_page_service.create_new_measure_version(
+            stub_measure_version, NewVersionType.MINOR_UPDATE, user=mock_rdu_user
+        )
+
+        # then
+        assert new_version.dimensions.count() > 0
+        new_dimension = new_version.dimensions[0]
+        # new dimension should be a copy
+        assert new_dimension.title == old_dimension.title
+
+        # with guid and versions updated
+        assert new_dimension.guid != original_guid
+        assert new_dimension.page_version != original_version
+        assert new_dimension.page_version == new_version.version
+
+    def test_create_new_version_of_page_duplicates_dimension_categorisations(
+        self, db_session, stub_measure_version, stub_dimension, stub_classification, mock_rdu_user
+    ):
+        # given an existing page with a dimension
+        classification_id = stub_classification.id
+        original_dimension_guid = stub_measure_version.dimensions[0].guid
+        include_parents = True
+        include_all = False
+        include_unknown = True
+
+        link = DimensionClassification(
+            dimension_guid=original_dimension_guid,
+            classification_id=classification_id,
+            includes_parents=include_parents,
+            includes_unknown=include_unknown,
+            includes_all=include_all,
+        )
+        db_session.session.add(link)
+        db_session.session.commit()
+        assert stub_measure_version.dimensions[0].classification_links.count() > 0
+
+        # when we copy the page
+        new_version = new_page_service.create_new_measure_version(
+            stub_measure_version, NewVersionType.MINOR_UPDATE, user=mock_rdu_user
+        )
+
+        # then
+        assert new_version.dimensions.count() > 0
+        assert new_version.dimensions[0].classification_links.count() > 0
+
+        new_link = new_version.dimensions[0].classification_links[0]
+        assert new_link.dimension_guid == new_version.dimensions[0].guid
+        assert new_link.classification_id == classification_id
+        assert new_link.includes_parents == include_parents
+        assert new_link.includes_all == include_all
+        assert new_link.includes_unknown == include_unknown
+
+    def test_create_copy_of_page(self, stub_measure_page, mock_rdu_user):
+        assert stub_measure_page.latest
+
+        first_copy = new_page_service.create_new_measure_version(
+            stub_measure_page, NewVersionType.NEW_MEASURE, user=mock_rdu_user
+        )
+        first_copy_guid = first_copy.guid
+        first_copy_title = first_copy.title
+        first_copy_slug = first_copy.slug
+
+        assert first_copy.version == "1.0"
+        assert first_copy.status == "DRAFT"
+        assert first_copy.internal_edit_summary is None
+        assert first_copy.external_edit_summary is None
+        assert first_copy.published_at is None
+        assert not first_copy.published
+        assert mock_rdu_user.email == first_copy.created_by
+        assert first_copy.latest
+
+        second_copy = new_page_service.create_new_measure_version(
+            first_copy, NewVersionType.NEW_MEASURE, user=mock_rdu_user
+        )
+
+        assert second_copy.version == "1.0"
+        assert second_copy.status == "DRAFT"
+        assert second_copy.internal_edit_summary is None
+        assert second_copy.external_edit_summary is None
+        assert second_copy.published_at is None
+        assert not second_copy.published
+        assert mock_rdu_user.email == first_copy.created_by
+        assert second_copy.latest
+
+        assert first_copy_guid != second_copy.guid
+        assert second_copy.title == f"COPY OF {first_copy_title}"
+        assert second_copy.slug == f"{first_copy_slug}-copy"

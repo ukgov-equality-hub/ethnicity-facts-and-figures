@@ -188,7 +188,16 @@ def _user_of_type(db_session, type_of_user):
 
 
 @pytest.fixture(scope="function")
-def stub_topic_page(db_session, stub_home_page):  # TODO: Delete these stubs after using new hierarchy tables.
+def stub_compatible_topic(db_session):
+    topic = Topic(id=98, slug="test", title="Test topic page", description="", additional_description="")
+    db_session.session.add(topic)
+    db_session.session.commit()
+    return topic
+
+
+# TODO: Delete these stubs after using new hierarchy tables.
+@pytest.fixture(scope="function")
+def stub_topic_page(db_session, stub_home_page, stub_compatible_topic):
     page = MeasureVersion(
         id=98,
         guid="topic_test",
@@ -201,25 +210,27 @@ def stub_topic_page(db_session, stub_home_page):  # TODO: Delete these stubs aft
         version="1.0",
     )
 
-    topic = Topic(
-        id=page.id,
-        slug=page.slug,
-        title=page.title,
-        description=page.description,
-        additional_description=page.additional_description,
-    )
-
     page.page_json = json.dumps({"guid": "topic_test", "title": "Test topic page"})
 
     db_session.session.add(page)
-    db_session.session.add(topic)
     db_session.session.commit()
 
     return page
 
 
 @pytest.fixture(scope="function")
-def stub_subtopic_page(db_session, stub_topic_page):  # TODO: Delete these stubs after using new hierarchy tables.
+def stub_compatible_subtopic(db_session, stub_compatible_topic):
+    subtopic = Subtopic(
+        id=99, slug="example", title="Test subtopic page", position=0, topic_id=stub_compatible_topic.id
+    )
+    db_session.session.add(subtopic)
+    db_session.session.commit()
+    return subtopic
+
+
+# TODO: Delete these stubs after using new hierarchy tables.
+@pytest.fixture(scope="function")
+def stub_subtopic_page(db_session, stub_topic_page, stub_compatible_subtopic):
     page = MeasureVersion(
         id=99,
         guid="subtopic_example",
@@ -232,18 +243,10 @@ def stub_subtopic_page(db_session, stub_topic_page):  # TODO: Delete these stubs
         title="Test subtopic page",
         version="1.0",
     )
-    subtopic = Subtopic(
-        id=page.id,
-        slug=page.slug,
-        title=page.title,
-        position=page.position,
-        topic_id=Topic.query.get(stub_topic_page.id).id,
-    )
 
     page.page_json = json.dumps({"guid": "subtopic_example", "title": "Test subtopic page"})
 
     db_session.session.add(page)
-    db_session.session.add(subtopic)
     db_session.session.commit()
 
     return page
@@ -266,8 +269,9 @@ def stub_home_page(db_session):
     return page
 
 
+# TODO: Delete these stubs after using new hierarchy tables.
 @pytest.fixture(scope="function")
-def stub_sandbox_topic_page(db_session):  # TODO: Delete these stubs after using new hierarchy tables.
+def stub_sandbox_topic_page(db_session):
     page = MeasureVersion(
         id=101,
         guid="sandbox_topic_test",
@@ -333,7 +337,7 @@ def stub_organisations(db_session):
 
 
 @pytest.fixture(scope="function")
-def stub_data_source(db_session, stub_organisations, stub_type_of_statistic):
+def stub_data_source(db_session, stub_organisations, stub_type_of_statistic, stub_frequency):
     data_source = DataSource(
         title="DWP Stats",
         type_of_data=["SURVEY"],
@@ -342,8 +346,7 @@ def stub_data_source(db_session, stub_organisations, stub_type_of_statistic):
         source_url="http://dwp.gov.uk",
         publication_date="15th May 2017",
         note_on_corrections_or_updates="Note on corrections or updates",
-        frequency_of_release_other="some other frequency of release",
-        frequency_of_release_id=1,
+        frequency_of_release_id=stub_frequency.id,
         purpose="Purpose of data source",
     )
     db_session.session.add(data_source)
@@ -353,9 +356,27 @@ def stub_data_source(db_session, stub_organisations, stub_type_of_statistic):
 
 
 @pytest.fixture(scope="function")
+def stub_compatible_measure(db_session, stub_compatible_subtopic):
+    measure = Measure(slug="test-measure-page", position=0)
+    measure.subtopics = [stub_compatible_subtopic]
+
+    db_session.session.add(measure)
+    db_session.session.commit()
+
+    return measure
+
+
+# TODO: Delete these stubs after using new hierarchy tables.
+@pytest.fixture(scope="function")
 def stub_measure_page(
-    db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
-):  # TODO: Delete these stubs after using new hierarchy tables.
+    db_session,
+    stub_subtopic_page,
+    stub_measure_data,
+    stub_frequency,
+    stub_geography,
+    stub_data_source,
+    stub_compatible_measure,
+):
     page = MeasureVersion(
         id=100,
         guid="test-measure-page",
@@ -372,9 +393,9 @@ def stub_measure_page(
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
-    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
-    measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
-    page.measure_id = measure.id  # Duplicating page ID for simplicity during migration to new data model
+    page.measure_id = (
+        stub_compatible_measure.id
+    )  # Duplicating page ID for simplicity during migration to new data model
 
     for key, val in stub_measure_data.items():
         if key == "published_at":
@@ -384,7 +405,6 @@ def stub_measure_page(
     page.data_sources = [stub_data_source]
 
     db_session.session.add(page)
-    db_session.session.add(measure)
     db_session.session.commit()
 
     return page
@@ -945,6 +965,7 @@ def stub_measure_version(db_session, stub_measure_1):
         guid="test-measure-version",
         measure_id=stub_measure_1.id,
         slug="test-measure-version",
+        title="Test Measure Page",
         status="DRAFT",
         version="1.0",
         internal_edit_summary="internal_edit_summary",

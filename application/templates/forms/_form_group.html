@@ -18,8 +18,8 @@
           {% endif %}
           {{ field(**field_options) }}
       {% endfor %}
-      
-      {% if other_field %}
+
+      {% if fields and other_field %}
         <div class="panel panel-border-narrow form-group {% if other_field.errors %}form-group-error{% endif %}"
               id="{{ other_field.id }}-wrapper">
           {{ other_field(disabled=disabled) }}

@@ -27,6 +27,12 @@ publish_status = bidict(
 )
 
 
+class NewVersionType(enum.Enum):
+    NEW_MEASURE = "new_measure"
+    MINOR_UPDATE = "minor"
+    MAJOR_UPDATE = "major"
+
+
 class TypeOfData(enum.Enum):
     ADMINISTRATIVE = "Administrative"
     SURVEY = "Survey (including census data)"
@@ -100,7 +106,7 @@ class CopyableModel(DictableModel):
         if not exclude_fields:
             exclude_fields = []
 
-        copy = DataSource()
+        copy = self.__class__()
         copy.fromdict(self.asdict(exclude_pk=True, exclude=exclude_fields))
 
         return copy
@@ -199,7 +205,7 @@ user_measure = db.Table(
 
 
 @total_ordering
-class MeasureVersion(db.Model):
+class MeasureVersion(db.Model, CopyableModel):
     """
     The Page model holds data about all pages in the page hierarchy of the website:
     Homepage (root) -> Topics -> Subtopics -> Measure pages (leaves)
@@ -455,11 +461,13 @@ class MeasureVersion(db.Model):
     def next_major_version(self):
         return "%s.0" % str(self.major() + 1)
 
-    def next_version_number_by_type(self, version_type):
-        if version_type == "copy":
+    def next_version_number_by_type(self, version_type: NewVersionType):
+        if version_type == NewVersionType.NEW_MEASURE:
             return "1.0"
-        if version_type == "minor":
+
+        elif version_type == NewVersionType.MINOR_UPDATE:
             return self.next_minor_version()
+
         return self.next_major_version()
 
     def latest_version(self):
@@ -484,10 +492,10 @@ class MeasureVersion(db.Model):
 
     def get_versions(self, include_self=True):
         if include_self:
-            return self.query.filter(MeasureVersion.measure.has(Measure.id == self.measure.id)).all()
+            return self.query.filter(MeasureVersion.measure.has(Measure.id == self.measure_id)).all()
         else:
             return self.query.filter(
-                MeasureVersion.measure.has(Measure.id == self.measure.id), MeasureVersion.version != self.version
+                MeasureVersion.measure.has(Measure.id == self.measure_id), MeasureVersion.version != self.version
             ).all()
 
     def get_previous_version(self):
@@ -765,12 +773,13 @@ class Dimension(db.Model):
             self.dimension_table = table_object.copy()
 
         for dc in links:
+            dc.dimension_guid = self.guid
             self.classification_links.append(dc)
 
         return self
 
 
-class Upload(db.Model):
+class Upload(db.Model, CopyableModel):
     # metadata
     __tablename__ = "upload"
     __table_args__ = (

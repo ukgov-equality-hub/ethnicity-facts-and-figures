@@ -1,20 +1,23 @@
+from datetime import datetime
 import uuid
 
 from slugify import slugify
-from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
+from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.cms.models import publish_status, DataSource
 from application.cms.exceptions import (
-    PageNotFoundException,
-    InvalidPageHierarchy,
-    UploadNotFoundException,
     DimensionNotFoundException,
+    InvalidPageHierarchy,
     PageExistsException,
+    PageNotFoundException,
+    UpdateAlreadyExists,
+    UploadNotFoundException,
 )
-from application.cms.models import Measure, MeasureVersion, Subtopic, Topic
+from application.cms.models import DataSource, Measure, MeasureVersion, Subtopic, Topic, publish_status, NewVersionType
 from application.cms.service import Service
+from application.cms.upload_service import upload_service
+from application.utils import create_guid
 
 
 class NewPageService(Service):
@@ -68,6 +71,12 @@ class NewPageService(Service):
             raise PageNotFoundException()
         except NoResultFound:
             raise PageNotFoundException()
+
+    @staticmethod
+    def get_measure_version_by_id(measure_id, version):
+        return MeasureVersion.query.filter(
+            MeasureVersion.measure.has(Measure.id == measure_id), MeasureVersion.version == version
+        ).one_or_none()
 
     @staticmethod
     def get_measure_from_measure_version_id(measure_version_id):
@@ -218,6 +227,72 @@ class NewPageService(Service):
             db.session.commit()
 
         return measure_version
+
+    def create_new_measure_version(self, measure_version, update_type, user):
+        next_version_number = measure_version.next_version_number_by_type(update_type)
+
+        if update_type != NewVersionType.NEW_MEASURE and self.get_measure_version_by_id(
+            measure_version.measure_id, next_version_number
+        ):
+            raise UpdateAlreadyExists()
+
+        new_version = measure_version.copy()
+        new_version.guid = measure_version.guid
+
+        if update_type == NewVersionType.NEW_MEASURE:
+            new_version.guid = str(uuid.uuid4())
+            new_version.title = f"COPY OF {measure_version.title}"
+
+            # TODO: Remove this later when we stop duplicating to the MeasureVersion table.
+            try:
+                while self.get_measure(
+                    measure_version.measure.subtopic.topic.slug, measure_version.measure.subtopic.slug, new_version.slug
+                ):
+                    new_version.slug = f"{new_version.slug}-copy"
+
+            except PageNotFoundException:
+                pass
+
+            new_version.measure = Measure(
+                slug=new_version.slug,
+                position=len(measure_version.measure.subtopic.measures),
+                reference=measure_version.internal_reference,
+            )
+            new_version.measure.subtopics = measure_version.measure.subtopics
+
+        new_version.version = next_version_number
+        new_version.status = "DRAFT"
+        new_version.created_by = user.email
+        new_version.created_at = datetime.utcnow()
+        new_version.published_at = None
+        new_version.published = False
+        new_version.internal_edit_summary = None
+        new_version.external_edit_summary = None
+        new_version.dimensions = [dimension.copy() for dimension in measure_version.dimensions]
+        new_version.data_sources = [data_source.copy() for data_source in measure_version.data_sources]
+        new_version.latest = True
+
+        previous_version = new_version.get_previous_version()
+        if previous_version:
+            previous_version.latest = False
+            db.session.add(previous_version)
+
+        new_version.uploads = []
+        for upload in measure_version.uploads:
+            new_upload = upload.copy()
+            new_upload.guid = create_guid(upload.file_name)
+            new_version.uploads.append(new_upload)
+
+        db.session.add(new_version)
+        db.session.flush()
+
+        upload_service.copy_uploads_between_measure_versions(
+            from_measure_version=measure_version, to_measure_version=new_version
+        )
+
+        db.session.commit()
+
+        return new_version
 
 
 new_page_service = NewPageService()

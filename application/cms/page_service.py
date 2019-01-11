@@ -1,19 +1,11 @@
-import uuid
 from datetime import datetime, date
 
 from slugify import slugify
 from sqlalchemy import desc
-from sqlalchemy.orm import make_transient
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.cms.exceptions import (
-    PageUnEditable,
-    PageExistsException,
-    PageNotFoundException,
-    UpdateAlreadyExists,
-    StaleUpdateException,
-)
+from application.cms.exceptions import PageUnEditable, PageExistsException, PageNotFoundException, StaleUpdateException
 from application.cms.models import (
     LowestLevelOfGeography,
     MeasureVersion,
@@ -24,8 +16,7 @@ from application.cms.models import (
     DataSource,
 )
 from application.cms.service import Service
-from application.cms.upload_service import upload_service
-from application.utils import generate_review_token, create_guid
+from application.utils import generate_review_token
 
 
 class PageService(Service):
@@ -186,101 +177,6 @@ class PageService(Service):
         if previous_version and previous_version.latest:
             previous_version.latest = False
         db.session.commit()
-
-    def page_cannot_be_created(self, parent, slug):
-        pages_by_slug = self.get_pages_by_slug(parent, slug)
-        if pages_by_slug:
-            message = 'Page title "%s" and slug "%s" already exists under "%s"' % (
-                pages_by_slug[0].title,
-                pages_by_slug[0].slug,
-                pages_by_slug[0].parent_guid,
-            )
-            return True, message
-
-        else:
-            message = "Page with parent %s and slug %s does not exist" % (parent, slug)
-            self.logger.info(message)
-
-        return False, message
-
-    def create_copy(self, page_guid, page_version, version_type, created_by):
-        """
-        WARNING: This method has side_effects: any existing references to the page being copied will point to
-        references of the COPY after this function runs.
-
-        This function should be removed in the future. A tech improvement ticket has been generated here:
-
-        https://trello.com/c/DFmMmd9g/78
-        """
-        page = self.get_page_with_version(page_guid, page_version)
-        next_version = page.next_version_number_by_type(version_type)
-
-        if version_type != "copy" and self.already_updating(page.guid, next_version):
-            raise UpdateAlreadyExists()
-
-        dimensions = [dimension for dimension in page.dimensions]
-        uploads = [upload for upload in page.uploads]
-        data_sources = [data_source for data_source in page.data_sources]
-        subtopics = page.measure.subtopics
-
-        db.session.expunge(page)
-        make_transient(page)
-        original_guid = page.guid
-
-        page.id = None
-        if version_type == "copy":
-            page.guid = str(uuid.uuid4())
-            page.title = f"COPY OF {page.title}"
-            # Duplicate (URI + version) in the same subtopic would mean we can't resolve preview URLs to a single page
-            while self.new_slug_invalid(page, page.slug):
-                page.slug = f"{page.slug}-copy"
-
-            page.measure = Measure(
-                slug=page.slug, position=len(subtopics[0].measures), reference=f"{page.internal_reference}-copy"
-            )
-            page.measure.subtopics = subtopics
-
-        page.version = next_version
-        page.status = "DRAFT"
-        page.created_by = created_by
-        page.created_at = datetime.utcnow()
-        page.published_at = None
-        page.published = False
-        page.internal_edit_summary = None
-        page.external_edit_summary = None
-        page.latest = True
-
-        for data_source in data_sources:
-            page.data_sources.append(data_source.copy())
-
-        for dimension in dimensions:
-            page.dimensions.append(dimension.copy())
-
-        for upload in uploads:
-            file_name = upload.file_name
-            db.session.expunge(upload)
-            make_transient(upload)
-            upload.guid = create_guid(file_name)
-            page.uploads.append(upload)
-
-        db.session.add(page)
-        db.session.commit()
-
-        previous_page = page.get_previous_version()
-        if previous_page is not None:
-            previous_page.latest = False
-            db.session.commit()
-
-        upload_service.copy_uploads(page, page_version, original_guid)
-
-        return page
-
-    def already_updating(self, page, next_version):
-        try:
-            self.get_page_with_version(page, next_version)
-            return True
-        except PageNotFoundException:
-            return False
 
     def delete_measure_page(self, measure, version):
         page = self.get_page_with_version(measure, version)

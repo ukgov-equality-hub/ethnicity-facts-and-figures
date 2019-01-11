@@ -941,18 +941,17 @@ def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(
     assert ("create a copy of this measure" in page_button_texts) is can_see_copy_button
 
 
-def test_copy_measure_page(test_app_client, mock_dev_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
-
+def test_copy_measure_page(test_app_client, mock_dev_user, stub_measure_version):
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dev_user.id
 
     resp = test_app_client.post(
         url_for(
             "cms.copy_measure_page",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            topic_slug=stub_measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_version.measure.subtopic.slug,
+            measure_slug=stub_measure_version.measure.slug,
+            version=stub_measure_version.version,
         ),
         follow_redirects=True,
     )
