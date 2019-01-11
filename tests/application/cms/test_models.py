@@ -616,11 +616,10 @@ class TestMeasureVersion:
 
         major_version_1.has_major_update()
 
-    def test_page_has_correct_number_of_versions(self, db, db_session):
-
-        major_version_1 = MeasureVersion(guid="test_page", version="1.0")
-        minor_version = MeasureVersion(guid="test_page", version="1.1")
-        major_version_2 = MeasureVersion(guid="test_page", version="2.0")
+    def test_page_has_correct_number_of_versions(self, db, db_session, stub_measure_1):
+        major_version_1 = MeasureVersion(guid="test_page", version="1.0", measure_id=stub_measure_1.id)
+        minor_version = MeasureVersion(guid="test_page", version="1.1", measure_id=stub_measure_1.id)
+        major_version_2 = MeasureVersion(guid="test_page", version="2.0", measure_id=stub_measure_1.id)
 
         db.session.add(major_version_1)
         db.session.add(minor_version)

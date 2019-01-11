@@ -374,7 +374,7 @@ def stub_measure_page(
     )
     measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
     measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
-    page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
+    page.measure_id = measure.id  # Duplicating page ID for simplicity during migration to new data model
 
     for key, val in stub_measure_data.items():
         if key == "published_at":

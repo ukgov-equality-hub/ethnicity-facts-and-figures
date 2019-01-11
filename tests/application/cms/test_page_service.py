@@ -135,11 +135,11 @@ def test_page_cannot_be_created_if_slug_is_not_unique_for_subtopic(db_session, s
     )
 
 
-def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session, stub_subtopic_page):
-    major_version_1 = MeasureVersion(guid="test_page", version="1.0", status="APPROVED")
-    minor_version_2 = MeasureVersion(guid="test_page", version="1.1", status="APPROVED")
-    minor_version_3 = MeasureVersion(guid="test_page", version="1.2", status="APPROVED")
-    minor_version_4 = MeasureVersion(guid="test_page", version="1.3", status="DRAFT")
+def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session, stub_subtopic_page, stub_measure_1):
+    major_version_1 = MeasureVersion(guid="test_page", version="1.0", status="APPROVED", measure_id=stub_measure_1.id)
+    minor_version_2 = MeasureVersion(guid="test_page", version="1.1", status="APPROVED", measure_id=stub_measure_1.id)
+    minor_version_3 = MeasureVersion(guid="test_page", version="1.2", status="APPROVED", measure_id=stub_measure_1.id)
+    minor_version_4 = MeasureVersion(guid="test_page", version="1.3", status="DRAFT", measure_id=stub_measure_1.id)
 
     stub_subtopic_page.children.append(major_version_1)
     stub_subtopic_page.children.append(minor_version_2)
@@ -158,7 +158,7 @@ def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session
 
 
 def test_create_new_version_of_page(db, db_session, stub_measure_page, mock_rdu_user):
-    assert stub_measure_page.latest
+    assert stub_measure_page.latest is True
 
     new_version = page_service.create_copy(
         stub_measure_page.guid, stub_measure_page.version, "minor", mock_rdu_user.email
@@ -169,26 +169,26 @@ def test_create_new_version_of_page(db, db_session, stub_measure_page, mock_rdu_
     assert new_version.internal_edit_summary is None
     assert new_version.external_edit_summary is None
     assert new_version.published_at is None
-    assert not new_version.published
+    assert new_version.published is False
     assert mock_rdu_user.email == new_version.created_by
-    assert new_version.latest
+    assert new_version.latest is True
 
-    assert not new_version.get_previous_version().latest
+    assert new_version.get_previous_version().latest is False
 
     next_version = page_service.create_copy(
         stub_measure_page.guid, stub_measure_page.version, "major", mock_rdu_user.email
     )
 
-    assert not next_version.get_previous_version().latest
+    assert next_version.get_previous_version().latest is False
 
     assert next_version.version == "2.0"
     assert next_version.status == "DRAFT"
     assert next_version.internal_edit_summary is None
     assert next_version.external_edit_summary is None
     assert next_version.published_at is None
-    assert not next_version.published
+    assert next_version.published is False
     assert mock_rdu_user.email == new_version.created_by
-    assert next_version.latest
+    assert next_version.latest is True
 
 
 def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_editor):

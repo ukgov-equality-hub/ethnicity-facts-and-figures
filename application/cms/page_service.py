@@ -251,6 +251,12 @@ class PageService(Service):
             # Duplicate (URI + version) in the same subtopic would mean we can't resolve preview URLs to a single page
             while self.new_slug_invalid(page, page.slug):
                 page.slug = f"{page.slug}-copy"
+
+            page.measure = Measure(
+                slug=page.slug, position=len(subtopics[0].measures), reference=f"{page.internal_reference}-copy"
+            )
+            page.measure.subtopics = subtopics
+
         page.version = next_version
         page.status = "DRAFT"
         page.created_by = created_by
@@ -260,11 +266,6 @@ class PageService(Service):
         page.internal_edit_summary = None
         page.external_edit_summary = None
         page.latest = True
-
-        page.measure = Measure(slug=page.slug, position=len(subtopics[0].measures), reference=page.internal_reference)
-        page.measure.subtopics = subtopics
-
-        db.session.add(page.measure)
 
         for data_source in data_sources:
             page.data_sources.append(data_source.copy())

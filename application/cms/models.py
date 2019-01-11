@@ -484,9 +484,11 @@ class MeasureVersion(db.Model):
 
     def get_versions(self, include_self=True):
         if include_self:
-            return self.query.filter(MeasureVersion.guid == self.guid).all()
+            return self.query.filter(MeasureVersion.measure.has(Measure.id == self.measure.id)).all()
         else:
-            return self.query.filter(MeasureVersion.guid == self.guid, MeasureVersion.version != self.version).all()
+            return self.query.filter(
+                MeasureVersion.measure.has(Measure.id == self.measure.id), MeasureVersion.version != self.version
+            ).all()
 
     def get_previous_version(self):
         versions = self.get_versions(include_self=False)

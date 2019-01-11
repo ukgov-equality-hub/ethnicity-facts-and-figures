@@ -102,6 +102,24 @@ class NewPageService(Service):
         return (item for item in return_items)
 
     @staticmethod
+    def get_previous_major_versions(measure_version):
+        versions = measure_version.get_versions(include_self=False)
+        versions.sort(reverse=True)
+        versions = [v for v in versions if v.major() < measure_version.major() and not v.has_minor_update()]
+        return versions
+
+    @staticmethod
+    def get_previous_minor_versions(measure_version):
+        versions = measure_version.get_versions(include_self=False)
+        versions.sort(reverse=True)
+        versions = [v for v in versions if v.major() == measure_version.major() and v.minor() < measure_version.minor()]
+        return versions
+
+    def get_first_published_date(self, measure_version):
+        versions = self.get_previous_minor_versions(measure_version)
+        return versions[-1].published_at if versions else measure_version.published_at
+
+    @staticmethod
     def get_latest_version_of_all_measures(include_drafts=False):
         measure_query = MeasureVersion.query
 

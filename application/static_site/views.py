@@ -12,7 +12,6 @@ from application.data.dimensions import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, UploadNotFoundException
 from application.cms.models import MeasureVersion
 from application.cms.new_page_service import new_page_service
-from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
 from application.utils import (
@@ -116,7 +115,7 @@ def topic(topic_slug):
 def measure_page_markdown(topic_slug, subtopic_slug, measure_slug, version):
     try:
         if version == "latest":
-            measure_version = page_service.get_latest_version(topic_slug, subtopic_slug, measure_slug)
+            measure_version = new_page_service.get_measure(topic_slug, subtopic_slug, measure_slug).latest_version
         else:
             *_, measure_version = new_page_service.get_measure_page_hierarchy(
                 topic_slug, subtopic_slug, measure_slug, version
@@ -144,7 +143,8 @@ def measure_page(topic_slug, subtopic_slug, measure_slug, version):
 
     try:
         if version == "latest":
-            measure_version = page_service.get_latest_version(topic_slug, subtopic_slug, measure_slug)
+            print("woo")
+            measure_version = new_page_service.get_measure(topic_slug, subtopic_slug, measure_slug).latest_version
         else:
             *_, measure_version = new_page_service.get_measure_page_hierarchy(
                 topic_slug, subtopic_slug, measure_slug, version
@@ -152,21 +152,15 @@ def measure_page(topic_slug, subtopic_slug, measure_slug, version):
     except PageNotFoundException:
         abort(404)
 
-    versions = page_service.get_previous_major_versions(measure_version)
-    edit_history = page_service.get_previous_minor_versions(measure_version)
-    first_published_date = page_service.get_first_published_date(measure_version)
-
-    dimensions = [dimension.to_dict() for dimension in measure_version.dimensions]
-
     return render_template(
         "static_site/measure.html",
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
         measure_page=measure_version,
-        dimensions=dimensions,
-        versions=versions,
-        first_published_date=first_published_date,
-        edit_history=edit_history,
+        dimensions=[dimension.to_dict() for dimension in measure_version.dimensions],
+        versions=new_page_service.get_previous_major_versions(measure_version),
+        first_published_date=new_page_service.get_first_published_date(measure_version),
+        edit_history=new_page_service.get_previous_minor_versions(measure_version),
         static_mode=get_bool(request.args.get("static_mode", False)),
     )
 
