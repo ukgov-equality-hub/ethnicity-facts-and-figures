@@ -5,7 +5,7 @@ import pytest
 from bs4 import BeautifulSoup
 from flask import url_for
 
-from application.cms.models import MeasureVersion
+from application.cms.models import MeasureVersion, Topic, Subtopic, Measure
 from application.cms.page_service import PageService
 from application.config import Config
 
@@ -445,7 +445,7 @@ def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub
 
 @pytest.mark.parametrize(["number_of_topics", "row_counts"], ((1, (1,)), (3, (3,)), (5, (3, 2)), (9, (3, 3, 3))))
 def test_homepage_topics_display_in_rows_with_three_columns(
-    number_of_topics, row_counts, test_app_client, mock_rdu_user, stub_home_page, db_session
+    number_of_topics, row_counts, test_app_client, mock_rdu_user, db_session
 ):
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
@@ -454,41 +454,31 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     db_session.session.commit()
 
     for i in range(number_of_topics):
-        topic = MeasureVersion(
-            guid=f"topic_{i}",
-            parent_guid="homepage",
-            page_type="topic",
-            slug=f"topic-{i}",
-            status="DRAFT",
-            title=f"Test topic page #{i}",
-            version="1.0",
-        )
-        subtopic = MeasureVersion(
-            guid=f"subtopic_{i}",
-            parent_guid=f"topic_{i}",
-            page_type="subtopic",
-            slug=f"subtopic-{i}",
-            status="DRAFT",
-            title=f"Test subtopic page #{i}",
-            version="1.0",
-        )
-        measure = MeasureVersion(
-            guid=f"measure_{i}",
-            parent_guid=f"topic_{i}",
+        topic = Topic(slug=f"topic-{i}", title=f"Test topic page #{i}")
+        db_session.session.add(topic)
+        db_session.session.flush()
+
+        subtopic = Subtopic(slug=f"subtopic-{i}", title=f"Test subtopic page #{i}", topic_id=topic.id)
+        db_session.session.add(subtopic)
+        db_session.session.flush()
+
+        measure = Measure(slug=f"measure-{i}")
+        measure.subtopics = [subtopic]
+        db_session.session.add(measure)
+        db_session.session.flush()
+
+        measure_version = MeasureVersion(
+            guid=f"measure_version_{i}",
             page_type="measure",
             slug=f"measure-{i}",
             status="APPROVED",
             published=True,
             title=f"Test measure page #{i}",
             version="1.0",
+            measure_id=measure.id,
         )
 
-        topic.children = [subtopic]
-        subtopic.children = [measure]
-
-        db_session.session.add(topic)
-        db_session.session.add(subtopic)
-        db_session.session.add(measure)
+        db_session.session.add(measure_version)
         db_session.session.commit()
 
     resp = test_app_client.get(url_for("static_site.index"))
@@ -511,15 +501,11 @@ def test_homepage_only_shows_topics_with_published_measures_for_site_type(
     static_mode,
     topic_should_be_visible,
     test_app_client,
-    mock_rdu_user,
-    stub_measure_page,
+    mock_logged_in_rdu_user,
+    stub_measure_version,
     db_session,
 ):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
-
-    stub_measure_page.published = measure_published
-    db_session.session.add(stub_measure_page)
+    stub_measure_version.published = measure_published
     db_session.session.commit()
 
     resp = test_app_client.get(url_for("static_site.index", static_mode=static_mode))

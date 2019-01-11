@@ -1001,6 +1001,10 @@ class Topic(db.Model):
     # relationships
     subtopics = db.relationship("Subtopic", back_populates="topic", order_by="asc(Subtopic.position)")
 
+    @property
+    def has_published_measures(self):
+        return any(subtopic.has_published_measures for subtopic in self.subtopics)
+
 
 class Subtopic(db.Model):
     # metadata

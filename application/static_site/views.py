@@ -10,7 +10,6 @@ from slugify import slugify
 
 from application.data.dimensions import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, UploadNotFoundException
-from application.cms.models import MeasureVersion
 from application.cms.new_page_service import new_page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
@@ -26,15 +25,10 @@ from application.utils import (
 @static_site_blueprint.route("")
 @login_required
 def index():
-    topics = sorted(
-        MeasureVersion.query.filter(
-            MeasureVersion.page_type == "topic", MeasureVersion.parent_guid == "homepage"
-        ).all(),
-        key=lambda topic: topic.title,
-    )
-
     return render_template(
-        "static_site/index.html", topics=topics, static_mode=get_bool(request.args.get("static_mode", False))
+        "static_site/index.html",
+        topics=new_page_service.get_all_topics(),
+        static_mode=get_bool(request.args.get("static_mode", False)),
     )
 
 
@@ -143,7 +137,6 @@ def measure_page(topic_slug, subtopic_slug, measure_slug, version):
 
     try:
         if version == "latest":
-            print("woo")
             measure_version = new_page_service.get_measure(topic_slug, subtopic_slug, measure_slug).latest_version
         else:
             *_, measure_version = new_page_service.get_measure_page_hierarchy(
