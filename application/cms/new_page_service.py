@@ -253,7 +253,7 @@ class NewPageService(Service):
 
         return measure_version
 
-    def create_new_measure_version(self, measure_version, update_type, user):
+    def create_measure_version(self, measure_version, update_type, user):
         next_version_number = measure_version.next_version_number_by_type(update_type)
 
         if update_type != NewVersionType.NEW_MEASURE and self.get_measure_version_by_id(

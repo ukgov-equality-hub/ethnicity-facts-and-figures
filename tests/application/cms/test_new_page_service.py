@@ -299,7 +299,7 @@ class TestNewPageService:
             last_updated_by_email=test_app_editor.email,
         )
 
-        copied_page = new_page_service.create_new_measure_version(
+        copied_page = new_page_service.create_measure_version(
             created_page, NewVersionType.MINOR_UPDATE, user=test_app_editor
         )
 
@@ -319,7 +319,7 @@ class TestNewPageService:
     def test_create_new_version_of_page(self, db_session, stub_measure_version, mock_rdu_user):
         assert stub_measure_version.latest is True
 
-        new_version = new_page_service.create_new_measure_version(
+        new_version = new_page_service.create_measure_version(
             stub_measure_version, NewVersionType.MINOR_UPDATE, user=mock_rdu_user
         )
 
@@ -334,7 +334,7 @@ class TestNewPageService:
 
         assert new_version.get_previous_version().latest is False
 
-        next_version = new_page_service.create_new_measure_version(
+        next_version = new_page_service.create_measure_version(
             stub_measure_version, NewVersionType.MAJOR_UPDATE, user=mock_rdu_user
         )
 
@@ -360,7 +360,7 @@ class TestNewPageService:
         original_version = old_dimension.page_version
 
         # when we copy the page
-        new_version = new_page_service.create_new_measure_version(
+        new_version = new_page_service.create_measure_version(
             stub_measure_version, NewVersionType.MINOR_UPDATE, user=mock_rdu_user
         )
 
@@ -397,7 +397,7 @@ class TestNewPageService:
         assert stub_measure_version.dimensions[0].classification_links.count() > 0
 
         # when we copy the page
-        new_version = new_page_service.create_new_measure_version(
+        new_version = new_page_service.create_measure_version(
             stub_measure_version, NewVersionType.MINOR_UPDATE, user=mock_rdu_user
         )
 
@@ -415,7 +415,7 @@ class TestNewPageService:
     def test_create_copy_of_page(self, stub_measure_page, mock_rdu_user):
         assert stub_measure_page.latest
 
-        first_copy = new_page_service.create_new_measure_version(
+        first_copy = new_page_service.create_measure_version(
             stub_measure_page, NewVersionType.NEW_MEASURE, user=mock_rdu_user
         )
         first_copy_guid = first_copy.guid
@@ -431,7 +431,7 @@ class TestNewPageService:
         assert mock_rdu_user.email == first_copy.created_by
         assert first_copy.latest
 
-        second_copy = new_page_service.create_new_measure_version(
+        second_copy = new_page_service.create_measure_version(
             first_copy, NewVersionType.NEW_MEASURE, user=mock_rdu_user
         )
 

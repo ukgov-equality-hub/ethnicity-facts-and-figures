@@ -1206,7 +1206,7 @@ def copy_measure_page(topic_slug, subtopic_slug, measure_slug, version):
     topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
     )
-    copied_measure_version = new_page_service.create_new_measure_version(
+    copied_measure_version = new_page_service.create_measure_version(
         measure_version, update_type=NewVersionType.NEW_MEASURE, user=current_user
     )
     return redirect(
