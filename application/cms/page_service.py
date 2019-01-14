@@ -1,20 +1,11 @@
 from datetime import datetime, date
 
-from slugify import slugify
 from sqlalchemy import desc
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.cms.exceptions import PageUnEditable, PageExistsException, PageNotFoundException, StaleUpdateException
-from application.cms.models import (
-    LowestLevelOfGeography,
-    MeasureVersion,
-    Measure,
-    Subtopic,
-    Topic,
-    publish_status,
-    DataSource,
-)
+from application.cms.exceptions import PageNotFoundException
+from application.cms.models import MeasureVersion, publish_status, DataSource
 from application.cms.service import Service
 from application.utils import generate_review_token
 
@@ -22,69 +13,6 @@ from application.utils import generate_review_token
 class PageService(Service):
     def __init__(self):
         super().__init__()
-
-    def update_page(self, page, data, last_updated_by, data_source_forms=None):
-        if page.not_editable():
-            message = "Error updating '{}' pages not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(page.guid)
-            self.logger.error(message)
-            raise PageUnEditable(message)
-        elif page_service.is_stale_update(data, page):
-            raise StaleUpdateException("")
-        else:
-            measure = Measure.query.get(page.measure_id)
-
-            # Possibly temporary to work out issue with data deletions
-            message = "EDIT MEASURE: Current state of page: %s" % page.to_dict()
-            self.logger.info(message)
-            message = "EDIT MEASURE: Data posted to update page: %s" % data
-            self.logger.info(message)
-
-            subtopic = data.pop("subtopic", None)
-            if subtopic is not None and page.parent.guid != subtopic:
-                new_subtopic = page_service.get_page(subtopic)
-                conflicting_url = [measure for measure in new_subtopic.children if measure.slug == page.slug]
-                if conflicting_url:
-                    message = "A page with url %s already exists in %s" % (page.slug, new_subtopic.title)
-                    raise PageExistsException(message)
-                else:
-                    page.parent = new_subtopic
-                    page.position = len(new_subtopic.children)
-
-                    topic = Topic.query.filter_by(slug=page.parent.parent.slug).one()
-                    measure.subtopics = [Subtopic.query.filter_by(topic_id=topic.id, slug=new_subtopic.slug).one()]
-                    measure.position = page.position
-
-            data.pop("guid", None)
-            title = data.pop("title").strip()
-            if page.version == "1.0":
-                slug = slugify(title)
-
-                if slug != page.slug and self.new_slug_invalid(page, slug):
-                    message = "The title '%s' and slug '%s' already exists under '%s'" % (title, slug, page.parent_guid)
-                    raise PageExistsException(message)
-                page.slug = slug
-                page.measure.slug = slug
-
-            page.title = title
-
-            self._set_main_fields(page=page, data=data)
-            self._set_data_sources(page=page, data_source_forms=data_source_forms)
-
-            # Copy data to normalised `measure`
-            if "internal_reference" in data:
-                reference = data["internal_reference"]
-                measure.reference = reference if reference else None
-
-            if page.publish_status() in ["REJECTED", "UNPUBLISHED"]:
-                new_status = publish_status.inv[1]
-                page.status = new_status
-
-            page.updated_at = datetime.utcnow()
-            page.last_updated_by = last_updated_by
-
-            db.session.commit()
-
-            return page
 
     def _set_data_sources(self, page, data_source_forms):
         current_data_sources = page.data_sources
@@ -287,55 +215,6 @@ class PageService(Service):
             return True
         else:
             return False
-
-    @staticmethod
-    def is_stale_update(data, page):
-        update_db_version_id = int(data.pop("db_version_id"))
-        if update_db_version_id < page.db_version_id:
-            return page_service.page_and_data_have_diffs(data, page)
-        else:
-            return False
-
-    @staticmethod
-    def page_and_data_have_diffs(data, page):
-        for key, update_value in data.items():
-            if hasattr(page, key) and key != "db_version_id":
-                existing_page_value = getattr(page, key)
-                if update_value != existing_page_value:
-                    if type(existing_page_value) == type(str) and existing_page_value.strip() == "":
-                        # The existing_page_value is empty so we don't count it as a conflict
-                        return False
-                    else:
-                        # The existing_page_value isn't empty and differs from the submitted value in data
-                        return True
-        return False
-
-    @staticmethod
-    def set_lowest_level_of_geography(page, data):
-        lowest_level_of_geography_id = data.pop("lowest_level_of_geography_id", None)
-        if lowest_level_of_geography_id != "None" and lowest_level_of_geography_id is not None:
-            # Note wtforms radio fields have the value 'None' - a string - if none selected
-            geography = LowestLevelOfGeography.query.get(lowest_level_of_geography_id)
-            page.lowest_level_of_geography = geography
-
-    @staticmethod
-    def set_other_fields(data, page):
-        for key, value in data.items():
-            if isinstance(value, str):
-                value = value.strip()
-                if value == "":
-                    value = None
-            setattr(page, key, value)
-
-    def _set_main_fields(self, page, data):
-        try:
-            self.set_lowest_level_of_geography(page, data)
-        except NoResultFound:
-            message = "There was an error setting lowest level of geography"
-            self.logger.exception(message)
-            raise PageUnEditable(message)
-
-        self.set_other_fields(data, page)
 
 
 page_service = PageService()

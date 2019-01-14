@@ -7,7 +7,7 @@ from application.cms.forms import MeasurePageForm
 from application.cms.models import Topic, Subtopic, Measure, MeasureVersion, NewVersionType, DimensionClassification
 from application.cms.new_page_service import NewPageService
 from application.cms.page_service import PageService
-from application.cms.exceptions import PageNotFoundException, InvalidPageHierarchy, PageExistsException
+from application.cms.exceptions import PageNotFoundException, InvalidPageHierarchy, PageExistsException, PageUnEditable
 
 new_page_service = NewPageService()
 page_service = PageService()
@@ -267,11 +267,11 @@ class TestNewPageService:
         assert "the title" == created_page.title
         assert "the-title" == created_page.slug == created_page.slug
 
-        updated_page = page_service.update_page(
+        updated_page = new_page_service.update_measure_version(
             created_page,
-            data={"title": "an updated title", "db_version_id": created_page.db_version_id},
-            last_updated_by=test_app_editor.email,
+            measure_page_form=MeasurePageForm(title="an updated title", db_version_id=created_page.db_version_id),
             data_source_forms=[],
+            last_updated_by_email=test_app_editor.email,
         )
 
         assert "an updated title" == updated_page.title
@@ -290,11 +290,13 @@ class TestNewPageService:
         assert "the title" == created_page.title
         assert "the-title" == created_page.slug
 
-        page_service.update_page(
+        new_page_service.update_measure_version(
             created_page,
-            data={"title": "the title", "status": "APPROVED", "db_version_id": created_page.db_version_id},
-            last_updated_by=test_app_editor.email,
+            measure_page_form=MeasurePageForm(
+                title="the title", status="APPROVED", db_version_id=created_page.db_version_id
+            ),
             data_source_forms=[],
+            last_updated_by_email=test_app_editor.email,
         )
 
         copied_page = new_page_service.create_new_measure_version(
@@ -304,11 +306,11 @@ class TestNewPageService:
         assert "the title" == copied_page.title
         assert "the-title" == copied_page.slug
 
-        page_service.update_page(
+        new_page_service.update_measure_version(
             copied_page,
-            data={"title": "the updated title", "db_version_id": copied_page.db_version_id},
-            last_updated_by=test_app_editor.email,
+            measure_page_form=MeasurePageForm(title="the updated title", db_version_id=copied_page.db_version_id),
             data_source_forms=[],
+            last_updated_by_email=test_app_editor.email,
         )
 
         assert "the updated title" == copied_page.title
@@ -445,3 +447,77 @@ class TestNewPageService:
         assert first_copy_guid != second_copy.guid
         assert second_copy.title == f"COPY OF {first_copy_title}"
         assert second_copy.slug == f"{first_copy_slug}-copy"
+
+    def test_update_measure_version(self, db_session, stub_measure_page, test_app_editor):
+        new_page_service.update_measure_version(
+            stub_measure_page,
+            measure_page_form=MeasurePageForm(title="I care too much!", db_version_id=stub_measure_page.db_version_id),
+            data_source_forms=[],
+            last_updated_by_email=test_app_editor.email,
+        )
+
+        measure_version_from_db = new_page_service.get_measure_version_by_id(
+            stub_measure_page.measure.id, stub_measure_page.version
+        )
+        assert measure_version_from_db.title == "I care too much!"
+        assert measure_version_from_db.last_updated_by == test_app_editor.email
+
+    def test_update_measure_version_raises_if_page_not_editable(self, db_session, stub_measure_page, test_app_editor):
+        measure_version_from_db = new_page_service.get_measure_version_by_id(
+            stub_measure_page.measure.id, stub_measure_page.version
+        )
+        assert measure_version_from_db.status == "DRAFT"
+
+        new_page_service.update_measure_version(
+            stub_measure_page,
+            measure_page_form=MeasurePageForm(title="Who cares", db_version_id=stub_measure_page.db_version_id),
+            data_source_forms=[],
+            last_updated_by_email=test_app_editor.email,
+            **{"status": "APPROVED"},
+        )
+
+        measure_version_from_db = new_page_service.get_measure_version_by_id(
+            stub_measure_page.measure.id, stub_measure_page.version
+        )
+        assert measure_version_from_db.status == "APPROVED"
+
+        with pytest.raises(PageUnEditable):
+            new_page_service.update_measure_version(
+                stub_measure_page,
+                measure_page_form=MeasurePageForm(
+                    title="I care too much!", db_version_id=stub_measure_page.db_version_id
+                ),
+                data_source_forms=[],
+                last_updated_by_email=test_app_editor.email,
+            )
+
+    def test_update_measure_version_trims_whitespace(self, db_session, stub_measure_page, test_app_editor):
+        measure_version = new_page_service.update_measure_version(
+            stub_measure_page,
+            measure_page_form=MeasurePageForm(
+                title="Who cares",
+                db_version_id=stub_measure_page.db_version_id,
+                published_at=datetime.now().date(),
+                ethnicity_definition_summary="\n\n\n\n\n\nThis is what should be left\n",
+            ),
+            data_source_forms=[],
+            last_updated_by_email=test_app_editor.email,
+        )
+
+        assert measure_version.ethnicity_definition_summary == "This is what should be left"
+
+        new_page_service.update_measure_version(
+            stub_measure_page,
+            measure_page_form=MeasurePageForm(
+                title="Who cares",
+                db_version_id=stub_measure_page.db_version_id,
+                ethnicity_definition_summary="\n   How about some more whitespace? \n             \n",
+            ),
+            data_source_forms=[],
+            last_updated_by_email=test_app_editor.email,
+        )
+
+        measure_version_from_db = new_page_service.get_measure_version_by_id(
+            stub_measure_page.measure.id, stub_measure_page.version
+        )
+        assert measure_version_from_db.ethnicity_definition_summary == "How about some more whitespace?"

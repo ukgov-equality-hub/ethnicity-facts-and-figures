@@ -1,5 +1,5 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 from slugify import slugify
 from sqlalchemy import func
@@ -13,6 +13,9 @@ from application.cms.exceptions import (
     PageNotFoundException,
     UpdateAlreadyExists,
     UploadNotFoundException,
+    PageUnEditable,
+    StaleUpdateException,
+    CannotChangeSubtopicOncePublished,
 )
 from application.cms.models import DataSource, Measure, MeasureVersion, Subtopic, Topic, publish_status, NewVersionType
 from application.cms.service import Service
@@ -150,6 +153,28 @@ class NewPageService(Service):
         )
 
         return measure_query.order_by(MeasureVersion.title).all()
+
+    @staticmethod
+    def _is_stale_update(data, page):
+        update_db_version_id = int(data.pop("db_version_id"))
+        if update_db_version_id < page.db_version_id:
+            return new_page_service._page_and_data_have_diffs(data, page)
+        else:
+            return False
+
+    @staticmethod
+    def _page_and_data_have_diffs(data, page):
+        for key, update_value in data.items():
+            if hasattr(page, key) and key != "db_version_id":
+                existing_page_value = getattr(page, key)
+                if update_value != existing_page_value:
+                    if type(existing_page_value) == type(str) and existing_page_value.strip() == "":
+                        # The existing_page_value is empty so we don't count it as a conflict
+                        return False
+                    else:
+                        # The existing_page_value isn't empty and differs from the submitted value in data
+                        return True
+        return False
 
     def _set_data_sources(self, page, data_source_forms):
         current_data_sources = page.data_sources
@@ -293,6 +318,99 @@ class NewPageService(Service):
         db.session.commit()
 
         return new_version
+
+    def update_measure_version(  # noqa: C901 (complexity)
+        self, measure_version, measure_page_form, data_source_forms, last_updated_by_email, **kwargs
+    ):
+        if measure_version.not_editable():
+            message = "Error updating '{}': Versions not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(
+                measure_version.title
+            )
+            self.logger.error(message)
+            raise PageUnEditable(message)
+        elif new_page_service._is_stale_update(measure_page_form.data, measure_version):
+            raise StaleUpdateException("")
+
+        # Possibly temporary to work out issue with data deletions
+        message = "EDIT MEASURE: Current state of measure_version: %s" % measure_version.to_dict()
+        self.logger.info(message)
+        message = "EDIT MEASURE: Data posted to update measure_version: %s" % measure_page_form.data
+        self.logger.info(message)
+
+        subtopic_id_from_form = kwargs.get("subtopic_id")
+        if subtopic_id_from_form is not None and measure_version.measure.subtopic.id != int(subtopic_id_from_form):
+            if measure_version.version != "1.0":
+                raise CannotChangeSubtopicOncePublished
+            new_subtopic = Subtopic.query.get(subtopic_id_from_form)
+
+            conflicting_url = [msure for msure in new_subtopic.measures if msure.slug == measure_version.measure.slug]
+            if conflicting_url:
+                message = f"A measure with url '{measure_version.slug}' already exists in {new_subtopic.title}"
+                raise PageExistsException(message)
+            else:
+                measure_version.measure.subtopics = [new_subtopic]
+                measure_version.measure.position = len(new_subtopic.measures)
+
+                # TODO: Remove this once we drop the parent relationship and remove subtopic/topics from MeasureVersion
+                subtopic_pages_matching_slug = MeasureVersion.query.filter_by(
+                    page_type="subtopic", slug=new_subtopic.slug
+                ).all()
+                # This will raise StopIteration if no subtopic page is found with a matching topic
+                new_subtopic_page = next(
+                    filter(lambda st: st.parent.slug == new_subtopic.topic.slug, subtopic_pages_matching_slug)
+                )
+                measure_version.parent = new_subtopic_page
+                measure_version.position = len(new_subtopic_page.children)
+                # TODO: End of code to remove
+
+        status = kwargs.get("status")
+        if status is not None:
+            measure_version.status = status
+
+        measure_page_form.data.pop("guid", None)  # TODO: Remove this?
+        title = measure_page_form.data.pop("title").strip()
+        measure_version.title = title
+        if measure_version.version == "1.0":
+            slug = slugify(title)
+
+            if slug != measure_version.slug and self._new_slug_invalid(measure_version, slug):
+                message = (
+                    f"A page '{title}' with slug '{slug}' already exists under {measure_version.measure.subtopic.title}"
+                )
+                raise PageExistsException(message)
+            measure_version.measure.slug = slug
+            measure_version.slug = slug  # TODO: Remove this once slug is gone from MeasureVersion
+
+        # Update main fields of MeasureVersion
+        measure_page_form.populate_obj(measure_version)
+        self._set_data_sources(page=measure_version, data_source_forms=data_source_forms)
+
+        # Update fields in the parent Measure
+        if "internal_reference" in measure_page_form.data:
+            reference = measure_page_form.data["internal_reference"]
+            measure_version.measure.reference = reference if reference else None
+
+        if measure_version.publish_status() in ["REJECTED", "UNPUBLISHED"]:
+            new_status = publish_status.inv[1]
+            measure_version.status = new_status
+
+        measure_version.updated_at = datetime.utcnow()
+        measure_version.last_updated_by = last_updated_by_email
+
+        db.session.commit()
+
+        return measure_version
+
+    @staticmethod
+    def _new_slug_invalid(measure_version, new_slug):
+        if MeasureVersion.query.filter(
+            Topic.slug == measure_version.measure.subtopic.topic.slug,
+            Subtopic.slug == measure_version.measure.subtopic.slug,
+            Measure.slug == new_slug,
+        ).first():
+            return True
+        else:
+            return False
 
 
 new_page_service = NewPageService()

@@ -601,7 +601,7 @@ def test_view_edit_measure_page(
 
     subtopic = page.find("select", attrs={"id": "subtopic"})
     assert subtopic
-    assert subtopic.find("option", selected=True).attrs.get("value") == "subtopic_example"
+    assert int(subtopic.find("option", selected=True).attrs.get("value")) == stub_measure_page.measure.subtopic.id
 
     time_covered = page.find("input", attrs={"id": "time_covered"})
     assert time_covered

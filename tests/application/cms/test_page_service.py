@@ -1,7 +1,9 @@
 import pytest
-from datetime import datetime
-from application.cms.exceptions import PageUnEditable, PageNotFoundException
+
+from application.cms.exceptions import PageNotFoundException
+from application.cms.forms import MeasurePageForm
 from application.cms.models import MeasureVersion
+from application.cms.new_page_service import new_page_service
 from application.cms.page_service import PageService
 
 page_service = PageService()
@@ -31,42 +33,6 @@ def test_get_page_by_guid_raises_exception_if_page_does_not_exist():
         page_service.get_page("notthere")
 
 
-def test_update_page(db_session, stub_measure_page, test_app_editor):
-    page_service.update_page(
-        stub_measure_page,
-        data={"title": "I cares too much!", "db_version_id": stub_measure_page.db_version_id},
-        last_updated_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    page_from_db = page_service.get_page(stub_measure_page.guid)
-    assert page_from_db.title == "I cares too much!"
-    assert page_from_db.last_updated_by == test_app_editor.email
-
-
-def test_update_page_raises_exception_if_page_not_editable(db_session, stub_measure_page, test_app_editor):
-    page_from_db = page_service.get_page(stub_measure_page.guid)
-    assert page_from_db.status == "DRAFT"
-
-    page_service.update_page(
-        stub_measure_page,
-        data={"title": "Who cares", "status": "APPROVED", "db_version_id": stub_measure_page.db_version_id},
-        last_updated_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    page_from_db = page_service.get_page(stub_measure_page.guid)
-    assert page_from_db.status == "APPROVED"
-
-    with pytest.raises(PageUnEditable):
-        page_service.update_page(
-            stub_measure_page,
-            data={"title": "I cares too much!", "db_version_id": stub_measure_page.db_version_id},
-            last_updated_by=test_app_editor.email,
-            data_source_forms=[],
-        )
-
-
 def test_set_page_to_next_state(db_session, stub_measure_page, test_app_editor):
     page_from_db = page_service.get_page(stub_measure_page.guid)
     assert page_from_db.status == "DRAFT"
@@ -89,11 +55,12 @@ def test_set_page_to_next_state(db_session, stub_measure_page, test_app_editor):
 
 
 def test_reject_page(db_session, stub_measure_page, test_app_editor):
-    page_service.update_page(
+    new_page_service.update_measure_version(
         stub_measure_page,
-        data={"title": "Who cares", "status": "DEPARTMENT_REVIEW", "db_version_id": stub_measure_page.db_version_id},
-        last_updated_by=test_app_editor.email,
+        measure_page_form=MeasurePageForm(title="Who cares", db_version_id=stub_measure_page.db_version_id),
+        last_updated_by_email=test_app_editor.email,
         data_source_forms=[],
+        **{"status": "DEPARTMENT_REVIEW"},
     )
 
     page_from_db = page_service.get_page(stub_measure_page.guid)
@@ -127,33 +94,3 @@ def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session
 
     measures = page_service.get_latest_publishable_measures(stub_subtopic_page)
     assert len(measures) == 1
-
-
-def test_update_page_trims_whitespace(db_session, stub_measure_page, test_app_editor):
-    page = page_service.update_page(
-        stub_measure_page,
-        data={
-            "title": "Who cares",
-            "db_version_id": stub_measure_page.db_version_id,
-            "published_at": datetime.now().date(),
-            "ethnicity_definition_summary": "\n\n\n\n\n\nThis is what should be left\n",
-        },
-        last_updated_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    assert page.ethnicity_definition_summary == "This is what should be left"
-
-    page_service.update_page(
-        stub_measure_page,
-        data={
-            "title": "Who cares",
-            "ethnicity_definition_summary": "\n   How about some more whitespace? \n             \n",
-            "db_version_id": stub_measure_page.db_version_id,
-        },
-        last_updated_by=test_app_editor.email,
-        data_source_forms=[],
-    )
-
-    page_from_db = page_service.get_page(stub_measure_page.guid)
-    assert page_from_db.ethnicity_definition_summary == "How about some more whitespace?"

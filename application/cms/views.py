@@ -102,8 +102,6 @@ def create_measure_page(topic_slug, subtopic_slug):
                 url_for("cms.create_measure_page", form=form, topic_slug=topic.slug, subtopic_slug=subtopic.slug)
             )
 
-    ordered_topics = sorted(page_service.get_pages_by_type("topic"), key=lambda topic: topic.title)
-
     return render_template(
         "cms/edit_measure_page.html",
         form=form,
@@ -114,7 +112,7 @@ def create_measure_page(topic_slug, subtopic_slug):
         measure={},
         new=True,
         organisations_by_type=Organisation.select_options_by_type(),
-        topics=ordered_topics,
+        topics=new_page_service.get_all_topics(),
     )
 
 
@@ -230,9 +228,9 @@ def _diff_updates(form, page):
 @login_required
 @user_has_access
 def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
-    *_, measure_version = new_page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
-    topics = page_service.get_pages_by_type("topic")
-    topics.sort(key=lambda page: page.title)
+    topic, subtopic, measure, measure_version = new_page_service.get_measure_page_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
     diffs = {}
 
     data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=measure_version)
@@ -253,20 +251,27 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
         "lowest_level_of_geography_choices": LowestLevelOfGeography,
     }
     if request.method == "GET":
-        form = MeasurePageForm(obj=measure_version, **form_kwargs)
+        measure_page_form = MeasurePageForm(obj=measure_version, **form_kwargs)
     elif request.method == "POST":
-        form = MeasurePageForm(**form_kwargs)
+        measure_page_form = MeasurePageForm(**form_kwargs)
 
     saved = False
-    if form.validate_on_submit() and data_source_form.validate_on_submit() and data_source_2_form.validate_on_submit():
+    if (
+        measure_page_form.validate_on_submit()
+        and data_source_form.validate_on_submit()
+        and data_source_2_form.validate_on_submit()
+    ):
+        additional_kwargs_from_request = {
+            "status": request.form.get("status", None),
+            "subtopic_id": request.form.get("subtopic", None),
+        }
         try:
-            form_data = form.data
-            form_data["subtopic"] = request.form.get("subtopic", None)
-            page_service.update_page(
+            new_page_service.update_measure_version(
                 measure_version,
-                data=form_data,
-                last_updated_by=current_user.email,
+                measure_page_form=measure_page_form,
                 data_source_forms=(data_source_form, data_source_2_form),
+                last_updated_by_email=current_user.email,
+                **additional_kwargs_from_request,
             )
             message = 'Updated page "{}"'.format(measure_version.title)
             current_app.logger.info(message)
@@ -275,10 +280,10 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
         except PageExistsException as e:
             current_app.logger.info(e)
             flash(str(e), "error")
-            form.title.data = measure_version.title
+            measure_page_form.title.data = measure_version.title
         except StaleUpdateException as e:
             current_app.logger.error(e)
-            diffs = _diff_updates(form, measure_version)
+            diffs = _diff_updates(measure_page_form, measure_version)
             if diffs:
                 flash("Your update will overwrite the latest content. Resolve the conflicts below", "error")
             else:
@@ -287,10 +292,10 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
             current_app.logger.info(e)
             flash(str(e), "error")
 
-    if form.errors or data_source_form.errors or data_source_2_form.errors:
+    if measure_page_form.errors or data_source_form.errors or data_source_2_form.errors:
         flash_message_with_form_errors(
             lede="This page could not be saved. Please check for errors below:",
-            forms=(form, data_source_form, data_source_2_form),
+            forms=(measure_page_form, data_source_form, data_source_2_form),
         )
 
     current_status = measure_version.status
@@ -303,9 +308,9 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
         return redirect(
             url_for(
                 "cms.send_to_review",
-                topic_slug=measure_version.parent.parent.slug,
-                subtopic_slug=measure_version.parent.slug,
-                measure_slug=measure_version.slug,
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
                 version=measure_version.version,
             )
         )
@@ -313,14 +318,14 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
         return redirect(
             url_for(
                 "cms.edit_measure_page",
-                topic_slug=measure_version.parent.parent.slug,
-                subtopic_slug=measure_version.parent.slug,
-                measure_slug=measure_version.slug,
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
                 version=measure_version.version,
             )
         )
     context = {
-        "form": form,
+        "form": measure_page_form,
         "topic": measure_version.measure.subtopic.topic,
         "subtopic": measure_version.measure.subtopic,
         "measure": measure_version,
@@ -331,7 +336,7 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
         "next_approval_state": approval_state if "APPROVE" in available_actions else None,
         "diffs": diffs,
         "organisations_by_type": Organisation.select_options_by_type(),
-        "topics": topics,
+        "topics": new_page_service.get_all_topics(),
     }
 
     return render_template("cms/edit_measure_page.html", **context)
@@ -490,7 +495,7 @@ def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
             "available_actions": available_actions,
             "next_approval_state": approval_state if "APPROVE" in available_actions else None,
             "organisations_by_type": Organisation.select_options_by_type(),
-            "topics": page_service.get_pages_by_type("topic"),
+            "topics": new_page_service.get_all_topics(),
         }
 
         return render_template("cms/edit_measure_page.html", **context)

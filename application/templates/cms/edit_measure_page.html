@@ -152,8 +152,8 @@
                                 {% if form_disabled or (measure and measure.version != '1.0') or new %}disabled{% endif %}>
                             {% for topic in topics %}
                                 <optgroup label="{{ topic.title }}">
-                                    {% for st in topic.children %}
-                                        <option value="{{ st.guid }}"
+                                    {% for st in topic.subtopics %}
+                                        <option value="{{ st.id }}"
                                                 {% if st.id == subtopic.id %}selected{% endif %}>{{ st.title }}</option>
                                     {% endfor %}
                                 </optgroup>
