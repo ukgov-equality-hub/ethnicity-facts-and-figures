@@ -111,6 +111,9 @@ class PageService(Service):
         previous_version = page.get_previous_version()
         if previous_version:
             previous_version.latest = True
+        else:
+            #  We're deleting a a 1.0 version and so need to also delete the associated Measure
+            db.session.delete(page.measure)
         db.session.delete(page)
         db.session.commit()
 
