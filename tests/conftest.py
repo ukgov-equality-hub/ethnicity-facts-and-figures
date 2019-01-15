@@ -619,30 +619,6 @@ def stub_measure_page_three_of_three(
 
 
 @pytest.fixture(scope="function")
-def mock_create_page(mocker, stub_measure_page):
-    def _create_page(page_type, parent, data, user):
-        return stub_measure_page
-
-    return mocker.patch("application.cms.views.page_service.create_page", side_effect=_create_page)
-
-
-@pytest.fixture(scope="function")
-def mock_get_page(mocker, stub_topic_page, stub_measure_page):
-    def _get_page(guid):
-        if guid == "test-measure-page":
-            return stub_measure_page
-        else:
-            return stub_topic_page
-
-    return mocker.patch("application.cms.views.page_service.get_page", side_effect=_get_page)
-
-
-@pytest.fixture(scope="function")
-def mock_get_measure_page(mocker, stub_measure_page):
-    return mocker.patch("application.cms.views.page_service.get_page", return_value=stub_measure_page)
-
-
-@pytest.fixture(scope="function")
 def stub_page_with_dimension(db_session, stub_measure_page):
     db_dimension = Dimension(
         guid="stub_dimension",
