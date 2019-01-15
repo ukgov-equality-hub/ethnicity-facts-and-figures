@@ -412,5 +412,11 @@ class NewPageService(Service):
         else:
             return False
 
+    def reject_measure_version(self, measure_version: MeasureVersion):
+        message = measure_version.reject()
+        db.session.commit()
+        self.logger.info(message)
+        return message
+
 
 new_page_service = NewPageService()

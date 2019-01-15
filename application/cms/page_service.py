@@ -40,7 +40,7 @@ class PageService(Service):
                 if existing_source or source_has_truthy_values:
                     page.data_sources.append(data_source)
 
-    def get_page(self, guid):
+    def get_page(self, guid):  # TODO: Kill this with fire.
         try:
             return MeasureVersion.query.filter_by(guid=guid).one()
         except NoResultFound as e:
@@ -66,13 +66,6 @@ class PageService(Service):
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
-
-    def reject_page(self, page_guid, version):
-        page = self.get_page_with_version(page_guid, version)
-        message = page.reject()
-        db.session.commit()
-        self.logger.info(message)
-        return message
 
     def unpublish(self, page_guid, version, unpublished_by):
         page = self.get_page_with_version(page_guid, version)

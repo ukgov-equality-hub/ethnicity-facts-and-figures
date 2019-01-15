@@ -637,11 +637,6 @@ def mock_get_measure_page(mocker, stub_measure_page):
 
 
 @pytest.fixture(scope="function")
-def mock_reject_page(mocker, stub_topic_page):
-    return mocker.patch("application.cms.views.page_service.reject_page", return_value=stub_topic_page)
-
-
-@pytest.fixture(scope="function")
 def stub_page_with_dimension(db_session, stub_measure_page):
     db_dimension = Dimension(
         guid="stub_dimension",

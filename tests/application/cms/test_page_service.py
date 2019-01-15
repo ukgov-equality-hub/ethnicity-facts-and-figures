@@ -1,9 +1,7 @@
 import pytest
 
 from application.cms.exceptions import PageNotFoundException
-from application.cms.forms import MeasurePageForm
 from application.cms.models import MeasureVersion
-from application.cms.new_page_service import new_page_service
 from application.cms.page_service import PageService
 
 page_service = PageService()
@@ -52,26 +50,6 @@ def test_set_page_to_next_state(db_session, stub_measure_page, test_app_editor):
     assert page_from_db.status == "APPROVED"
     assert page_from_db.last_updated_by == test_app_editor.email
     assert page_from_db.published_by == test_app_editor.email
-
-
-def test_reject_page(db_session, stub_measure_page, test_app_editor):
-    new_page_service.update_measure_version(
-        stub_measure_page,
-        measure_page_form=MeasurePageForm(title="Who cares", db_version_id=stub_measure_page.db_version_id),
-        last_updated_by_email=test_app_editor.email,
-        data_source_forms=[],
-        **{"status": "DEPARTMENT_REVIEW"},
-    )
-
-    page_from_db = page_service.get_page(stub_measure_page.guid)
-
-    assert page_from_db.status == "DEPARTMENT_REVIEW"
-
-    message = page_service.reject_page(page_from_db.guid, page_from_db.version)
-    assert message == 'Sent page "Who cares" to REJECTED'
-
-    page_from_db = page_service.get_page(stub_measure_page.guid)
-    assert page_from_db.status == "REJECTED"
 
 
 def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session, stub_subtopic_page, stub_measure_1):

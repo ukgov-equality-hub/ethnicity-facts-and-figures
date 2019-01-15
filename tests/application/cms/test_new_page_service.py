@@ -521,3 +521,19 @@ class TestNewPageService:
             stub_measure_page.measure.id, stub_measure_page.version
         )
         assert measure_version_from_db.ethnicity_definition_summary == "How about some more whitespace?"
+
+    def test_reject_measure_version(self, db_session, stub_measure_page, test_app_editor):
+        assert stub_measure_page.status == "DRAFT"
+        new_page_service.update_measure_version(
+            stub_measure_page,
+            measure_page_form=MeasurePageForm(title="Who cares", db_version_id=stub_measure_page.db_version_id),
+            last_updated_by_email=test_app_editor.email,
+            data_source_forms=[],
+            **{"status": "DEPARTMENT_REVIEW"},
+        )
+        assert stub_measure_page.status == "DEPARTMENT_REVIEW"
+
+        message = new_page_service.reject_measure_version(stub_measure_page)
+
+        assert message == 'Sent page "Who cares" to REJECTED'
+        assert stub_measure_page.status == "REJECTED"

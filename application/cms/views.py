@@ -551,7 +551,7 @@ def reject_page(topic_slug, subtopic_slug, measure_slug, version):
     if measure_version.status not in {"INTERNAL_REVIEW", "DEPARTMENT_REVIEW"}:
         abort(400)
 
-    message = page_service.reject_page(measure_version.guid, version)
+    message = new_page_service.reject_measure_version(measure_version)
     flash(message, "info")
     current_app.logger.info(message)
     return redirect(
