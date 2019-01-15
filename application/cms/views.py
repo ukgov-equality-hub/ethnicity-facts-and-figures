@@ -34,7 +34,6 @@ from application.cms.models import (
     Organisation,
     LowestLevelOfGeography,
     MeasureVersion,
-    Measure,
 )
 from application.cms.new_page_service import new_page_service
 from application.cms.upload_service import upload_service
@@ -43,7 +42,6 @@ from application.data.charts import ChartObjectDataBuilder
 from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
 from application.data.tables import TableObjectDataBuilder
 from application.sitebuilder import build_service
-from application.sitebuilder.build_service import request_build
 from application.utils import get_bool, user_can, user_has_access
 
 
@@ -1219,21 +1217,13 @@ def copy_measure_page(topic_slug, subtopic_slug, measure_slug, version):
 @cms_blueprint.route("/set-measure-order", methods=["POST"])
 @login_required
 def set_measure_order():
-    from application import db
-
     try:
         positions = request.json.get("positions", [])
-        for p in positions:
-            pages = MeasureVersion.query.filter_by(guid=p["guid"], parent_guid=p["subtopic"]).all()
-            for page in pages:
-                page.position = p["position"]
 
-            if pages:
-                measure = Measure.query.get(pages[0].measure_id)
-                measure.position = p["position"]
+        new_page_service.update_measure_position_within_subtopic(
+            *[(position["measure_id"], position["subtopic_id"], position["position"]) for position in positions]
+        )
 
-        db.session.commit()
-        request_build()
         return json.dumps({"status": "OK", "status_code": 200}), 200
     except Exception as e:
         current_app.logger.exception(e)

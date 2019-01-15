@@ -48,7 +48,7 @@
                                                 <ul class="links js-reorderable">
                                                     {% for measure in measures_by_subtopic[subtopic.id] %}
                                                         {% with measure_version = measure.latest_version %}
-                                                            <li data-guid="{{ measure_version.id }}" data-subtopic="{{ subtopic.id }}">
+                                                            <li data-measure-id="{{ measure_version.measure.id }}" data-subtopic-id="{{ subtopic.id }}">
                                                                 <a href="{{ url_for('static_site.measure_page',
                                                                                     topic_slug=topic.slug,
                                                                                     subtopic_slug=subtopic.slug,
@@ -125,8 +125,8 @@
                 var positions = [];
                 for(var i = 0; i < list.children.length; i++) {
                      positions.push({"position": i,
-                                     "guid": list.children[i].dataset.guid,
-                                     "subtopic": list.children[i].dataset.subtopic})
+                                     "measure_id": list.children[i].dataset.measureId,
+                                     "subtopic_id": list.children[i].dataset.subtopicId})
                 }
 
                 status.classList.remove('status-invisible');

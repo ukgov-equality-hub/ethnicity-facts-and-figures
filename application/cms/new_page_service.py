@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime, date
+from typing import Iterable, Tuple
 
 from slugify import slugify
 from sqlalchemy import func
@@ -20,6 +21,7 @@ from application.cms.exceptions import (
 from application.cms.models import DataSource, Measure, MeasureVersion, Subtopic, Topic, publish_status, NewVersionType
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
+from application.sitebuilder.build_service import request_build
 from application.utils import create_guid, generate_review_token
 
 
@@ -475,6 +477,25 @@ class NewPageService(Service):
             measure_version.published_by = updated_by
         db.session.commit()
         return message
+
+    def update_measure_position_within_subtopic(self, *new_measure_positions: Iterable[Tuple[int, int, int]]):
+        for new_measure_position in new_measure_positions:
+            measure_id, subtopic_id, position = new_measure_position
+
+            measure_version = MeasureVersion.query.filter(
+                MeasureVersion.measure_id == measure_id,
+                MeasureVersion.measure.has(Measure.subtopics.any(Subtopic.id == subtopic_id)),
+            ).all()
+
+            for page in measure_version:  # TODO: Remove when we clean up the sitemap refactor
+                page.position = position
+
+            if measure_version:
+                measure = Measure.query.get(measure_version[0].measure_id)
+                measure.position = position
+
+        db.session.commit()
+        request_build()
 
 
 new_page_service = NewPageService()
