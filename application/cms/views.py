@@ -1137,7 +1137,7 @@ def delete_measure_page(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    page_service.delete_measure_page(measure_version.guid, version)
+    new_page_service.delete_measure_version(measure_version)
     if request.referrer.endswith("/versions"):
         return redirect(
             url_for(

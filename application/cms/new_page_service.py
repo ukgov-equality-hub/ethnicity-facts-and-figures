@@ -438,5 +438,15 @@ class NewPageService(Service):
 
         return message
 
+    def delete_measure_version(self, measure_version: MeasureVersion):
+        previous_version = measure_version.get_previous_version()
+        if previous_version:
+            previous_version.latest = True
+        else:
+            #  We're deleting a a 1.0 version and so need to also delete the associated Measure
+            db.session.delete(measure_version.measure)
+        db.session.delete(measure_version)
+        db.session.commit()
+
 
 new_page_service = NewPageService()

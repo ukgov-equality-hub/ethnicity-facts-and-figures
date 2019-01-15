@@ -1,6 +1,7 @@
 import pytest
 
 from application.cms.page_service import PageService
+from application.cms.models import Measure
 
 from tests.functional.pages import LogInPage, HomePage, TopicPage, MeasureEditPage, MeasureCreatePage, RandomMeasure
 
@@ -14,12 +15,16 @@ THIS TEST CREATES THEN DELETES A MEASURE AT THE DRAFT 1.0 STAGE
 
 
 def test_delete_a_draft_1_0_measure(
-    driver, test_app_editor, live_server, stub_topic_page, stub_subtopic_page, stub_published_measure_page
+    db, driver, test_app_editor, live_server, stub_topic_page, stub_subtopic_page, stub_published_measure_page
 ):
+    assert Measure.query.count() == 2  # From fixtures :facepalm:
+
     # GIVEN we create a version 1.0 measure
     login(driver, live_server, test_app_editor)
     navigate_to_topic_page(driver, live_server, stub_topic_page)
     measure = create_measure_with_minimal_content(driver, live_server, stub_subtopic_page, stub_topic_page)
+
+    assert Measure.query.count() == 3  # From new measure
 
     # WHEN we go to the topic page
     topic_page = TopicPage(driver, live_server, stub_topic_page)
@@ -41,6 +46,8 @@ def test_delete_a_draft_1_0_measure(
     # TODO: Check the page didn't error and is the actual page we expect to not find the thing in
     # TODO: Maybe assert 200 responses after all get()s in functional tests?
     assert topic_page.measure_is_listed(measure) is False
+
+    assert Measure.query.count() == 2  # Back to number of measures from fixtures
 
 
 def create_measure_with_minimal_content(driver, live_server, stub_subtopic_page, stub_topic_page):

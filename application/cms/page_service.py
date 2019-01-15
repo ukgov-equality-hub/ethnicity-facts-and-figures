@@ -79,17 +79,6 @@ class PageService(Service):
             previous_version.latest = False
         db.session.commit()
 
-    def delete_measure_page(self, measure, version):
-        page = self.get_page_with_version(measure, version)
-        previous_version = page.get_previous_version()
-        if previous_version:
-            previous_version.latest = True
-        else:
-            #  We're deleting a a 1.0 version and so need to also delete the associated Measure
-            db.session.delete(page.measure)
-        db.session.delete(page)
-        db.session.commit()
-
     @staticmethod
     def get_pages_by_type(page_type):
         return (
