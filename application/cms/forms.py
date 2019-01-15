@@ -1,10 +1,10 @@
 from flask_wtf import FlaskForm
 from markupsafe import Markup
-from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField
+from wtforms import StringField, TextAreaField, FileField, HiddenField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length
 
-from application.cms.models import TypeOfData, UKCountry
+from application.cms.models import TypeOfData, UKCountry, MeasureVersion, NewVersionType
 from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
 
 
@@ -307,6 +307,21 @@ class DimensionRequiredForm(DimensionForm):
 
 
 class NewVersionForm(FlaskForm):
-    version_type = RadioField(
-        label="New version type", validators=[DataRequired()], choices=[("minor", "Minor"), ("major", "Major")]
-    )
+    version_type = RDURadioField(label=Markup("<b>New version type:</b>"), validators=[DataRequired()])
+
+    def __init__(self, measure_version: MeasureVersion, *args, **kwargs):
+        super(NewVersionForm, self).__init__(*args, **kwargs)
+
+        next_minor_version = measure_version.next_minor_version()
+        next_major_version = measure_version.next_major_version()
+
+        self.version_type.choices = [
+            (
+                NewVersionType.MINOR_UPDATE.value,
+                Markup(f"<b>{next_minor_version}</b>Edit this edition (eg for clarifications or corrections)"),
+            ),
+            (
+                NewVersionType.MAJOR_UPDATE.value,
+                Markup(f"<b>{next_major_version}</b>Create new edition (eg after new data becomes available)"),
+            ),
+        ]

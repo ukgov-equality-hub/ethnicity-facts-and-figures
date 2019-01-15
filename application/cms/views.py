@@ -1158,7 +1158,7 @@ def new_version(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    form = NewVersionForm()
+    form = NewVersionForm(measure_version)
     if form.validate_on_submit():
         version_type = form.data["version_type"]
         try:

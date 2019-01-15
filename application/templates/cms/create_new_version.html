@@ -28,12 +28,7 @@
             <form method="POST"
                   action="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                 {{ form.csrf_token }}
-                <div class="version-type">New version type:</div>
-                {% for version in form.version_type %}
-                    <div class="input-radio">
-                        {{ render_version_radio(version, measure) }}
-                    </div>
-                {% endfor %}
+                {{ form.version_type }}
                 <button class="button">Create new version in draft</button>
             </form>
         </div>
