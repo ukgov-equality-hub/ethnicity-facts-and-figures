@@ -37,6 +37,9 @@ def test_delete_a_draft_1_0_measure(
     driver.find_element_by_xpath('//button[text()="Yes, delete"]').click()
 
     topic_page.get()
+    # This test has been passing when the final .get() returned a 500 error page.
+    # TODO: Check the page didn't error and is the actual page we expect to not find the thing in
+    # TODO: Maybe assert 200 responses after all get()s in functional tests?
     assert topic_page.measure_is_listed(measure) is False
 
 
