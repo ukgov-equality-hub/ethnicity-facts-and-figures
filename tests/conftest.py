@@ -422,7 +422,7 @@ def stub_published_measure_page(
     db_session, stub_subtopic_page, stub_measure_data, stub_frequency, stub_geography, stub_data_source
 ):  # TODO: Delete these stubs after using new hierarchy tables.
     page = MeasureVersion(
-        id=200,
+        id=_get_random_unused_measure_version_id(),
         guid="test-published-measure-page",
         parent_id=stub_subtopic_page.id,
         parent_guid=stub_subtopic_page.guid,
@@ -449,10 +449,9 @@ def stub_published_measure_page(
 
     page.data_sources = [stub_data_source]
 
-    db_session.session.add(page)
     db_session.session.add(measure)
+    db_session.session.add(page)
     db_session.session.commit()
-
     return page
 
 
@@ -1007,3 +1006,12 @@ def stub_dimension(db_session, stub_measure_version):
     db_session.session.add(dimension)
     db_session.session.commit()
     return dimension
+
+
+def _get_random_unused_measure_version_id():
+    from random import randint
+
+    id = randint(1, 99999)
+    while MeasureVersion.query.filter_by(id=id).first() is not None:
+        id = randint(1, 99999)
+    return id
