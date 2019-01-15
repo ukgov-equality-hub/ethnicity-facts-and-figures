@@ -418,5 +418,12 @@ class NewPageService(Service):
         self.logger.info(message)
         return message
 
+    def unpublish_measure_version(self, measure_version: MeasureVersion, unpublished_by: str):
+        message = measure_version.unpublish()
+        measure_version.unpublished_by = unpublished_by
+        db.session.commit()
+        self.logger.info(message)
+        return message
+
 
 new_page_service = NewPageService()

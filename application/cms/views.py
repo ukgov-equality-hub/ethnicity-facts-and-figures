@@ -576,8 +576,8 @@ def unpublish_page(topic_slug, subtopic_slug, measure_slug, version):
     if measure_version.status != "APPROVED":
         abort(400)
 
-    page, message = page_service.unpublish(measure_version.guid, version, current_user.email)
-    _build_if_necessary(page)
+    message = new_page_service.unpublish_measure_version(measure_version, unpublished_by=current_user.email)
+    _build_if_necessary(measure_version)
     flash(message, "info")
     current_app.logger.info(message)
     return redirect(

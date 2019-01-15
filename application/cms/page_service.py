@@ -67,14 +67,6 @@ class PageService(Service):
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def unpublish(self, page_guid, version, unpublished_by):
-        page = self.get_page_with_version(page_guid, version)
-        message = page.unpublish()
-        page.unpublished_by = unpublished_by
-        db.session.commit()
-        self.logger.info(message)
-        return (page, message)
-
     def send_page_to_draft(self, page_guid, version):
         page = self.get_page_with_version(page_guid, version)
         available_actions = page.available_actions()

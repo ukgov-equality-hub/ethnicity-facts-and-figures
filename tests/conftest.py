@@ -159,6 +159,13 @@ def mock_rdu_user(db_session):
 
 
 @pytest.fixture(scope="function")
+def mock_logged_in_admin_user(mock_admin_user, test_app_client):
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = mock_admin_user.id
+    return mock_admin_user
+
+
+@pytest.fixture(scope="function")
 def mock_logged_in_dept_user(mock_dept_user, test_app_client):
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id

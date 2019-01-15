@@ -292,16 +292,12 @@ def test_admin_user_can_unpublish_page(
     db,
     db_session,
     test_app_client,
-    mock_admin_user,
+    mock_logged_in_admin_user,
     stub_topic_page,
     stub_subtopic_page,
     stub_measure_page,
     mock_request_build,
 ):
-
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
-
     stub_measure_page.status = "APPROVED"
     db.session.add(stub_measure_page)
     db.session.commit()
@@ -324,7 +320,7 @@ def test_admin_user_can_unpublish_page(
     page_service.init_app(app)
     page = page_service.get_page(stub_measure_page.guid)
     assert page.status == "UNPUBLISH"
-    assert page.unpublished_by == mock_admin_user.email
+    assert page.unpublished_by == mock_logged_in_admin_user.email
 
 
 def test_non_admin_user_can_not_unpublish_page(
