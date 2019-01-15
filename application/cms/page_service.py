@@ -5,39 +5,13 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
 from application.cms.exceptions import PageNotFoundException
-from application.cms.models import MeasureVersion, DataSource
+from application.cms.models import MeasureVersion
 from application.cms.service import Service
 
 
 class PageService(Service):
     def __init__(self):
         super().__init__()
-
-    def _set_data_sources(self, page, data_source_forms):
-        current_data_sources = page.data_sources
-        page.data_sources = []
-
-        for i, data_source_form in enumerate(data_source_forms):
-            existing_source = len(current_data_sources) > i
-
-            if data_source_form.remove_data_source.data or not any(
-                value for key, value in data_source_form.data.items() if key != "csrf_token"
-            ):
-                if existing_source:
-                    db.session.delete(current_data_sources[i])
-
-            else:
-                data_source = current_data_sources[i] if existing_source else DataSource()
-                data_source_form.populate_obj(data_source)
-
-                source_has_truthy_values = any(
-                    getattr(getattr(data_source_form, column.name), "data")
-                    for column in DataSource.__table__.columns
-                    if column.name != "id"
-                )
-
-                if existing_source or source_has_truthy_values:
-                    page.data_sources.append(data_source)
 
     def get_page(self, guid):  # TODO: Kill this with fire.
         try:
@@ -49,19 +23,6 @@ class PageService(Service):
     def get_page_with_title(self, title):
         try:
             return MeasureVersion.query.filter_by(title=title).one()
-        except NoResultFound as e:
-            self.logger.exception(e)
-            raise PageNotFoundException()
-
-    def get_page_with_version(self, guid, version):
-        try:
-            page = MeasureVersion.query.filter_by(guid=guid, version=version).one()
-
-            # Temporary logging to work out issue with data deletions
-            message = "Get page with version %s" % page.to_dict()
-            self.logger.info(message)
-
-            return page
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
@@ -98,17 +59,6 @@ class PageService(Service):
         )
 
     @staticmethod
-    def get_latest_measures(subtopic):
-        filtered = []
-        seen = set([])
-        for m in subtopic.children:
-            if m.guid not in seen and m.latest:
-                filtered.append(m)
-                seen.add(m.guid)
-
-        return filtered
-
-    @staticmethod
     def get_previous_major_versions(measure):
         versions = measure.get_versions(include_self=False)
         versions.sort(reverse=True)
@@ -143,14 +93,6 @@ class PageService(Service):
             page.unpublished_at = datetime.datetime.now()
             page.status = "UNPUBLISHED"
             db.session.commit()
-
-    @staticmethod
-    def new_slug_invalid(page, slug):
-        existing_page = MeasureVersion.query.filter_by(slug=slug, parent_guid=page.parent_guid).first()
-        if existing_page:
-            return True
-        else:
-            return False
 
 
 page_service = PageService()
