@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
 from application.cms.exceptions import PageNotFoundException
-from application.cms.models import MeasureVersion, publish_status, DataSource
+from application.cms.models import MeasureVersion, DataSource
 from application.cms.service import Service
 from application.utils import generate_review_token
 
@@ -66,18 +66,6 @@ class PageService(Service):
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
-
-    def send_page_to_draft(self, page_guid, version):
-        page = self.get_page_with_version(page_guid, version)
-        available_actions = page.available_actions()
-        if "RETURN_TO_DRAFT" in available_actions:
-            numerical_status = page.publish_status(numerical=True)
-            page.status = publish_status.inv[(numerical_status + 1) % 6]
-            page_service.save_page(page)
-            message = 'Sent page "{}" back to {}'.format(page.title, page.status)
-        else:
-            message = 'Page "{}" can not be updated'.format(page.title)
-        return message
 
     def mark_page_published(self, page):
         if page.published_at is None:
@@ -143,11 +131,6 @@ class PageService(Service):
             page.published_by = updated_by
         db.session.commit()
         return message
-
-    @staticmethod
-    def save_page(page):
-        db.session.add(page)
-        db.session.commit()
 
     @staticmethod
     def get_latest_measures(subtopic):

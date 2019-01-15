@@ -600,7 +600,7 @@ def send_page_to_draft(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    message = page_service.send_page_to_draft(measure_version.guid, version)
+    message = new_page_service.send_measure_version_to_draft(measure_version)
     flash(message, "info")
     current_app.logger.info(message)
     return redirect(

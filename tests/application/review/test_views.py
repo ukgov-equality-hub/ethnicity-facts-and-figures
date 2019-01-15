@@ -108,13 +108,12 @@ def test_review_token_messed_up_throws_bad_signature(app, mock_rdu_user, stub_me
 
 
 def test_page_main_download_available_without_login(
-    test_app_client, stub_measure_page, mock_get_measure_download, mock_get_csv_data_for_download
+    db_session, test_app_client, stub_measure_page, mock_get_measure_download, mock_get_csv_data_for_download
 ):
-
     upload = Upload(guid=str(uuid.uuid4()), title="test file", file_name="test-file.csv")
     stub_measure_page.uploads = [upload]
 
-    page_service.save_page(stub_measure_page)
+    db_session.session.commit()
 
     resp = test_app_client.get(
         url_for(
