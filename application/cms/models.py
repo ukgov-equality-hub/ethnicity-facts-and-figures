@@ -227,6 +227,7 @@ class MeasureVersion(db.Model, CopyableModel):
         ),
         Index("ix_page_type_uri", "page_type", "slug"),
         ForeignKeyConstraint(["measure_id"], ["measure.id"]),
+        UniqueConstraint("measure_id", "version"),
     )
 
     def __eq__(self, other):
