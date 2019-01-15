@@ -86,9 +86,7 @@ class User(db.Model, RoleFreeUserMixin):
         if self.user_type != TypeOfUser.DEPT_USER:
             return True
         else:
-            print(measure_slug, self.measures)
-            for measure in self.measures:
-                if measure.slug == measure_slug:
-                    return True
+            if any(measure.slug == measure_slug for measure in self.measures):
+                return True
             else:
                 return False
