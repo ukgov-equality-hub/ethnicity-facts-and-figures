@@ -31,27 +31,6 @@ def test_get_page_by_guid_raises_exception_if_page_does_not_exist():
         page_service.get_page("notthere")
 
 
-def test_set_page_to_next_state(db_session, stub_measure_page, test_app_editor):
-    page_from_db = page_service.get_page(stub_measure_page.guid)
-    assert page_from_db.status == "DRAFT"
-
-    page_service.next_state(page_from_db, updated_by=test_app_editor.email)
-    page_from_db = page_service.get_page(stub_measure_page.guid)
-    assert page_from_db.status == "INTERNAL_REVIEW"
-    assert page_from_db.last_updated_by == test_app_editor.email
-
-    page_service.next_state(page_from_db, updated_by=test_app_editor.email)
-    page_from_db = page_service.get_page(stub_measure_page.guid)
-    assert page_from_db.status == "DEPARTMENT_REVIEW"
-    assert page_from_db.last_updated_by == test_app_editor.email
-
-    page_service.next_state(page_from_db, updated_by=test_app_editor.email)
-    page_from_db = page_service.get_page(stub_measure_page.guid)
-    assert page_from_db.status == "APPROVED"
-    assert page_from_db.last_updated_by == test_app_editor.email
-    assert page_from_db.published_by == test_app_editor.email
-
-
 def test_get_latest_publishable_versions_of_measures_for_subtopic(db, db_session, stub_subtopic_page, stub_measure_1):
     major_version_1 = MeasureVersion(guid="test_page", version="1.0", status="APPROVED", measure_id=stub_measure_1.id)
     minor_version_2 = MeasureVersion(guid="test_page", version="1.1", status="APPROVED", measure_id=stub_measure_1.id)

@@ -37,7 +37,6 @@ from application.cms.models import (
     Measure,
 )
 from application.cms.new_page_service import new_page_service
-from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.utils import copy_form_errors, flash_message_with_form_errors, get_data_source_forms
 from application.data.charts import ChartObjectDataBuilder
@@ -500,7 +499,7 @@ def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
 
         return render_template("cms/edit_measure_page.html", **context)
 
-    message = page_service.next_state(measure_version, updated_by=current_user.email)
+    message = new_page_service.move_measure_version_to_next_state(measure_version, updated_by=current_user.email)
     current_app.logger.info(message)
     flash(message, "info")
 
@@ -525,7 +524,7 @@ def publish(topic_slug, subtopic_slug, measure_slug, version):
     if measure_version.status != "DEPARTMENT_REVIEW":
         abort(400)
 
-    message = page_service.next_state(measure_version, current_user.email)
+    message = new_page_service.move_measure_version_to_next_state(measure_version, current_user.email)
     current_app.logger.info(message)
     _build_if_necessary(measure_version)
     flash(message, "info")

@@ -7,7 +7,6 @@ from application import db
 from application.cms.exceptions import PageNotFoundException
 from application.cms.models import MeasureVersion, DataSource
 from application.cms.service import Service
-from application.utils import generate_review_token
 
 
 class PageService(Service):
@@ -97,17 +96,6 @@ class PageService(Service):
             .order_by(desc(MeasureVersion.version))
             .all()
         )
-
-    @staticmethod
-    def next_state(page, updated_by):
-        message = page.next_state()
-        page.last_updated_by = updated_by
-        if page.status == "DEPARTMENT_REVIEW":
-            page.review_token = generate_review_token(page.guid, page.version)
-        if page.status == "APPROVED":
-            page.published_by = updated_by
-        db.session.commit()
-        return message
 
     @staticmethod
     def get_latest_measures(subtopic):

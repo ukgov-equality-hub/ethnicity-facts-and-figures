@@ -20,7 +20,7 @@ from application.cms.exceptions import (
 from application.cms.models import DataSource, Measure, MeasureVersion, Subtopic, Topic, publish_status, NewVersionType
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
-from application.utils import create_guid
+from application.utils import create_guid, generate_review_token
 
 
 class NewPageService(Service):
@@ -464,6 +464,17 @@ class NewPageService(Service):
             previous_version.latest = False
 
         db.session.commit()
+
+    @staticmethod
+    def move_measure_version_to_next_state(measure_version: MeasureVersion, updated_by: str):
+        message = measure_version.next_state()
+        measure_version.last_updated_by = updated_by
+        if measure_version.status == "DEPARTMENT_REVIEW":
+            measure_version.review_token = generate_review_token(measure_version.guid, measure_version.version)
+        if measure_version.status == "APPROVED":
+            measure_version.published_by = updated_by
+        db.session.commit()
+        return message
 
 
 new_page_service = NewPageService()

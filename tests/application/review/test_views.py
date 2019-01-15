@@ -6,7 +6,7 @@ from flask import url_for
 from itsdangerous import SignatureExpired, BadSignature
 
 from application.cms.models import Upload
-from application.cms.page_service import page_service
+from application.cms.new_page_service import new_page_service
 from application.utils import decode_review_token
 
 
@@ -16,8 +16,8 @@ def test_review_link_returns_page(test_app_client, mock_rdu_user, stub_measure_p
         session["user_id"] = mock_rdu_user.id
 
     assert stub_measure_page.status == "DRAFT"
-    page_service.next_state(stub_measure_page, mock_rdu_user.email)
-    page_service.next_state(stub_measure_page, mock_rdu_user.email)
+    new_page_service.move_measure_version_to_next_state(stub_measure_page, mock_rdu_user.email)
+    new_page_service.move_measure_version_to_next_state(stub_measure_page, mock_rdu_user.email)
     assert stub_measure_page.status == "DEPARTMENT_REVIEW"
 
     resp = test_app_client.get(url_for("review.review_page", review_token=stub_measure_page.review_token))
@@ -33,8 +33,8 @@ def test_review_link_returns_404_if_token_incomplete(test_app_client, mock_rdu_u
         session["user_id"] = mock_rdu_user.id
 
     assert stub_measure_page.status == "DRAFT"
-    page_service.next_state(stub_measure_page, mock_rdu_user.email)
-    page_service.next_state(stub_measure_page, mock_rdu_user.email)
+    new_page_service.move_measure_version_to_next_state(stub_measure_page, mock_rdu_user.email)
+    new_page_service.move_measure_version_to_next_state(stub_measure_page, mock_rdu_user.email)
     assert stub_measure_page.status == "DEPARTMENT_REVIEW"
 
     broken_token = stub_measure_page.review_token.replace(".", " ")
@@ -53,8 +53,8 @@ def test_review_link_returns_404_if_token_incomplete(test_app_client, mock_rdu_u
 def test_review_token_decoded_if_not_expired(app, mock_rdu_user, stub_measure_page):
 
     assert stub_measure_page.status == "DRAFT"
-    page_service.next_state(stub_measure_page, mock_rdu_user.email)
-    page_service.next_state(stub_measure_page, mock_rdu_user.email)
+    new_page_service.move_measure_version_to_next_state(stub_measure_page, mock_rdu_user.email)
+    new_page_service.move_measure_version_to_next_state(stub_measure_page, mock_rdu_user.email)
     assert stub_measure_page.status == "DEPARTMENT_REVIEW"
 
     expires_tomorrow = 1
@@ -70,8 +70,8 @@ def test_review_token_decoded_if_not_expired(app, mock_rdu_user, stub_measure_pa
 def test_review_token_expired_throws_signature_expired(app, mock_rdu_user, stub_measure_page):
 
     assert stub_measure_page.status == "DRAFT"
-    page_service.next_state(stub_measure_page, mock_rdu_user.email)
-    page_service.next_state(stub_measure_page, mock_rdu_user.email)
+    new_page_service.move_measure_version_to_next_state(stub_measure_page, mock_rdu_user.email)
+    new_page_service.move_measure_version_to_next_state(stub_measure_page, mock_rdu_user.email)
     assert stub_measure_page.status == "DEPARTMENT_REVIEW"
 
     expired_yesterday = -1
@@ -86,8 +86,8 @@ def test_review_token_expired_throws_signature_expired(app, mock_rdu_user, stub_
 def test_review_token_messed_up_throws_bad_signature(app, mock_rdu_user, stub_measure_page):
 
     assert stub_measure_page.status == "DRAFT"
-    page_service.next_state(stub_measure_page, mock_rdu_user.email)
-    page_service.next_state(stub_measure_page, mock_rdu_user.email)
+    new_page_service.move_measure_version_to_next_state(stub_measure_page, mock_rdu_user.email)
+    new_page_service.move_measure_version_to_next_state(stub_measure_page, mock_rdu_user.email)
     assert stub_measure_page.status == "DEPARTMENT_REVIEW"
 
     broken_token = stub_measure_page.review_token.replace(".", " ")

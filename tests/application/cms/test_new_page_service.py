@@ -537,3 +537,19 @@ class TestNewPageService:
 
         assert message == 'Sent page "Who cares" to REJECTED'
         assert stub_measure_page.status == "REJECTED"
+
+    def test_set_page_to_next_state(self, db_session, stub_measure_page, test_app_editor):
+        assert stub_measure_page.status == "DRAFT"
+
+        new_page_service.move_measure_version_to_next_state(stub_measure_page, updated_by=test_app_editor.email)
+        assert stub_measure_page.status == "INTERNAL_REVIEW"
+        assert stub_measure_page.last_updated_by == test_app_editor.email
+
+        new_page_service.move_measure_version_to_next_state(stub_measure_page, updated_by=test_app_editor.email)
+        assert stub_measure_page.status == "DEPARTMENT_REVIEW"
+        assert stub_measure_page.last_updated_by == test_app_editor.email
+
+        new_page_service.move_measure_version_to_next_state(stub_measure_page, updated_by=test_app_editor.email)
+        assert stub_measure_page.status == "APPROVED"
+        assert stub_measure_page.last_updated_by == test_app_editor.email
+        assert stub_measure_page.published_by == test_app_editor.email
