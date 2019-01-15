@@ -1163,11 +1163,8 @@ def new_version(topic_slug, subtopic_slug, measure_slug, version):
     if form.validate_on_submit():
         version_type = form.data["version_type"]
         try:
-            new_measure_version = page_service.create_copy(
-                measure_version.guid,
-                measure_version.version,
-                NewVersionType(version_type),
-                created_by=current_user.email,
+            new_measure_version = new_page_service.create_measure_version(
+                measure_version, NewVersionType(version_type), user=current_user
             )
             message = "Added a new %s version %s" % (version_type, new_measure_version.version)
             flash(message)
@@ -1244,9 +1241,10 @@ def set_measure_order():
         return json.dumps({"status": "INTERNAL SERVER ERROR", "status_code": 500}), 500
 
 
-def _build_if_necessary(page):
-    if page.status == "UNPUBLISH":
+def _build_if_necessary(measure_version: MeasureVersion):
+    if measure_version.status == "UNPUBLISH":
         build_service.request_build()
-    elif page.eligible_for_build():
-        page_service.mark_page_published(page)
+
+    elif measure_version.eligible_for_build():
+        new_page_service.mark_measure_version_published(measure_version)
         build_service.request_build()

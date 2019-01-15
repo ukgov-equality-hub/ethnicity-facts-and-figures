@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, date
 
 from slugify import slugify
 from sqlalchemy import func
@@ -446,6 +446,23 @@ class NewPageService(Service):
             #  We're deleting a a 1.0 version and so need to also delete the associated Measure
             db.session.delete(measure_version.measure)
         db.session.delete(measure_version)
+        db.session.commit()
+
+    def mark_measure_version_published(self, measure_version: MeasureVersion):
+        if measure_version.published_at is None:
+            measure_version.published_at = date.today()
+
+        measure_version.published = True
+        measure_version.latest = True
+        message = 'measure_version "{}" published on "{}"'.format(
+            measure_version.id, measure_version.published_at.strftime("%Y-%m-%d")
+        )
+        self.logger.info(message)
+
+        previous_version = measure_version.get_previous_version()
+        if previous_version and previous_version.latest:
+            previous_version.latest = False
+
         db.session.commit()
 
 

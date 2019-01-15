@@ -161,7 +161,7 @@ def test_admin_user_can_publish_page_in_dept_review(
     stub_subtopic_page,
     stub_measure_page,
     mock_request_build,
-    mock_page_service_mark_page_published,
+    mock_new_page_service_mark_measure_version_published,
 ):
 
     with test_app_client.session_transaction() as session:
@@ -184,7 +184,7 @@ def test_admin_user_can_publish_page_in_dept_review(
 
     assert response.status_code == 200
     mock_request_build.assert_called_once()
-    mock_page_service_mark_page_published.assert_called_once_with(stub_measure_page)
+    mock_new_page_service_mark_measure_version_published.assert_called_once_with(stub_measure_page)
 
     page_service = PageService()
     page_service.init_app(app)

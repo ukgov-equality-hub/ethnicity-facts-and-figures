@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime
 
 from sqlalchemy import desc
 from sqlalchemy.orm.exc import NoResultFound
@@ -66,18 +66,6 @@ class PageService(Service):
         except NoResultFound as e:
             self.logger.exception(e)
             raise PageNotFoundException()
-
-    def mark_page_published(self, page):
-        if page.published_at is None:
-            page.published_at = date.today()
-        page.published = True
-        page.latest = True
-        message = 'page "{}" published on "{}"'.format(page.guid, page.published_at.strftime("%Y-%m-%d"))
-        self.logger.info(message)
-        previous_version = page.get_previous_version()
-        if previous_version and previous_version.latest:
-            previous_version.latest = False
-        db.session.commit()
 
     @staticmethod
     def get_pages_by_type(page_type):
