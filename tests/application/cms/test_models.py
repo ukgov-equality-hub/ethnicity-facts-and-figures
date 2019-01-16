@@ -700,9 +700,9 @@ class TestMeasureVersion:
 
     def test_measure_latest_published_version_returns_latest_published_version(self, db_session, stub_measure_1):
         version_1_0 = MeasureVersion(version="1.0", guid=stub_measure_1.id, latest=False, published=True)
-        version_3_1 = MeasureVersion(version="3.1", guid=stub_measure_1.id, latest=True, published=False)
         version_2_0 = MeasureVersion(version="2.0", guid=stub_measure_1.id, latest=False, published=True)
         version_3_0 = MeasureVersion(version="3.0", guid=stub_measure_1.id, latest=False, published=True)
+        version_3_1 = MeasureVersion(version="3.1", guid=stub_measure_1.id, latest=True, published=False)
 
         stub_measure_1.versions = [version_1_0, version_3_1, version_2_0, version_3_0]
 

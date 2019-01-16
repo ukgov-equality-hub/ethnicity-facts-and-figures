@@ -1086,7 +1086,7 @@ class Measure(db.Model):
         ).all()
 
         if published_versions:
-            return max(published_versions, key=lambda x: x.version)
+            return max(published_versions, key=lambda version: (version.major(), version.minor()))
 
         return None
 
