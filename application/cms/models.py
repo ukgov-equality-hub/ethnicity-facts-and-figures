@@ -1073,7 +1073,7 @@ class Measure(db.Model):
 
     @property
     def has_published_version(self):
-        return any(mv.published for mv in self.versions)
+        return any(version.published for version in self.versions)
 
     @property
     def latest_version(self):
