@@ -25,16 +25,7 @@ from application.cms.exceptions import (
     PageUnEditable,
 )
 from application.cms.forms import DimensionForm, DimensionRequiredForm, MeasurePageForm, NewVersionForm, UploadForm
-from application.cms.models import (
-    NewVersionType,
-    publish_status,
-    FrequencyOfRelease,
-    TypeOfStatistic,
-    UKCountry,
-    Organisation,
-    LowestLevelOfGeography,
-    MeasureVersion,
-)
+from application.cms.models import NewVersionType, publish_status, Organisation
 from application.cms.new_page_service import new_page_service
 from application.cms.upload_service import upload_service
 from application.cms.utils import copy_form_errors, flash_message_with_form_errors, get_data_source_forms
@@ -61,13 +52,7 @@ def create_measure_page(topic_slug, subtopic_slug):
     except PageNotFoundException:
         abort(404)
 
-    form = MeasurePageForm(
-        frequency_choices=FrequencyOfRelease,
-        type_of_statistic_choices=TypeOfStatistic,
-        lowest_level_of_geography_choices=LowestLevelOfGeography,
-        internal_edit_summary="Initial version",
-        external_edit_summary="First published",
-    )
+    form = MeasurePageForm(internal_edit_summary="Initial version", external_edit_summary="First published")
     data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=None)
 
     if form.validate_on_submit() and data_source_form.validate_on_submit() and data_source_2_form.validate_on_submit():
@@ -232,25 +217,10 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
 
     data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=measure_version)
 
-    if measure_version.area_covered is not None:
-        england = True if UKCountry.ENGLAND in measure_version.area_covered else False
-        wales = True if UKCountry.WALES in measure_version.area_covered else False
-        scotland = True if UKCountry.SCOTLAND in measure_version.area_covered else False
-        northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_version.area_covered else False
-    else:
-        england = wales = scotland = northern_ireland = False
-
-    form_kwargs = {
-        "england": england,
-        "wales": wales,
-        "scotland": scotland,
-        "northern_ireland": northern_ireland,
-        "lowest_level_of_geography_choices": LowestLevelOfGeography,
-    }
     if request.method == "GET":
-        measure_page_form = MeasurePageForm(obj=measure_version, **form_kwargs)
+        measure_page_form = MeasurePageForm(obj=measure_version)
     elif request.method == "POST":
-        measure_page_form = MeasurePageForm(**form_kwargs)
+        measure_page_form = MeasurePageForm()
 
     saved = False
     if (
@@ -396,24 +366,7 @@ def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
     if measure_version.status == "DEPARTMENT_REVIEW":
         abort(400)
 
-    if measure_version.area_covered is not None:
-        england = True if UKCountry.ENGLAND in measure_version.area_covered else False
-        wales = True if UKCountry.WALES in measure_version.area_covered else False
-        scotland = True if UKCountry.SCOTLAND in measure_version.area_covered else False
-        northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_version.area_covered else False
-    else:
-        england = wales = scotland = northern_ireland = False
-
-    measure_page_form_to_validate = MeasurePageForm(
-        obj=measure_version,
-        meta={"csrf": False},
-        england=england,
-        wales=wales,
-        scotland=scotland,
-        northern_ireland=northern_ireland,
-        lowest_level_of_geography_choices=LowestLevelOfGeography,
-        sending_to_review=True,
-    )
+    measure_page_form_to_validate = MeasurePageForm(obj=measure_version, meta={"csrf": False}, sending_to_review=True)
 
     data_source_form_to_validate, data_source_2_form_to_validate = get_data_source_forms(
         request, measure_page=measure_version, sending_to_review=True
@@ -446,14 +399,7 @@ def send_to_review(topic_slug, subtopic_slug, measure_slug, version):
         session.pop("_flashes", None)
 
         # Recreate form with csrf token for next update
-        measure_page_form = MeasurePageForm(
-            obj=measure_version,
-            england=england,
-            wales=wales,
-            scotland=scotland,
-            northern_ireland=northern_ireland,
-            lowest_level_of_geography_choices=LowestLevelOfGeography,
-        )
+        measure_page_form = MeasurePageForm(obj=measure_version)
 
         data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=measure_version)
 
@@ -1230,7 +1176,7 @@ def set_measure_order():
         return json.dumps({"status": "INTERNAL SERVER ERROR", "status_code": 500}), 500
 
 
-def _build_if_necessary(measure_version: MeasureVersion):
+def _build_if_necessary(measure_version):
     if measure_version.status == "UNPUBLISH":
         build_service.request_build()
 

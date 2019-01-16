@@ -4,7 +4,15 @@ from wtforms import StringField, TextAreaField, FileField, HiddenField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length
 
-from application.cms.models import TypeOfData, UKCountry, MeasureVersion, NewVersionType
+from application.cms.models import (
+    TypeOfData,
+    UKCountry,
+    MeasureVersion,
+    NewVersionType,
+    LowestLevelOfGeography,
+    FrequencyOfRelease,
+    TypeOfStatistic,
+)
 from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
 
 
@@ -133,18 +141,12 @@ class DataSourceForm(FlaskForm):
 
         self.sending_to_review = sending_to_review
 
-        type_of_statistic_choices = []
-        type_of_statistic_model = kwargs.get("type_of_statistic_model", None)
-        if type_of_statistic_model:
-            type_of_statistic_choices = type_of_statistic_model.query.order_by("position").all()
-        self.type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in type_of_statistic_choices]
+        self.type_of_statistic_id.choices = [
+            (choice.id, choice.internal) for choice in TypeOfStatistic.query.order_by("position").all()
+        ]
 
-        frequency_of_release_choices = []
-        frequency_of_release_model = kwargs.get("frequency_of_release_model", None)
-        if frequency_of_release_model:
-            frequency_of_release_choices = frequency_of_release_model.query.order_by("position").all()
         self.frequency_of_release_id.choices = [
-            (choice.id, choice.description) for choice in frequency_of_release_choices
+            (choice.id, choice.description) for choice in FrequencyOfRelease.query.order_by("position").all()
         ]
         self.frequency_of_release_id.set_other_field(self.frequency_of_release_other)
 
@@ -264,16 +266,14 @@ class MeasurePageForm(FlaskForm):
 
         self.sending_to_review = sending_to_review
 
-        choice_model = kwargs.get("lowest_level_of_geography_choices", None)
         choices = []
-        if choice_model:
-            geographic_choices = choice_model.query.order_by("position").all()
-            for choice in geographic_choices:
-                if choice.description is not None:
-                    description = "%s %s" % (choice.name, choice.description)
-                    choices.append((choice.name, description))
-                else:
-                    choices.append((choice.name, choice.name))
+        geographic_choices = LowestLevelOfGeography.query.order_by("position").all()
+        for choice in geographic_choices:
+            if choice.description is not None:
+                description = "%s %s" % (choice.name, choice.description)
+                choices.append((choice.name, description))
+            else:
+                choices.append((choice.name, choice.name))
 
         self.lowest_level_of_geography_id.choices = choices
 

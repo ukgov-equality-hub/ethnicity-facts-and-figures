@@ -3,7 +3,6 @@ from functools import partial
 from flask import flash, current_app
 
 from application.cms.forms import DataSourceForm
-from application.cms.models import TypeOfStatistic, FrequencyOfRelease
 
 
 def copy_form_errors(from_form, to_form):
@@ -35,12 +34,7 @@ def get_data_source_forms(request, measure_page, sending_to_review=False):
         include_csrf = False
 
     PartialDataSourceForm = partial(
-        DataSourceForm,
-        prefix="data-source-1-",
-        type_of_statistic_model=TypeOfStatistic,
-        frequency_of_release_model=FrequencyOfRelease,
-        sending_to_review=sending_to_review,
-        meta={"csrf": include_csrf},
+        DataSourceForm, prefix="data-source-1-", sending_to_review=sending_to_review, meta={"csrf": include_csrf}
     )
     PartialDataSource2Form = partial(PartialDataSourceForm, prefix="data-source-2-")
 
