@@ -749,22 +749,6 @@ class TestMeasureVersion:
         assert [page.version for page in pages] == expected_version_order
 
     @pytest.mark.parametrize(
-        "page_versions, expected_order",
-        (
-            (["1.0", "1.1", "1.2", "2.0"], ["2.0", "1.2", "1.1", "1.0"]),
-            (["2.0", "1.2", "1.1", "1.0"], ["2.0", "1.2", "1.1", "1.0"]),
-            (["2.0", "4.1", "3.0", "8.2", "1.0"], ["8.2", "4.1", "3.0", "2.0", "1.0"]),
-        ),
-    )
-    def test_get_pages_by_slug_returns_pages_ordered_by_version(
-        self, db_session, page_service, stub_measure_page, page_versions, expected_order
-    ):
-        create_measure_versions(db_session, stub_measure_page, page_versions)
-
-        pages = page_service.get_pages_by_slug(stub_measure_page.parent.guid, "test-measure-page-2")
-        assert [page.version for page in pages] == expected_order
-
-    @pytest.mark.parametrize(
         "countries, formatted_string",
         (
             ([UKCountry.ENGLAND], "England"),

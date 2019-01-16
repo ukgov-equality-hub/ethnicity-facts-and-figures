@@ -51,14 +51,6 @@ class PageService(Service):
         return filtered
 
     @staticmethod
-    def get_pages_by_slug(subtopic, measure):
-        return (
-            MeasureVersion.query.filter_by(parent_guid=subtopic, slug=measure)
-            .order_by(desc(MeasureVersion.version))
-            .all()
-        )
-
-    @staticmethod
     def get_previous_major_versions(measure):
         versions = measure.get_versions(include_self=False)
         versions.sort(reverse=True)
