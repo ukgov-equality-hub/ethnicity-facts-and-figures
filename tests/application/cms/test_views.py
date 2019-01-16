@@ -732,8 +732,8 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
     resp = test_app_client.get(
         url_for(
             "cms.edit_measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -744,8 +744,8 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
     resp = test_app_client.post(
         url_for(
             "cms.delete_upload",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
             upload_guid=upload.guid,
@@ -771,8 +771,8 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
     resp = test_app_client.get(
         url_for(
             "cms.edit_measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -783,8 +783,8 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
     resp = test_app_client.get(
         url_for(
             "cms.edit_upload",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
             upload_guid=upload.guid,
@@ -806,8 +806,8 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(
     resp = test_app_client.get(
         url_for(
             "cms.edit_measure_page",
-            topic_slug=stub_page_with_dimension.parent.parent.slug,
-            subtopic_slug=stub_page_with_dimension.parent.slug,
+            topic_slug=stub_page_with_dimension.measure.subtopic.topic.slug,
+            subtopic_slug=stub_page_with_dimension.measure.subtopic.slug,
             measure_slug=stub_page_with_dimension.slug,
             version=stub_page_with_dimension.version,
         )
@@ -818,8 +818,8 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(
     resp = test_app_client.post(
         url_for(
             "cms.delete_dimension",
-            topic_slug=stub_page_with_dimension.parent.parent.slug,
-            subtopic_slug=stub_page_with_dimension.parent.slug,
+            topic_slug=stub_page_with_dimension.measure.subtopic.topic.slug,
+            subtopic_slug=stub_page_with_dimension.measure.subtopic.slug,
             measure_slug=stub_page_with_dimension.slug,
             version=stub_page_with_dimension.version,
             dimension_guid=stub_page_with_dimension.dimensions[0].guid,
@@ -841,8 +841,8 @@ def test_dept_user_should_be_able_to_edit_shared_page(
     resp = test_app_client.post(
         url_for(
             "cms.edit_measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),
@@ -870,8 +870,8 @@ def test_dept_user_should_be_able_to_send_shared_page_to_review(
     resp = test_app_client.get(
         url_for(
             "cms.send_to_review",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),
@@ -898,8 +898,8 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
     resp = test_app_client.get(
         url_for(
             "cms.edit_measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -913,8 +913,8 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
     resp = test_app_client.get(
         url_for(
             "cms.publish",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),

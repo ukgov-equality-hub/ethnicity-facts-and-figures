@@ -16,8 +16,8 @@ class TestDimensionModel:
 
         url = url_for(
             "cms.create_dimension",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -33,8 +33,8 @@ class TestDimensionModel:
 
         url = url_for(
             "cms.create_dimension",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -65,8 +65,8 @@ class TestDimensionModel:
 
         url = url_for(
             "cms.edit_dimension",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
             dimension_guid=dimension.guid,
@@ -97,8 +97,8 @@ class TestDimensionModel:
 
         url = url_for(
             "cms.edit_dimension",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
             dimension_guid=dimension.guid,
