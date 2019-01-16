@@ -848,35 +848,6 @@ def test_dept_user_should_be_able_to_edit_shared_page(
     assert page.find("div", class_="alert-box").span.string == 'Updated page "this is the update"'
 
 
-def test_dept_user_should_be_able_to_send_shared_page_to_review(
-    db_session, test_app_client, stub_measure_page, mock_dept_user
-):
-    stub_measure_page.title = "the page to review"
-    stub_measure_page.shared_with.append(mock_dept_user)
-    db_session.session.add(stub_measure_page)
-    db_session.session.commit()
-
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_dept_user.id
-
-    response = test_app_client.post(
-        url_for(
-            "cms.edit_measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
-        ),
-        data=ImmutableMultiDict({"measure-action": "send-to-internal-review"}),
-        follow_redirects=True,
-    )
-
-    assert response.status_code == 200
-
-    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == 'Sent page "the page to review" to INTERNAL_REVIEW'
-
-
 def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_measure_page, mock_dept_user):
 
     stub_measure_page.title = "try to publish"

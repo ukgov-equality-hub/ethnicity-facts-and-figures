@@ -271,7 +271,7 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
             )
             return redirect_following_change_of_status
 
-        elif measure_action in ("send-to-internal-review", "send-to-department-review"):
+        elif measure_action == "send-to-department-review":
             return _send_to_review(
                 topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug, version=version
             )

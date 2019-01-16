@@ -103,10 +103,6 @@
                         <button type="submit" class="button {% if next_approval_state == 'INTERNAL_REVIEW' %}neutral{%endif %}" name="save-and-review" id="save-and-review">
                             {{ next_approval_state | format_approve_button | safe }}
                         </button>
-                     {% elif next_approval_state == 'INTERNAL_REVIEW' %}
-                        <button class="button neutral" id="send-to-internal-review" name="measure-action" value="send-to-internal-review">
-                            {{ next_approval_state | format_approve_button | safe }}
-                        </button>
                     {% elif next_approval_state == 'DEPARTMENT_REVIEW' %}
                         <button class="button" id="send-to-department-review" name="measure-action" value="send-to-department-review">
                             {{ next_approval_state | format_approve_button | safe }}
