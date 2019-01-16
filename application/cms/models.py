@@ -509,7 +509,7 @@ class MeasureVersion(db.Model, CopyableModel):
         if latest_published_version is None:
             return True
 
-        return latest_published_version.version <= self.version
+        return latest_published_version <= self
 
     @property
     def is_published_measure_or_parent_of(self):
@@ -1077,14 +1077,11 @@ class Measure(db.Model):
 
     @property
     def latest_version(self):
-        return MeasureVersion.query.filter(MeasureVersion.measure_id == self.id, MeasureVersion.latest == True).one()
+        return next(filter(lambda version: version.latest, self.versions), None)
 
     @property
     def latest_published_version(self):
-        published_versions = MeasureVersion.query.filter(
-            MeasureVersion.measure_id == self.id, MeasureVersion.published == True
-        ).all()
-
+        published_versions = [version for version in self.versions if version.published]
         if published_versions:
             return max(published_versions, key=lambda version: (version.major(), version.minor()))
 

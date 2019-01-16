@@ -75,7 +75,7 @@ def privacy_policy():
 @static_site_blueprint.route("/<topic_slug>")
 @login_required
 def topic(topic_slug):
-    topic = new_page_service.get_topic(topic_slug)
+    topic = new_page_service.get_topic_with_subtopics_and_measures(topic_slug)
 
     # We want to avoid passing measures into the template that the current user should not be able to see listed.
     # Departmental users should not be able to see unpublished measures that have not been explicitly shared with them.

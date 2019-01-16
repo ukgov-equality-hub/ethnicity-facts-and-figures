@@ -4,6 +4,7 @@ from typing import Iterable, Tuple
 
 from slugify import slugify
 from sqlalchemy import func
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
@@ -33,6 +34,21 @@ class NewPageService(Service):
     def get_topic(topic_slug):
         try:
             return Topic.query.filter_by(slug=topic_slug).one()
+        except NoResultFound:
+            raise PageNotFoundException()
+
+    @staticmethod
+    def get_topic_with_subtopics_and_measures(topic_slug):
+        """Returns a Topic, the same as `get_topic`, but pre-loads the subtopics and measures in order to avoid
+        subsequent queries going back and forth to the database."""
+        try:
+            return (
+                Topic.query.options(
+                    joinedload(Topic.subtopics).joinedload(Subtopic.measures).joinedload(Measure.versions)
+                )
+                .filter(Topic.slug == topic_slug)
+                .one()
+            )
         except NoResultFound:
             raise PageNotFoundException()
 
