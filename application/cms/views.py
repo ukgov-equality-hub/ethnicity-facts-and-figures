@@ -29,7 +29,6 @@ from application.cms.models import (
     publish_status,
     FrequencyOfRelease,
     TypeOfStatistic,
-    UKCountry,
     Organisation,
     LowestLevelOfGeography,
     MeasureVersion,
@@ -293,21 +292,7 @@ def edit_measure_page(topic_slug, subtopic_slug, measure_slug, version):
 
     data_source_form, data_source_2_form = get_data_source_forms(request, measure_page=measure_page)
 
-    if measure_page.area_covered is not None:
-        england = True if UKCountry.ENGLAND in measure_page.area_covered else False
-        wales = True if UKCountry.WALES in measure_page.area_covered else False
-        scotland = True if UKCountry.SCOTLAND in measure_page.area_covered else False
-        northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_page.area_covered else False
-    else:
-        england = wales = scotland = northern_ireland = False
-
-    form_kwargs = {
-        "england": england,
-        "wales": wales,
-        "scotland": scotland,
-        "northern_ireland": northern_ireland,
-        "lowest_level_of_geography_choices": LowestLevelOfGeography,
-    }
+    form_kwargs = {"lowest_level_of_geography_choices": LowestLevelOfGeography}
     if request.method == "GET":
         form = MeasurePageForm(obj=measure_page, **form_kwargs)
     elif request.method == "POST":
@@ -446,21 +431,10 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
 
     #  No need to validate if page is already under review, as it has already been validated
     if measure_page.status != "INTERNAL_REVIEW":
-        if measure_page.area_covered is not None:
-            england = True if UKCountry.ENGLAND in measure_page.area_covered else False
-            wales = True if UKCountry.WALES in measure_page.area_covered else False
-            scotland = True if UKCountry.SCOTLAND in measure_page.area_covered else False
-            northern_ireland = True if UKCountry.NORTHERN_IRELAND in measure_page.area_covered else False
-        else:
-            england = wales = scotland = northern_ireland = False
 
         measure_page_form_to_validate = MeasurePageForm(
             obj=measure_page,
             meta={"csrf": False},
-            england=england,
-            wales=wales,
-            scotland=scotland,
-            northern_ireland=northern_ireland,
             lowest_level_of_geography_choices=LowestLevelOfGeography,
             sending_to_review=True,
         )
@@ -497,12 +471,7 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
 
             # Recreate form with csrf token for next update
             measure_page_form = MeasurePageForm(
-                obj=measure_page,
-                england=england,
-                wales=wales,
-                scotland=scotland,
-                northern_ireland=northern_ireland,
-                lowest_level_of_geography_choices=LowestLevelOfGeography,
+                obj=measure_page, lowest_level_of_geography_choices=LowestLevelOfGeography
             )
             # If the page was saved before sending to review form's db_version_id will be out of sync, so update it
             measure_page_form.db_version_id.data = measure_page.db_version_id
