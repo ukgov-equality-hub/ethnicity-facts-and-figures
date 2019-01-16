@@ -247,19 +247,19 @@ class MeasureVersion(db.Model, CopyableModel):
     # columns
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     measure_id = db.Column(db.Integer, nullable=True)  # FK to `measure` table
-    guid = db.Column(db.String(255), nullable=False, primary_key=True)  # identifier for a measure (but not a page)
+    guid = db.Column(db.String(255), nullable=False, primary_key=True)  # TODO: Remove, but needs dentangling first.
     version = db.Column(
         db.String(), nullable=False, primary_key=True
-    )  # combined with guid forms primary key for page table
+    )  # The version number of this measure version in the format `X.y`.
     internal_reference = db.Column(db.String())  # optional internal reference number for measures
     latest = db.Column(db.Boolean, default=True)  # True if the current row is the latest version of a measure
     #                                               (latest created, not latest published, so could be a new draft)
 
-    slug = db.Column(db.String(255))  # slug to be used in URLs for the page
+    slug = db.Column(db.String(255))  # TODO: Remove
     review_token = db.Column(db.String())  # used for review page URLs
     description = db.Column(db.Text)  # TOPIC PAGES ONLY: a sentence below topic heading on homepage
     additional_description = db.Column(db.TEXT)  # TOPIC PAGES ONLY: short paragraph displayed on topic page itself
-    page_type = db.Column(db.String(255))  # one of measure, homepage, subtopic, topic
+    page_type = db.Column(db.String(255))  # TODO: Remove
     position = db.Column(db.Integer, default=0)  # ordering for MEASURE and SUBTOPIC pages
 
     # status for measure pages is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
@@ -284,9 +284,9 @@ class MeasureVersion(db.Model, CopyableModel):
     # SUBTOPIC pages have "topic_xxx" as parent_guid
     # MEASURE pages have "subtopic_xxx" as parent_guid
     # The homepage and test area topic page have no parent_guid
-    parent_id = db.Column(db.Integer)
-    parent_guid = db.Column(db.String(255))
-    parent_version = db.Column(db.String())  # version number of the parent page, as guid+version is PK
+    parent_id = db.Column(db.Integer)  # TODO: Remove
+    parent_guid = db.Column(db.String(255))  # TODO: Remove
+    parent_version = db.Column(db.String())  # TODO: Remove
 
     db_version_id = db.Column(db.Integer, nullable=False)  # used to detect and prevent stale updates
     __mapper_args__ = {"version_id_col": db_version_id}
@@ -321,7 +321,7 @@ class MeasureVersion(db.Model, CopyableModel):
     further_technical_information = db.Column(db.TEXT)  # "Further technical information"
 
     # relationships
-    parent = db.relationship(
+    parent = db.relationship(  # TODO: Remove
         "MeasureVersion",
         foreign_keys=[parent_id, parent_guid, parent_version],
         remote_side=[id, guid, version],
