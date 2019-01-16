@@ -1077,10 +1077,12 @@ class Measure(db.Model):
 
     @property
     def latest_version(self):
+        """Return the very latest version of a measure. This can include drafts."""
         return next(filter(lambda version: version.latest, self.versions), None)
 
     @property
     def latest_published_version(self):
+        """Return the latest _published_ version of a measure."""
         published_versions = [version for version in self.versions if version.published]
         if published_versions:
             return max(published_versions, key=lambda version: (version.major(), version.minor()))
@@ -1089,6 +1091,8 @@ class Measure(db.Model):
 
     @property
     def subtopic(self):
+        """Get the first subtopic for this measure. Theoretically there can be more than one subtopic; practically,
+        as of 2019/01/01, there will only ever be one. Which makes this shortcut semi-reasonable."""
         return self.subtopics[0]
 
     @property
