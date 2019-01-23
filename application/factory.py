@@ -266,11 +266,15 @@ def register_errorhandlers(app):
     def render_error(error):
         # Try to get the `code` attribute (which will exist for HTTPExceptions); use 500 if no code found
         error_code = getattr(error, "code", None) or 500
+        error_message = getattr(error, "description", "")
 
         if re.match(r"/cms", request.path):
-            return render_template("error/{0}.html".format(error_code)), error_code
+            return render_template("error/{0}.html".format(error_code), message=error_message), error_code
         else:
-            return render_template("static_site/error/major-errors/{0}.html".format(error_code)), error_code
+            return (
+                render_template("static_site/error/major-errors/{0}.html".format(error_code), message=error_message),
+                error_code,
+            )
 
     for errcode in [400, 401, 403, 404, 500]:
         # add more codes if we create templates for them
