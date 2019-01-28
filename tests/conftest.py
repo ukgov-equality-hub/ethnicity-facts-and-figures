@@ -35,6 +35,8 @@ from application.cms.upload_service import UploadService
 from application.config import TestConfig
 from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.factory import create_app
+
+from tests.models import MeasureVersionFactory, UserFactory
 from tests.test_data.chart_and_table import simple_table, grouped_table, single_series_bar_chart, multi_series_bar_chart
 from tests.utils import UnmockedRequestException
 
@@ -138,6 +140,19 @@ def db_session(db):
     yield db
 
 
+@pytest.fixture(scope="function", autouse=True)
+def _configure_factory_sessions(db_session):
+    from tests.models import ALL_FACTORIES
+
+    for factory in ALL_FACTORIES:
+        factory._meta.sqlalchemy_session = db_session.session
+
+    yield
+
+    for factory in ALL_FACTORIES:
+        factory._meta.sqlalchemy_session = None
+
+
 @pytest.fixture(scope="function")
 def mock_admin_user(db_session):
     return _user_of_type(db_session, TypeOfUser.ADMIN_USER)
@@ -159,17 +174,35 @@ def mock_rdu_user(db_session):
 
 
 @pytest.fixture(scope="function")
-def mock_logged_in_dept_user(mock_dept_user, test_app_client):
+def mock_logged_in_admin_user(test_app_client):
+    user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_dept_user.id
-    return mock_dept_user
+        session["user_id"] = user.id
+    return user
 
 
 @pytest.fixture(scope="function")
-def mock_logged_in_rdu_user(mock_rdu_user, test_app_client):
+def mock_logged_in_dept_user(test_app_client):
+    user = UserFactory(user_type=TypeOfUser.DEPT_USER)
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
-    return mock_rdu_user
+        session["user_id"] = user.id
+    return user
+
+
+@pytest.fixture(scope="function")
+def mock_logged_in_rdu_user(test_app_client):
+    user = UserFactory(user_type=TypeOfUser.RDU_USER)
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = user.id
+    return user
+
+
+@pytest.fixture(scope="function")
+def mock_logged_in_dev_user(test_app_client):
+    user = UserFactory(user_type=TypeOfUser.DEV_USER)
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = user.id
+    return user
 
 
 # To use this fixture pass in a TypeOfUser as request.param
@@ -872,3 +905,10 @@ def page_service(app):
     page_service = PageService()
     page_service.init_app(app)
     return page_service
+
+
+@pytest.fixture(scope="function")
+def random_measure_version(db_session, _configure_factory_sessions):
+    measure_version = MeasureVersionFactory()
+    db_session.session.commit()
+    return measure_version

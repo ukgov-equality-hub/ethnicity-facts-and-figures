@@ -320,6 +320,7 @@ class MeasureVersion(db.Model):
         remote_side=[id, guid, version],
         backref=db.backref("children", order_by="MeasureVersion.position"),
     )
+    measure = db.relationship("Measure", back_populates="versions")
     lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="pages")
     uploads = db.relationship("Upload", back_populates="page", lazy="dynamic", cascade="all,delete")
     dimensions = db.relationship(
@@ -1040,6 +1041,7 @@ class Measure(db.Model):
 
     # relationships
     subtopics = db.relationship("Subtopic", secondary="subtopic_measure", back_populates="measures")
+    versions = db.relationship("MeasureVersion", back_populates="measure")
 
     # Departmental users can only access measures that have been shared with them, as defined by this relationship
     # TODO: Uncomment this and use back_populates (relationship declared both sides) once user_measure table exists
