@@ -25,18 +25,6 @@ class TypeOfDataRequiredValidator:
             raise ValidationError("Select at least one")
 
 
-class AreaCoveredRequiredForReviewValidator:
-    def __call__(self, form, field):
-        if getattr(form, "sending_to_review", False):
-            england = form.data.get("england", False)
-            wales = form.data.get("wales", False)
-            scotland = form.data.get("scotland", False)
-            northern_ireland = form.data.get("northern_ireland", False)
-
-            if not any([england, wales, scotland, northern_ireland]):
-                raise ValidationError("Select at least one")
-
-
 class FrequencyOfReleaseOtherRequiredValidator:
     def __call__(self, form, field):
         message = "Other selected but no value has been entered"

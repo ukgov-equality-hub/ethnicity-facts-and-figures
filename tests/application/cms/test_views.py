@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from flask import url_for, current_app
 from lxml import html
 import pytest
-from werkzeug import ImmutableMultiDict
+from werkzeug.datastructures import ImmutableMultiDict
 
 from application.auth.models import TypeOfUser
 from application.cms.forms import MeasurePageForm
@@ -39,14 +39,14 @@ class TestGetCreateMeasurePage:
 
         form = MeasurePageForm(**stub_measure_data)
 
-        resp = test_app_client.post(
+        response = test_app_client.post(
             url_for("cms.create_measure_page", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
             data=form.data,
             follow_redirects=True,
         )
 
-        assert resp.status_code == 200
-        page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+        assert response.status_code == 200
+        page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
         assert page.find("div", class_="alert-box").span.string == "Created page %s" % stub_measure_data["title"]
 
     def test_create_measure_page_creates_data_source_entries(
@@ -112,15 +112,16 @@ def test_can_not_reject_page_if_not_under_review(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
     stub_measure_page.status = cannot_reject_status
-    response = test_app_client.get(
+    response = test_app_client.post(
         url_for(
-            "cms.reject_page",
+            "cms.edit_measure_page",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
-            follow_redirects=True,
-        )
+        ),
+        data=ImmutableMultiDict({"measure-action": "reject-measure"}),
+        follow_redirects=True,
     )
     assert response.status_code == 400
     page_service = PageService()
@@ -135,15 +136,16 @@ def test_can_reject_page_under_review(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
     stub_measure_page.status = "DEPARTMENT_REVIEW"
-    test_app_client.get(
+    test_app_client.post(
         url_for(
-            "cms.reject_page",
+            "cms.edit_measure_page",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
-            follow_redirects=True,
-        )
+        ),
+        data=ImmutableMultiDict({"measure-action": "reject-measure"}),
+        follow_redirects=True,
     )
     page_service = PageService()
     page_service.init_app(app)
@@ -171,14 +173,15 @@ def test_admin_user_can_publish_page_in_dept_review(
     db.session.add(stub_measure_page)
     db.session.commit()
 
-    response = test_app_client.get(
+    response = test_app_client.post(
         url_for(
-            "cms.publish",
+            "cms.edit_measure_page",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),
+        data=ImmutableMultiDict({"measure-action": "send-to-approved"}),
         follow_redirects=True,
     )
 
@@ -215,14 +218,15 @@ def test_admin_user_can_not_publish_page_not_in_department_review(
 
     assert stub_measure_page.status == "DRAFT"
 
-    response = test_app_client.get(
+    response = test_app_client.post(
         url_for(
-            "cms.publish",
+            "cms.edit_measure_page",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),
+        data=ImmutableMultiDict({"measure-action": "send-to-approved"}),
         follow_redirects=True,
     )
 
@@ -237,14 +241,15 @@ def test_admin_user_can_not_publish_page_not_in_department_review(
     db.session.add(stub_measure_page)
     db.session.commit()
 
-    response = test_app_client.get(
+    response = test_app_client.post(
         url_for(
-            "cms.publish",
+            "cms.edit_measure_page",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),
+        data=ImmutableMultiDict({"measure-action": "send-to-approved"}),
         follow_redirects=True,
     )
 
@@ -268,14 +273,15 @@ def test_non_admin_user_can_not_publish_page_in_dept_review(
     db.session.add(stub_measure_page)
     db.session.commit()
 
-    response = test_app_client.get(
+    response = test_app_client.post(
         url_for(
-            "cms.publish",
+            "cms.edit_measure_page",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),
+        data=ImmutableMultiDict({"measure-action": "send-to-approved"}),
         follow_redirects=True,
     )
 
@@ -302,14 +308,15 @@ def test_admin_user_can_unpublish_page(
     db.session.add(stub_measure_page)
     db.session.commit()
 
-    response = test_app_client.get(
+    response = test_app_client.post(
         url_for(
-            "cms.unpublish_page",
+            "cms.edit_measure_page",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),
+        data=ImmutableMultiDict({"measure-action": "unpublish-measure"}),
         follow_redirects=True,
     )
 
@@ -342,14 +349,15 @@ def test_non_admin_user_can_not_unpublish_page(
     db.session.add(stub_measure_page)
     db.session.commit()
 
-    response = test_app_client.get(
+    response = test_app_client.post(
         url_for(
-            "cms.unpublish_page",
+            "cms.edit_measure_page",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),
+        data=ImmutableMultiDict({"measure-action": "unpublish-measure"}),
         follow_redirects=True,
     )
 
@@ -385,7 +393,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("a", class_="button")[-1].text.strip().lower() == "approve for publishing"
+    assert page.find_all("button", class_="button")[-1].text.strip().lower() == "approve for publishing"
 
     stub_measure_page.status = "APPROVED"
     db.session.add(stub_measure_page)
@@ -403,7 +411,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("a", class_="button")[-1].text.strip().lower() == "unpublish"
+    assert page.find_all("button", class_="button")[-1].text.strip().lower() == "unpublish"
 
 
 def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
@@ -429,7 +437,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("a", class_="button")[-1].text.strip().lower() == "reject"
+    assert page.find_all("button", class_="button")[-1].text.strip().lower() == "reject"
 
     stub_measure_page.status = "APPROVED"
     db.session.add(stub_measure_page)
@@ -484,11 +492,11 @@ def test_order_measures_in_subtopic(
     for position, id_ in enumerate(reversed(ids)):
         updates.append({"position": position, "measure_id": id_, "subtopic_id": stub_subtopic_page.id})
 
-    resp = test_app_client.post(
+    response = test_app_client.post(
         url_for("cms.set_measure_order"), data=json.dumps({"positions": updates}), content_type="application/json"
     )
 
-    assert resp.status_code == 200
+    assert response.status_code == 200
 
     assert stub_subtopic_page.children[0].guid == "4"
     assert stub_subtopic_page.children[1].guid == "3"
@@ -524,11 +532,11 @@ def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, m
     for position, id in enumerate(reversed_ids):
         updates.append({"position": position, "measure_id": str(id), "subtopic_id": stub_subtopic_page.id})
 
-    resp = test_app_client.post(
+    response = test_app_client.post(
         url_for("cms.set_measure_order"), data=json.dumps({"positions": updates}), content_type="application/json"
     )
 
-    assert resp.status_code == 200
+    assert response.status_code == 200
 
     builds = Build.query.all()
 
@@ -573,11 +581,11 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
         {"position": 1, "measure_id": "0", "subtopic_id": stub_subtopic_page.id},
     ]
 
-    resp = test_app_client.post(
+    response = test_app_client.post(
         url_for("cms.set_measure_order"), data=json.dumps({"positions": updates}), content_type="application/json"
     )
 
-    assert resp.status_code == 200
+    assert response.status_code == 200
 
     assert stub_subtopic_page.children[0].guid == "1"
     assert stub_subtopic_page.children[1].guid == "1"
@@ -596,7 +604,7 @@ def test_view_edit_measure_page(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
 
-    resp = test_app_client.get(
+    response = test_app_client.get(
         url_for(
             "cms.edit_measure_page",
             topic_slug=stub_topic_page.slug,
@@ -606,8 +614,8 @@ def test_view_edit_measure_page(
         )
     )
 
-    assert resp.status_code == 200
-    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
     assert page.h1.text.strip() == "Edit page"
 
@@ -729,7 +737,7 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id
 
-    resp = test_app_client.get(
+    response = test_app_client.get(
         url_for(
             "cms.edit_measure_page",
             topic_slug=stub_measure_page.measure.subtopic.topic.slug,
@@ -739,9 +747,9 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
         )
     )
 
-    assert resp.status_code == 403
+    assert response.status_code == 403
 
-    resp = test_app_client.post(
+    response = test_app_client.post(
         url_for(
             "cms.delete_upload",
             topic_slug=stub_measure_page.measure.subtopic.topic.slug,
@@ -752,7 +760,7 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
         )
     )
 
-    assert resp.status_code == 403
+    assert response.status_code == 403
 
     mock_delete_upload.assert_not_called()
 
@@ -768,7 +776,7 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id
 
-    resp = test_app_client.get(
+    response = test_app_client.get(
         url_for(
             "cms.edit_measure_page",
             topic_slug=stub_measure_page.measure.subtopic.topic.slug,
@@ -778,9 +786,9 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
         )
     )
 
-    assert resp.status_code == 403
+    assert response.status_code == 403
 
-    resp = test_app_client.get(
+    response = test_app_client.get(
         url_for(
             "cms.edit_upload",
             topic_slug=stub_measure_page.measure.subtopic.topic.slug,
@@ -791,7 +799,7 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
         )
     )
 
-    assert resp.status_code == 403
+    assert response.status_code == 403
 
     mock_edit_upload.assert_not_called()
 
@@ -803,7 +811,7 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id
 
-    resp = test_app_client.get(
+    response = test_app_client.get(
         url_for(
             "cms.edit_measure_page",
             topic_slug=stub_page_with_dimension.measure.subtopic.topic.slug,
@@ -813,9 +821,9 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(
         )
     )
 
-    assert resp.status_code == 403
+    assert response.status_code == 403
 
-    resp = test_app_client.post(
+    response = test_app_client.post(
         url_for(
             "cms.delete_dimension",
             topic_slug=stub_page_with_dimension.measure.subtopic.topic.slug,
@@ -826,7 +834,7 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(
         )
     )
 
-    assert resp.status_code == 403
+    assert response.status_code == 403
 
 
 def test_dept_user_should_be_able_to_edit_shared_page(
@@ -838,7 +846,7 @@ def test_dept_user_should_be_able_to_edit_shared_page(
     db_session.session.commit()
 
     data = {"title": "this is the update", "db_version_id": stub_measure_page.db_version_id + 1}
-    resp = test_app_client.post(
+    response = test_app_client.post(
         url_for(
             "cms.edit_measure_page",
             topic_slug=stub_measure_page.measure.subtopic.topic.slug,
@@ -850,38 +858,10 @@ def test_dept_user_should_be_able_to_edit_shared_page(
         follow_redirects=True,
     )
 
-    assert resp.status_code == 200
+    assert response.status_code == 200
 
-    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert page.find("div", class_="alert-box").span.string == 'Updated page "this is the update"'
-
-
-def test_dept_user_should_be_able_to_send_shared_page_to_review(
-    db_session, test_app_client, stub_measure_page, mock_dept_user
-):
-    stub_measure_page.title = "the page to review"
-    stub_measure_page.measure.shared_with.append(mock_dept_user)
-    db_session.session.add(stub_measure_page)
-    db_session.session.commit()
-
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_dept_user.id
-
-    resp = test_app_client.get(
-        url_for(
-            "cms.send_to_review",
-            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=stub_measure_page.measure.subtopic.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
-        ),
-        follow_redirects=True,
-    )
-
-    assert resp.status_code == 200
-
-    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == 'Sent page "the page to review" to INTERNAL_REVIEW'
 
 
 def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_measure_page, mock_dept_user):
@@ -895,7 +875,7 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id
 
-    resp = test_app_client.get(
+    response = test_app_client.get(
         url_for(
             "cms.edit_measure_page",
             topic_slug=stub_measure_page.measure.subtopic.topic.slug,
@@ -905,12 +885,12 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
         )
     )
 
-    assert resp.status_code == 200
+    assert response.status_code == 200
 
-    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert not page.find("a", id="send-to-approved")
 
-    resp = test_app_client.get(
+    response = test_app_client.post(
         url_for(
             "cms.publish",
             topic_slug=stub_measure_page.measure.subtopic.topic.slug,
@@ -918,10 +898,11 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),
+        data=ImmutableMultiDict({"measure-action": "send-to-approved"}),
         follow_redirects=True,
     )
 
-    assert resp.status_code == 403
+    assert response.status_code == 403
 
 
 @pytest.mark.parametrize(
@@ -961,7 +942,7 @@ def test_copy_measure_page(test_app_client, mock_dev_user, stub_measure_version)
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dev_user.id
 
-    resp = test_app_client.post(
+    response = test_app_client.post(
         url_for(
             "cms.copy_measure_page",
             topic_slug=stub_measure_version.measure.subtopic.topic.slug,
@@ -972,8 +953,8 @@ def test_copy_measure_page(test_app_client, mock_dev_user, stub_measure_version)
         follow_redirects=True,
     )
 
-    assert resp.status_code == 200
-    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
     assert page.find("h1").text == "Edit page"
     assert page.find("input", attrs={"name": "title"})["value"] == "COPY OF Test Measure Page"
