@@ -4,6 +4,7 @@ from flask import url_for
 
 from application.cms.exceptions import RejectionImpossible
 from application.cms.models import Dimension, DimensionClassification, MeasureVersion, UKCountry
+from tests.models import MeasureFactory, MeasureVersionFactory
 from tests.utils import create_measure_versions
 
 
@@ -594,61 +595,36 @@ class TestMeasureVersion:
         assert pages[4] == fifth_page
         assert pages[5] == sixth_page
 
-    def test_page_has_minor_update(self, db, db_session):
-        major_version = MeasureVersion(guid="test_page", version="1.0")
-        minor_version = MeasureVersion(guid="test_page", version="1.1")
-
-        db.session.add(major_version)
-        db.session.add(minor_version)
-
-        db.session.commit()
+    def test_page_has_minor_update(self, db_session):
+        measure = MeasureFactory()
+        major_version = MeasureVersionFactory(version="1.0", measure=measure)
+        MeasureVersionFactory(version="1.1", measure=measure)
 
         major_version.has_minor_update()
 
-    def test_page_has_major_update(self, db, db_session):
-        major_version_1 = MeasureVersion(guid="test_page", version="1.0")
-        major_version_2 = MeasureVersion(guid="test_page", version="2.0")
-
-        db.session.add(major_version_1)
-        db.session.add(major_version_2)
-
-        db.session.commit()
+    def test_page_has_major_update(self, db_session):
+        measure = MeasureFactory()
+        major_version_1 = MeasureVersionFactory(version="1.0", measure=measure)
+        MeasureVersionFactory(version="2.0", measure=measure)
 
         major_version_1.has_major_update()
 
-    def test_page_has_correct_number_of_versions(self, db, db_session, stub_measure_1):
-        major_version_1 = MeasureVersion(guid="test_page", version="1.0", measure_id=stub_measure_1.id)
-        minor_version = MeasureVersion(guid="test_page", version="1.1", measure_id=stub_measure_1.id)
-        major_version_2 = MeasureVersion(guid="test_page", version="2.0", measure_id=stub_measure_1.id)
-
-        db.session.add(major_version_1)
-        db.session.add(minor_version)
-        db.session.add(major_version_2)
-        db.session.commit()
+    def test_page_has_correct_number_of_versions(self):
+        measure = MeasureFactory()
+        major_version_1 = MeasureVersionFactory(version="1.0", measure=measure)
+        minor_version = MeasureVersionFactory(version="1.1", measure=measure)
+        major_version_2 = MeasureVersionFactory(version="2.0", measure=measure)
 
         assert major_version_1.number_of_versions() == 3
         assert minor_version.number_of_versions() == 3
         assert major_version_2.number_of_versions() == 3
 
-    def test_page_has_later_published_versions(self, db, db_session, stub_measure_1):
-        major_version_1 = MeasureVersion(
-            guid="test_page", version="1.0", published=True, status="APPROVED", measure_id=stub_measure_1.id
-        )
-        minor_version_2 = MeasureVersion(
-            guid="test_page", version="1.1", published=True, status="APPROVED", measure_id=stub_measure_1.id
-        )
-        minor_version_3 = MeasureVersion(
-            guid="test_page", version="1.2", published=True, status="APPROVED", measure_id=stub_measure_1.id
-        )
-        minor_version_4 = MeasureVersion(
-            guid="test_page", version="1.3", published=False, status="DRAFT", measure_id=stub_measure_1.id
-        )
-
-        db.session.add(major_version_1)
-        db.session.add(minor_version_2)
-        db.session.add(minor_version_3)
-        db.session.add(minor_version_4)
-        db.session.commit()
+    def test_page_has_later_published_versions(self):
+        measure = MeasureFactory()
+        major_version_1 = MeasureVersionFactory(version="1.0", published=True, status="APPROVED", measure=measure)
+        minor_version_2 = MeasureVersionFactory(version="1.1", published=True, status="APPROVED", measure=measure)
+        minor_version_3 = MeasureVersionFactory(version="1.2", published=True, status="APPROVED", measure=measure)
+        minor_version_4 = MeasureVersionFactory(version="1.3", published=False, status="DRAFT", measure=measure)
 
         assert major_version_1.has_no_later_published_versions() is False
         assert minor_version_2.has_no_later_published_versions() is False
@@ -656,7 +632,7 @@ class TestMeasureVersion:
         assert minor_version_4.has_no_later_published_versions() is True
 
     def test_is_minor_or_minor_version(self,):
-        page = MeasureVersion(guid="test_page", version="1.0")
+        page = MeasureVersionFactory(guid="test_page", version="1.0")
 
         assert page.version == "1.0"
         assert page.is_major_version() is True
@@ -683,30 +659,33 @@ class TestMeasureVersion:
         ),
     )
     def test_measure_versions_returns_pages_ordered_by_version(
-        self, db_session, stub_measure_page, stub_measure_1, page_versions, expected_order
+        self, db_session, stub_measure_page, page_versions, expected_order
     ):
-        create_measure_versions(db_session, stub_measure_page, page_versions, parent_measure=stub_measure_1)
-        assert [mv.version for mv in stub_measure_1.versions] == expected_order
+        measure = MeasureFactory()
+        create_measure_versions(db_session, stub_measure_page, page_versions, parent_measure=measure)
+        assert [mv.version for mv in measure.versions] == expected_order
 
-    def test_measure_latest_version_returns_latest_measure_version(self, db_session, stub_measure_1):
-        version_1_0 = MeasureVersion(version="1.0", guid=stub_measure_1.id, latest=False)
-        version_3_1 = MeasureVersion(version="3.1", guid=stub_measure_1.id, latest=True)
-        version_2_0 = MeasureVersion(version="2.0", guid=stub_measure_1.id, latest=False)
-        version_3_0 = MeasureVersion(version="3.0", guid=stub_measure_1.id, latest=False)
+    def test_measure_latest_version_returns_latest_measure_version(self):
+        measure = MeasureFactory()
+        version_1_0 = MeasureVersionFactory(version="1.0", guid=measure.id, latest=False, measure=measure)
+        version_3_1 = MeasureVersionFactory(version="3.1", guid=measure.id, latest=True, measure=measure)
+        version_2_0 = MeasureVersionFactory(version="2.0", guid=measure.id, latest=False, measure=measure)
+        version_3_0 = MeasureVersionFactory(version="3.0", guid=measure.id, latest=False, measure=measure)
 
-        stub_measure_1.versions = [version_1_0, version_3_1, version_2_0, version_3_0]
+        measure.versions = [version_1_0, version_3_1, version_2_0, version_3_0]
 
-        assert stub_measure_1.latest_version.version == "3.1"
+        assert measure.latest_version.version == "3.1"
 
-    def test_measure_latest_published_version_returns_latest_published_version(self, db_session, stub_measure_1):
-        version_1_0 = MeasureVersion(version="1.0", guid=stub_measure_1.id, latest=False, published=True)
-        version_2_0 = MeasureVersion(version="2.0", guid=stub_measure_1.id, latest=False, published=True)
-        version_3_0 = MeasureVersion(version="3.0", guid=stub_measure_1.id, latest=False, published=True)
-        version_3_1 = MeasureVersion(version="3.1", guid=stub_measure_1.id, latest=True, published=False)
+    def test_measure_latest_published_version_returns_latest_published_version(self):
+        measure = MeasureFactory()
+        version_1_0 = MeasureVersionFactory(version="1.0", guid=measure.id, latest=False, published=True)
+        version_2_0 = MeasureVersionFactory(version="2.0", guid=measure.id, latest=False, published=True)
+        version_3_0 = MeasureVersionFactory(version="3.0", guid=measure.id, latest=False, published=True)
+        version_3_1 = MeasureVersionFactory(version="3.1", guid=measure.id, latest=True, published=False)
 
-        stub_measure_1.versions = [version_1_0, version_3_1, version_2_0, version_3_0]
+        measure.versions = [version_1_0, version_3_1, version_2_0, version_3_0]
 
-        assert stub_measure_1.latest_published_version.version == "3.0"
+        assert measure.latest_published_version.version == "3.0"
 
     @pytest.mark.parametrize(
         "page_versions, page_titles, expected_version_order, expected_title_order",

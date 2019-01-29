@@ -15,6 +15,8 @@ from application.cms.page_service import PageService
 from application.cms.utils import get_data_source_forms
 from application.sitebuilder.models import Build
 
+from tests.models import MeasureVersionFactory
+
 
 class TestGetCreateMeasurePage:
     def setup(self):
@@ -878,8 +880,8 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
     response = test_app_client.get(
         url_for(
             "cms.edit_measure_page",
-            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=stub_measure_page.measure.subtopic.slug,
+            topic_slug=stub_measure_page.parent.parent.slug,
+            subtopic_slug=stub_measure_page.parent.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -892,9 +894,9 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
 
     response = test_app_client.post(
         url_for(
-            "cms.publish",
-            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=stub_measure_page.measure.subtopic.slug,
+            "cms.edit_measure_page",
+            topic_slug=stub_measure_page.parent.parent.slug,
+            subtopic_slug=stub_measure_page.parent.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),
@@ -938,17 +940,16 @@ def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(
     assert ("create a copy of this measure" in page_button_texts) is can_see_copy_button
 
 
-def test_copy_measure_page(test_app_client, mock_dev_user, stub_measure_version):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_dev_user.id
+def test_copy_measure_page(test_app_client, mock_logged_in_dev_user):
+    measure_version = MeasureVersionFactory(title="Test Measure Page", status="APPROVED")
 
     response = test_app_client.post(
         url_for(
             "cms.copy_measure_page",
-            topic_slug=stub_measure_version.measure.subtopic.topic.slug,
-            subtopic_slug=stub_measure_version.measure.subtopic.slug,
-            measure_slug=stub_measure_version.measure.slug,
-            version=stub_measure_version.version,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         ),
         follow_redirects=True,
     )

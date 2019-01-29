@@ -241,6 +241,56 @@ class MeasureFactory(factory.alchemy.SQLAlchemyModelFactory):
             self.subtopics = [SubtopicFactory(**kwargs)]
 
 
+# TODO: REMOVE
+class HomePageFactory(factory.alchemy.SQLAlchemyModelFactory):
+    class Meta:
+        model = MeasureVersion
+
+    id = factory.Sequence(lambda x: x)
+    guid = factory.Faker("uuid4")
+    page_type = "homepage"
+    version = "1.0"
+
+
+class TopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
+    class Meta:
+        model = MeasureVersion
+
+    id = factory.Sequence(lambda x: x)
+    guid = factory.Faker("uuid4")
+    page_type = "topic"
+    title = factory.Faker("sentence", nb_words=3)
+    description = factory.Faker("paragraph", nb_sentences=3)
+    additional_description = factory.Faker("paragraph", nb_sentences=5)
+    version = "1.0"
+
+    parent = factory.SubFactory(HomePageFactory)
+    parent_id = factory.SelfAttribute("parent.id")
+    parent_guid = factory.SelfAttribute("parent.guid")
+    parent_version = factory.SelfAttribute("parent.version")
+
+
+class SubtopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
+    class Meta:
+        model = MeasureVersion
+
+    id = factory.Sequence(lambda x: x)
+    guid = factory.Faker("uuid4")
+    page_type = "subtopic"
+    title = factory.Faker("sentence", nb_words=3)
+    description = factory.Faker("paragraph", nb_sentences=3)
+    additional_description = factory.Faker("paragraph", nb_sentences=5)
+    version = "1.0"
+
+    parent = factory.SubFactory(TopicPageFactory)
+    parent_id = factory.SelfAttribute("parent.id")
+    parent_guid = factory.SelfAttribute("parent.guid")
+    parent_version = factory.SelfAttribute("parent.version")
+
+
+# TODO: END REMOVE
+
+
 class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = MeasureVersion
@@ -279,10 +329,6 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     published_by = factory.Maybe("published", yes_declaration=factory.SelfAttribute("_publisher.email"))
     unpublished_at = factory.Maybe("_unpublished", yes_declaration=Faker().past_date(start_date="-7d"))
     unpublished_by = factory.Maybe("_unpublished", yes_declaration=factory.SelfAttribute("_unpublisher.email"))
-    # unsupported: old way of doing things
-    # parent_id = db.Column(db.Integer)
-    # parent_guid = db.Column(db.String(255))
-    # parent_version = db.Column(db.String())
     db_version_id = factory.Sequence(lambda x: x)
     title = factory.Faker("sentence", nb_words=6)
     summary = factory.Faker("sentence", nb_words=10)
@@ -300,6 +346,14 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     related_publications = factory.Faker("paragraph", nb_sentences=3)
     qmi_url = factory.Faker("paragraph", nb_sentences=3)
     further_technical_information = factory.Faker("paragraph", nb_sentences=3)
+
+    # TODO: REMOVE
+    # unsupported: old way of doing things
+    parent = factory.SubFactory(SubtopicPageFactory)
+    parent_id = factory.SelfAttribute("parent.id")
+    parent_guid = factory.SelfAttribute("parent.guid")
+    parent_version = factory.SelfAttribute("parent.version")
+    # TODO: END REMOVE
 
     # scalar relationships
     measure = factory.SubFactory(MeasureFactory)

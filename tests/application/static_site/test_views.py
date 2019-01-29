@@ -9,6 +9,8 @@ from application.cms.models import MeasureVersion, Topic, Subtopic, Measure
 from application.cms.page_service import PageService
 from application.config import Config
 
+from tests.models import MeasureVersionFactory
+
 page_service = PageService()
 
 
@@ -497,16 +499,13 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     ((True, True, True), (True, False, True), (False, True, False), (False, False, True)),
 )
 def test_homepage_only_shows_topics_with_published_measures_for_site_type(
-    measure_published,
-    static_mode,
-    topic_should_be_visible,
-    test_app_client,
-    mock_logged_in_rdu_user,
-    stub_measure_version,
-    db_session,
+    measure_published, static_mode, topic_should_be_visible, test_app_client, mock_logged_in_rdu_user, db_session
 ):
-    stub_measure_version.published = measure_published
-    db_session.session.commit()
+    MeasureVersionFactory(
+        status="APPROVED" if measure_published else "DRAFT",
+        published=measure_published,
+        measure__subtopics__topic__title="Test topic page",
+    )
 
     resp = test_app_client.get(url_for("static_site.index", static_mode=static_mode))
     assert resp.status_code == 200
