@@ -569,3 +569,22 @@ class TestNewPageService:
         assert measure_version.status == "APPROVED"
         assert measure_version.last_updated_by == user.email
         assert measure_version.published_by == user.email
+
+    def test_get_latest_publishable_versions_of_measures_for_subtopic(self, db_session):
+        measure = MeasureFactory()
+        MeasureVersionFactory(version="1.0", status="APPROVED", measure=measure)
+        MeasureVersionFactory(version="1.1", status="APPROVED", measure=measure)
+        latest_publishable_version = MeasureVersionFactory(version="1.2", status="APPROVED", measure=measure)
+        MeasureVersionFactory(version="1.3", status="DRAFT", measure=measure)
+
+        measure_2 = MeasureFactory(subtopics=measure.subtopics)
+        MeasureVersionFactory(version="1.0", status="DRAFT", measure=measure_2)
+
+        # # Need to commit the MeasureVersions so that ordering on SQLAlchemy relationships works properly
+        # db_session.session.commit()
+
+        measures = new_page_service.get_publishable_measures_for_subtopic(measure.subtopic)
+        assert len(measures) == 1
+        assert measures[0] == measure
+        assert measure.versions_to_publish == [latest_publishable_version]
+        assert measure_2.versions_to_publish == []

@@ -9,9 +9,9 @@ See `tests/README.md` for further information on our use of Factory Boy.
 import itertools
 import random
 
-import factory
 from faker import Faker
 
+import factory
 from application.auth.models import CAPABILITIES, TypeOfUser, User
 from application.cms.models import (
     publish_status,
@@ -51,6 +51,7 @@ def _random_combination(from_iterable):
 class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = User
+        sqlalchemy_session_persistence = "flush"
         exclude = ("_password_to_hash",)
 
     _password_to_hash = factory.Faker("word")
@@ -68,6 +69,7 @@ class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
 class FrequencyOfReleaseFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = FrequencyOfRelease
+        sqlalchemy_session_persistence = "flush"
 
     id = factory.Sequence(lambda x: x)
     description = factory.Faker("text")
@@ -77,6 +79,7 @@ class FrequencyOfReleaseFactory(factory.alchemy.SQLAlchemyModelFactory):
 class LowestLevelOfGeographyFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = LowestLevelOfGeography
+        sqlalchemy_session_persistence = "flush"
 
     name = factory.Faker("sentence", nb_words=3)
     description = factory.Faker("sentence", nb_words=6)
@@ -86,6 +89,7 @@ class LowestLevelOfGeographyFactory(factory.alchemy.SQLAlchemyModelFactory):
 class TypeOfStatisticFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = TypeOfStatistic
+        sqlalchemy_session_persistence = "flush"
 
     id = factory.Sequence(lambda x: x)
     internal = factory.Faker("sentence", nb_words=5)
@@ -96,6 +100,7 @@ class TypeOfStatisticFactory(factory.alchemy.SQLAlchemyModelFactory):
 class OrganisationFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Organisation
+        sqlalchemy_session_persistence = "flush"
 
     id = factory.Sequence(lambda x: x)
     name = factory.Faker("company")
@@ -107,6 +112,7 @@ class OrganisationFactory(factory.alchemy.SQLAlchemyModelFactory):
 class DataSourceFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = DataSource
+        sqlalchemy_session_persistence = "flush"
 
     id = factory.Sequence(lambda x: x)
     title = factory.Faker("sentence", nb_words=5)
@@ -141,6 +147,7 @@ class DataSourceFactory(factory.alchemy.SQLAlchemyModelFactory):
 class UploadFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Upload
+        sqlalchemy_session_persistence = None
 
     guid = factory.Faker("uuid4")
     title = factory.Faker("sentence", nb_words=5)
@@ -168,6 +175,7 @@ class UploadFactory(factory.alchemy.SQLAlchemyModelFactory):
 class TopicFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Topic
+        sqlalchemy_session_persistence = "flush"
 
     id = factory.Sequence(lambda x: x)
     slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
@@ -193,6 +201,7 @@ class TopicFactory(factory.alchemy.SQLAlchemyModelFactory):
 class SubtopicFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Subtopic
+        sqlalchemy_session_persistence = "flush"
 
     id = factory.Sequence(lambda x: x)
     slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
@@ -218,6 +227,7 @@ class SubtopicFactory(factory.alchemy.SQLAlchemyModelFactory):
 class MeasureFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Measure
+        sqlalchemy_session_persistence = "flush"
 
     id = factory.Sequence(lambda x: x)
     slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
@@ -245,6 +255,7 @@ class MeasureFactory(factory.alchemy.SQLAlchemyModelFactory):
 class HomePageFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = MeasureVersion
+        sqlalchemy_session_persistence = "flush"
 
     id = factory.Sequence(lambda x: x)
     guid = factory.Faker("uuid4")
@@ -255,6 +266,7 @@ class HomePageFactory(factory.alchemy.SQLAlchemyModelFactory):
 class TopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = MeasureVersion
+        sqlalchemy_session_persistence = "flush"
 
     id = factory.Sequence(lambda x: x)
     guid = factory.Faker("uuid4")
@@ -273,6 +285,7 @@ class TopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
 class SubtopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = MeasureVersion
+        sqlalchemy_session_persistence = "flush"
 
     id = factory.Sequence(lambda x: x)
     guid = factory.Faker("uuid4")
@@ -294,6 +307,7 @@ class SubtopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
 class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = MeasureVersion
+        sqlalchemy_session_persistence = "flush"
         exclude = {"_creator", "_publisher", "_unpublished", "_unpublisher"}
 
     # Underscored attributes are helpers that assist in the creation of a valid (business-logic-wise) measure version.
@@ -399,6 +413,7 @@ class MeasureVersionWithDimensionFactory(MeasureVersionFactory):
 class EthnicityFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Ethnicity
+        sqlalchemy_session_persistence = "flush"
 
     id = factory.Sequence(lambda x: x)
     value = factory.Iterator([child for children in PARENT_AND_CHILD_ETHNICITIES.values() for child in children])
@@ -408,6 +423,7 @@ class EthnicityFactory(factory.alchemy.SQLAlchemyModelFactory):
 class ClassificationFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Classification
+        sqlalchemy_session_persistence = "flush"
         exclude = ("_parent_child_ethnicities",)
 
     _parent_child_ethnicities = factory.LazyFunction(
@@ -447,6 +463,7 @@ class ClassificationFactory(factory.alchemy.SQLAlchemyModelFactory):
 class DimensionClassificationFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = DimensionClassification
+        sqlalchemy_session_persistence = "flush"
 
     # columns
     dimension_guid = factory.SelfAttribute("dimension.guid")
@@ -476,11 +493,13 @@ class _ChartAndTableFactoryMixin(factory.alchemy.SQLAlchemyModelFactory):
 class ChartFactory(_ChartAndTableFactoryMixin):
     class Meta:
         model = Chart
+        sqlalchemy_session_persistence = "flush"
 
 
 class TableFactory(_ChartAndTableFactoryMixin):
     class Meta:
         model = Table
+        sqlalchemy_session_persistence = "flush"
 
 
 class DimensionFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -490,6 +509,7 @@ class DimensionFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     class Meta:
         model = Dimension
+        sqlalchemy_session_persistence = None
 
     guid = factory.Faker("uuid4")
     title = factory.Faker("sentence", nb_words=5)

@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 from functools import total_ordering
 from typing import Optional, Iterable
 
-from dictalchemy import DictableModel
 import sqlalchemy
 from bidict import bidict
-from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, Index, asc, text, desc
+from dictalchemy import DictableModel
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, Index, asc, text
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -456,6 +456,7 @@ class MeasureVersion(db.Model, CopyableModel):
     def minor(self):
         return int(self.version.split(".")[1])
 
+    # TODO: See which of the below methods we can now remove altogether or make a property on Measure itself
     def next_minor_version(self):
         return "%s.%s" % (self.major(), self.minor() + 1)
 
@@ -510,6 +511,18 @@ class MeasureVersion(db.Model, CopyableModel):
             return True
 
         return latest_published_version <= self
+
+    @property
+    def previous_major_versions(self):
+        return [v for v in self.measure.versions if v.major() < self.major() and not v.has_minor_update()]
+
+    @property
+    def previous_minor_versions(self):
+        return [v for v in self.measure.versions if v.major() == self.major() and v.minor() < self.minor()]
+
+    @property
+    def first_published_date(self):
+        return self.previous_minor_versions[-1].published_at if self.previous_minor_versions else self.published_at
 
     @property
     def is_published_measure_or_parent_of(self):
@@ -1059,7 +1072,7 @@ class Measure(db.Model):
     subtopics = db.relationship(
         "Subtopic", secondary="subtopic_measure", back_populates="measures", order_by="asc(Subtopic.id)"
     )
-    versions = db.relationship("MeasureVersion", back_populates="measure", order_by=desc(MeasureVersion.version))
+    versions = db.relationship("MeasureVersion", back_populates="measure", order_by="desc(MeasureVersion.version)")
 
     # Departmental users can only access measures that have been shared with them, as defined by this relationship
     shared_with = db.relationship(
@@ -1088,6 +1101,15 @@ class Measure(db.Model):
             return max(published_versions, key=lambda version: (version.major(), version.minor()))
 
         return None
+
+    @property
+    def versions_to_publish(self):
+        # Need to publish:
+        # 1. Latest published version
+        # 2. Latest published version of all previous major versions
+        if self.latest_published_version:
+            return [self.latest_published_version] + self.latest_published_version.previous_major_versions
+        return []
 
     @property
     def subtopic(self):

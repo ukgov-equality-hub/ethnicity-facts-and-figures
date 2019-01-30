@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import pytest
 from bs4 import BeautifulSoup
 from flask import url_for
@@ -667,23 +669,19 @@ class TestMeasureVersion:
 
     def test_measure_latest_version_returns_latest_measure_version(self):
         measure = MeasureFactory()
-        version_1_0 = MeasureVersionFactory(version="1.0", guid=measure.id, latest=False, measure=measure)
-        version_3_1 = MeasureVersionFactory(version="3.1", guid=measure.id, latest=True, measure=measure)
-        version_2_0 = MeasureVersionFactory(version="2.0", guid=measure.id, latest=False, measure=measure)
-        version_3_0 = MeasureVersionFactory(version="3.0", guid=measure.id, latest=False, measure=measure)
-
-        measure.versions = [version_1_0, version_3_1, version_2_0, version_3_0]
+        MeasureVersionFactory(version="1.0", guid=measure.id, latest=False, measure=measure)
+        MeasureVersionFactory(version="3.1", guid=measure.id, latest=True, measure=measure)
+        MeasureVersionFactory(version="2.0", guid=measure.id, latest=False, measure=measure)
+        MeasureVersionFactory(version="3.0", guid=measure.id, latest=False, measure=measure)
 
         assert measure.latest_version.version == "3.1"
 
     def test_measure_latest_published_version_returns_latest_published_version(self):
         measure = MeasureFactory()
-        version_1_0 = MeasureVersionFactory(version="1.0", guid=measure.id, latest=False, published=True)
-        version_2_0 = MeasureVersionFactory(version="2.0", guid=measure.id, latest=False, published=True)
-        version_3_0 = MeasureVersionFactory(version="3.0", guid=measure.id, latest=False, published=True)
-        version_3_1 = MeasureVersionFactory(version="3.1", guid=measure.id, latest=True, published=False)
-
-        measure.versions = [version_1_0, version_3_1, version_2_0, version_3_0]
+        MeasureVersionFactory(version="1.0", guid=measure.id, latest=False, published=True, measure=measure)
+        MeasureVersionFactory(version="2.0", guid=measure.id, latest=False, published=True, measure=measure)
+        MeasureVersionFactory(version="3.0", guid=measure.id, latest=False, published=True, measure=measure)
+        MeasureVersionFactory(version="3.1", guid=measure.id, latest=True, published=False, measure=measure)
 
         assert measure.latest_published_version.version == "3.0"
 
@@ -739,3 +737,27 @@ class TestMeasureVersion:
         page = MeasureVersion(guid="test_page", version="1.0", area_covered=countries)
 
         assert page.format_area_covered() == formatted_string
+
+    def test_first_published_date(self, db_session):
+        v1_publication_date = datetime(2018, 1, 19).date()
+        v2_publication_date = datetime(2018, 2, 19).date()
+        measure = MeasureFactory()
+        major_version_1 = MeasureVersionFactory(
+            version="1.0", status="APPROVED", measure=measure, published_at=v1_publication_date
+        )
+        major_version_2 = MeasureVersionFactory(
+            version="2.0", status="APPROVED", measure=measure, published_at=v2_publication_date
+        )
+        minor_version_2_1 = MeasureVersionFactory(
+            version="2.1", status="APPROVED", measure=measure, published_at=v2_publication_date + timedelta(days=30)
+        )
+        minor_version_2_2 = MeasureVersionFactory(
+            version="2.2", status="APPROVED", measure=measure, published_at=v2_publication_date + timedelta(days=60)
+        )
+        # # Need to commit the MeasureVersions so that ordering on SQLAlchemy relationships works properly
+        # db_session.session.commit()
+
+        assert major_version_1.first_published_date == v1_publication_date
+        assert major_version_2.first_published_date == v2_publication_date
+        assert minor_version_2_1.first_published_date == v2_publication_date
+        assert minor_version_2_2.first_published_date == v2_publication_date

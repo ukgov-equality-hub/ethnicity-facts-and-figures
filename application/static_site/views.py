@@ -151,9 +151,9 @@ def measure_page(topic_slug, subtopic_slug, measure_slug, version):
         subtopic_slug=subtopic_slug,
         measure_page=measure_version,
         dimensions=[dimension.to_dict() for dimension in measure_version.dimensions],
-        versions=new_page_service.get_previous_major_versions(measure_version),
-        first_published_date=new_page_service.get_first_published_date(measure_version),
-        edit_history=new_page_service.get_previous_minor_versions(measure_version),
+        versions=measure_version.previous_major_versions,
+        first_published_date=measure_version.first_published_date,
+        edit_history=measure_version.previous_minor_versions,
         static_mode=get_bool(request.args.get("static_mode", False)),
     )
 

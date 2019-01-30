@@ -3,7 +3,7 @@ from datetime import datetime, date
 from typing import Iterable, Tuple
 
 from slugify import slugify
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -134,24 +134,6 @@ class NewPageService(Service):
             return_items.append(upload_object)
 
         return (item for item in return_items)
-
-    @staticmethod
-    def get_previous_major_versions(measure_version):
-        versions = measure_version.get_versions(include_self=False)
-        versions.sort(reverse=True)
-        versions = [v for v in versions if v.major() < measure_version.major() and not v.has_minor_update()]
-        return versions
-
-    @staticmethod
-    def get_previous_minor_versions(measure_version):
-        versions = measure_version.get_versions(include_self=False)
-        versions.sort(reverse=True)
-        versions = [v for v in versions if v.major() == measure_version.major() and v.minor() < measure_version.minor()]
-        return versions
-
-    def get_first_published_date(self, measure_version):
-        versions = self.get_previous_minor_versions(measure_version)
-        return versions[-1].published_at if versions else measure_version.published_at
 
     @staticmethod
     def get_latest_version_of_all_measures(include_drafts=False):
@@ -512,6 +494,40 @@ class NewPageService(Service):
 
         db.session.commit()
         request_build()
+
+    #  Methods below are used only by the static site build
+    @staticmethod
+    def get_publishable_measures_for_subtopic(subtopic):
+        measures_to_publish = []
+        for measure in subtopic.measures:
+            if any(version.eligible_for_build() for version in measure.versions):
+                measures_to_publish.append(measure)
+        return measures_to_publish
+
+    @staticmethod
+    def first_published_date(measure_version):
+        versions = measure_version.previous_minor_versions()
+        return versions[-1].published_at if versions else measure_version.published_at
+
+    @staticmethod
+    def get_measure_versions_to_unpublish():
+        return (
+            MeasureVersion.query.filter_by(status="UNPUBLISH")
+            .order_by(MeasureVersion.title, desc(MeasureVersion.version))
+            .all()
+        )
+
+    @staticmethod
+    def mark_measure_versions_unpublished(measure_versions):
+        for measure_version in measure_versions:
+            measure_version.published = False
+            measure_version.unpublished_at = datetime.datetime.now()
+            measure_version.status = "UNPUBLISHED"
+
+            # TODO: Don't unset this (need to update logic around whether published or not)
+            measure_version.published_at = None
+
+            db.session.commit()
 
 
 new_page_service = NewPageService()
