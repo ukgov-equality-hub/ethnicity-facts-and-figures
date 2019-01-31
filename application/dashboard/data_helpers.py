@@ -187,7 +187,7 @@ def get_ethnic_group_by_slug_dashboard_data(value_slug):
                     "slug": d["page_slug"],
                     "position": d["page_position"],
                     "url": url_for(
-                        "static_site.measure_page",
+                        "static_site.measure_version",
                         topic_slug=subtopic["topic_slug"],
                         subtopic_slug=subtopic["slug"],
                         measure_slug=d["page_slug"],
@@ -321,7 +321,7 @@ def get_ethnicity_classification_by_id_dashboard_data(classification_id):
                     "slug": d["page_slug"],
                     "position": d["page_position"],
                     "url": url_for(
-                        "static_site.measure_page",
+                        "static_site.measure_version",
                         topic_slug=subtopic["topic_slug"],
                         subtopic_slug=subtopic["slug"],
                         measure_slug=d["page_slug"],
@@ -409,7 +409,7 @@ def get_geographic_breakdown_by_slug_dashboard_data(slug):
                 {
                     "title": measure.page_title,
                     "url": url_for(
-                        "static_site.measure_page",
+                        "static_site.measure_version",
                         topic_slug=page.parent.slug,
                         subtopic_slug=page.slug,
                         measure_slug=measure.page_slug,

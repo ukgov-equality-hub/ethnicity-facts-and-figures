@@ -5,7 +5,7 @@
 {% set breadcrumbs =
   [
     {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
-    {"url": url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version), "text": measure.title},
+    {"url": url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version), "text": measure.title},
   ]
 %}
 
@@ -21,7 +21,7 @@
     <div class="grid-row">
         <div class="column-two-thirds new-version">
             <p>Current version: <b>{{ measure.version }}</b>
-                <a href="{{ url_for('static_site.measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
+                <a href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">
                     View page
                 </a>
             </p>

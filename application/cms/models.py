@@ -1116,7 +1116,3 @@ class Measure(db.Model):
         """Get the first subtopic for this measure. Theoretically there can be more than one subtopic; practically,
         as of 2019/01/01, there will only ever be one. Which makes this shortcut semi-reasonable."""
         return self.subtopics[0]
-
-    @property
-    def title(self):
-        return self.latest_version.title

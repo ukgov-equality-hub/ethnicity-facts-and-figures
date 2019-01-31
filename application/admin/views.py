@@ -53,7 +53,7 @@ def share_page_with_user(user_id):
     if not user.is_departmental_user():
         flash("User %s is not a departmental user" % user.email, "error")
     if user in measure.shared_with:
-        flash("User %s already has access to %s " % (user.email, measure.title), "error")
+        flash("User %s already has access to %s " % (user.email, measure.latest_version.title), "error")
     else:
         measure.shared_with.append(user)
         db.session.commit()

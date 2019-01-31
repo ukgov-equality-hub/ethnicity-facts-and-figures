@@ -181,7 +181,7 @@ def write_measure_versions(measure, build_dir, local_build=False):
             "static_site/measure.html",
             topic_slug=measure.subtopic.topic.slug,
             subtopic_slug=measure.subtopic.slug,
-            measure_page=measure_version,
+            measure_version=measure_version,
             dimensions=dimensions,
             versions=measure_version.previous_major_versions,
             first_published_date=measure_version.first_published_date,

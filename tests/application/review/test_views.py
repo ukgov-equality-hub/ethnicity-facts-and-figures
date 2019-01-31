@@ -117,7 +117,7 @@ def test_page_main_download_available_without_login(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page_file_download",
+            "static_site.measure_version_file_download",
             topic_slug=stub_measure_page.measure.subtopic.topic.slug,
             subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,

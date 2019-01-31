@@ -1,7 +1,7 @@
 from werkzeug.datastructures import ImmutableMultiDict
 
 from application.cms.models import DataSource
-from application.cms.forms import DataSourceForm, MeasurePageForm
+from application.cms.forms import DataSourceForm, MeasureVersionForm
 
 
 class TestDataSourceForm:
@@ -40,7 +40,7 @@ class TestDataSourceForm:
 
 class TestMeasurePageForm:
     def test_runs_full_validation_when_sending_to_review(self):
-        form = MeasurePageForm(sending_to_review=True)
+        form = MeasureVersionForm(sending_to_review=True)
 
         form.validate()
 

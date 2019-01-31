@@ -4,23 +4,23 @@
 {% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
-    {"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_page.measure.subtopic.topic.title},
+    {"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_version.measure.subtopic.topic.title},
   ]
   if not preview else
   none
 %}
 
-{% block pageTitle %}{{ measure_page.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
-{% block socialTitle %}{{ measure_page.title }}{% endblock %}
-{% block socialDescription %}{{ measure_page.summary | first_bullet | render_markdown | striptags }}{% endblock %}
+{% block pageTitle %}{{ measure_version.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block socialTitle %}{{ measure_version.title }}{% endblock %}
+{% block socialDescription %}{{ measure_version.summary | first_bullet | render_markdown | striptags }}{% endblock %}
 {% block googleAnalytics %}ga('set','contentGroup1','Measure');{% endblock %}
 
-{% set version = 'latest' if measure_page.has_no_later_published_versions() else measure_page.version %}
+{% set version = 'latest' if measure_version.has_no_later_published_versions() else measure_version.version %}
 
 {% block headEnd %}
     {{ super() }}
 
-    {% if not measure_page.has_no_later_published_versions() %}
+    {% if not measure_version.has_no_later_published_versions() %}
         <meta name="robots" content="noindex">
     {% endif %}
 {% endblock %}
@@ -29,33 +29,33 @@
 
 {% block content %}
   <meta itemprop="image" content="https://www.ethnicity-facts-figures.service.gov.uk/static/images/opengraph-image.png" />
-  <meta itemscope itemprop="mainEntityOfPage"  itemType="https://schema.org/WebPage" itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_page',
+  <meta itemscope itemprop="mainEntityOfPage"  itemType="https://schema.org/WebPage" itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_version',
                           topic_slug=topic_slug,
                           subtopic_slug=subtopic_slug,
-                          measure_slug=measure_page.slug,
+                          measure_slug=measure_version.slug,
                           version=version) }}"/>
 
 
   {% if not static_mode %}
     {% call status_banner(sticky=False) %}
       <div class="version-info left">
-          <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure_page.version }}{% endif %}</b></span>
+          <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure_version.version }}{% endif %}</b></span>
       </div>
       <div class="centre">
           <span class="info" id="status">Status:&nbsp;<b>
-              {% if measure_page.published == True and measure_page.status == "APPROVED" %}
+              {% if measure_version.published == True and measure_version.status == "APPROVED" %}
                   Published
               {% else %}
-                  {% if new %}DRAFT{% else %}{{ measure_page.status | format_status | safe }}{% endif %}
+                  {% if new %}DRAFT{% else %}{{ measure_version.status | format_status | safe }}{% endif %}
               {% endif %}</b>
           </span>
 
-          {% if measure_page.number_of_versions() > 1 %}
-            {%  set latest_page = measure_page.latest_version() %}
-            <span class="info"><a href="{{ url_for('cms.list_measure_page_versions',
+          {% if measure_version.number_of_versions() > 1 %}
+            {%  set latest_page = measure_version.latest_version() %}
+            <span class="info"><a href="{{ url_for('cms.list_measure_versions',
                                   topic_slug=topic_slug,
                                   subtopic_slug=subtopic_slug,
-                                  measure_slug=measure_page.slug)}}">Version history</a></span>
+                                  measure_slug=measure_version.slug)}}">Version history</a></span>
 
           {% endif %}
 
@@ -64,43 +64,43 @@
 
 
         <span class="info">
-          {% if measure_page.latest_version() %}
-            <a href="{{ url_for('static_site.measure_page_markdown',
+          {% if measure_version.latest_version() %}
+            <a href="{{ url_for('static_site.measure_version_markdown',
              topic_slug=topic_slug,
              subtopic_slug=subtopic_slug,
-             measure_slug=measure_page.slug,
-             version=measure_page.version) }}">Export</a>
+             measure_slug=measure_version.slug,
+             version=measure_version.version) }}">Export</a>
           {% else %}
-            <a href="{{ url_for('cms.list_measure_page_versions',
+            <a href="{{ url_for('cms.list_measure_versions',
                     topic_slug=topic_slug,
                     subtopic_slug=subtopic_slug,
-                    measure_slug=measure_page.slug) }}">Export</a>
+                    measure_slug=measure_version.slug) }}">Export</a>
           {% endif %}
         </span>
 
         <span class="info">
-          {% if measure_page.latest %}
+          {% if measure_version.latest %}
 
-            {% if measure_page.status == 'APPROVED' %}
+            {% if measure_version.status == 'APPROVED' %}
               {% if current_user.can(CREATE_VERSION) %}
-                <a class="button" href="{{ url_for('cms.new_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_page.slug, version=measure_page.version) }}">
+                <a class="button" href="{{ url_for('cms.new_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.slug, version=measure_version.version) }}">
                   Update
                 </a>
               {% endif %}
             {% else %}
-              <a href="{{ url_for('cms.edit_measure_page',
+              <a href="{{ url_for('cms.edit_measure_version',
            topic_slug=topic_slug,
            subtopic_slug=subtopic_slug,
-           measure_slug=measure_page.slug,
-           version=measure_page.version) }}" class="button">Edit</a>
+           measure_slug=measure_version.slug,
+           version=measure_version.version) }}" class="button">Edit</a>
             {% endif %}
           {% endif %}
         </span>
 
-        {% if measure_page.status == 'DRAFT' %}
+        {% if measure_version.status == 'DRAFT' %}
 
 
-          <a class="button delete" href="{{ url_for('cms.confirm_delete_measure_page', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_page.slug, version=measure_page.version) }}">Delete</a>
+          <a class="button delete" href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.slug, version=measure_version.version) }}">Delete</a>
 
         {% endif %}
       </div>
@@ -112,7 +112,7 @@
   <div class="grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-large" itemprop="headline">
-        {{ measure_page.title }}
+        {{ measure_version.title }}
       </h1>
     </div>
   </div>
@@ -120,10 +120,10 @@
   {% if version != 'latest' %}
     <div class="old-edition-notice">
       <h2 class="heading-large">There is a new version of this page</h2>
-      <p>View the <a href="{{ url_for('static_site.measure_page',
+      <p>View the <a href="{{ url_for('static_site.measure_version',
                             topic_slug=topic_slug,
                             subtopic_slug=subtopic_slug,
-                            measure_slug=measure_page.slug,
+                            measure_slug=measure_version.slug,
                             version='latest') }}">latest version</a></p>
     </div>
   {% endif %}
@@ -132,10 +132,10 @@
     <div class="column-two-thirds">
       <div class="metadata">
         <dl>
-          {% if measure_page.primary_data_source and measure_page.primary_data_source.publisher %}
+          {% if measure_version.primary_data_source and measure_version.primary_data_source.publisher %}
             <dt>Department:</dt>
             <dd itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
-             <span itemprop="name">{{ measure_page.primary_data_source.publisher.name }}</span>
+             <span itemprop="name">{{ measure_version.primary_data_source.publisher.name }}</span>
             </dd>
           {% endif %}
 
@@ -146,32 +146,32 @@
             </dd>
           {%  endif %}
 
-          {% if measure_page.version != '1.0' and measure_page.published_at %}
+          {% if measure_version.version != '1.0' and measure_version.published_at %}
             <dt>Last updated:</dt>
             <dd itemprop="dateModified">
-              {{ measure_page.published_at | format_friendly_date }}, <a href="#history">see all updates</a>
+              {{ measure_version.published_at | format_friendly_date }}, <a href="#history">see all updates</a>
             </dd>
           {% endif %}
 
-          {% if measure_page.primary_data_source %}
+          {% if measure_version.primary_data_source %}
           <dt>Source:</dt>
           <dd>
-            <a href="{{ measure_page.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_page.primary_data_source.title }}">
-              {{ measure_page.primary_data_source.title }}
+            <a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_version.primary_data_source.title }}">
+              {{ measure_version.primary_data_source.title }}
             </a>
           </dd>
           {% endif %}
 
-          {% if measure_page.area_covered %}
+          {% if measure_version.area_covered %}
           <dt>Area covered:</dt>
           <dd>
-            {{ measure_page.format_area_covered()  }}
+            {{ measure_version.format_area_covered()  }}
           </dd>
           {% endif %}
-          {% if measure_page.time_covered %}
+          {% if measure_version.time_covered %}
           <dt>Time period:</dt>
           <dd>
-            {{ measure_page.time_covered }}
+            {{ measure_version.time_covered }}
           </dd>
           {% endif %}
 
@@ -186,14 +186,14 @@
       <p>
         The main facts and figures show that:
       </p>
-        {% if measure_page.summary %}
+        {% if measure_version.summary %}
             <div class="bullets spaced-out">
-                {{ measure_page.summary | render_markdown }}
+                {{ measure_version.summary | render_markdown }}
             </div>
         {% endif %}
 
 
-      {% if measure_page.need_to_know %}
+      {% if measure_version.need_to_know %}
       <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Things you need to know" class="normalize">
         <summary>
           <span id="things-you-need-to-know" class="summary">
@@ -201,17 +201,17 @@
           </span>
         </summary>
         <div class="panel panel-border-narrow">
-            {{ measure_page.need_to_know | render_markdown  }}
+            {{ measure_version.need_to_know | render_markdown  }}
         </div>
         <noscript>
           <div>
-            {{ measure_page.need_to_know | render_markdown  }}
+            {{ measure_version.need_to_know | render_markdown  }}
           </div>
         </noscript>
       </details>
       {% endif %}
 
-      {% if measure_page.measure_summary %}
+      {% if measure_version.measure_summary %}
       <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="What the data measures" class="normalize">
         <summary>
           <span id="what-the-data-measures" class="summary">
@@ -219,17 +219,17 @@
           </span>
         </summary>
         <div class="panel panel-border-narrow" itemprop="description">
-            {{ measure_page.measure_summary | render_markdown  }}
+            {{ measure_version.measure_summary | render_markdown  }}
         </div>
         <noscript>
           <div>
-            {{ measure_page.measure_summary | render_markdown  }}
+            {{ measure_version.measure_summary | render_markdown  }}
           </div>
         </noscript>
       </details>
       {% endif %}
 
-      {% if measure_page.ethnicity_definition_summary %}
+      {% if measure_version.ethnicity_definition_summary %}
       <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="The ethnic categories used in this data" class="normalize">
         <summary>
           <span id="the-ethnic-categories-used-in-this-data" class="summary">
@@ -237,12 +237,12 @@
           </span>
         </summary>
         <div class="panel panel-border-narrow">
-            {{ measure_page.ethnicity_definition_summary | render_markdown  }}
+            {{ measure_version.ethnicity_definition_summary | render_markdown  }}
           <p><a href="{{ url_for('static_site.ethnicity_in_the_uk') }}">Ethnic groups and how data on ethnicity is collected</a></p>
         </div>
         <noscript>
           <div id="ethnicity-definition" class="section-expandable-region">
-            {{ measure_page.ethnicity_definition_summary | render_markdown  }}
+            {{ measure_version.ethnicity_definition_summary | render_markdown  }}
           </div>
         </noscript>
       </details>
@@ -251,7 +251,7 @@
   </div>
 
   <div class="grid-row">
-      {% if measure_page.dimensions %}
+      {% if measure_version.dimensions %}
           {% for dimension in dimensions %}
 
             {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
@@ -260,10 +260,10 @@
                   <h2 class="heading-medium" id="{{ dimension.title|slugify_value }}">{{ dimension.title }}</h2>
                   <div class="metadata">
                       <dl>
-                          {% if measure_page.area_covered %}
+                          {% if measure_version.area_covered %}
                               <dt>Location:</dt>
                               <dd>
-                                  {{ measure_page.format_area_covered()  }}
+                                  {{ measure_version.format_area_covered()  }}
                               </dd>
                           {% endif %}
                           {% if dimension.time_period %}
@@ -272,11 +272,11 @@
                                   {{ dimension.time_period }}
                               </dd>
                           {% endif %}
-                          {% if measure_page.primary_data_source %}
+                          {% if measure_version.primary_data_source %}
                               <dt>Source:</dt>
                               <dd>
-                                  <a href="{{ measure_page.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_page.primary_data_source.title }}">
-                                      {{ measure_page.primary_data_source.title }}
+                                  <a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_version.primary_data_source.title }}">
+                                      {{ measure_version.primary_data_source.title }}
                                   </a>
                               </dd>
                           {% endif %}
@@ -331,26 +331,26 @@
                       {% if tabular_download_viable %}
                       <p class="chart-download">
                           {% if static_mode %}
-                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_page.slug }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
+                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.slug }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
                                  download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_table_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
-                                   measure_slug=measure_page.slug,
-                                   version=measure_page.version,
+                                   measure_slug=measure_version.slug,
+                                   version=measure_version.version,
                                    dimension_guid=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}">Download table data (CSV)</a>
                           {% endif %}
 
                           {% if static_mode %}
-                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_page.slug }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
+                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.slug }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
                                  data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
-                                   measure_slug=measure_page.slug,
-                                   version=measure_page.version,
+                                   measure_slug=measure_version.slug,
+                                   version=measure_version.version,
                                    dimension_guid=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% endif %}
                       </p>
@@ -377,37 +377,37 @@
 
           <div class="accordion-section-body">
 
-            {% if measure_page.methodology %}
+            {% if measure_version.methodology %}
             <h3 class="heading-small">
               Methodology
             </h3>
-              {{ measure_page.methodology | render_markdown  }}
+              {{ measure_version.methodology | render_markdown  }}
             {% endif %}
 
-            {% if measure_page.suppression_and_disclosure %}
+            {% if measure_version.suppression_and_disclosure %}
                 <h3 class="heading-small">Suppression rules and disclosure control</h3>
-              {{ measure_page.suppression_and_disclosure | render_markdown }}
+              {{ measure_version.suppression_and_disclosure | render_markdown }}
             {% endif %}
 
-            {% if measure_page.estimation %}
+            {% if measure_version.estimation %}
                 <h3 class="heading-small">Rounding</h3>
-                {{ measure_page.estimation  | render_markdown  }}
+                {{ measure_version.estimation  | render_markdown  }}
             {% endif %}
 
-            {% if measure_page.related_publications %}
+            {% if measure_version.related_publications %}
               <h3 class="heading-small">Related publications</h3>
-              {{ measure_page.related_publications | render_markdown }}
+              {{ measure_version.related_publications | render_markdown }}
             {% endif %}
 
-            {% if measure_page.qmi_url %}
-              <a href="{{ measure_page.qmi_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Quality and methodology information" data-event-label="{{ measure_page.title }}">Quality and methodology information</a>
+            {% if measure_version.qmi_url %}
+              <a href="{{ measure_version.qmi_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Quality and methodology information" data-event-label="{{ measure_version.title }}">Quality and methodology information</a>
             {% endif %}
 
-            {% if measure_page.further_technical_information %}
+            {% if measure_version.further_technical_information %}
             <h3 class="heading-small">
               Further technical information
             </h3>
-              {{ measure_page.further_technical_information  | render_markdown }}
+              {{ measure_version.further_technical_information  | render_markdown }}
             {% endif %}
 
           </div>
@@ -422,92 +422,92 @@
           <div class="accordion-section-body">
 
             <h3 class="heading-small">Source</h3>
-            <p><a href="{{ measure_page.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.title }}">
-                {{ measure_page.primary_data_source.title }}</a>
+            <p><a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.title }}">
+                {{ measure_version.primary_data_source.title }}</a>
             </p>
 
-            {% if measure_page.primary_data_source %}
-              {% if measure_page.primary_data_source.type_of_data %}
+            {% if measure_version.primary_data_source %}
+              {% if measure_version.primary_data_source.type_of_data %}
               <h3 class="heading-small">Type of data</h3>
-              <p>{{ measure_page.primary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
+              <p>{{ measure_version.primary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
               {% endif %}
 
-              {% if measure_page.primary_data_source.type_of_statistic %}
+              {% if measure_version.primary_data_source.type_of_statistic %}
                 <h3 class="heading-small">Type of statistic</h3>
-                <p>{{ measure_page.primary_data_source.type_of_statistic.external }}</p>
+                <p>{{ measure_version.primary_data_source.type_of_statistic.external }}</p>
               {% endif %}
 
-              {% if measure_page.primary_data_source.publisher %}
+              {% if measure_version.primary_data_source.publisher %}
                 <h3 class="heading-small">Publisher</h3>
-                <p>{{ measure_page.primary_data_source.publisher.name }}</p>
+                <p>{{ measure_version.primary_data_source.publisher.name }}</p>
               {% endif %}
 
-              {% if measure_page.primary_data_source.note_on_corrections_or_updates %}
+              {% if measure_version.primary_data_source.note_on_corrections_or_updates %}
                 <h3 class="heading-small">Note on corrections or updates</h3>
-                <p>{{ measure_page.primary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
+                <p>{{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
               {% endif %}
 
-              {% if measure_page.primary_data_source.frequency_of_release %}
+              {% if measure_version.primary_data_source.frequency_of_release %}
                 <h3 class="heading-small">Publication frequency</h3>
-                {% if measure_page.primary_data_source.frequency_of_release.description == 'Other' %}
-                      {{ measure_page.primary_data_source.frequency_other }}
+                {% if measure_version.primary_data_source.frequency_of_release.description == 'Other' %}
+                      {{ measure_version.primary_data_source.frequency_other }}
                 {% else %}
-                    {{ measure_page.primary_data_source.frequency_of_release.description }}
+                    {{ measure_version.primary_data_source.frequency_of_release.description }}
                 {% endif %}
               {% endif %}
 
-              {% if measure_page.primary_data_source.purpose %}
+              {% if measure_version.primary_data_source.purpose %}
                   <h3 class="heading-small">Purpose of data source</h3>
-                  {{ measure_page.primary_data_source.purpose | render_markdown }}
+                  {{ measure_version.primary_data_source.purpose | render_markdown }}
               {% endif %}
             {% endif %}
 
-            {% if measure_page.secondary_data_source %}
+            {% if measure_version.secondary_data_source %}
               <div class="secondary-source">
                 <h3 class="heading-small">Secondary source</h3>
-                <p><a href="{{ measure_page.secondary_data_source.source_url }}"  data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_page.secondary_data_source.title }}">
-                    {{ measure_page.secondary_data_source.title }}
+                <p><a href="{{ measure_version.secondary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.secondary_data_source.title }}">
+                    {{ measure_version.secondary_data_source.title }}
                 </a></p>
 
-                {% if measure_page.secondary_data_source.type_of_data %}
+                {% if measure_version.secondary_data_source.type_of_data %}
                  <h3 class="heading-small">Type of data</h3>
-                 <p>{{ measure_page.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
+                 <p>{{ measure_version.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
                 {% endif %}
 
-                {% if measure_page.secondary_data_source.type_of_statistic %}
+                {% if measure_version.secondary_data_source.type_of_statistic %}
                  <h3 class="heading-small">Type of statistic</h3>
-                 <p>{{ measure_page.secondary_data_source.type_of_statistic.external }}</p>
+                 <p>{{ measure_version.secondary_data_source.type_of_statistic.external }}</p>
                 {% endif %}
 
-                {% if measure_page.secondary_data_source.publisher %}
+                {% if measure_version.secondary_data_source.publisher %}
                   <h3 class="heading-small">Publisher</h3>
-                  <p>{{ measure_page.secondary_data_source.publisher.name }}</p>
+                  <p>{{ measure_version.secondary_data_source.publisher.name }}</p>
                 {% endif %}
 
               {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
-                {% if measure_page.secondary_data_source.publication_date %}
+                {% if measure_version.secondary_data_source.publication_date %}
                   <h3 class="heading-small">Publication release date</h3>
-                  <p>{{ measure_page.secondary_data_source.publication_date }}</p>
+                  <p>{{ measure_version.secondary_data_source.publication_date }}</p>
                 {% endif %}
               #}
 
-                {% if measure_page.secondary_data_source.note_on_corrections_or_updates %}
+                {% if measure_version.secondary_data_source.note_on_corrections_or_updates %}
                   <h3 class="heading-small">Note on corrections or updates</h3>
-                  <p>{{ measure_page.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
+                  <p>{{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
                 {% endif %}
 
-                {% if measure_page.secondary_data_source.frequency_of_release %}
+                {% if measure_version.secondary_data_source.frequency_of_release %}
                   <h3 class="heading-small">Publication frequency</h3>
-                  {% if measure_page.secondary_data_source.frequency_of_release.description == 'Other' %}
-                        {{ measure_page.secondary_data_source.frequency_of_release_other }}
+                  {% if measure_version.secondary_data_source.frequency_of_release.description == 'Other' %}
+                        {{ measure_version.secondary_data_source.frequency_of_release_other }}
                   {% else %}
-                      {{ measure_page.secondary_data_source.frequency_of_release.description }}
+                      {{ measure_version.secondary_data_source.frequency_of_release.description }}
                   {% endif %}
                 {% endif %}
 
-                {% if measure_page.secondary_data_source.purpose %}
+                {% if measure_version.secondary_data_source.purpose %}
                   <h3 class="heading-small">Purpose of data source</h3>
-                  {{ measure_page.secondary_data_source.purpose | render_markdown }}
+                  {{ measure_version.secondary_data_source.purpose | render_markdown }}
                 {% endif %}
               </div>
 
@@ -523,19 +523,19 @@
           </div>
 
           <div class="accordion-section-body downloads">
-            {% for file in measure_page.uploads  %}
+            {% for file in measure_version.uploads  %}
               {% if file.file_name %}
-                {% set measure_page_data_url =
-                  ("/" + topic_slug + "/"+  subtopic_slug + "/"+  measure_page.slug + "/"+  version + "/downloads/" + file.file_name)
+                {% set measure_version_data_url =
+                  ("/" + topic_slug + "/"+  subtopic_slug + "/"+  measure_version.slug + "/"+  version + "/downloads/" + file.file_name)
                   if static_mode else
-                  url_for('static_site.measure_page_file_download',
+                  url_for('static_site.measure_version_file_download',
                           topic_slug=topic_slug,
                           subtopic_slug=subtopic_slug,
-                          measure_slug=measure_page.slug,
-                          version=measure_page.version,
+                          measure_slug=measure_version.slug,
+                          version=measure_version.version,
                           filename=file.file_name)
                 %}
-                <a href="{{ measure_page_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
+                <a href="{{ measure_version_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
                       {{ file.title }}
                       {{ " - Spreadsheet " if file.extension() == "csv" }}
                       {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
@@ -576,7 +576,7 @@
 
             {% if edit_history %}
                 <p>Updated:
-                    <span class="updated definition"> {{ measure_page.published_at|format_friendly_date }}</span>
+                    <span class="updated definition"> {{ measure_version.published_at|format_friendly_date }}</span>
                 </p>
             {% endif %}
 
@@ -587,15 +587,15 @@
 
               <div class="" id="full-history" aria-live="polite" role="region"><span class="arrow"></span>
                 <ol>
-                {% set current_edit_summary = measure_page.external_edit_summary %}
-                {% if measure_page.published_at %}
-                    {% set publish_date = measure_page.published_at|format_friendly_date %}
+                {% set current_edit_summary = measure_version.external_edit_summary %}
+                {% if measure_version.published_at %}
+                    {% set publish_date = measure_version.published_at|format_friendly_date %}
                 {% else %}
                     {% set publish_date = 'TBC' %}
                 {% endif %}
                 <li>
-                    {% if measure_page.published_at %}
-                        <time datetime="{{ measure_page.published_at }}" class="timestamp">{{ measure_page.published_at|format_friendly_date }}</time>
+                    {% if measure_version.published_at %}
+                        <time datetime="{{ measure_version.published_at }}" class="timestamp">{{ measure_version.published_at|format_friendly_date }}</time>
                     {% else %}
                         <span class="timestamp">TBC</span>
                     {% endif %}
@@ -623,10 +623,10 @@
           </div>
         </div>
         <div class="related-information">
-          {% if measure_page.primary_data_source and measure_page.primary_data_source.publisher %}
+          {% if measure_version.primary_data_source and measure_version.primary_data_source.publisher %}
             <p>
             From:
-            <span class="definition">{{ measure_page.primary_data_source.publisher.name }}</span>
+            <span class="definition">{{ measure_version.primary_data_source.publisher.name }}</span>
           </p>
           {%  endif %}
 
@@ -639,7 +639,7 @@
               <ol>
                 {% for page_version in versions %}
                     <li>
-                        <a href="{{ url_for('static_site.measure_page',
+                        <a href="{{ url_for('static_site.measure_version',
                             topic_slug=topic_slug,
                             subtopic_slug=subtopic_slug,
                             measure_slug=page_version.slug,
@@ -693,9 +693,9 @@
             chartTitle = $(evt.currentTarget).data('title');
 
         var subtitle = 'Title:' +  chartTitle
-                                + '. Location: ' + '{{ measure_page.format_area_covered() }}'
+                                + '. Location: ' + '{{ measure_version.format_area_covered() }}'
                                 + '. Time period: '  + dimension.time_period
-                                + '. Source:  {{ measure_page.primary_data_source.publisher.name if measure_page.primary_data_source else "" }}'
+                                + '. Source:  {{ measure_version.primary_data_source.publisher.name if measure_version.primary_data_source else "" }}'
                                 + '| Ethnicity Facts and Figures GOV.UK';
 
         chart.highcharts().options.subtitle.text = subtitle;

@@ -41,7 +41,7 @@
                                     <div class="accordion-section-body {% if not static_mode %}eff-!-padding-bottom-40{% endif %}">
                                         {% if not static_mode %}
                                             {% if current_user.can(CREATE_MEASURE) %}
-                                                <p class="button-container"><a href="{{ url_for('cms.create_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}" class="button">Create a new page</a></p>
+                                                <p class="button-container"><a href="{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}" class="button">Create a new page</a></p>
                                             {% endif %}
                                         {% endif %}
                                         {% if measures_by_subtopic[subtopic.id] %}
@@ -49,10 +49,10 @@
                                                     {% for measure in measures_by_subtopic[subtopic.id] %}
                                                         {% with measure_version = measure.latest_version %}
                                                             <li data-measure-id="{{ measure.id }}" data-subtopic-id="{{ subtopic.id }}">
-                                                                <a href="{{ url_for('static_site.measure_page',
+                                                                <a href="{{ url_for('static_site.measure_version',
                                                                                     topic_slug=topic.slug,
                                                                                     subtopic_slug=subtopic.slug,
-                                                                                    measure_slug=measure_version.slug,
+                                                                                    measure_slug=measure.slug,
                                                                                     version='latest') }}">{{ measure_version.title }}
                                                                 </a>
 

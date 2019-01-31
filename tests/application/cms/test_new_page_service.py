@@ -4,7 +4,7 @@ import pytest
 
 from application.auth.models import TypeOfUser
 from application.cms.exceptions import PageNotFoundException, InvalidPageHierarchy, PageExistsException, PageUnEditable
-from application.cms.forms import MeasurePageForm
+from application.cms.forms import MeasureVersionForm
 from application.cms.models import Measure, NewVersionType
 from application.cms.new_page_service import NewPageService
 from application.cms.page_service import PageService
@@ -94,7 +94,7 @@ class TestNewPageService:
         measure_version = MeasureVersionWithDimensionFactory()
 
         assert list(
-            new_page_service.get_measure_page_hierarchy(
+            new_page_service.get_measure_version_hierarchy(
                 measure_version.measure.subtopic.topic.slug,
                 measure_version.measure.subtopic.slug,
                 measure_version.measure.slug,
@@ -108,7 +108,7 @@ class TestNewPageService:
         ]
 
         assert list(
-            new_page_service.get_measure_page_hierarchy(
+            new_page_service.get_measure_version_hierarchy(
                 measure_version.measure.subtopic.topic.slug,
                 measure_version.measure.subtopic.slug,
                 measure_version.measure.slug,
@@ -124,7 +124,7 @@ class TestNewPageService:
         ]
 
         assert list(
-            new_page_service.get_measure_page_hierarchy(
+            new_page_service.get_measure_version_hierarchy(
                 measure_version.measure.subtopic.topic.slug,
                 measure_version.measure.subtopic.slug,
                 measure_version.measure.slug,
@@ -140,7 +140,7 @@ class TestNewPageService:
         ]
 
         assert list(
-            new_page_service.get_measure_page_hierarchy(
+            new_page_service.get_measure_version_hierarchy(
                 measure_version.measure.subtopic.topic.slug,
                 measure_version.measure.subtopic.slug,
                 measure_version.measure.slug,
@@ -161,7 +161,7 @@ class TestNewPageService:
         measure_version = MeasureVersionWithDimensionFactory(measure__slug="measure-slug")
 
         with pytest.raises(InvalidPageHierarchy):
-            new_page_service.get_measure_page_hierarchy(
+            new_page_service.get_measure_version_hierarchy(
                 measure_version.measure.subtopic.topic.slug,
                 measure_version.measure.subtopic.slug,
                 "not-the-right-slug",
@@ -218,7 +218,7 @@ class TestNewPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         created_measure_version = new_page_service.create_measure(
             subtopic=subtopic,
-            measure_page_form=MeasurePageForm(
+            measure_version_form=MeasureVersionForm(
                 title="I care", published_at=datetime.now().date(), internal_reference="abc123"
             ),
             data_source_forms=[],
@@ -242,7 +242,7 @@ class TestNewPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         created_page = new_page_service.create_measure(
             subtopic=subtopic,
-            measure_page_form=MeasurePageForm(title="I care", published_at=datetime.now().date()),
+            measure_version_form=MeasureVersionForm(title="I care", published_at=datetime.now().date()),
             data_source_forms=[],
             created_by_email=user.email,
         )
@@ -250,7 +250,9 @@ class TestNewPageService:
         with pytest.raises(PageExistsException):
             new_page_service.create_measure(
                 subtopic=subtopic,
-                measure_page_form=MeasurePageForm(title=created_page.title, published_at=created_page.published_at),
+                measure_version_form=MeasureVersionForm(
+                    title=created_page.title, published_at=created_page.published_at
+                ),
                 data_source_forms=[],
                 created_by_email=user.email,
             )
@@ -261,7 +263,7 @@ class TestNewPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         page = new_page_service.create_measure(
             subtopic=subtopic,
-            measure_page_form=MeasurePageForm(
+            measure_version_form=MeasureVersionForm(
                 title="\n\t   I care\n", published_at=datetime.now().date(), methodology="\n\n\n\n\n\n"
             ),
             created_by_email=user.email,
@@ -277,7 +279,7 @@ class TestNewPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         created_page = new_page_service.create_measure(
             subtopic=subtopic,
-            measure_page_form=MeasurePageForm(title="the title", published_at=datetime.now().date()),
+            measure_version_form=MeasureVersionForm(title="the title", published_at=datetime.now().date()),
             created_by_email=user.email,
             data_source_forms=[],
         )
@@ -287,7 +289,7 @@ class TestNewPageService:
 
         updated_page = new_page_service.update_measure_version(
             created_page,
-            measure_page_form=MeasurePageForm(title="an updated title", db_version_id=created_page.db_version_id),
+            measure_version_form=MeasureVersionForm(title="an updated title", db_version_id=created_page.db_version_id),
             data_source_forms=[],
             last_updated_by_email=user.email,
         )
@@ -301,7 +303,7 @@ class TestNewPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         created_page = new_page_service.create_measure(
             subtopic=subtopic,
-            measure_page_form=MeasurePageForm(title="the title", published_at=datetime.now().date()),
+            measure_version_form=MeasureVersionForm(title="the title", published_at=datetime.now().date()),
             created_by_email=user.email,
             data_source_forms=[],
         )
@@ -311,7 +313,7 @@ class TestNewPageService:
 
         new_page_service.update_measure_version(
             created_page,
-            measure_page_form=MeasurePageForm(
+            measure_version_form=MeasureVersionForm(
                 title="the title", status="APPROVED", db_version_id=created_page.db_version_id
             ),
             data_source_forms=[],
@@ -325,7 +327,7 @@ class TestNewPageService:
 
         new_page_service.update_measure_version(
             copied_page,
-            measure_page_form=MeasurePageForm(title="the updated title", db_version_id=copied_page.db_version_id),
+            measure_version_form=MeasureVersionForm(title="the updated title", db_version_id=copied_page.db_version_id),
             data_source_forms=[],
             last_updated_by_email=user.email,
         )
@@ -454,7 +456,9 @@ class TestNewPageService:
 
         new_page_service.update_measure_version(
             measure_version,
-            measure_page_form=MeasurePageForm(title="I care too much!", db_version_id=measure_version.db_version_id),
+            measure_version_form=MeasureVersionForm(
+                title="I care too much!", db_version_id=measure_version.db_version_id
+            ),
             data_source_forms=[],
             last_updated_by_email=user.email,
         )
@@ -476,7 +480,7 @@ class TestNewPageService:
 
         new_page_service.update_measure_version(
             measure_version,
-            measure_page_form=MeasurePageForm(title="Who cares", db_version_id=measure_version.db_version_id),
+            measure_version_form=MeasureVersionForm(title="Who cares", db_version_id=measure_version.db_version_id),
             data_source_forms=[],
             last_updated_by_email=user.email,
             **{"status": "APPROVED"},
@@ -490,7 +494,7 @@ class TestNewPageService:
         with pytest.raises(PageUnEditable):
             new_page_service.update_measure_version(
                 measure_version,
-                measure_page_form=MeasurePageForm(
+                measure_version_form=MeasureVersionForm(
                     title="I care too much!", db_version_id=measure_version.db_version_id
                 ),
                 data_source_forms=[],
@@ -503,7 +507,7 @@ class TestNewPageService:
 
         new_page_service.update_measure_version(
             measure_version,
-            measure_page_form=MeasurePageForm(
+            measure_version_form=MeasureVersionForm(
                 title="Who cares",
                 db_version_id=measure_version.db_version_id,
                 published_at=datetime.now().date(),
@@ -517,7 +521,7 @@ class TestNewPageService:
 
         new_page_service.update_measure_version(
             measure_version,
-            measure_page_form=MeasurePageForm(
+            measure_version_form=MeasureVersionForm(
                 title="Who cares",
                 db_version_id=measure_version.db_version_id,
                 ethnicity_definition_summary="\n   How about some more whitespace? \n             \n",
@@ -539,7 +543,7 @@ class TestNewPageService:
 
         new_page_service.update_measure_version(
             measure_version,
-            measure_page_form=MeasurePageForm(title="Who cares", db_version_id=measure_version.db_version_id),
+            measure_version_form=MeasureVersionForm(title="Who cares", db_version_id=measure_version.db_version_id),
             last_updated_by_email=user.email,
             data_source_forms=[],
             **{"status": "DEPARTMENT_REVIEW"},

@@ -27,7 +27,7 @@ def flash_message_with_form_errors(lede="Please see below errors:", forms=None):
     flash(message, "error")
 
 
-def get_data_source_forms(request, measure_page, sending_to_review=False):
+def get_data_source_forms(request, measure_version, sending_to_review=False):
     include_csrf = current_app.config["WTF_CSRF_ENABLED"]
 
     if sending_to_review:
@@ -38,9 +38,9 @@ def get_data_source_forms(request, measure_page, sending_to_review=False):
     )
     PartialDataSource2Form = partial(PartialDataSourceForm, prefix="data-source-2-")
 
-    if measure_page:
-        data_source_form = PartialDataSourceForm(obj=measure_page.primary_data_source)
-        data_source_2_form = PartialDataSource2Form(obj=measure_page.secondary_data_source)
+    if measure_version:
+        data_source_form = PartialDataSourceForm(obj=measure_version.primary_data_source)
+        data_source_2_form = PartialDataSource2Form(obj=measure_version.secondary_data_source)
 
     else:
         data_source_form = PartialDataSourceForm()

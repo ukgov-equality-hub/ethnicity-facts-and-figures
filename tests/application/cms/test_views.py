@@ -9,7 +9,7 @@ import pytest
 from werkzeug.datastructures import ImmutableMultiDict
 
 from application.auth.models import TypeOfUser
-from application.cms.forms import MeasurePageForm
+from application.cms.forms import MeasureVersionForm
 from application.cms.models import MeasureVersion, Upload, DataSource, Measure
 from application.cms.page_service import PageService
 from application.cms.utils import get_data_source_forms
@@ -39,10 +39,10 @@ class TestGetCreateMeasurePage:
         with test_app_client.session_transaction() as session:
             session["user_id"] = mock_rdu_user.id
 
-        form = MeasurePageForm(**stub_measure_data)
+        form = MeasureVersionForm(**stub_measure_data)
 
         response = test_app_client.post(
-            url_for("cms.create_measure_page", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
+            url_for("cms.create_measure", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
             data=form.data,
             follow_redirects=True,
         )
@@ -61,7 +61,7 @@ class TestGetCreateMeasurePage:
         stub_frequency,
         stub_geography,
     ):
-        form = MeasurePageForm(**stub_measure_data)
+        form = MeasureVersionForm(**stub_measure_data)
         request_mock = mock.Mock()
         request_mock.method = "POST"
         data_source_form, data_source_2_form = get_data_source_forms(request_mock, None)
@@ -77,7 +77,7 @@ class TestGetCreateMeasurePage:
         assert DataSource.query.count() == 0
 
         res = test_app_client.post(
-            url_for("cms.create_measure_page", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
+            url_for("cms.create_measure", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
             data=form_data,
             follow_redirects=True,
         )
@@ -97,7 +97,7 @@ class TestGetCreateMeasurePage:
     ):
         current_app.config["WTF_CSRF_ENABLED"] = True
         res = test_app_client.get(
-            url_for("cms.create_measure_page", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
+            url_for("cms.create_measure", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
             follow_redirects=True,
         )
         doc = html.fromstring(res.get_data(as_text=True))
@@ -116,7 +116,7 @@ def test_can_not_reject_page_if_not_under_review(
     stub_measure_page.status = cannot_reject_status
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -140,7 +140,7 @@ def test_can_reject_page_under_review(
     stub_measure_page.status = "DEPARTMENT_REVIEW"
     test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -177,7 +177,7 @@ def test_admin_user_can_publish_page_in_dept_review(
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -222,7 +222,7 @@ def test_admin_user_can_not_publish_page_not_in_department_review(
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -245,7 +245,7 @@ def test_admin_user_can_not_publish_page_not_in_department_review(
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -277,7 +277,7 @@ def test_non_admin_user_can_not_publish_page_in_dept_review(
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -312,7 +312,7 @@ def test_admin_user_can_unpublish_page(
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -353,7 +353,7 @@ def test_non_admin_user_can_not_unpublish_page(
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -385,7 +385,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -403,7 +403,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -429,7 +429,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -447,7 +447,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -608,7 +608,7 @@ def test_view_edit_measure_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -741,7 +741,7 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_measure_page.measure.subtopic.topic.slug,
             subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
@@ -780,7 +780,7 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_measure_page.measure.subtopic.topic.slug,
             subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
@@ -815,7 +815,7 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_page_with_dimension.measure.subtopic.topic.slug,
             subtopic_slug=stub_page_with_dimension.measure.subtopic.slug,
             measure_slug=stub_page_with_dimension.slug,
@@ -850,7 +850,7 @@ def test_dept_user_should_be_able_to_edit_shared_page(
     data = {"title": "this is the update", "db_version_id": stub_measure_page.db_version_id + 1}
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_measure_page.measure.subtopic.topic.slug,
             subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
@@ -879,7 +879,7 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_measure_page.parent.parent.slug,
             subtopic_slug=stub_measure_page.parent.slug,
             measure_slug=stub_measure_page.slug,
@@ -894,7 +894,7 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_measure_page.parent.parent.slug,
             subtopic_slug=stub_measure_page.parent.slug,
             measure_slug=stub_measure_page.slug,
@@ -926,7 +926,7 @@ def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -945,7 +945,7 @@ def test_copy_measure_page(test_app_client, mock_logged_in_dev_user):
 
     response = test_app_client.post(
         url_for(
-            "cms.copy_measure_page",
+            "cms.copy_measure_version",
             topic_slug=measure_version.measure.subtopic.topic.slug,
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_slug=measure_version.measure.slug,

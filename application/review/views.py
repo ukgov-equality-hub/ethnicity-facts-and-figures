@@ -13,18 +13,18 @@ from application import db
 def review_page(review_token):
     try:
         id, version = decode_review_token(review_token, current_app.config)
-        page = MeasureVersion.query.filter_by(guid=id, version=version, review_token=review_token).one()
+        measure_version = MeasureVersion.query.filter_by(guid=id, version=version, review_token=review_token).one()
 
-        if page.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
+        if measure_version.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html", preview=True)
 
-        dimensions = [dimension.to_dict() for dimension in page.dimensions]
+        dimensions = [dimension.to_dict() for dimension in measure_version.dimensions]
 
         return render_template(
             "static_site/measure.html",
-            topic_slug=page.measure.subtopic.topic.slug,
-            subtopic_slug=page.measure.subtopic.slug,
-            measure_page=page,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_version=measure_version,
             dimensions=dimensions,
             preview=True,
         )

@@ -5,7 +5,7 @@
 {% set breadcrumbs =
   [
     {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
-    {"url": url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version), "text": measure.title},
+    {"url": url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version), "text": measure.latest_version.title},
   ]
 %}
 
@@ -42,10 +42,10 @@
             {% block measure_form %}
                 <p>
                     Current file:
-                    <a href="{{ url_for('static_site.measure_page_file_download', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
+                    <a href="{{ url_for('static_site.measure_version_file_download', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
                 </p>
                 <p>To replace this file choose another file below</p>
-                <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.edit_upload',topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, upload_guid=upload.guid, version=measure.version)}}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.edit_upload',topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, upload_guid=upload.guid, version=measure_version.version)}}">
                     {{ form.csrf_token }}
                     {% block fields %}
                         {{ form.upload.label }}
@@ -76,7 +76,7 @@
 
                     {% endblock fields %}
 
-                    {% if 'UPDATE' in measure.available_actions() %}
+                    {% if 'UPDATE' in measure_version.available_actions() %}
                         <button type="submit" class="button" name="save">
                             Save
                         </button>
@@ -87,4 +87,3 @@
         </div>
     </div>
 {% endblock %}
-

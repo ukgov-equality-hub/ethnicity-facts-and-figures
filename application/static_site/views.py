@@ -106,12 +106,12 @@ def topic(topic_slug):
 @static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/export")
 @login_required
 @user_has_access
-def measure_page_markdown(topic_slug, subtopic_slug, measure_slug, version):
+def measure_version_markdown(topic_slug, subtopic_slug, measure_slug, version):
     try:
         if version == "latest":
             measure_version = new_page_service.get_measure(topic_slug, subtopic_slug, measure_slug).latest_version
         else:
-            *_, measure_version = new_page_service.get_measure_page_hierarchy(
+            *_, measure_version = new_page_service.get_measure_version_hierarchy(
                 topic_slug, subtopic_slug, measure_slug, version
             )
     except PageNotFoundException:
@@ -125,7 +125,7 @@ def measure_page_markdown(topic_slug, subtopic_slug, measure_slug, version):
         "static_site/export/measure_export.html",
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
-        measure_page=measure_version,
+        measure_version=measure_version,
         dimensions=dimensions,
     )
 
@@ -133,13 +133,13 @@ def measure_page_markdown(topic_slug, subtopic_slug, measure_slug, version):
 @static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>")
 @login_required
 @user_has_access
-def measure_page(topic_slug, subtopic_slug, measure_slug, version):
+def measure_version(topic_slug, subtopic_slug, measure_slug, version):
 
     try:
         if version == "latest":
             measure_version = new_page_service.get_measure(topic_slug, subtopic_slug, measure_slug).latest_version
         else:
-            *_, measure_version = new_page_service.get_measure_page_hierarchy(
+            *_, measure_version = new_page_service.get_measure_version_hierarchy(
                 topic_slug, subtopic_slug, measure_slug, version
             )
     except PageNotFoundException:
@@ -149,7 +149,7 @@ def measure_page(topic_slug, subtopic_slug, measure_slug, version):
         "static_site/measure.html",
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
-        measure_page=measure_version,
+        measure_version=measure_version,
         dimensions=[dimension.to_dict() for dimension in measure_version.dimensions],
         versions=measure_version.previous_major_versions,
         first_published_date=measure_version.first_published_date,
@@ -159,9 +159,9 @@ def measure_page(topic_slug, subtopic_slug, measure_slug, version):
 
 
 @static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/downloads/<filename>")
-def measure_page_file_download(topic_slug, subtopic_slug, measure_slug, version, filename):
+def measure_version_file_download(topic_slug, subtopic_slug, measure_slug, version, filename):
     try:
-        *_, measure_version = new_page_service.get_measure_page_hierarchy(
+        *_, measure_version = new_page_service.get_measure_version_hierarchy(
             topic_slug, subtopic_slug, measure_slug, version
         )
         upload_obj = upload_service.get_upload(measure_version, filename)
@@ -187,7 +187,7 @@ def measure_page_file_download(topic_slug, subtopic_slug, measure_slug, version,
 )
 def dimension_file_download(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     try:
-        *_, dimension = new_page_service.get_measure_page_hierarchy(
+        *_, dimension = new_page_service.get_measure_version_hierarchy(
             topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
         )
         dimension_obj = DimensionObjectBuilder.build(dimension)
@@ -213,7 +213,7 @@ def dimension_file_download(topic_slug, subtopic_slug, measure_slug, version, di
 )
 def dimension_file_table_download(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     try:
-        *_, dimension = new_page_service.get_measure_page_hierarchy(
+        *_, dimension = new_page_service.get_measure_version_hierarchy(
             topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
         )
         dimension_obj = DimensionObjectBuilder.build(dimension)

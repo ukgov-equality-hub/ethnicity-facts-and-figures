@@ -60,7 +60,7 @@ def test_rdu_user_can_see_page_if_not_shared(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -84,7 +84,7 @@ def test_departmental_user_cannot_see_page_unless_shared(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -100,7 +100,7 @@ def test_departmental_user_cannot_see_page_unless_shared(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -127,7 +127,7 @@ def test_get_file_download_returns_404(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page_file_download",
+            "static_site.measure_version_file_download",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -149,7 +149,7 @@ def test_view_export_page(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page_markdown",
+            "static_site.measure_version_markdown",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -340,7 +340,7 @@ def test_measure_page_social_sharing(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -375,7 +375,7 @@ def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -600,7 +600,7 @@ def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_a
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -641,7 +641,7 @@ def test_latest_version_does_not_add_noindex_for_robots(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=latest_version_of_page.measure.slug,
@@ -677,7 +677,7 @@ def test_latest_version_does_not_add_noindex_for_robots_when_newer_draft_exists(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=latest_published_version_of_page.measure.slug,
@@ -712,7 +712,7 @@ def test_previous_version_adds_noindex_for_robots(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=outdated_page.measure.slug,

@@ -107,7 +107,7 @@ class NewPageService(Service):
         except NoResultFound:
             raise PageNotFoundException()
 
-    def get_measure_page_hierarchy(
+    def get_measure_version_hierarchy(
         self, topic_slug, subtopic_slug, measure_slug, version, dimension_guid=None, upload_guid=None
     ):
         try:
@@ -202,8 +202,8 @@ class NewPageService(Service):
                 if existing_source or source_has_truthy_values:
                     page.data_sources.append(data_source)
 
-    def create_measure(self, subtopic, measure_page_form, data_source_forms, created_by_email):
-        title = measure_page_form.data.pop("title", "").strip()
+    def create_measure(self, subtopic, measure_version_form, data_source_forms, created_by_email):
+        title = measure_version_form.data.pop("title", "").strip()
         guid = str(uuid.uuid4())
         slug = slugify(title)
 
@@ -213,7 +213,9 @@ class NewPageService(Service):
             )
 
         measure = Measure(
-            slug=slug, position=len(subtopic.measures), reference=measure_page_form.data.get("internal_reference", None)
+            slug=slug,
+            position=len(subtopic.measures),
+            reference=measure_version_form.data.get("internal_reference", None),
         )
         measure.subtopics = [subtopic]
         db.session.add(measure)
@@ -239,7 +241,7 @@ class NewPageService(Service):
             parent_version=subtopic_page.version,
         )
 
-        measure_page_form.populate_obj(measure_version)
+        measure_version_form.populate_obj(measure_version)
 
         self._set_data_sources(page=measure_version, data_source_forms=data_source_forms)
 
@@ -320,7 +322,7 @@ class NewPageService(Service):
         return new_version
 
     def update_measure_version(  # noqa: C901 (complexity)
-        self, measure_version, measure_page_form, data_source_forms, last_updated_by_email, **kwargs
+        self, measure_version, measure_version_form, data_source_forms, last_updated_by_email, **kwargs
     ):
         if measure_version.not_editable():
             message = "Error updating '{}': Versions not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(
@@ -328,13 +330,13 @@ class NewPageService(Service):
             )
             self.logger.error(message)
             raise PageUnEditable(message)
-        elif new_page_service._is_stale_update(measure_page_form.data, measure_version):
+        elif new_page_service._is_stale_update(measure_version_form.data, measure_version):
             raise StaleUpdateException("")
 
         # Possibly temporary to work out issue with data deletions
         message = "EDIT MEASURE: Current state of measure_version: %s" % measure_version.to_dict()
         self.logger.info(message)
-        message = "EDIT MEASURE: Data posted to update measure_version: %s" % measure_page_form.data
+        message = "EDIT MEASURE: Data posted to update measure_version: %s" % measure_version_form.data
         self.logger.info(message)
 
         subtopic_id_from_form = kwargs.get("subtopic_id")
@@ -367,8 +369,8 @@ class NewPageService(Service):
         if status is not None:
             measure_version.status = status
 
-        measure_page_form.data.pop("guid", None)  # TODO: Remove this?
-        title = measure_page_form.data.pop("title").strip()
+        measure_version_form.data.pop("guid", None)  # TODO: Remove this?
+        title = measure_version_form.data.pop("title").strip()
         measure_version.title = title
         if measure_version.version == "1.0":
             slug = slugify(title)
@@ -382,12 +384,12 @@ class NewPageService(Service):
             measure_version.slug = slug  # TODO: Remove this once slug is gone from MeasureVersion
 
         # Update main fields of MeasureVersion
-        measure_page_form.populate_obj(measure_version)
+        measure_version_form.populate_obj(measure_version)
         self._set_data_sources(page=measure_version, data_source_forms=data_source_forms)
 
         # Update fields in the parent Measure
-        if "internal_reference" in measure_page_form.data:
-            reference = measure_page_form.data["internal_reference"]
+        if "internal_reference" in measure_version_form.data:
+            reference = measure_version_form.data["internal_reference"]
             measure_version.measure.reference = reference if reference else None
 
         if measure_version.publish_status() in ["REJECTED", "UNPUBLISHED"]:

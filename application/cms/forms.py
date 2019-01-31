@@ -139,7 +139,7 @@ class DataSourceForm(FlaskForm):
         self.frequency_of_release_id.set_other_field(self.frequency_of_release_other)
 
 
-class MeasurePageForm(FlaskForm):
+class MeasureVersionForm(FlaskForm):
     db_version_id = HiddenField()
     title = RDUStringField(
         label="Title",
@@ -250,7 +250,7 @@ class MeasurePageForm(FlaskForm):
     )
 
     def __init__(self, sending_to_review=False, *args, **kwargs):
-        super(MeasurePageForm, self).__init__(*args, **kwargs)
+        super(MeasureVersionForm, self).__init__(*args, **kwargs)
 
         self.sending_to_review = sending_to_review
 
