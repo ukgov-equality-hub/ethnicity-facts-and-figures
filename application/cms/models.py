@@ -484,18 +484,16 @@ class MeasureVersion(db.Model, CopyableModel):
     def is_major_version(self):
         return not self.is_minor_version()
 
-    def get_versions(self, include_self=True):
-        if include_self:
-            return self.query.filter(MeasureVersion.measure.has(Measure.id == self.measure_id)).all()
-        else:
-            return self.query.filter(
-                MeasureVersion.measure.has(Measure.id == self.measure_id), MeasureVersion.version != self.version
-            ).all()
-
     def get_previous_version(self):
-        versions = self.get_versions(include_self=False)
-        versions.sort(reverse=True)
-        return versions[0] if versions else None
+        found_myself = False
+        for measure_version in self.measure.versions:
+            if found_myself:
+                # The preceding iteration found 'self', so this version is the previous version to 'self'
+                return measure_version
+            elif measure_version == self:
+                # Set flag to return the next version in the list (if there is one)
+                found_myself = True
+        return None
 
     def has_no_later_published_versions(self):
         latest_published_version = self.measure.latest_published_version

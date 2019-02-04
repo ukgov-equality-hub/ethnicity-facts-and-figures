@@ -579,12 +579,12 @@ class TestMeasureVersion:
 
     def test_page_sort_by_version(self,):
 
-        first_page = MeasureVersion(guid="test_page", version="1.0")
-        second_page = MeasureVersion(guid="test_page", version="1.1")
-        third_page = MeasureVersion(guid="test_page", version="2.0")
-        fourth_page = MeasureVersion(guid="test_page", version="2.2")
-        fifth_page = MeasureVersion(guid="test_page", version="2.10")
-        sixth_page = MeasureVersion(guid="test_page", version="2.20")
+        first_page = MeasureVersionFactory(guid="test_page", version="1.0")
+        second_page = MeasureVersionFactory(guid="test_page", version="1.1")
+        third_page = MeasureVersionFactory(guid="test_page", version="2.0")
+        fourth_page = MeasureVersionFactory(guid="test_page", version="2.2")
+        fifth_page = MeasureVersionFactory(guid="test_page", version="2.10")
+        sixth_page = MeasureVersionFactory(guid="test_page", version="2.20")
 
         pages = [fourth_page, sixth_page, fifth_page, second_page, first_page, third_page]
 
@@ -751,3 +751,19 @@ class TestMeasureVersion:
         assert major_version_2.first_published_date == v2_publication_date
         assert minor_version_2_1.first_published_date == v2_publication_date
         assert minor_version_2_2.first_published_date == v2_publication_date
+
+    def test_get_previous_version(self):
+        measure = MeasureFactory()
+        mv1_0 = MeasureVersionFactory(version="1.0", measure=measure)
+        mv1_1 = MeasureVersionFactory(version="1.1", measure=measure)
+        mv1_2 = MeasureVersionFactory(version="1.2", measure=measure)
+        mv2_0 = MeasureVersionFactory(version="2.0", measure=measure)
+        mv2_1 = MeasureVersionFactory(version="2.1", measure=measure)
+        mv3_0 = MeasureVersionFactory(version="3.0", measure=measure)
+
+        assert mv1_0.get_previous_version() is None
+        assert mv1_1.get_previous_version() is mv1_0
+        assert mv1_2.get_previous_version() is mv1_1
+        assert mv2_0.get_previous_version() is mv1_2
+        assert mv2_1.get_previous_version() is mv2_0
+        assert mv3_0.get_previous_version() is mv2_1
