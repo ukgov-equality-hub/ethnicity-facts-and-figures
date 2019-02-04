@@ -44,7 +44,6 @@
                 {% endif %}
 
               {% if not new and measure_version.number_of_versions() > 1 %}
-                {%  set latest_page = measure.latest_version %}
                 <span class="info"><a href="{{ url_for('cms.list_measure_versions',
                                       topic_slug=topic.slug,
                                       subtopic_slug=subtopic.slug,
