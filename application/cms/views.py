@@ -28,7 +28,6 @@ from application.cms.forms import DimensionForm, DimensionRequiredForm, MeasureV
 from application.cms.models import NewVersionType
 from application.cms.models import publish_status, Organisation
 from application.cms.new_page_service import new_page_service
-from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.utils import copy_form_errors, flash_message_with_form_errors, get_data_source_forms
 from application.data.charts import ChartObjectDataBuilder
@@ -263,8 +262,6 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             )
             return redirect_following_change_of_status
 
-    topics = page_service.get_pages_by_type("topic")
-    topics.sort(key=lambda page: page.title)
     diffs = {}
 
     data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=measure_version)
