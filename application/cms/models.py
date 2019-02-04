@@ -475,9 +475,6 @@ class MeasureVersion(db.Model, CopyableModel):
     def has_minor_update(self):
         return len(self.minor_updates()) > 0
 
-    def has_major_update(self):
-        return len(self.major_updates()) > 0
-
     def is_minor_version(self):
         return self.minor() != 0
 
@@ -516,10 +513,6 @@ class MeasureVersion(db.Model, CopyableModel):
     def minor_updates(self):
         versions = MeasureVersion.query.filter(MeasureVersion.guid == self.guid, MeasureVersion.version != self.version)
         return [page for page in versions if page.major() == self.major() and page.minor() > self.minor()]
-
-    def major_updates(self):
-        versions = MeasureVersion.query.filter(MeasureVersion.guid == self.guid, MeasureVersion.version != self.version)
-        return [page for page in versions if page.major() > self.major()]
 
     def format_area_covered(self):
         if self.area_covered is None:

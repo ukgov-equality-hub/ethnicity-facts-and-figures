@@ -604,13 +604,6 @@ class TestMeasureVersion:
 
         major_version.has_minor_update()
 
-    def test_page_has_major_update(self, db_session):
-        measure = MeasureFactory()
-        major_version_1 = MeasureVersionFactory(version="1.0", measure=measure)
-        MeasureVersionFactory(version="2.0", measure=measure)
-
-        major_version_1.has_major_update()
-
     def test_page_has_later_published_versions(self):
         measure = MeasureFactory()
         major_version_1 = MeasureVersionFactory(version="1.0", published=True, status="APPROVED", measure=measure)
