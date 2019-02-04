@@ -63,18 +63,11 @@
 
 
         <span class="info">
-          {% if measure_version.latest_version() %}
             <a href="{{ url_for('static_site.measure_version_markdown',
              topic_slug=topic_slug,
              subtopic_slug=subtopic_slug,
              measure_slug=measure_version.slug,
              version=measure_version.version) }}">Export</a>
-          {% else %}
-            <a href="{{ url_for('cms.list_measure_versions',
-                    topic_slug=topic_slug,
-                    subtopic_slug=subtopic_slug,
-                    measure_slug=measure_version.slug) }}">Export</a>
-          {% endif %}
         </span>
 
         <span class="info">
