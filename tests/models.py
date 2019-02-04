@@ -232,7 +232,7 @@ class MeasureFactory(factory.alchemy.SQLAlchemyModelFactory):
     id = factory.Sequence(lambda x: x)
     slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
     position = factory.Sequence(lambda x: x)
-    reference = factory.LazyFunction(lambda: " ".join(Faker().words(nb=3)))
+    reference = factory.LazyFunction(lambda: " ".join(Faker().words(nb=2)))
 
     # array-based relationships
     @factory.post_generation
@@ -321,7 +321,7 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     measure_id = factory.SelfAttribute("measure.id")
     guid = factory.Faker("uuid4")
     version = factory.LazyFunction(lambda: "1.0")
-    internal_reference = factory.Faker("sentence", nb_words=3)
+    internal_reference = factory.Faker("sentence", nb_words=2)
     latest = True  # TODO: Add smarter logic
     slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
     review_token = factory.LazyAttribute(
