@@ -9,11 +9,11 @@ from application.utils import get_bool
 
 # Note this will fail with warnings, not exception
 # if file does not exist. Therefore the config classes
-# below will break. For CI env variables are set in circle.yml
-# In Heroku, well... they are set in Heroku.
+# below will break.
+# CI env variables are set in Heroku.
 
-p = Path(dirname(__file__))
-dotenv_path = join(str(p.parent), ".env")
+app_base_path = Path(dirname(__file__))
+dotenv_path = join(str(app_base_path.parent), ".env")
 load_dotenv(dotenv_path)
 
 
