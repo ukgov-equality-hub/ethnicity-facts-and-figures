@@ -472,9 +472,6 @@ class MeasureVersion(db.Model, CopyableModel):
 
         return self.next_major_version()
 
-    def number_of_versions(self):
-        return len(self.get_versions())
-
     def has_minor_update(self):
         return len(self.minor_updates()) > 0
 

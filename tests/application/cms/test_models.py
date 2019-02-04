@@ -611,16 +611,6 @@ class TestMeasureVersion:
 
         major_version_1.has_major_update()
 
-    def test_page_has_correct_number_of_versions(self):
-        measure = MeasureFactory()
-        major_version_1 = MeasureVersionFactory(version="1.0", measure=measure)
-        minor_version = MeasureVersionFactory(version="1.1", measure=measure)
-        major_version_2 = MeasureVersionFactory(version="2.0", measure=measure)
-
-        assert major_version_1.number_of_versions() == 3
-        assert minor_version.number_of_versions() == 3
-        assert major_version_2.number_of_versions() == 3
-
     def test_page_has_later_published_versions(self):
         measure = MeasureFactory()
         major_version_1 = MeasureVersionFactory(version="1.0", published=True, status="APPROVED", measure=measure)

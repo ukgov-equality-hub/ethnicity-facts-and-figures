@@ -50,7 +50,7 @@
               {% endif %}</b>
           </span>
 
-          {% if measure_version.number_of_versions() > 1 %}
+          {% if measure_version.measure.versions|length > 1 %}
             <span class="info"><a href="{{ url_for('cms.list_measure_versions',
                                   topic_slug=topic_slug,
                                   subtopic_slug=subtopic_slug,
