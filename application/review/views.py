@@ -43,11 +43,11 @@ def review_page(review_token):
 def get_new_review_url(id, version):
     try:
         token = generate_review_token(id, version)
-        page = MeasureVersion.query.filter_by(guid=id, version=version).one()
-        page.review_token = token
+        measure_version = MeasureVersion.query.filter_by(guid=id, version=version).one()
+        measure_version.review_token = token
         db.session.commit()
-        url = url_for("review.review_page", review_token=page.review_token, _external=True)
-        expires = page.review_token_expires_in(current_app.config)
+        url = url_for("review.review_page", review_token=measure_version.review_token, _external=True)
+        expires = measure_version.review_token_expires_in(current_app.config)
         day = "day" if expires == 1 else "days"
         return """<a href="{url}">Review link</a> expires in {expires} {day}
                     <button id="copy-to-clipboard" class="button neutral">Copy link</button>
