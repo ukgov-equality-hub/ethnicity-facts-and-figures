@@ -513,13 +513,6 @@ class MeasureVersion(db.Model, CopyableModel):
     def first_published_date(self):
         return self.previous_minor_versions[-1].published_at if self.previous_minor_versions else self.published_at
 
-    @property
-    def is_published_measure_or_parent_of(self):
-        if self.page_type == "measure":
-            return self.published
-
-        return any(child.is_published_measure_or_parent_of for child in self.children)
-
     def minor_updates(self):
         versions = MeasureVersion.query.filter(MeasureVersion.guid == self.guid, MeasureVersion.version != self.version)
         return [page for page in versions if page.major() == self.major() and page.minor() > self.minor()]
