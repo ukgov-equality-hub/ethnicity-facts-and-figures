@@ -73,7 +73,7 @@ def do_it(application, build):
         if application.config["DEPLOY_SITE"]:
             from application.sitebuilder.build_service import s3_deployer
 
-            s3_deployer(application, build_dir, deletions=pages_unpublished)
+            s3_deployer(application, build_dir, measure_versions_to_delete=pages_unpublished)
             print("Static site deployed")
 
         if not local_build:
