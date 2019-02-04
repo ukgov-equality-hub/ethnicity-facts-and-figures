@@ -456,7 +456,6 @@ class MeasureVersion(db.Model, CopyableModel):
     def minor(self):
         return int(self.version.split(".")[1])
 
-    # TODO: See which of the below methods we can now remove altogether or make a property on Measure itself
     def next_minor_version(self):
         return "%s.%s" % (self.major(), self.minor() + 1)
 
