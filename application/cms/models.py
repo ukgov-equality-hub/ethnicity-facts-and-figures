@@ -7,7 +7,7 @@ from typing import Optional, Iterable
 import sqlalchemy
 from bidict import bidict
 from dictalchemy import DictableModel
-from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, Index, asc, text
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, Index, asc, text, desc
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -485,15 +485,14 @@ class MeasureVersion(db.Model, CopyableModel):
         return not self.is_minor_version()
 
     def get_previous_version(self):
-        found_myself = False
-        for measure_version in self.measure.versions:
-            if found_myself:
-                # The preceding iteration found 'self', so this version is the previous version to 'self'
-                return measure_version
-            elif measure_version == self:
-                # Set flag to return the next version in the list (if there is one)
-                found_myself = True
-        return None
+        # For some weird reason we can't reliably use self.measure.versions here as sometimes self isn't yet in there
+        # But querying MeasureVersion for matching guid works OK
+        all_versions = self.query.filter(MeasureVersion.guid == self.guid).order_by(desc(MeasureVersion.version)).all()
+        my_index = all_versions.index(self)
+        if len(all_versions) > my_index + 1:
+            return all_versions[my_index + 1]
+        else:
+            return None
 
     def has_no_later_published_versions(self):
         latest_published_version = self.measure.latest_published_version

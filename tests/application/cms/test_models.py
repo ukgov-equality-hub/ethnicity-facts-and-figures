@@ -754,12 +754,12 @@ class TestMeasureVersion:
 
     def test_get_previous_version(self):
         measure = MeasureFactory()
-        mv1_0 = MeasureVersionFactory(version="1.0", measure=measure)
-        mv1_1 = MeasureVersionFactory(version="1.1", measure=measure)
-        mv1_2 = MeasureVersionFactory(version="1.2", measure=measure)
-        mv2_0 = MeasureVersionFactory(version="2.0", measure=measure)
-        mv2_1 = MeasureVersionFactory(version="2.1", measure=measure)
-        mv3_0 = MeasureVersionFactory(version="3.0", measure=measure)
+        mv1_0 = MeasureVersionFactory(guid="guid", version="1.0", measure=measure)
+        mv1_1 = MeasureVersionFactory(guid="guid", version="1.1", measure=measure)
+        mv1_2 = MeasureVersionFactory(guid="guid", version="1.2", measure=measure)
+        mv2_0 = MeasureVersionFactory(guid="guid", version="2.0", measure=measure)
+        mv2_1 = MeasureVersionFactory(guid="guid", version="2.1", measure=measure)
+        mv3_0 = MeasureVersionFactory(guid="guid", version="3.0", measure=measure)
 
         assert mv1_0.get_previous_version() is None
         assert mv1_1.get_previous_version() is mv1_0

@@ -299,11 +299,6 @@ class NewPageService(Service):
         new_version.data_sources = [data_source.copy() for data_source in measure_version.data_sources]
         new_version.latest = True
 
-        previous_version = new_version.get_previous_version()
-        if previous_version:
-            previous_version.latest = False
-            db.session.add(previous_version)
-
         new_version.uploads = []
         for upload in measure_version.uploads:
             new_upload = upload.copy()
@@ -316,6 +311,11 @@ class NewPageService(Service):
         upload_service.copy_uploads_between_measure_versions(
             from_measure_version=measure_version, to_measure_version=new_version
         )
+
+        previous_version = new_version.get_previous_version()
+        if previous_version:
+            previous_version.latest = False
+            db.session.add(previous_version)
 
         db.session.commit()
 
