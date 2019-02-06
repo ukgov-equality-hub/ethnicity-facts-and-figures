@@ -1,9 +1,9 @@
 import pytest
 
-from application.cms.page_service import PageService
 from application.cms.models import Measure
 
 from tests.functional.pages import LogInPage, HomePage, TopicPage, MeasureEditPage, MeasureCreatePage, RandomMeasure
+from tests.utils import get_page_with_title
 
 pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
 
@@ -77,8 +77,7 @@ def create_measure_with_minimal_content(driver, live_server, stub_subtopic_page,
     CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so
     we have to retrieve the page again
     """
-    page_service = PageService()
-    page = page_service.get_page_with_title(page.title)
+    page = get_page_with_title(page.title)
     return page
 
 

@@ -1,6 +1,5 @@
 from random import shuffle
 
-from application.cms.page_service import PageService
 from tests.functional.pages import (
     HomePage,
     LogInPage,
@@ -10,6 +9,7 @@ from tests.functional.pages import (
     TopicPage,
     RandomDataSource,
 )
+from tests.utils import get_page_with_title
 
 EXPECTED_STATUSES = {
     "draft": "Status:  Draft",
@@ -70,8 +70,7 @@ def create_measure_starting_at_topic_page(driver, live_server, stub_subtopic_pag
     CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so
     we may have to retrieve the page again
     """
-    page_service = PageService()
-    page = page_service.get_page_with_title(page.title)
+    page = get_page_with_title(page.title)
     return measure_edit_page, page
 
 

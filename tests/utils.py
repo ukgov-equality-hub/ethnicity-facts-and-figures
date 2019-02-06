@@ -13,6 +13,7 @@ class UnexpectedMockInvocationException(GeneralTestException):
     pass
 
 
+# TODO: Delete this/replace it with FactoryBoy stuff
 def create_measure_versions(db, example_measure_page, required_versions, required_titles=None, parent_measure=None):
     if not required_titles:
         required_titles = [f"Test {version}" for version in required_versions]
@@ -33,3 +34,7 @@ def create_measure_versions(db, example_measure_page, required_versions, require
         db.session.add(measure_version)
 
     db.session.commit()
+
+
+def get_page_with_title(title):
+    return MeasureVersion.query.filter_by(title=title).one()

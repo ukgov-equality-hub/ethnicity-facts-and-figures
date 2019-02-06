@@ -17,15 +17,8 @@ class PageService(Service):
             self.logger.exception(e)
             raise PageNotFoundException()
 
-    def get_page_with_title(self, title):
-        try:
-            return MeasureVersion.query.filter_by(title=title).one()
-        except NoResultFound as e:
-            self.logger.exception(e)
-            raise PageNotFoundException()
-
     @staticmethod
-    def get_pages_by_type(page_type):
+    def get_pages_by_type(page_type):  # TODO: Kill this too when fixing dashboards
         return (
             MeasureVersion.query.filter_by(page_type=page_type)
             .order_by(MeasureVersion.title, desc(MeasureVersion.version))
