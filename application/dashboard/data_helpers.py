@@ -40,10 +40,18 @@ def get_published_dashboard_data():
 
     # GET DATA
     # get measures at their 1.0 publish date
-    original_publications = MeasureVersion.published_first_versions().order_by(MeasureVersion.published_at.desc()).all()
+    original_publications = (
+        MeasureVersion.published_first_versions()
+        .order_by(MeasureVersion.published_at.desc(), MeasureVersion.title)
+        .all()
+    )
 
     # get measures at their 2.0, 3.0 major update dates
-    major_updates = MeasureVersion.published_updates_first_versions().order_by(MeasureVersion.published_at.desc()).all()
+    major_updates = (
+        MeasureVersion.published_updates_first_versions()
+        .order_by(MeasureVersion.published_at.desc(), MeasureVersion.title)
+        .all()
+    )
 
     # get first date to start point for data table
     first_publication = (
