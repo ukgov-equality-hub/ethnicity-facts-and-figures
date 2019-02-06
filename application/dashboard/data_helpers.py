@@ -18,7 +18,11 @@ from application.factory import page_service
 
 
 def get_published_measures_by_years_and_months():
-    all_publications = MeasureVersion.published_major_versions().order_by(MeasureVersion.published_at.desc()).all()
+    all_publications = (
+        MeasureVersion.published_major_versions()
+        .order_by(MeasureVersion.published_at.desc(), MeasureVersion.title)
+        .all()
+    )
 
     # Dict of years to dicts of months to lists of pages published that month.
     # dict[year: int] -> dict[published_at_to_month_precision: datetime] -> pages: list
@@ -36,10 +40,18 @@ def get_published_dashboard_data():
 
     # GET DATA
     # get measures at their 1.0 publish date
-    original_publications = MeasureVersion.published_first_versions().order_by(MeasureVersion.published_at.desc()).all()
+    original_publications = (
+        MeasureVersion.published_first_versions()
+        .order_by(MeasureVersion.published_at.desc(), MeasureVersion.title)
+        .all()
+    )
 
     # get measures at their 2.0, 3.0 major update dates
-    major_updates = MeasureVersion.published_updates_first_versions().order_by(MeasureVersion.published_at.desc()).all()
+    major_updates = (
+        MeasureVersion.published_updates_first_versions()
+        .order_by(MeasureVersion.published_at.desc(), MeasureVersion.title)
+        .all()
+    )
 
     # get first date to start point for data table
     first_publication = (
@@ -187,7 +199,7 @@ def get_ethnic_group_by_slug_dashboard_data(value_slug):
                     "slug": d["page_slug"],
                     "position": d["page_position"],
                     "url": url_for(
-                        "static_site.measure_page",
+                        "static_site.measure_version",
                         topic_slug=subtopic["topic_slug"],
                         subtopic_slug=subtopic["slug"],
                         measure_slug=d["page_slug"],
@@ -321,7 +333,7 @@ def get_ethnicity_classification_by_id_dashboard_data(classification_id):
                     "slug": d["page_slug"],
                     "position": d["page_position"],
                     "url": url_for(
-                        "static_site.measure_page",
+                        "static_site.measure_version",
                         topic_slug=subtopic["topic_slug"],
                         subtopic_slug=subtopic["slug"],
                         measure_slug=d["page_slug"],
@@ -409,7 +421,7 @@ def get_geographic_breakdown_by_slug_dashboard_data(slug):
                 {
                     "title": measure.page_title,
                     "url": url_for(
-                        "static_site.measure_page",
+                        "static_site.measure_version",
                         topic_slug=page.parent.slug,
                         subtopic_slug=page.slug,
                         measure_slug=measure.page_slug,

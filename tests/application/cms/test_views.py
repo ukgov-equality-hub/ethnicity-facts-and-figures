@@ -9,11 +9,13 @@ import pytest
 from werkzeug.datastructures import ImmutableMultiDict
 
 from application.auth.models import TypeOfUser
-from application.cms.forms import MeasurePageForm
+from application.cms.forms import MeasureVersionForm
 from application.cms.models import MeasureVersion, Upload, DataSource, Measure
 from application.cms.page_service import PageService
 from application.cms.utils import get_data_source_forms
 from application.sitebuilder.models import Build
+
+from tests.models import MeasureVersionFactory
 
 
 class TestGetCreateMeasurePage:
@@ -37,10 +39,10 @@ class TestGetCreateMeasurePage:
         with test_app_client.session_transaction() as session:
             session["user_id"] = mock_rdu_user.id
 
-        form = MeasurePageForm(**stub_measure_data)
+        form = MeasureVersionForm(**stub_measure_data)
 
         response = test_app_client.post(
-            url_for("cms.create_measure_page", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
+            url_for("cms.create_measure", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
             data=form.data,
             follow_redirects=True,
         )
@@ -59,7 +61,7 @@ class TestGetCreateMeasurePage:
         stub_frequency,
         stub_geography,
     ):
-        form = MeasurePageForm(**stub_measure_data)
+        form = MeasureVersionForm(**stub_measure_data)
         request_mock = mock.Mock()
         request_mock.method = "POST"
         data_source_form, data_source_2_form = get_data_source_forms(request_mock, None)
@@ -75,7 +77,7 @@ class TestGetCreateMeasurePage:
         assert DataSource.query.count() == 0
 
         res = test_app_client.post(
-            url_for("cms.create_measure_page", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
+            url_for("cms.create_measure", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
             data=form_data,
             follow_redirects=True,
         )
@@ -95,7 +97,7 @@ class TestGetCreateMeasurePage:
     ):
         current_app.config["WTF_CSRF_ENABLED"] = True
         res = test_app_client.get(
-            url_for("cms.create_measure_page", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
+            url_for("cms.create_measure", topic_slug=stub_topic_page.slug, subtopic_slug=stub_subtopic_page.slug),
             follow_redirects=True,
         )
         doc = html.fromstring(res.get_data(as_text=True))
@@ -114,7 +116,7 @@ def test_can_not_reject_page_if_not_under_review(
     stub_measure_page.status = cannot_reject_status
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -138,7 +140,7 @@ def test_can_reject_page_under_review(
     stub_measure_page.status = "DEPARTMENT_REVIEW"
     test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -163,7 +165,7 @@ def test_admin_user_can_publish_page_in_dept_review(
     stub_subtopic_page,
     stub_measure_page,
     mock_request_build,
-    mock_page_service_mark_page_published,
+    mock_new_page_service_mark_measure_version_published,
 ):
 
     with test_app_client.session_transaction() as session:
@@ -175,7 +177,7 @@ def test_admin_user_can_publish_page_in_dept_review(
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -187,7 +189,7 @@ def test_admin_user_can_publish_page_in_dept_review(
 
     assert response.status_code == 200
     mock_request_build.assert_called_once()
-    mock_page_service_mark_page_published.assert_called_once_with(stub_measure_page)
+    mock_new_page_service_mark_measure_version_published.assert_called_once_with(stub_measure_page)
 
     page_service = PageService()
     page_service.init_app(app)
@@ -220,7 +222,7 @@ def test_admin_user_can_not_publish_page_not_in_department_review(
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -243,7 +245,7 @@ def test_admin_user_can_not_publish_page_not_in_department_review(
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -275,7 +277,7 @@ def test_non_admin_user_can_not_publish_page_in_dept_review(
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -298,23 +300,19 @@ def test_admin_user_can_unpublish_page(
     db,
     db_session,
     test_app_client,
-    mock_admin_user,
+    mock_logged_in_admin_user,
     stub_topic_page,
     stub_subtopic_page,
     stub_measure_page,
     mock_request_build,
 ):
-
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
-
     stub_measure_page.status = "APPROVED"
     db.session.add(stub_measure_page)
     db.session.commit()
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -331,7 +329,7 @@ def test_admin_user_can_unpublish_page(
     page_service.init_app(app)
     page = page_service.get_page(stub_measure_page.guid)
     assert page.status == "UNPUBLISH"
-    assert page.unpublished_by == mock_admin_user.email
+    assert page.unpublished_by == mock_logged_in_admin_user.email
 
 
 def test_non_admin_user_can_not_unpublish_page(
@@ -355,7 +353,7 @@ def test_non_admin_user_can_not_unpublish_page(
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -387,7 +385,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -405,7 +403,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -431,7 +429,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -449,7 +447,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -462,15 +460,19 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(
     assert page.find_all("a", class_="button")[-1].text.strip() == "Update"
 
 
-def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page):
-    guids = [0, 1, 2, 3, 4]
-    for guid in guids:
-        db.session.add(Measure(id=guid, position=guid, slug=str(guid)))
+def test_order_measures_in_subtopic(
+    app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page, stub_compatible_subtopic
+):
+    ids = [0, 1, 2, 3, 4]
+    for id_ in ids:
+        measure = Measure(id=id_, position=id_, slug=str(id_))
         stub_subtopic_page.children.append(
-            MeasureVersion(id=guid, guid=str(guid), version="1.0", position=guid, measure_id=guid)
+            MeasureVersion(guid=id_, id=id_, version="1.0", position=id_, measure_id=id_)
         )
+        measure.subtopics = [stub_compatible_subtopic]
 
-    db.session.add(stub_subtopic_page)
+        db.session.add(measure)
+
     db.session.commit()
 
     assert stub_subtopic_page.children[0].guid == "0"
@@ -479,12 +481,18 @@ def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_r
     assert stub_subtopic_page.children[3].guid == "3"
     assert stub_subtopic_page.children[4].guid == "4"
 
+    assert stub_compatible_subtopic.measures[0].slug == "0"
+    assert stub_compatible_subtopic.measures[1].slug == "1"
+    assert stub_compatible_subtopic.measures[2].slug == "2"
+    assert stub_compatible_subtopic.measures[3].slug == "3"
+    assert stub_compatible_subtopic.measures[4].slug == "4"
+
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
 
     updates = []
-    for position, guid in enumerate(reversed(guids)):
-        updates.append({"position": position, "guid": str(guid), "subtopic": stub_subtopic_page.guid})
+    for position, id_ in enumerate(reversed(ids)):
+        updates.append({"position": position, "measure_id": id_, "subtopic_id": stub_subtopic_page.id})
 
     response = test_app_client.post(
         url_for("cms.set_measure_order"), data=json.dumps({"positions": updates}), content_type="application/json"
@@ -492,15 +500,17 @@ def test_order_measures_in_subtopic(app, db, db_session, test_app_client, mock_r
 
     assert response.status_code == 200
 
-    page_service = PageService()
-    page_service.init_app(app)
-    udpated_page = page_service.get_page(stub_subtopic_page.guid)
+    assert stub_subtopic_page.children[0].guid == "4"
+    assert stub_subtopic_page.children[1].guid == "3"
+    assert stub_subtopic_page.children[2].guid == "2"
+    assert stub_subtopic_page.children[3].guid == "1"
+    assert stub_subtopic_page.children[4].guid == "0"
 
-    assert udpated_page.children[0].guid == "4"
-    assert udpated_page.children[1].guid == "3"
-    assert udpated_page.children[2].guid == "2"
-    assert udpated_page.children[3].guid == "1"
-    assert udpated_page.children[4].guid == "0"
+    assert stub_compatible_subtopic.measures[0].slug == "4"
+    assert stub_compatible_subtopic.measures[1].slug == "3"
+    assert stub_compatible_subtopic.measures[2].slug == "2"
+    assert stub_compatible_subtopic.measures[3].slug == "1"
+    assert stub_compatible_subtopic.measures[4].slug == "0"
 
 
 def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page):
@@ -522,7 +532,7 @@ def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, m
 
     updates = []
     for position, id in enumerate(reversed_ids):
-        updates.append({"position": position, "guid": str(id), "subtopic": stub_subtopic_page.guid})
+        updates.append({"position": position, "measure_id": str(id), "subtopic_id": stub_subtopic_page.id})
 
     response = test_app_client.post(
         url_for("cms.set_measure_order"), data=json.dumps({"positions": updates}), content_type="application/json"
@@ -536,16 +546,22 @@ def test_reorder_measures_triggers_build(app, db, db_session, test_app_client, m
 
 
 def test_order_measures_in_subtopic_sets_order_on_all_versions(
-    app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page
-):
-    db.session.add(Measure(id=0, slug="0", position=0))
-    db.session.add(Measure(id=1, slug="0", position=1))
+    app, db, db_session, test_app_client, mock_rdu_user, stub_subtopic_page, stub_compatible_subtopic
+):  # TODO: Rewrite this test when we stop using the parent/children relationship on MeasureVersion
+    m0 = Measure(id=0, slug="0", position=0)
+    m0.subtopics = [stub_compatible_subtopic]
 
-    stub_subtopic_page.children.append(MeasureVersion(id=0, guid="0", version="1.0", position=0, measure_id=0))
-    stub_subtopic_page.children.append(MeasureVersion(id=1, guid="0", version="1.1", position=0, measure_id=0))
-    stub_subtopic_page.children.append(MeasureVersion(id=2, guid="0", version="2.0", position=0, measure_id=0))
-    stub_subtopic_page.children.append(MeasureVersion(id=3, guid="1", version="1.0", position=1, measure_id=1))
-    stub_subtopic_page.children.append(MeasureVersion(id=4, guid="1", version="2.0", position=1, measure_id=1))
+    m1 = Measure(id=1, slug="1", position=1)
+    m1.subtopics = [stub_compatible_subtopic]
+
+    db.session.add(m0)
+    db.session.add(m1)
+
+    stub_subtopic_page.children.append(MeasureVersion(id=0, guid="0", version="1.0", position=0, measure_id=m0.id))
+    stub_subtopic_page.children.append(MeasureVersion(id=1, guid="0", version="1.1", position=0, measure_id=m0.id))
+    stub_subtopic_page.children.append(MeasureVersion(id=2, guid="0", version="2.0", position=0, measure_id=m0.id))
+    stub_subtopic_page.children.append(MeasureVersion(id=3, guid="1", version="1.0", position=1, measure_id=m1.id))
+    stub_subtopic_page.children.append(MeasureVersion(id=4, guid="1", version="2.0", position=1, measure_id=m1.id))
 
     db.session.add(stub_subtopic_page)
     db.session.commit()
@@ -556,12 +572,15 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
     assert stub_subtopic_page.children[3].guid == "1"
     assert stub_subtopic_page.children[4].guid == "1"
 
+    assert stub_compatible_subtopic.measures[0].slug == "0"
+    assert stub_compatible_subtopic.measures[1].slug == "1"
+
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
 
     updates = [
-        {"position": 0, "guid": "1", "subtopic": stub_subtopic_page.guid},
-        {"position": 1, "guid": "0", "subtopic": stub_subtopic_page.guid},
+        {"position": 0, "measure_id": "1", "subtopic_id": stub_subtopic_page.id},
+        {"position": 1, "measure_id": "0", "subtopic_id": stub_subtopic_page.id},
     ]
 
     response = test_app_client.post(
@@ -570,15 +589,14 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
 
     assert response.status_code == 200
 
-    page_service = PageService()
-    page_service.init_app(app)
-    udpated_page = page_service.get_page(stub_subtopic_page.guid)
+    assert stub_subtopic_page.children[0].guid == "1"
+    assert stub_subtopic_page.children[1].guid == "1"
+    assert stub_subtopic_page.children[2].guid == "0"
+    assert stub_subtopic_page.children[3].guid == "0"
+    assert stub_subtopic_page.children[4].guid == "0"
 
-    assert udpated_page.children[0].guid == "1"
-    assert udpated_page.children[1].guid == "1"
-    assert udpated_page.children[2].guid == "0"
-    assert udpated_page.children[3].guid == "0"
-    assert udpated_page.children[4].guid == "0"
+    assert stub_compatible_subtopic.measures[0].slug == "1"
+    assert stub_compatible_subtopic.measures[1].slug == "0"
 
 
 def test_view_edit_measure_page(
@@ -590,7 +608,7 @@ def test_view_edit_measure_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -609,7 +627,7 @@ def test_view_edit_measure_page(
 
     subtopic = page.find("select", attrs={"id": "subtopic"})
     assert subtopic
-    assert subtopic.find("option", selected=True).attrs.get("value") == "subtopic_example"
+    assert int(subtopic.find("option", selected=True).attrs.get("value")) == stub_measure_page.measure.subtopic.id
 
     time_covered = page.find("input", attrs={"id": "time_covered"})
     assert time_covered
@@ -723,9 +741,9 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            "cms.edit_measure_version",
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -736,8 +754,8 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
     response = test_app_client.post(
         url_for(
             "cms.delete_upload",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
             upload_guid=upload.guid,
@@ -762,9 +780,9 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            "cms.edit_measure_version",
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -775,8 +793,8 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
     response = test_app_client.get(
         url_for(
             "cms.edit_upload",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
             upload_guid=upload.guid,
@@ -797,9 +815,9 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
-            topic_slug=stub_page_with_dimension.parent.parent.slug,
-            subtopic_slug=stub_page_with_dimension.parent.slug,
+            "cms.edit_measure_version",
+            topic_slug=stub_page_with_dimension.measure.subtopic.topic.slug,
+            subtopic_slug=stub_page_with_dimension.measure.subtopic.slug,
             measure_slug=stub_page_with_dimension.slug,
             version=stub_page_with_dimension.version,
         )
@@ -810,8 +828,8 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(
     response = test_app_client.post(
         url_for(
             "cms.delete_dimension",
-            topic_slug=stub_page_with_dimension.parent.parent.slug,
-            subtopic_slug=stub_page_with_dimension.parent.slug,
+            topic_slug=stub_page_with_dimension.measure.subtopic.topic.slug,
+            subtopic_slug=stub_page_with_dimension.measure.subtopic.slug,
             measure_slug=stub_page_with_dimension.slug,
             version=stub_page_with_dimension.version,
             dimension_guid=stub_page_with_dimension.dimensions[0].guid,
@@ -825,16 +843,16 @@ def test_dept_user_should_be_able_to_edit_shared_page(
     db_session, test_app_client, stub_measure_page, mock_logged_in_dept_user
 ):
     stub_measure_page.title = "this will be updated"
-    stub_measure_page.shared_with.append(mock_logged_in_dept_user)
+    stub_measure_page.measure.shared_with.append(mock_logged_in_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
 
     data = {"title": "this is the update", "db_version_id": stub_measure_page.db_version_id + 1}
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            "cms.edit_measure_version",
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         ),
@@ -852,7 +870,7 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
 
     stub_measure_page.title = "try to publish"
     stub_measure_page.status = "DEPARTMENT_REVIEW"
-    stub_measure_page.shared_with.append(mock_dept_user)
+    stub_measure_page.measure.shared_with.append(mock_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
 
@@ -861,7 +879,7 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_measure_page.parent.parent.slug,
             subtopic_slug=stub_measure_page.parent.slug,
             measure_slug=stub_measure_page.slug,
@@ -876,7 +894,7 @@ def test_dept_cannot_publish_a_shared_page(db_session, test_app_client, stub_mea
 
     response = test_app_client.post(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_measure_page.parent.parent.slug,
             subtopic_slug=stub_measure_page.parent.slug,
             measure_slug=stub_measure_page.slug,
@@ -908,7 +926,7 @@ def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(
 
     response = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
+            "cms.edit_measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -922,18 +940,16 @@ def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(
     assert ("create a copy of this measure" in page_button_texts) is can_see_copy_button
 
 
-def test_copy_measure_page(test_app_client, mock_dev_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
-
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_dev_user.id
+def test_copy_measure_page(test_app_client, mock_logged_in_dev_user):
+    measure_version = MeasureVersionFactory(title="Test Measure Page", status="APPROVED")
 
     response = test_app_client.post(
         url_for(
-            "cms.copy_measure_page",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            "cms.copy_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         ),
         follow_redirects=True,
     )

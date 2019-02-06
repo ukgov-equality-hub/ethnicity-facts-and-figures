@@ -188,9 +188,9 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
     # dept user can't get to page
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            "static_site.measure_version",
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -200,9 +200,9 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
 
     resp = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            "cms.edit_measure_version",
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -214,7 +214,7 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_admin_user.id
 
-    data = {"measure-picker": stub_measure_page.guid}
+    data = {"measure-picker": stub_measure_page.id}
 
     resp = test_app_client.post(
         url_for("admin.share_page_with_user", user_id=mock_dept_user.id), data=data, follow_redirects=True
@@ -228,9 +228,9 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            "static_site.measure_version",
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -240,9 +240,9 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
 
     resp = test_app_client.get(
         url_for(
-            "cms.edit_measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            "cms.edit_measure_version",
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -254,8 +254,7 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
 def test_admin_user_can_remove_share_of_page_with_dept_user(
     test_app_client, mock_dept_user, mock_admin_user, stub_measure_page, db_session
 ):
-
-    stub_measure_page.shared_with.append(mock_dept_user)
+    stub_measure_page.measure.shared_with.append(mock_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
 
@@ -264,9 +263,9 @@ def test_admin_user_can_remove_share_of_page_with_dept_user(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            "static_site.measure_version",
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )
@@ -293,9 +292,9 @@ def test_admin_user_can_remove_share_of_page_with_dept_user(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_measure_page.parent.parent.slug,
-            subtopic_slug=stub_measure_page.parent.slug,
+            "static_site.measure_version",
+            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=stub_measure_page.measure.subtopic.slug,
             measure_slug=stub_measure_page.slug,
             version=stub_measure_page.version,
         )

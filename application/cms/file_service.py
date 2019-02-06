@@ -197,5 +197,5 @@ class LocalFileSystem:
         fs_path = fs_path.replace("data", "source")
         os.rename("%s/%s" % (fs_path, key), "%s/%s" % (fs_path, new_key))
 
-    def copy_file(self, from_path, to_path, filename):
+    def copy_file(self, from_path, to_path):
         pass

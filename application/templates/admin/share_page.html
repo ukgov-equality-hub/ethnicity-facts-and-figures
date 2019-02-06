@@ -1,15 +1,15 @@
 <table class="shares">
-    {% for page in shared %}
+    {% for measure in shared %}
     <tr>
         <td>
-            <a href="{{ url_for('static_site.measure_page',
-                       topic_slug=page.parent.parent.slug,
-                       subtopic_slug=page.parent.slug,
-                       measure_slug=page.slug,
-                       version='latest') }}">{{ page.title }}</a>
+            <a href="{{ url_for('static_site.measure_version',
+                       topic_slug=measure.subtopic.topic.slug,
+                       subtopic_slug=measure.subtopic.slug,
+                       measure_slug=measure.slug,
+                       version='latest') }}">{{ measure.latest_version.title }}</a>
         </td>
         <td>
-            <a href="{{ url_for('admin.remove_shared_page_from_user', user_id=user.id, measure_id=page.measure_id) }}">Remove</a>
+            <a href="{{ url_for('admin.remove_shared_page_from_user', user_id=user.id, measure_id=measure.id) }}">Remove</a>
         </td>
     </tr>
     {% endfor %}

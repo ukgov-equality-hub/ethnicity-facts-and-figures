@@ -70,7 +70,7 @@
                               <p>New measures:</p>
                               <ul>
                                 {% for page in  week['publications'] %}
-                                    <li><a href="{{ url_for('static_site.measure_page',
+                                    <li><a href="{{ url_for('static_site.measure_version',
                                                             topic_slug=page.parent.parent.slug,
                                                             subtopic_slug=page.parent.slug,
                                                             measure_slug=page.slug,
@@ -83,7 +83,7 @@
                               <p>Updates:</p>
                               <ul>
                                 {% for page in week['major_updates'] %}
-                                    <li><a href="{{ url_for('static_site.measure_page',
+                                    <li><a href="{{ url_for('static_site.measure_version',
                                                             topic_slug=page.parent.parent.slug,
                                                             subtopic_slug=page.parent.slug,
                                                             measure_slug=page.slug,

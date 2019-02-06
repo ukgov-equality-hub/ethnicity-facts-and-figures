@@ -29,11 +29,12 @@ class UploadService(Service):
         page_file_system = self.app.file_service.page_system(page)
         return page_file_system.url_for_file("%s/%s" % (directory, file_name))
 
-    def copy_uploads(self, page, from_version, from_guid):
-        page_file_system = self.app.file_service.page_system(page)
-        from_key = "%s/%s/source" % (from_guid, from_version)
-        to_key = "%s/%s/source" % (page.guid, page.version)
-        for upload in page.uploads:
+    def copy_uploads_between_measure_versions(self, from_measure_version, to_measure_version):
+        page_file_system = self.app.file_service.page_system(to_measure_version)
+        from_key = "%s/%s/source" % (from_measure_version.guid, from_measure_version.version)
+        to_key = "%s/%s/source" % (to_measure_version.guid, to_measure_version.version)
+
+        for upload in to_measure_version.uploads:
             from_path = "%s/%s" % (from_key, upload.file_name)
             to_path = "%s/%s" % (to_key, upload.file_name)
             page_file_system.copy_file(from_path, to_path)

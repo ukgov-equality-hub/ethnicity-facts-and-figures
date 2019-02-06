@@ -26,16 +26,16 @@
                     <td>Status</td>
                 </tr>
                 </thead>
-                {% for topic in pages %}
-                    {% for subtopic in topic.children %}
-                        {% for measure in subtopic.children %}
+                {% for topic in topics %}
+                    {% for subtopic in topic.subtopics %}
+                        {% for measure in subtopic.measures %}
                             <tr>
-                                <td><a href="{{ url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">{{ measure.title }}</a></td>
-                                <td>{{ measure.internal_reference }}</td>
-                                <td><a href="{{ url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}">{{ measure.version }}</a></td>
+                                <td><a href="{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.latest_version.version) }}">{{ measure.latest_version.title }}</a></td>
+                                <td>{{ measure.reference }}</td>
+                                <td><a href="{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.latest_version.version) }}">{{ measure.latest_version.version }}</a></td>
                                 <td>{{ topic.title}}</td>
                                 <td>{{ subtopic.title }}</td>
-                                <td>{{ measure.status }}</td>
+                                <td>{{ measure.latest_version.status }}</td>
                             </tr>
                         {% endfor %}
                     {% endfor %}

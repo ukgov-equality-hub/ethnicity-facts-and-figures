@@ -25,7 +25,7 @@
         <ol>
           {% for page in pages %}
             <li><a href="{{ url_for(
-              'static_site.measure_page',
+              'static_site.measure_version',
               topic_slug=page.parent.parent.slug,
               subtopic_slug=page.parent.slug,
               measure_slug=page.slug,

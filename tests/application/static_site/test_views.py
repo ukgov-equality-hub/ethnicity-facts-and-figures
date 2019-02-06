@@ -5,9 +5,11 @@ import pytest
 from bs4 import BeautifulSoup
 from flask import url_for
 
-from application.cms.models import MeasureVersion
+from application.cms.models import MeasureVersion, Topic, Subtopic, Measure
 from application.cms.page_service import PageService
 from application.config import Config
+
+from tests.models import MeasureVersionFactory
 
 page_service = PageService()
 
@@ -50,15 +52,15 @@ def test_homepage_search_links_to_google_custom_url_before_javascript(
 def test_rdu_user_can_see_page_if_not_shared(
     test_app_client, db_session, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-    assert stub_measure_page.shared_with == []
-    assert mock_rdu_user.pages == []
+    assert stub_measure_page.measure.shared_with == []
+    assert mock_rdu_user.measures == []
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -77,12 +79,12 @@ def test_departmental_user_cannot_see_page_unless_shared(
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id
 
-    assert stub_measure_page.shared_with == []
-    assert mock_dept_user.pages == []
+    assert stub_measure_page.measure.shared_with == []
+    assert mock_dept_user.measures == []
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -92,13 +94,13 @@ def test_departmental_user_cannot_see_page_unless_shared(
 
     assert resp.status_code == 403
 
-    stub_measure_page.shared_with.append(mock_dept_user)
+    stub_measure_page.measure.shared_with.append(mock_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -110,8 +112,8 @@ def test_departmental_user_cannot_see_page_unless_shared(
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.h1.text.strip() == "Test Measure Page"
 
-    stub_measure_page.shared_with = []
-    mock_dept_user.pages = []
+    stub_measure_page.measure.shared_with = []
+    mock_dept_user.measures = []
     db_session.session.add(mock_dept_user)
     db_session.session.add(stub_measure_page)
     db_session.session.commit()
@@ -125,7 +127,7 @@ def test_get_file_download_returns_404(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page_file_download",
+            "static_site.measure_version_file_download",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -147,7 +149,7 @@ def test_view_export_page(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page_markdown",
+            "static_site.measure_version_markdown",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -338,7 +340,7 @@ def test_measure_page_social_sharing(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -373,7 +375,7 @@ def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -445,7 +447,7 @@ def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub
 
 @pytest.mark.parametrize(["number_of_topics", "row_counts"], ((1, (1,)), (3, (3,)), (5, (3, 2)), (9, (3, 3, 3))))
 def test_homepage_topics_display_in_rows_with_three_columns(
-    number_of_topics, row_counts, test_app_client, mock_rdu_user, stub_home_page, db_session
+    number_of_topics, row_counts, test_app_client, mock_rdu_user, db_session
 ):
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
@@ -454,41 +456,31 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     db_session.session.commit()
 
     for i in range(number_of_topics):
-        topic = MeasureVersion(
-            guid=f"topic_{i}",
-            parent_guid="homepage",
-            page_type="topic",
-            slug=f"topic-{i}",
-            status="DRAFT",
-            title=f"Test topic page #{i}",
-            version="1.0",
-        )
-        subtopic = MeasureVersion(
-            guid=f"subtopic_{i}",
-            parent_guid=f"topic_{i}",
-            page_type="subtopic",
-            slug=f"subtopic-{i}",
-            status="DRAFT",
-            title=f"Test subtopic page #{i}",
-            version="1.0",
-        )
-        measure = MeasureVersion(
-            guid=f"measure_{i}",
-            parent_guid=f"topic_{i}",
+        topic = Topic(slug=f"topic-{i}", title=f"Test topic page #{i}")
+        db_session.session.add(topic)
+        db_session.session.flush()
+
+        subtopic = Subtopic(slug=f"subtopic-{i}", title=f"Test subtopic page #{i}", topic_id=topic.id)
+        db_session.session.add(subtopic)
+        db_session.session.flush()
+
+        measure = Measure(slug=f"measure-{i}")
+        measure.subtopics = [subtopic]
+        db_session.session.add(measure)
+        db_session.session.flush()
+
+        measure_version = MeasureVersion(
+            guid=f"measure_version_{i}",
             page_type="measure",
             slug=f"measure-{i}",
             status="APPROVED",
             published=True,
             title=f"Test measure page #{i}",
             version="1.0",
+            measure_id=measure.id,
         )
 
-        topic.children = [subtopic]
-        subtopic.children = [measure]
-
-        db_session.session.add(topic)
-        db_session.session.add(subtopic)
-        db_session.session.add(measure)
+        db_session.session.add(measure_version)
         db_session.session.commit()
 
     resp = test_app_client.get(url_for("static_site.index"))
@@ -507,20 +499,13 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     ((True, True, True), (True, False, True), (False, True, False), (False, False, True)),
 )
 def test_homepage_only_shows_topics_with_published_measures_for_site_type(
-    measure_published,
-    static_mode,
-    topic_should_be_visible,
-    test_app_client,
-    mock_rdu_user,
-    stub_measure_page,
-    db_session,
+    measure_published, static_mode, topic_should_be_visible, test_app_client, mock_logged_in_rdu_user, db_session
 ):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
-
-    stub_measure_page.published = measure_published
-    db_session.session.add(stub_measure_page)
-    db_session.session.commit()
+    MeasureVersionFactory(
+        status="APPROVED" if measure_published else "DRAFT",
+        published=measure_published,
+        measure__subtopics__topic__title="Test topic page",
+    )
 
     resp = test_app_client.get(url_for("static_site.index", static_mode=static_mode))
     assert resp.status_code == 200
@@ -575,7 +560,7 @@ def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_d
         session["user_id"] = mock_dept_user.id
 
     if measure_shared:
-        stub_measure_page.shared_with.append(mock_dept_user)
+        stub_measure_page.measure.shared_with.append(mock_dept_user)
         db_session.session.add(stub_measure_page)
 
     stub_measure_page.published = measure_published
@@ -607,15 +592,15 @@ def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
 def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(
     test_app_client, db_session, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
 ):
-    assert stub_measure_page.shared_with == []
-    assert mock_rdu_user.pages == []
+    assert stub_measure_page.measure.shared_with == []
+    assert mock_rdu_user.measures == []
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_rdu_user.id
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
             measure_slug=stub_measure_page.slug,
@@ -645,6 +630,7 @@ def test_latest_version_does_not_add_noindex_for_robots(
     stub_subtopic_page,
     stub_measure_page_one_of_three,
     stub_measure_page_two_of_three,
+    stub_measure_page_three_of_three,
 ):
     # GIVEN the latest version of a page
     latest_version_of_page = stub_measure_page_two_of_three
@@ -655,10 +641,10 @@ def test_latest_version_does_not_add_noindex_for_robots(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=latest_version_of_page.slug,
+            measure_slug=latest_version_of_page.measure.slug,
             version=latest_version_of_page.version,
         )
     )
@@ -691,10 +677,10 @@ def test_latest_version_does_not_add_noindex_for_robots_when_newer_draft_exists(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=latest_published_version_of_page.slug,
+            measure_slug=latest_published_version_of_page.measure.slug,
             version=latest_published_version_of_page.version,
         )
     )
@@ -715,6 +701,7 @@ def test_previous_version_adds_noindex_for_robots(
     stub_subtopic_page,
     stub_measure_page_one_of_three,
     stub_measure_page_two_of_three,
+    stub_measure_page_three_of_three,
 ):
     # GIVEN a page with a later published version
     outdated_page = stub_measure_page_one_of_three
@@ -725,10 +712,10 @@ def test_previous_version_adds_noindex_for_robots(
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
+            "static_site.measure_version",
             topic_slug=stub_topic_page.slug,
             subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=outdated_page.slug,
+            measure_slug=outdated_page.measure.slug,
             version=outdated_page.version,
         )
     )

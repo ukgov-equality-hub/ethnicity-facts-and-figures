@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 from functools import total_ordering
 from typing import Optional, Iterable
 
-from dictalchemy import DictableModel
 import sqlalchemy
 from bidict import bidict
-from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, Index, asc, text
+from dictalchemy import DictableModel
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, Index, asc, text, desc
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -25,6 +25,12 @@ from application.utils import get_token_age, create_guid
 publish_status = bidict(
     REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4, UNPUBLISH=5, UNPUBLISHED=6
 )
+
+
+class NewVersionType(enum.Enum):
+    NEW_MEASURE = "new_measure"
+    MINOR_UPDATE = "minor"
+    MAJOR_UPDATE = "major"
 
 
 class TypeOfData(enum.Enum):
@@ -100,7 +106,7 @@ class CopyableModel(DictableModel):
         if not exclude_fields:
             exclude_fields = []
 
-        copy = DataSource()
+        copy = self.__class__()
         copy.fromdict(self.asdict(exclude_pk=True, exclude=exclude_fields))
 
         return copy
@@ -199,7 +205,7 @@ user_measure = db.Table(
 
 
 @total_ordering
-class MeasureVersion(db.Model):
+class MeasureVersion(db.Model, CopyableModel):
     """
     The Page model holds data about all pages in the page hierarchy of the website:
     Homepage (root) -> Topics -> Subtopics -> Measure pages (leaves)
@@ -221,6 +227,7 @@ class MeasureVersion(db.Model):
         ),
         Index("ix_page_type_uri", "page_type", "slug"),
         ForeignKeyConstraint(["measure_id"], ["measure.id"]),
+        UniqueConstraint("measure_id", "version"),
     )
 
     def __eq__(self, other):
@@ -240,19 +247,19 @@ class MeasureVersion(db.Model):
     # columns
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     measure_id = db.Column(db.Integer, nullable=True)  # FK to `measure` table
-    guid = db.Column(db.String(255), nullable=False, primary_key=True)  # identifier for a measure (but not a page)
+    guid = db.Column(db.String(255), nullable=False, primary_key=True)  # TODO: Remove, but needs dentangling first.
     version = db.Column(
         db.String(), nullable=False, primary_key=True
-    )  # combined with guid forms primary key for page table
+    )  # The version number of this measure version in the format `X.y`.
     internal_reference = db.Column(db.String())  # optional internal reference number for measures
     latest = db.Column(db.Boolean, default=True)  # True if the current row is the latest version of a measure
     #                                               (latest created, not latest published, so could be a new draft)
 
-    slug = db.Column(db.String(255))  # slug to be used in URLs for the page
+    slug = db.Column(db.String(255))  # TODO: Remove
     review_token = db.Column(db.String())  # used for review page URLs
     description = db.Column(db.Text)  # TOPIC PAGES ONLY: a sentence below topic heading on homepage
     additional_description = db.Column(db.TEXT)  # TOPIC PAGES ONLY: short paragraph displayed on topic page itself
-    page_type = db.Column(db.String(255))  # one of measure, homepage, subtopic, topic
+    page_type = db.Column(db.String(255))  # TODO: Remove
     position = db.Column(db.Integer, default=0)  # ordering for MEASURE and SUBTOPIC pages
 
     # status for measure pages is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
@@ -277,9 +284,9 @@ class MeasureVersion(db.Model):
     # SUBTOPIC pages have "topic_xxx" as parent_guid
     # MEASURE pages have "subtopic_xxx" as parent_guid
     # The homepage and test area topic page have no parent_guid
-    parent_id = db.Column(db.Integer)
-    parent_guid = db.Column(db.String(255))
-    parent_version = db.Column(db.String())  # version number of the parent page, as guid+version is PK
+    parent_id = db.Column(db.Integer)  # TODO: Remove
+    parent_guid = db.Column(db.String(255))  # TODO: Remove
+    parent_version = db.Column(db.String())  # TODO: Remove
 
     db_version_id = db.Column(db.Integer, nullable=False)  # used to detect and prevent stale updates
     __mapper_args__ = {"version_id_col": db_version_id}
@@ -314,7 +321,7 @@ class MeasureVersion(db.Model):
     further_technical_information = db.Column(db.TEXT)  # "Further technical information"
 
     # relationships
-    parent = db.relationship(
+    parent = db.relationship(  # TODO: Remove
         "MeasureVersion",
         foreign_keys=[parent_id, parent_guid, parent_version],
         remote_side=[id, guid, version],
@@ -325,14 +332,6 @@ class MeasureVersion(db.Model):
     uploads = db.relationship("Upload", back_populates="page", lazy="dynamic", cascade="all,delete")
     dimensions = db.relationship(
         "Dimension", back_populates="page", lazy="dynamic", order_by="Dimension.position", cascade="all,delete"
-    )
-    shared_with = db.relationship(  # Departmental users can only access measure pages that have been shared with them
-        "User",
-        lazy="subquery",
-        secondary=user_measure,
-        primaryjoin="MeasureVersion.measure_id == user_measure.columns.measure_id",
-        secondaryjoin="User.id == user_measure.columns.user_id",
-        back_populates="pages",
     )
     data_sources = db.relationship(
         "DataSource", secondary="data_source_in_measure_version", back_populates="pages", order_by=asc(DataSource.id)
@@ -379,7 +378,7 @@ class MeasureVersion(db.Model):
 
     def get_upload(self, guid):
         try:
-            upload = Upload.query.filter_by(guid=guid).one()
+            upload = Upload.query.filter_by(guid=guid, page=self).one()
             return upload
         except NoResultFound:
             raise UploadNotFoundException
@@ -392,9 +391,9 @@ class MeasureVersion(db.Model):
             return current_status
 
     def available_actions(self):
-
-        if self.parent.parent.guid == "topic_testingspace":
+        if self.measure.subtopic.topic.slug == "testing-space":
             return ["UPDATE"]
+
         if self.status == "DRAFT":
             return ["APPROVE", "UPDATE"]
 
@@ -463,26 +462,17 @@ class MeasureVersion(db.Model):
     def next_major_version(self):
         return "%s.0" % str(self.major() + 1)
 
-    def next_version_number_by_type(self, version_type):
-        if version_type == "copy":
+    def next_version_number_by_type(self, version_type: NewVersionType):
+        if version_type == NewVersionType.NEW_MEASURE:
             return "1.0"
-        if version_type == "minor":
+
+        elif version_type == NewVersionType.MINOR_UPDATE:
             return self.next_minor_version()
+
         return self.next_major_version()
-
-    def latest_version(self):
-        versions = self.get_versions()
-        versions.sort(reverse=True)
-        return versions[0] if versions else self
-
-    def number_of_versions(self):
-        return len(self.get_versions())
 
     def has_minor_update(self):
         return len(self.minor_updates()) > 0
-
-    def has_major_update(self):
-        return len(self.major_updates()) > 0
 
     def is_minor_version(self):
         return self.minor() != 0
@@ -490,36 +480,38 @@ class MeasureVersion(db.Model):
     def is_major_version(self):
         return not self.is_minor_version()
 
-    def get_versions(self, include_self=True):
-        if include_self:
-            return self.query.filter(MeasureVersion.guid == self.guid).all()
-        else:
-            return self.query.filter(MeasureVersion.guid == self.guid, MeasureVersion.version != self.version).all()
-
     def get_previous_version(self):
-        versions = self.get_versions(include_self=False)
-        versions.sort(reverse=True)
-        return versions[0] if versions else None
+        # For some weird reason we can't reliably use self.measure.versions here as sometimes self isn't yet in there
+        # But querying MeasureVersion for matching guid works OK
+        all_versions = self.query.filter(MeasureVersion.guid == self.guid).order_by(desc(MeasureVersion.version)).all()
+        my_index = all_versions.index(self)
+        if len(all_versions) > my_index + 1:
+            return all_versions[my_index + 1]
+        else:
+            return None
 
     def has_no_later_published_versions(self):
-        updates = self.minor_updates() + self.major_updates()
-        published = [page for page in updates if page.status == "APPROVED"]
-        return len(published) == 0
+        latest_published_version = self.measure.latest_published_version
+        if latest_published_version is None:
+            return True
+
+        return latest_published_version <= self
 
     @property
-    def is_published_measure_or_parent_of(self):
-        if self.page_type == "measure":
-            return self.published
+    def previous_major_versions(self):
+        return [v for v in self.measure.versions if v.major() < self.major() and not v.has_minor_update()]
 
-        return any(child.is_published_measure_or_parent_of for child in self.children)
+    @property
+    def previous_minor_versions(self):
+        return [v for v in self.measure.versions if v.major() == self.major() and v.minor() < self.minor()]
+
+    @property
+    def first_published_date(self):
+        return self.previous_minor_versions[-1].published_at if self.previous_minor_versions else self.published_at
 
     def minor_updates(self):
         versions = MeasureVersion.query.filter(MeasureVersion.guid == self.guid, MeasureVersion.version != self.version)
         return [page for page in versions if page.major() == self.major() and page.minor() > self.minor()]
-
-    def major_updates(self):
-        versions = MeasureVersion.query.filter(MeasureVersion.guid == self.guid, MeasureVersion.version != self.version)
-        return [page for page in versions if page.major() > self.major()]
 
     def format_area_covered(self):
         if self.area_covered is None:
@@ -769,12 +761,13 @@ class Dimension(db.Model):
             self.dimension_table = table_object.copy()
 
         for dc in links:
+            dc.dimension_guid = self.guid
             self.classification_links.append(dc)
 
         return self
 
 
-class Upload(db.Model):
+class Upload(db.Model, CopyableModel):
     # metadata
     __tablename__ = "upload"
     __table_args__ = (
@@ -1003,7 +996,11 @@ class Topic(db.Model):
     additional_description = db.Column(db.TEXT, nullable=True)  # short paragraph displayed on topic page
 
     # relationships
-    subtopics = db.relationship("Subtopic", back_populates="topic")
+    subtopics = db.relationship("Subtopic", back_populates="topic", order_by="asc(Subtopic.position)")
+
+    @property
+    def has_published_measures(self):
+        return any(subtopic.has_published_measures for subtopic in self.subtopics)
 
 
 class Subtopic(db.Model):
@@ -1019,7 +1016,13 @@ class Subtopic(db.Model):
 
     # relationships
     topic = db.relationship("Topic", back_populates="subtopics")
-    measures = db.relationship("Measure", secondary="subtopic_measure", back_populates="subtopics")
+    measures = db.relationship(
+        "Measure", secondary="subtopic_measure", back_populates="subtopics", order_by="asc(Measure.position)"
+    )
+
+    @property
+    def has_published_measures(self):
+        return any(measure.has_published_version for measure in self.measures)
 
 
 subtopic_measure = db.Table(
@@ -1040,27 +1043,50 @@ class Measure(db.Model):
     reference = db.Column(db.String(32), nullable=True)  # optional internal reference
 
     # relationships
-    subtopics = db.relationship("Subtopic", secondary="subtopic_measure", back_populates="measures")
-    versions = db.relationship("MeasureVersion", back_populates="measure")
+    subtopics = db.relationship(
+        "Subtopic", secondary="subtopic_measure", back_populates="measures", order_by="asc(Subtopic.id)"
+    )
+    versions = db.relationship("MeasureVersion", back_populates="measure", order_by="desc(MeasureVersion.version)")
 
     # Departmental users can only access measures that have been shared with them, as defined by this relationship
-    # TODO: Uncomment this and use back_populates (relationship declared both sides) once user_measure table exists
-    # shared_with = db.relationship(
-    #     "User",
-    #     lazy="subquery",
-    #     secondary=user_measure,
-    #     primaryjoin="Measure.id == user_measure.columns.measure_id",
-    #     secondaryjoin="User.id == user_measure.columns.user_id",
-    #     backref=db.backref("measures", lazy=True),
-    # )
+    shared_with = db.relationship(
+        "User",
+        lazy="subquery",
+        secondary="user_measure",
+        primaryjoin="Measure.id == user_measure.columns.measure_id",
+        secondaryjoin="User.id == user_measure.columns.user_id",
+        back_populates="measures",
+    )
 
-    # TODO: Uncomment these once MeasureVersion exists
-    # def get_versions(self):
-    #     return (
-    #         MeasureVersion.query.filter(MeasureVersion.measure_id == self.id)
-    #         .order_by(desc(MeasureVersion.version))
-    #         .all()
-    #     )
-    #
-    # def latest_published_version_id(self):
-    #     return self.get_versions()[0].id
+    @property
+    def has_published_version(self):
+        return any(version.published for version in self.versions)
+
+    @property
+    def latest_version(self):
+        """Return the very latest version of a measure. This can include drafts."""
+        return next(filter(lambda version: version.latest, self.versions), None)
+
+    @property
+    def latest_published_version(self):
+        """Return the latest _published_ version of a measure."""
+        published_versions = [version for version in self.versions if version.published]
+        if published_versions:
+            return max(published_versions, key=lambda version: (version.major(), version.minor()))
+
+        return None
+
+    @property
+    def versions_to_publish(self):
+        # Need to publish:
+        # 1. Latest published version
+        # 2. Latest published version of all previous major versions
+        if self.latest_published_version:
+            return [self.latest_published_version] + self.latest_published_version.previous_major_versions
+        return []
+
+    @property
+    def subtopic(self):
+        """Get the first subtopic for this measure. Theoretically there can be more than one subtopic; practically,
+        as of 2019/01/01, there will only ever be one. Which makes this shortcut semi-reasonable."""
+        return self.subtopics[0]

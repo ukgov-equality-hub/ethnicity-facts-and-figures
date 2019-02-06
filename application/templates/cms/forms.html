@@ -7,7 +7,7 @@
 
 {% macro render_field(field, disabled=False, label_class=None, class="", hint=None, diffs={}) -%}
   {# Deprecated - use a custom RDU form field (e.g. RDUTextField) and render directly with `{{ form.field }}` in a jinja template #}
-  
+
     {% if label_class %}
         {{ field.label(class=label_class) }}
     {% else %}
@@ -31,21 +31,6 @@
         {% endif %}
         {{ field(disabled=disabled, class=class) }}
     {% endif %}
-{%- endmacro %}
-
-
-{% macro render_version_radio(field, measure) -%}
-  {# Unique macro - do not reuse. Use RDURadioField in a WTForm and render the field directly with `{{ form.field }}` in a jinja template #}
-  
-    <label>
-        {{ field }}
-        <b>{{ measure.next_version_number_by_type(field.data) }}</b>
-        {% if field.data == 'minor' %}
-            Edit this edition (eg for clarifications or corrections)
-        {% else %}
-            Create new edition (eg after new data becomes available)
-        {% endif %}
-    </label>
 {%- endmacro %}
 
 {% macro render_department_select(label,
