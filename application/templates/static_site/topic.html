@@ -31,7 +31,7 @@
                 <div class="accordion">
                     <div class="container">
                         {% for subtopic in (subtopics|selectattr('has_published_measures') if static_mode else subtopics) %}
-                            {% if measures_by_subtopic[subtopic.id]|length > 0 or current_user.can(CREATE_MEASURE) %}
+                            {% if measures_by_subtopic[subtopic.id]|length > 0 or (current_user.is_authenticated and current_user.can(CREATE_MEASURE)) %}
                                 <div class="accordion-section">
                                     <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="{{ subtopic.title }}" >
                                         <h2 class="heading-medium">
@@ -40,7 +40,7 @@
                                     </div>
                                     <div class="accordion-section-body {% if not static_mode %}eff-!-padding-bottom-40{% endif %}">
                                         {% if not static_mode %}
-                                            {% if current_user.can(CREATE_MEASURE) %}
+                                            {% if current_user.is_authenticated and current_user.can(CREATE_MEASURE) %}
                                                 <p class="button-container"><a href="{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}" class="button">Create a new page</a></p>
                                             {% endif %}
                                         {% endif %}
@@ -80,7 +80,7 @@
     {% block bodyEnd %}
         {{ super( )}}
 
-        {% if not static_mode and current_user.can(ORDER_MEASURES) %}
+        {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}
 
         <script type="text/javascript">
 

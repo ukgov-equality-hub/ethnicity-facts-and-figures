@@ -74,7 +74,7 @@
           {% if measure_version.latest %}
 
             {% if measure_version.status == 'APPROVED' %}
-              {% if current_user.can(CREATE_VERSION) %}
+              {% if current_user.is_authenticated and current_user.can(CREATE_VERSION) %}
                 <a class="button" href="{{ url_for('cms.new_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.slug, version=measure_version.version) }}">
                   Update
                 </a>

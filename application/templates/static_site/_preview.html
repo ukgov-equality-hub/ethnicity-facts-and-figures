@@ -12,7 +12,7 @@
             {% if not current_user.is_anonymous and not preview %}
               <span><a href="{{ url_for('static_site.topic', topic_slug='testing-space') }}">Testing space</a></span>
 
-              {% if current_user.can(MANAGE_USERS) %}
+              {% if current_user.is_authenticated and current_user.can(MANAGE_USERS) %}
                 <span><a href="{{ url_for('admin.index') }}">Admin</a></span>
               {% endif %}
             {% endif %}
