@@ -36,7 +36,7 @@
                           version=version) }}"/>
 
 
-  {% if not static_mode %}
+  {% if not static_mode and not preview %}
     {% call status_banner(sticky=False) %}
       <div class="version-info left">
           <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure_version.version }}{% endif %}</b></span>
