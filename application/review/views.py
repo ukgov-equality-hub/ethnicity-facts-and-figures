@@ -26,6 +26,9 @@ def review_page(review_token):
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_version=measure_version,
             dimensions=dimensions,
+            versions=measure_version.previous_major_versions,
+            first_published_date=measure_version.first_published_date,
+            edit_history=measure_version.previous_minor_versions,
             preview=True,
         )
 
