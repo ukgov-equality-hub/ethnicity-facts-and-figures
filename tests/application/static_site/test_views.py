@@ -388,6 +388,9 @@ def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub
 
     assert page.h1.text.strip() == stub_measure_page.title
 
+    # check that the status bar is shown
+    assert page.find("div", class_="status")
+
     # check metadata
     metadata_titles = page.find("div", class_="metadata").find_all("dt")
     assert len(metadata_titles) == 5
