@@ -4,7 +4,7 @@ from flask import url_for
 from application.auth.models import User, TypeOfUser
 from application.utils import generate_token
 
-from tests.models import UserFactory
+from tests.models import UserFactory, MeasureVersionFactory
 
 
 def test_standard_user_cannot_view_admin_urls(test_app_client, mock_logged_in_rdu_user):
@@ -180,8 +180,8 @@ def test_reset_password_accepts_good_password(app, test_app_client):
     assert page.find("h1").text.strip() == "Password updated"
 
 
-def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_user, mock_admin_user, stub_measure_page):
-
+def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_user, mock_admin_user):
+    measure_page = MeasureVersionFactory(id=100)
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id
 
@@ -189,10 +189,10 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
-            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=stub_measure_page.measure.subtopic.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            topic_slug=measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=measure_page.measure.subtopic.slug,
+            measure_slug=measure_page.measure.slug,
+            version=measure_page.version,
         )
     )
 
@@ -201,10 +201,10 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
     resp = test_app_client.get(
         url_for(
             "cms.edit_measure_version",
-            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=stub_measure_page.measure.subtopic.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            topic_slug=measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=measure_page.measure.subtopic.slug,
+            measure_slug=measure_page.measure.slug,
+            version=measure_page.version,
         )
     )
 
@@ -214,12 +214,12 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_admin_user.id
 
-    data = {"measure-picker": stub_measure_page.id}
+    data = {"measure-picker": measure_page.id}
 
     resp = test_app_client.post(
         url_for("admin.share_page_with_user", user_id=mock_dept_user.id), data=data, follow_redirects=True
     )
-
+    assert measure_page.measure.shared_with == [mock_dept_user]
     assert resp.status_code == 200
 
     # dept user can view or edit page
@@ -229,10 +229,10 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
-            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=stub_measure_page.measure.subtopic.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            topic_slug=measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=measure_page.measure.subtopic.slug,
+            measure_slug=measure_page.measure.slug,
+            version=measure_page.version,
         )
     )
 
@@ -241,22 +241,18 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, mock_dept_use
     resp = test_app_client.get(
         url_for(
             "cms.edit_measure_version",
-            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=stub_measure_page.measure.subtopic.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            topic_slug=measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=measure_page.measure.subtopic.slug,
+            measure_slug=measure_page.measure.slug,
+            version=measure_page.version,
         )
     )
 
     assert resp.status_code == 200
 
 
-def test_admin_user_can_remove_share_of_page_with_dept_user(
-    test_app_client, mock_dept_user, mock_admin_user, stub_measure_page, db_session
-):
-    stub_measure_page.measure.shared_with.append(mock_dept_user)
-    db_session.session.add(stub_measure_page)
-    db_session.session.commit()
+def test_admin_user_can_remove_share_of_page_with_dept_user(test_app_client, mock_dept_user, mock_admin_user):
+    measure_page = MeasureVersionFactory(measure__shared_with=[mock_dept_user])
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = mock_dept_user.id
@@ -264,10 +260,10 @@ def test_admin_user_can_remove_share_of_page_with_dept_user(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
-            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=stub_measure_page.measure.subtopic.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            topic_slug=measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=measure_page.measure.subtopic.slug,
+            measure_slug=measure_page.measure.slug,
+            version=measure_page.version,
         )
     )
 
@@ -278,9 +274,7 @@ def test_admin_user_can_remove_share_of_page_with_dept_user(
         session["user_id"] = mock_admin_user.id
 
     resp = test_app_client.get(
-        url_for(
-            "admin.remove_shared_page_from_user", measure_id=stub_measure_page.measure_id, user_id=mock_dept_user.id
-        ),
+        url_for("admin.remove_shared_page_from_user", measure_id=measure_page.measure_id, user_id=mock_dept_user.id),
         follow_redirects=True,
     )
 
@@ -293,26 +287,20 @@ def test_admin_user_can_remove_share_of_page_with_dept_user(
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
-            topic_slug=stub_measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=stub_measure_page.measure.subtopic.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            topic_slug=measure_page.measure.subtopic.topic.slug,
+            subtopic_slug=measure_page.measure.subtopic.slug,
+            measure_slug=measure_page.measure.slug,
+            version=measure_page.version,
         )
     )
 
     assert resp.status_code == 403
 
 
-def test_admin_user_can_delete_non_admin_user_account(test_app_client, mock_admin_user, db, db_session):
+def test_admin_user_can_delete_non_admin_user_account(test_app_client, mock_logged_in_admin_user):
+    user = UserFactory(email="someuser@somedept.gov.uk", active=True, user_type=TypeOfUser.RDU_USER)
 
-    db.session.add(User(email="someuser@somedept.gov.uk", active=True, user_type=TypeOfUser.RDU_USER))
-    db.session.commit()
-
-    user = User.query.filter_by(email="someuser@somedept.gov.uk").one()
     assert user.active
-
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
 
     resp = test_app_client.get(url_for("admin.delete_user", user_id=user.id), follow_redirects=True)
 
