@@ -1,5 +1,4 @@
 import re
-from datetime import datetime
 
 import pytest
 from bs4 import BeautifulSoup
@@ -8,7 +7,6 @@ from flask import url_for
 from application.cms.models import MeasureVersion, Topic, Subtopic, Measure
 from application.cms.page_service import PageService
 from application.config import Config
-
 from tests.models import MeasureVersionFactory
 
 page_service = PageService()
@@ -393,20 +391,18 @@ def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub
 
     # check metadata
     metadata_titles = page.find("div", class_="metadata").find_all("dt")
-    assert len(metadata_titles) == 5
+    assert len(metadata_titles) == 4
     assert metadata_titles[0].text == "Department:"
-    assert metadata_titles[1].text == "Published:"
-    assert metadata_titles[2].text == "Source:"
-    assert metadata_titles[3].text == "Area covered:"
-    assert metadata_titles[4].text == "Time period:"
+    assert metadata_titles[1].text == "Source:"
+    assert metadata_titles[2].text == "Area covered:"
+    assert metadata_titles[3].text == "Time period:"
 
     metadata_values = page.find("div", class_="metadata").find_all("dd")
-    assert len(metadata_titles) == 5
+    assert len(metadata_values) == 4
     assert metadata_values[0].text.strip() == "Department for Work and Pensions"
-    assert metadata_values[1].text.strip() == datetime.now().date().strftime("%d %B %Y").lstrip("0")
-    assert metadata_values[2].text.strip() == "DWP Stats"
-    assert metadata_values[3].text.strip() == "England"
-    assert metadata_values[4].text.strip() == "4 months"
+    assert metadata_values[1].text.strip() == "DWP Stats"
+    assert metadata_values[2].text.strip() == "England"
+    assert metadata_values[3].text.strip() == "4 months"
 
     things_to_know = page.find("span", attrs={"id": "things-you-need-to-know"})
     assert things_to_know

@@ -418,6 +418,8 @@ def stub_measure_page(
         page_type="measure",
         slug="test-measure-page",
         status="DRAFT",
+        published=False,
+        published_at=None,
         version="1.0",
         internal_edit_summary="internal_edit_summary",
         external_edit_summary="external_edit_summary",
@@ -430,8 +432,6 @@ def stub_measure_page(
     )  # Duplicating page ID for simplicity during migration to new data model
 
     for key, val in stub_measure_data.items():
-        if key == "published_at":
-            val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
 
     page.data_sources = [stub_data_source]
@@ -456,6 +456,7 @@ def stub_published_measure_page(
         slug="test-published-measure-page",
         status="APPROVED",
         published=True,
+        published_at=datetime.now().date(),
         version="1.0",
         internal_edit_summary="internal_edit_summary",
         external_edit_summary="external_edit_summary",
@@ -468,8 +469,6 @@ def stub_published_measure_page(
     page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
 
     for key, val in stub_measure_data.items():
-        if key == "published_at":
-            val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
 
     page.data_sources = [stub_data_source]
@@ -484,26 +483,16 @@ def stub_published_measure_page(
 def stub_measure_data():
     return {
         "title": "Test Measure Page",
-        "short_title": "Measure Page",
         "measure_summary": "Unemployment measure summary",
         "estimation": "X people are unemployed",
-        "type_of_statistic": "type of statistic",
-        "qmi_text": "Quality and Methodology Information",
         "need_to_know": "Need to know this",
         "summary": "Unemployment Summary\n * This is a summary bullet",
-        "frequency": "Quarterly",
         "qmi_url": "http://www.quality-street.gov.uk",
         "time_covered": "4 months",
-        "geographic_coverage": "United Kingdom",
-        "ethnicity_definition_detail": "Detailed ethnicity information",
         "methodology": "how we measure unemployment",
-        "next_update_date": "Ad hoc",
-        "quality_assurance": "Quality assurance",
-        "revisions": "",
         "further_technical_information": "Further technical information",
         "suppression_and_disclosure": "Suppression rules and disclosure control",
         "related_publications": "Related publications",
-        "published_at": datetime.now().date().strftime("%Y-%m-%d"),
         "internal_edit_summary": "initial version",
         "db_version_id": 1,
         "lowest_level_of_geography_id": "UK",
@@ -543,6 +532,7 @@ def stub_measure_page_one_of_three(
         slug="test-multiversion-measure-page-1-of-3",
         status="APPROVED",
         published=True,
+        published_at=datetime.now().date(),
         version="1.0",
         area_covered=["ENGLAND"],
         lowest_level_of_geography=stub_geography,
@@ -551,8 +541,6 @@ def stub_measure_page_one_of_three(
     )
 
     for key, val in stub_measure_data.items():
-        if key == "published_at":
-            val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
 
     page.data_sources = [stub_data_source]
@@ -581,6 +569,7 @@ def stub_measure_page_two_of_three(
         slug="test-multiversion-measure-page-2-of-3",
         status="APPROVED",
         published=True,
+        published_at=datetime.now().date(),
         version="2.0",
         internal_edit_summary="internal_edit_summary_v2",
         external_edit_summary="external_edit_summary_v2",
@@ -591,8 +580,6 @@ def stub_measure_page_two_of_three(
     )
 
     for key, val in stub_measure_data.items():
-        if key == "published_at":
-            val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
 
     page.data_sources = [stub_data_source]
@@ -622,6 +609,7 @@ def stub_measure_page_three_of_three(
         slug="test-multiversion-measure-page-3-of-3",
         status="DRAFT",
         published=False,
+        published_at=None,
         version="2.1",
         internal_edit_summary="internal_edit_summary_v3",
         external_edit_summary="external_edit_summary_v3",
@@ -632,8 +620,6 @@ def stub_measure_page_three_of_three(
     )
 
     for key, val in stub_measure_data.items():
-        if key == "published_at":
-            val = datetime.strptime(val, "%Y-%m-%d")
         setattr(page, key, val)
 
     page.data_sources = [stub_data_source]
