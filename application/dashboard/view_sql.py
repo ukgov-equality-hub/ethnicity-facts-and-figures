@@ -1,37 +1,47 @@
 drop_all_dashboard_helper_views = """
     DROP INDEX IF EXISTS uix_pages_by_geography;
-    DROP INDEX IF EXISTS uix_latest_published_pages;
+    DROP INDEX IF EXISTS uix_latest_published_measure_versions;
     DROP INDEX IF EXISTS uix_ethnic_groups_by_dimension;
     DROP INDEX IF EXISTS uix_categorisations_by_dimension;
-    DROP MATERIALIZED VIEW pages_by_geography;
-    DROP MATERIALIZED VIEW latest_published_pages;
-    DROP MATERIALIZED VIEW ethnic_groups_by_dimension;
-    DROP MATERIALIZED VIEW categorisations_by_dimension;
+    DROP MATERIALIZED VIEW IF EXISTS pages_by_geography;
+    DROP MATERIALIZED VIEW IF EXISTS latest_published_measure_versions;
+    DROP MATERIALIZED VIEW IF EXISTS ethnic_groups_by_dimension;
+    DROP MATERIALIZED VIEW IF EXISTS categorisations_by_dimension;
 """
 
 refresh_all_dashboard_helper_views = """
-    REFRESH MATERIALIZED VIEW CONCURRENTLY latest_published_pages;
+    REFRESH MATERIALIZED VIEW CONCURRENTLY latest_published_measure_versions;
     REFRESH MATERIALIZED VIEW CONCURRENTLY pages_by_geography;
     REFRESH MATERIALIZED VIEW CONCURRENTLY ethnic_groups_by_dimension;
     REFRESH MATERIALIZED VIEW CONCURRENTLY categorisations_by_dimension;
 """
 
-latest_published_pages_view = """
-    CREATE
-    MATERIALIZED
-    VIEW
-    latest_published_pages as (SELECT mv.*
-     FROM measure_version mv
-     JOIN ( SELECT latest_arr.guid,
-            (latest_arr.version_arr[1] || '.'::text) || latest_arr.version_arr[2] AS version
-           FROM ( SELECT measure_version.guid,
-                    max(string_to_array(measure_version.version::text, '.'::text)::integer[]) AS version_arr
-                   FROM measure_version
-                  WHERE measure_version.status::text = 'APPROVED'::text
-                  GROUP BY measure_version.guid) latest_arr) latest_published ON mv.guid::text = latest_published.guid::text AND mv.version::text = latest_published.version);
+latest_published_measure_versions_view = """
+CREATE MATERIALIZED VIEW latest_published_measure_versions AS
+(
+   SELECT
+      mv.*
+   FROM
+      measure_version AS mv
+      JOIN
+         (
+            SELECT
+               measure_version.measure_id,
+               array_to_string(MAX(string_to_array(measure_version.version, '.')), '.') AS max_approved_version
+            FROM
+               measure_version
+            WHERE
+               measure_version.status = 'APPROVED'
+            GROUP BY
+               measure_version.measure_id
+         )
+         AS max_approved_measure_versions
+         ON mv.measure_id = max_approved_measure_versions.measure_id
+         AND mv.version = max_approved_measure_versions.max_approved_version
+);
 
-    CREATE UNIQUE INDEX uix_latest_published_pages ON latest_published_pages (guid);
-"""  # noqa
+CREATE UNIQUE INDEX uix_latest_published_measure_versions ON latest_published_measure_versions (id);
+"""
 
 pages_by_geography_view = """
     CREATE
