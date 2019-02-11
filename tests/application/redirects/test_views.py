@@ -3,11 +3,8 @@ from flask import url_for
 from manage import add_redirect_rule, delete_redirect_rule
 
 
-def test_create_redirect(test_app_client, mock_rdu_user, db_session):
+def test_create_redirect(test_app_client, mock_logged_in_rdu_user):
     # GIVEN a fresh database
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
-
     # WHEN we add a redirect
     from_uri = "fish"
     to_uri = "chips"
@@ -21,10 +18,8 @@ def test_create_redirect(test_app_client, mock_rdu_user, db_session):
     assert "<ReplaceKeyPrefixWith>%s</ReplaceKeyPrefixWith" % to_uri in xml_string
 
 
-def test_delete_redirect(test_app_client, mock_rdu_user, db_session):
+def test_delete_redirect(test_app_client, mock_logged_in_rdu_user):
     # GIVEN a database with redirects in it
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
     add_redirect_rule(from_uri="alabama", to_uri="alaska")
     add_redirect_rule(from_uri="michigan", to_uri="maine")
 
