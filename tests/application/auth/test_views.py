@@ -85,8 +85,9 @@ def test_should_expire_session_vars_on_logout(test_app_client, mock_logged_in_rd
 
     with test_app_client.session_transaction() as session:
         session["session_data"] = "Secret stuff"
+        assert session.get("session_data") == "Secret stuff"
 
-    test_app_client.post("/auth/logout")  # TODO: Use `url_for`
+    test_app_client.post(url_for("auth.logout"))
 
     with test_app_client.session_transaction() as session:
         assert session.get("session_data") is None
