@@ -76,9 +76,12 @@ def ethnic_groups():
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def ethnic_group(value_slug):
-    value_title, page_count, results = get_ethnic_group_by_slug_dashboard_data(value_slug)
+    value_title, page_count, nested_measures_and_dimensions = get_ethnic_group_by_slug_dashboard_data(value_slug)
     return render_template(
-        "dashboards/ethnic_group.html", ethnic_group=value_title, measure_count=page_count, measure_tree=results
+        "dashboards/ethnic_group.html",
+        ethnic_group=value_title,
+        measure_count=page_count,
+        nested_measures_and_dimensions=nested_measures_and_dimensions,
     )
 
 

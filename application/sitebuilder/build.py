@@ -349,9 +349,12 @@ def build_dashboards(build_dir):
     # Individual ethnic group dashboards
     for ethnicity in sorted_ethnicity_list:
         slug = ethnicity["url"][ethnicity["url"].rindex("/") + 1 :]  # The part of the url after the final /
-        value_title, page_count, results = get_ethnic_group_by_slug_dashboard_data(slug)
+        value_title, page_count, nested_measures_and_dimensions = get_ethnic_group_by_slug_dashboard_data(slug)
         content = render_template(
-            "dashboards/ethnic_group.html", ethnic_group=value_title, measure_count=page_count, measure_tree=results
+            "dashboards/ethnic_group.html",
+            ethnic_group=value_title,
+            measure_count=page_count,
+            nested_measures_and_dimensions=nested_measures_and_dimensions,
         )
         dir_path = os.path.join(dashboards_dir, f"ethnic-groups/{slug}")
         os.makedirs(dir_path, exist_ok=True)

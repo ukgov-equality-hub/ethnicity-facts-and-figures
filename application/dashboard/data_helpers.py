@@ -106,130 +106,79 @@ def get_published_dashboard_data():
 def get_ethnic_groups_dashboard_data():
     from application.dashboard.models import EthnicGroupByDimension
 
-    links = EthnicGroupByDimension.query.order_by(
-        EthnicGroupByDimension.subtopic_guid,
-        EthnicGroupByDimension.page_position,
-        EthnicGroupByDimension.dimension_position,
-        EthnicGroupByDimension.value_position,
-    ).all()
+    links = EthnicGroupByDimension.query.all()
 
     # build a data structure with the links to count unique
     ethnicities = {}
-    for link in links:
-        if link.value not in ethnicities:
-            ethnicities[link.value] = {
-                "value": link.value,
-                "position": link.value_position,
-                "url": url_for("dashboards.ethnic_group", value_slug=slugify(link.value)),
-                "pages": {link.page_guid},
-                "dimensions": 1,
-                "classifications": {link.categorisation},
+    for link in sorted(links, key=lambda rec: rec.ethnicity_position):
+        if link.ethnicity_value not in ethnicities:
+            ethnicities[link.ethnicity_value] = {
+                "value": link.ethnicity_value,
+                "position": link.ethnicity_position,
+                "url": url_for("dashboards.ethnic_group", value_slug=slugify(link.ethnicity_value)),
+                "measure_ids": {link.measure_id},  # temporary list to allow calculating `count_measures` later
+                "count_measures": 0,  # calculated afterwards using `measure_ids`
+                "count_dimensions": 1,
+                "classifications": {link.classification_title},
             }
         else:
-            ethnicities[link.value]["dimensions"] += 1
-            ethnicities[link.value]["pages"].add(link.page_guid)
-            ethnicities[link.value]["classifications"].add(link.categorisation)
+            ethnicities[link.ethnicity_value]["measure_ids"].add(link.measure_id)
+            ethnicities[link.ethnicity_value]["count_dimensions"] += 1
+            ethnicities[link.ethnicity_value]["classifications"].add(link.classification_title)
+
+    # Count the number of distinct measures for each ethnic group
     for ethnic_group in ethnicities.values():
-        ethnic_group["pages"] = len(ethnic_group["pages"])
-        ethnic_group["classifications"] = len(ethnic_group["classifications"])
+        ethnic_group["count_measures"] = len(ethnic_group.pop("measure_ids"))
 
-    # sort by standard ethnicity position
-    return sorted(ethnicities.values(), key=lambda g: g["position"])
+    return ethnicities.values()
 
 
-def get_ethnic_group_by_slug_dashboard_data(value_slug):
-    ethnicity = classification_service.get_value_by_slug(value_slug)
+def get_ethnic_group_by_slug_dashboard_data(ethnic_group_slug):
+    ethnicity = classification_service.get_value_by_slug(ethnic_group_slug)
 
-    results = []
+    ethnic_group_title = ""
     page_count = 0
-    value_title = ""
+    nested_measures_and_dimensions = {}
     if ethnicity:
-        value_title = ethnicity.value
+        ethnic_group_title = ethnicity.value
         from application.dashboard.models import EthnicGroupByDimension
 
-        dimension_links = (
-            EthnicGroupByDimension.query.filter_by(value=ethnicity.value)
-            .order_by(
-                EthnicGroupByDimension.subtopic_guid,
-                EthnicGroupByDimension.page_position,
-                EthnicGroupByDimension.dimension_position,
-                EthnicGroupByDimension.value_position,
-            )
-            .all()
+        dimension_links = EthnicGroupByDimension.query.filter_by(ethnicity_value=ethnicity.value).all()
+
+        nested_measures_and_dimensions = defaultdict(
+            lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
         )
 
-        # Build a base tree of subtopics from the database
-        subtopics = [
-            {
-                "guid": page.guid,
-                "title": page.title,
-                "slug": page.slug,
-                "position": page.position,
-                "topic_guid": page.parent_guid,
-                "topic": page.parent.title,
-                "topic_slug": page.parent.slug,
-                "measures": [],
-            }
-            for page in page_service.get_pages_by_type("subtopic")
-        ]
-        subtopics = sorted(subtopics, key=lambda p: (p["topic_guid"], p["position"]))
+        for link in sorted(
+            dimension_links,
+            key=lambda rec: (rec.topic_title, rec.subtopic_position, rec.measure_position, rec.dimension_position),
+        ):
+            measure_dict = nested_measures_and_dimensions[link.topic_title][link.subtopic_title][
+                link.measure_version_title
+            ]
 
-        # Build a list of dimensions
-        dimension_list = [
-            {
-                "dimension_guid": d.dimension_guid,
-                "dimension_title": d.dimension_title,
-                "dimension_position": d.dimension_position,
-                "page_guid": d.page_guid,
-                "page_title": d.page_title,
-                "page_slug": d.page_slug,
-                "page_position": d.page_position,
-                "page_version": d.page_version,
-                "subtopic_guid": d.subtopic_guid,
-            }
-            for d in dimension_links
-        ]
-
-        # Integrate with the topic tree
-        for subtopic in subtopics:
-            # Build a data structure of unique pages in the subtopic
-            page_list = {
-                d["page_guid"]: {
-                    "guid": d["page_guid"],
-                    "title": d["page_title"],
-                    "slug": d["page_slug"],
-                    "position": d["page_position"],
-                    "url": url_for(
-                        "static_site.measure_version",
-                        topic_slug=subtopic["topic_slug"],
-                        subtopic_slug=subtopic["slug"],
-                        measure_slug=d["page_slug"],
-                        version="latest",
-                    ),
+            measure_dict["title"] = link.measure_version_title
+            measure_dict["url"] = url_for(
+                "static_site.measure_version",
+                topic_slug=link.topic_slug,
+                subtopic_slug=link.subtopic_slug,
+                measure_slug=link.measure_slug,
+                version="latest",
+            )
+            measure_dict["dimensions"].append(
+                {
+                    "guid": link.dimension_guid,
+                    "title": link.dimension_title,
+                    "short_title": _calculate_short_title(link.measure_version_title, link.dimension_title),
+                    "position": link.dimension_position,
                 }
-                for d in dimension_list
-                if d["subtopic_guid"] == subtopic["guid"]
-            }
+            )
 
-            # Integrate the list of dimensions
-            for page in page_list.values():
-                page["dimensions"] = [
-                    {
-                        "guid": d["dimension_guid"],
-                        "title": d["dimension_title"],
-                        "short_title": _calculate_short_title(page["title"], d["dimension_title"]),
-                        "position": d["dimension_position"],
-                    }
-                    for d in dimension_list
-                    if d["page_guid"] == page["guid"]
-                ]
+    for (topic, measures_with_dimensions_by_subtopic) in nested_measures_and_dimensions.items():
+        for subtopic, measures_with_dimensions in measures_with_dimensions_by_subtopic.items():
+            page_count += len(measures_with_dimensions)
 
-            subtopic["measures"] = sorted(page_list.values(), key=lambda p: p["position"])
-            page_count += len(page_list)
-
-        results = [s for s in subtopics if len(s["measures"]) > 0]
-
-    return value_title, page_count, results
+    return ethnic_group_title, page_count, nested_measures_and_dimensions
 
 
 def get_ethnicity_classifications_dashboard_data():
