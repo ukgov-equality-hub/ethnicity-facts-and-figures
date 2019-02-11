@@ -717,7 +717,7 @@ def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid,
         "classification_source": dimension_object.classification_source_string,
     }
 
-    return render_template("cms/edit_dimension.html", **context)
+    return render_template("cms/edit_dimension.html", **context), 400 if form.errors else 200
 
 
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/chartbuilder")
