@@ -115,10 +115,12 @@ def locations():
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def location(slug):
-    loc, page_count, subtopics = get_geographic_breakdown_by_slug_dashboard_data(slug)
+    geography, page_count, measure_titles_and_urls_by_topic_and_subtopic = get_geographic_breakdown_by_slug_dashboard_data(  # noqa
+        slug
+    )
     return render_template(
         "dashboards/lowest-level-of-geography.html",
-        level_of_geography=loc.name,
+        level_of_geography=geography.name,
         page_count=page_count,
-        measure_tree=subtopics,
+        measure_titles_and_urls_by_topic_and_subtopic=measure_titles_and_urls_by_topic_and_subtopic,
     )

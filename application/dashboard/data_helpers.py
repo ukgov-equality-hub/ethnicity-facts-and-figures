@@ -4,6 +4,7 @@ from datetime import date, timedelta
 
 from flask import url_for
 from slugify import slugify
+from sqlalchemy import func
 from trello.exceptions import TokenError
 
 from application.cms.classification_service import classification_service
@@ -365,87 +366,73 @@ def get_ethnicity_classification_by_id_dashboard_data(classification_id):
 
 
 def get_geographic_breakdown_dashboard_data():
-    # build framework
-    location_dict = {
-        location.name: {"location": location, "pages": []} for location in LowestLevelOfGeography.query.all()
-    }
+    from application.dashboard.models import LatestPublishedMeasureVersionByGeography
 
-    # integrate with page geography
-    from application.dashboard.models import PageByLowestLevelOfGeography
+    page_counts_by_geography = (
+        LatestPublishedMeasureVersionByGeography.query.with_entities(
+            LatestPublishedMeasureVersionByGeography.geography_name, func.count("*")
+        )
+        .group_by(
+            LatestPublishedMeasureVersionByGeography.geography_name,
+            LatestPublishedMeasureVersionByGeography.geography_position,
+        )
+        .order_by(LatestPublishedMeasureVersionByGeography.geography_position)
+    )
 
-    page_geogs = PageByLowestLevelOfGeography.query.all()
-    for page_geog in page_geogs:
-        location_dict[page_geog.geography_name]["pages"] += [page_geog.page_guid]
-
-    # convert to list and sort
-    location_list = list(location_dict.values())
-    location_list.sort(key=lambda x: x["location"].position)
-
-    location_levels = [
-        {
-            "name": item["location"].name,
-            "url": url_for("dashboards.location", slug=slugify(item["location"].name)),
-            "pages": len(item["pages"]),
-        }
-        for item in location_list
-        if len(item["pages"]) > 0
-    ]
+    location_levels = []
+    for geography_name, page_count in page_counts_by_geography:
+        if page_count > 0:
+            location_levels.append(
+                {
+                    "name": geography_name,
+                    "url": url_for("dashboards.location", slug=slugify(geography_name)),
+                    "pages": page_count,
+                }
+            )
 
     return location_levels
 
 
 def get_geographic_breakdown_by_slug_dashboard_data(slug):
-    # get the
-    loc = _deslugifiedLocation(slug)
+    # get the geography name from its slugified version
+    geography = _deslugifiedLocation(slug)
 
-    # get the measures that implement this as PageByLowestLevelOfGeography objects
-    from application.dashboard.models import PageByLowestLevelOfGeography
+    # get the measures that implement this as LatestPublishedMeasureVersionByGeography objects
+    from application.dashboard.models import LatestPublishedMeasureVersionByGeography
 
-    measures = (
-        PageByLowestLevelOfGeography.query.filter(PageByLowestLevelOfGeography.geography_name == loc.name)
-        .order_by(PageByLowestLevelOfGeography.page_position)
-        .all()
-    )
+    # Get measure version hierarchy for the given geographic area.
+    measure_versions_with_geography = (
+        LatestPublishedMeasureVersionByGeography.query.filter(
+            LatestPublishedMeasureVersionByGeography.geography_name == geography.name
+        )
+    ).all()
 
-    # Build a base tree of subtopics from the database
-    subtopics = [
-        {
-            "guid": page.guid,
-            "title": page.title,
-            "slug": page.slug,
-            "position": page.position,
-            "topic_guid": page.parent_guid,
-            "topic": page.parent.title,
-            "topic_slug": page.parent.slug,
-            "measures": [
-                {
-                    "title": measure.page_title,
-                    "url": url_for(
-                        "static_site.measure_version",
-                        topic_slug=page.parent.slug,
-                        subtopic_slug=page.slug,
-                        measure_slug=measure.page_slug,
-                        version="latest",
-                    ),
-                }
-                for measure in measures
-                if measure.subtopic_guid == page.guid
-            ],
-        }
-        for page in page_service.get_pages_by_type("subtopic")
-    ]
+    # Structure: {topic_title: {subtopic_title: [{title: mv_title, url: mv_url}, ...]}}
+    measure_titles_and_urls_by_topic_and_subtopic = defaultdict(lambda: defaultdict(list))
 
-    # dispose of subtopics without content
-    subtopics = [s for s in subtopics if len(s["measures"]) > 0]
-
-    # sort
-    subtopics.sort(key=lambda p: (p["topic_guid"], p["position"]))
+    # Sort records by topic title, subtopic position, measure position. Relies on preserved dict insertion order.
+    for record in sorted(
+        measure_versions_with_geography, key=lambda rec: (rec.topic_title, rec.subtopic_position, rec.measure_position)
+    ):
+        measure_titles_and_urls_by_topic_and_subtopic[record.topic_title][record.subtopic_title].append(
+            {
+                "title": record.measure_version_title,
+                "url": url_for(
+                    "static_site.measure_version",
+                    topic_slug=record.topic_slug,
+                    subtopic_slug=record.subtopic_slug,
+                    measure_slug=record.measure_slug,
+                    version="latest",
+                ),
+            }
+        )
 
     page_count = 0
-    for subtopic in subtopics:
-        page_count += len(subtopic["measures"])
+    for topic, measures_by_subtopic in measure_titles_and_urls_by_topic_and_subtopic.items():
+        for subtopic, measures in measures_by_subtopic.items():
+            page_count += len(measures)
 
-    return loc, page_count, subtopics
+    return geography, page_count, measure_titles_and_urls_by_topic_and_subtopic
 
 
 def get_planned_pages_dashboard_data():

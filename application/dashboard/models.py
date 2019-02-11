@@ -11,21 +11,22 @@ from sqlalchemy import PrimaryKeyConstraint
 from application import db
 
 
-class PageByLowestLevelOfGeography(db.Model):
-    __tablename__ = "pages_by_geography"
+class LatestPublishedMeasureVersionByGeography(db.Model):
+    __tablename__ = "new_latest_published_measure_versions_by_geography"
 
-    subtopic_guid = db.Column("subtopic_guid", db.String())
-    page_guid = db.Column("page_guid", db.String())
-    page_title = db.Column("page_title", db.String())
-    page_version = db.Column("page_version", db.String())
-    page_slug = db.Column("page_slug", db.String())
-    page_position = db.Column("page_position", db.Integer())
-
+    topic_title = db.Column("topic_title", db.String())
+    topic_slug = db.Column("topic_slug", db.String())
+    subtopic_title = db.Column("subtopic_title", db.String())
+    subtopic_slug = db.Column("subtopic_slug", db.String())
+    subtopic_position = db.Column("subtopic_position", db.Integer())
+    measure_slug = db.Column("measure_slug", db.String())
+    measure_position = db.Column("measure_position", db.Integer())
+    measure_version_id = db.Column("measure_version_id", db.Integer())
+    measure_version_title = db.Column("measure_version_title", db.String())
     geography_name = db.Column("geography_name", db.String())
-    geography_description = db.Column("geography_description", db.String())
     geography_position = db.Column("geography_position", db.Integer())
 
-    __table_args__ = (PrimaryKeyConstraint("page_guid"), {})
+    __table_args__ = (PrimaryKeyConstraint("measure_version_id"),)
 
 
 class EthnicGroupByDimension(db.Model):

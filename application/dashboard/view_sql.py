@@ -1,9 +1,9 @@
 drop_all_dashboard_helper_views = """
-    DROP INDEX IF EXISTS uix_pages_by_geography;
+    DROP INDEX IF EXISTS uix_new_latest_published_measure_versions_by_geography;
     DROP INDEX IF EXISTS uix_latest_published_measure_versions;
     DROP INDEX IF EXISTS uix_ethnic_groups_by_dimension;
     DROP INDEX IF EXISTS uix_categorisations_by_dimension;
-    DROP MATERIALIZED VIEW IF EXISTS pages_by_geography;
+    DROP MATERIALIZED VIEW IF EXISTS new_latest_published_measure_versions_by_geography;
     DROP MATERIALIZED VIEW IF EXISTS latest_published_measure_versions;
     DROP MATERIALIZED VIEW IF EXISTS ethnic_groups_by_dimension;
     DROP MATERIALIZED VIEW IF EXISTS categorisations_by_dimension;
@@ -11,7 +11,7 @@ drop_all_dashboard_helper_views = """
 
 refresh_all_dashboard_helper_views = """
     REFRESH MATERIALIZED VIEW CONCURRENTLY latest_published_measure_versions;
-    REFRESH MATERIALIZED VIEW CONCURRENTLY pages_by_geography;
+    REFRESH MATERIALIZED VIEW CONCURRENTLY new_latest_published_measure_versions_by_geography;
     REFRESH MATERIALIZED VIEW CONCURRENTLY ethnic_groups_by_dimension;
     REFRESH MATERIALIZED VIEW CONCURRENTLY categorisations_by_dimension;
 """
@@ -40,29 +40,52 @@ CREATE MATERIALIZED VIEW latest_published_measure_versions AS
          AND mv.version = max_approved_measure_versions.max_approved_version
 );
 
-CREATE UNIQUE INDEX uix_latest_published_measure_versions ON latest_published_measure_versions (id);
+CREATE UNIQUE INDEX uix_latest_published_measure_versions
+ON latest_published_measure_versions (id);
 """
 
-pages_by_geography_view = """
-    CREATE
-    MATERIALIZED
-    VIEW
-    pages_by_geography as (SELECT subtopic.guid AS "subtopic_guid",
-        p.guid AS "page_guid",
-        p.title AS "page_title",
-        p.version AS "page_version",
-        p.slug AS "page_slug",
-        p.position AS "page_position",
-        geog.name AS "geography_name",
-        geog.description AS "geography_description",
-        geog.position AS "geography_position"
-    FROM latest_published_pages p
-    JOIN measure_version subtopic ON p.parent_guid = subtopic.guid
-    JOIN lowest_level_of_geography geog ON p.lowest_level_of_geography_id = geog.name
-    ORDER BY geog.position ASC);
+latest_published_measure_versions_by_geography_view = """
+CREATE MATERIALIZED VIEW new_latest_published_measure_versions_by_geography AS
+(
+   SELECT
+      topic.title AS topic_title,
+      topic.slug AS topic_slug,
+      subtopic.title AS subtopic_title,
+      subtopic.slug AS subtopic_slug,
+      subtopic.position AS subtopic_position,
+      measure.slug AS measure_slug,
+      measure.position AS measure_position,
+      measure_version.id AS measure_version_id,
+      measure_version.title AS measure_version_title,
+      geography.name AS geography_name,
+      geography.position AS geography_position
+   FROM
+      latest_published_measure_versions AS mv
+      JOIN
+         lowest_level_of_geography AS geography
+         ON mv.lowest_level_of_geography_id = geography.name
+      JOIN
+         measure_version
+         ON measure_version.id = mv.id
+      JOIN
+         measure
+         ON measure.id = measure_version.measure_id
+      JOIN
+         subtopic_measure
+         ON subtopic_measure.measure_id = measure.id
+      JOIN
+         subtopic
+         ON subtopic.id = subtopic_measure.subtopic_id
+      JOIN
+         topic
+         ON topic.id = subtopic.topic_id
+   ORDER BY
+      geography.position ASC
+);
 
-    CREATE UNIQUE INDEX uix_pages_by_geography ON pages_by_geography (page_guid);
-"""  # noqa
+CREATE UNIQUE INDEX uix_new_latest_published_measure_versions_by_geography
+ON new_latest_published_measure_versions_by_geography (measure_version_id);
+"""
 
 
 ethnic_groups_by_dimension_view = """

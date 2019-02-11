@@ -387,12 +387,14 @@ def build_dashboards(build_dir):
     # Individual geographic area dashboards
     for loc_level in location_levels:
         slug = loc_level["url"][loc_level["url"].rindex("/") + 1 :]  # The part of the url after the final /
-        loc, page_count, subtopics = get_geographic_breakdown_by_slug_dashboard_data(slug)
+        geography, page_count, measure_titles_and_urls_by_topic_and_subtopic = get_geographic_breakdown_by_slug_dashboard_data(  # noqa
+            slug
+        )
         content = render_template(
             "dashboards/lowest-level-of-geography.html",
-            level_of_geography=loc.name,
+            level_of_geography=geography.name,
             page_count=page_count,
-            measure_tree=subtopics,
+            measure_titles_and_urls_by_topic_and_subtopic=measure_titles_and_urls_by_topic_and_subtopic,
         )
         dir_path = os.path.join(dashboards_dir, f"geographic-breakdown/{slug}")
         os.makedirs(dir_path, exist_ok=True)
