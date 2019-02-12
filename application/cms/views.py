@@ -1131,7 +1131,7 @@ def new_version(topic_slug, subtopic_slug, measure_slug, version):
                     "cms.edit_measure_version",
                     topic_slug=topic.slug,
                     subtopic_slug=subtopic.slug,
-                    measure_slug=new_measure_version.slug,
+                    measure_slug=new_measure_version.measure.slug,
                     version=new_measure_version.version,
                 )
             )

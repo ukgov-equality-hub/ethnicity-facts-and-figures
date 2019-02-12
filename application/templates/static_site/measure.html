@@ -32,7 +32,7 @@
   <meta itemscope itemprop="mainEntityOfPage"  itemType="https://schema.org/WebPage" itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_version',
                           topic_slug=topic_slug,
                           subtopic_slug=subtopic_slug,
-                          measure_slug=measure_version.slug,
+                          measure_slug=measure_version.measure.slug,
                           version=version) }}"/>
 
 
@@ -54,7 +54,7 @@
             <span class="info"><a href="{{ url_for('cms.list_measure_versions',
                                   topic_slug=topic_slug,
                                   subtopic_slug=subtopic_slug,
-                                  measure_slug=measure_version.slug)}}">Version history</a></span>
+                                  measure_slug=measure_version.measure.slug)}}">Version history</a></span>
 
           {% endif %}
 
@@ -66,7 +66,7 @@
             <a href="{{ url_for('static_site.measure_version_markdown',
              topic_slug=topic_slug,
              subtopic_slug=subtopic_slug,
-             measure_slug=measure_version.slug,
+             measure_slug=measure_version.measure.slug,
              version=measure_version.version) }}">Export</a>
         </span>
 
@@ -75,7 +75,7 @@
 
             {% if measure_version.status == 'APPROVED' %}
               {% if current_user.is_authenticated and current_user.can(CREATE_VERSION) %}
-                <a class="button" href="{{ url_for('cms.new_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.slug, version=measure_version.version) }}">
+                <a class="button" href="{{ url_for('cms.new_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">
                   Update
                 </a>
               {% endif %}
@@ -83,7 +83,7 @@
               <a href="{{ url_for('cms.edit_measure_version',
            topic_slug=topic_slug,
            subtopic_slug=subtopic_slug,
-           measure_slug=measure_version.slug,
+           measure_slug=measure_version.measure.slug,
            version=measure_version.version) }}" class="button">Edit</a>
             {% endif %}
           {% endif %}
@@ -92,7 +92,7 @@
         {% if measure_version.status == 'DRAFT' %}
 
 
-          <a class="button delete" href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.slug, version=measure_version.version) }}">Delete</a>
+          <a class="button delete" href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Delete</a>
 
         {% endif %}
       </div>
@@ -115,7 +115,7 @@
       <p>View the <a href="{{ url_for('static_site.measure_version',
                             topic_slug=topic_slug,
                             subtopic_slug=subtopic_slug,
-                            measure_slug=measure_version.slug,
+                            measure_slug=measure_version.measure.slug,
                             version='latest') }}">latest version</a></p>
     </div>
   {% endif %}
@@ -323,25 +323,25 @@
                       {% if tabular_download_viable %}
                       <p class="chart-download">
                           {% if static_mode %}
-                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.slug }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
+                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
                                  download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_table_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
-                                   measure_slug=measure_version.slug,
+                                   measure_slug=measure_version.measure.slug,
                                    version=measure_version.version,
                                    dimension_guid=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}">Download table data (CSV)</a>
                           {% endif %}
 
                           {% if static_mode %}
-                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.slug }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
+                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
                                  data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% else %}
                               <a href="{{ url_for('static_site.dimension_file_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
-                                   measure_slug=measure_version.slug,
+                                   measure_slug=measure_version.measure.slug,
                                    version=measure_version.version,
                                    dimension_guid=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% endif %}
@@ -518,12 +518,12 @@
             {% for file in measure_version.uploads  %}
               {% if file.file_name %}
                 {% set measure_version_data_url =
-                  ("/" + topic_slug + "/"+  subtopic_slug + "/"+  measure_version.slug + "/"+  version + "/downloads/" + file.file_name)
+                  ("/" + topic_slug + "/"+  subtopic_slug + "/"+  measure_version.measure.slug + "/"+  version + "/downloads/" + file.file_name)
                   if static_mode else
                   url_for('static_site.measure_version_file_download',
                           topic_slug=topic_slug,
                           subtopic_slug=subtopic_slug,
-                          measure_slug=measure_version.slug,
+                          measure_slug=measure_version.measure.slug,
                           version=measure_version.version,
                           filename=file.file_name)
                 %}
