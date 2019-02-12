@@ -272,6 +272,7 @@ class TopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
     guid = factory.Faker("uuid4")
     page_type = "topic"
     title = factory.Faker("sentence", nb_words=3)
+    slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
     description = factory.Faker("paragraph", nb_sentences=3)
     additional_description = factory.Faker("paragraph", nb_sentences=5)
     version = "1.0"
@@ -291,6 +292,7 @@ class SubtopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
     guid = factory.Faker("uuid4")
     page_type = "subtopic"
     title = factory.Faker("sentence", nb_words=3)
+    slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
     description = factory.Faker("paragraph", nb_sentences=3)
     additional_description = factory.Faker("paragraph", nb_sentences=5)
     version = "1.0"
