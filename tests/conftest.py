@@ -153,27 +153,27 @@ def _configure_factory_sessions(db_session):
 
 
 @pytest.fixture(scope="function")
-def mock_admin_user(db_session):
+def admin_user(db_session):
     return _user_of_type(db_session, TypeOfUser.ADMIN_USER)
 
 
 @pytest.fixture(scope="function")
-def mock_dept_user(db_session):
+def dept_user(db_session):
     return _user_of_type(db_session, TypeOfUser.DEPT_USER)
 
 
 @pytest.fixture(scope="function")
-def mock_dev_user(db_session):
+def dev_user(db_session):
     return _user_of_type(db_session, TypeOfUser.DEV_USER)
 
 
 @pytest.fixture(scope="function")
-def mock_rdu_user(db_session):
+def rdu_user(db_session):
     return _user_of_type(db_session, TypeOfUser.RDU_USER)
 
 
 @pytest.fixture(scope="function")
-def mock_logged_in_admin_user(test_app_client):
+def logged_in_admin_user(test_app_client):
     user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
     with test_app_client.session_transaction() as session:
         session["user_id"] = user.id
@@ -181,7 +181,7 @@ def mock_logged_in_admin_user(test_app_client):
 
 
 @pytest.fixture(scope="function")
-def mock_logged_in_dept_user(test_app_client):
+def logged_in_dept_user(test_app_client):
     user = UserFactory(user_type=TypeOfUser.DEPT_USER)
     with test_app_client.session_transaction() as session:
         session["user_id"] = user.id
@@ -189,7 +189,7 @@ def mock_logged_in_dept_user(test_app_client):
 
 
 @pytest.fixture(scope="function")
-def mock_logged_in_rdu_user(test_app_client):
+def logged_in_rdu_user(test_app_client):
     user = UserFactory(user_type=TypeOfUser.RDU_USER)
     with test_app_client.session_transaction() as session:
         session["user_id"] = user.id
@@ -197,7 +197,7 @@ def mock_logged_in_rdu_user(test_app_client):
 
 
 @pytest.fixture(scope="function")
-def mock_logged_in_dev_user(test_app_client):
+def logged_in_dev_user(test_app_client):
     user = UserFactory(user_type=TypeOfUser.DEV_USER)
     with test_app_client.session_transaction() as session:
         session["user_id"] = user.id
@@ -206,7 +206,7 @@ def mock_logged_in_dev_user(test_app_client):
 
 # To use this fixture pass in a TypeOfUser as request.param
 @pytest.fixture(scope="function")
-def mock_user(db_session, request):
+def user_with_type(db_session, request):
     return _user_of_type(db_session, request.param)
 
 

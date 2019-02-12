@@ -137,7 +137,7 @@ def test_table_object_builder_does_build_with_dimension_level_data_from_grouped_
     assert dimension_object["context"]["time_period"] == "dimension-time-period"
 
 
-def test_if_dimension_has_chart_download_chart_source_data(mock_logged_in_rdu_user, test_app_client):
+def test_if_dimension_has_chart_download_chart_source_data(logged_in_rdu_user, test_app_client):
     from tests.test_data.chart_and_table import chart, chart_source_data
 
     measure_version = MeasureVersionWithDimensionFactory(
@@ -184,7 +184,7 @@ def test_if_dimension_has_chart_download_chart_source_data(mock_logged_in_rdu_us
     assert actual_data == expected_csv
 
 
-def test_if_dimension_has_chart_and_table_download_table_source_data(mock_logged_in_rdu_user, test_app_client):
+def test_if_dimension_has_chart_and_table_download_table_source_data(logged_in_rdu_user, test_app_client):
     from tests.test_data.chart_and_table import chart, chart_source_data, table, table_source_data
 
     measure_version = MeasureVersionWithDimensionFactory(

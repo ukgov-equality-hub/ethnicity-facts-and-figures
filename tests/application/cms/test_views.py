@@ -31,7 +31,7 @@ class TestGetCreateMeasurePage:
     def teardown(self):
         current_app.config = {**self.saved_config}
 
-    def test_create_measure_page(self, test_app_client, mock_logged_in_rdu_user, stub_measure_data):
+    def test_create_measure_page(self, test_app_client, logged_in_rdu_user, stub_measure_data):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
         SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
@@ -48,7 +48,7 @@ class TestGetCreateMeasurePage:
         assert page.find("div", class_="alert-box").span.string == "Created page %s" % stub_measure_data["title"]
 
     def test_create_measure_page_creates_data_source_entries(
-        self, test_app_client, mock_logged_in_rdu_user, stub_measure_data
+        self, test_app_client, logged_in_rdu_user, stub_measure_data
     ):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
@@ -77,7 +77,7 @@ class TestGetCreateMeasurePage:
         assert res.status_code == 200
         assert DataSource.query.count() == 2
 
-    def test_measure_pages_have_csrf_protection(self, test_app_client, mock_logged_in_rdu_user, stub_measure_data):
+    def test_measure_pages_have_csrf_protection(self, test_app_client, logged_in_rdu_user, stub_measure_data):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
         SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
@@ -94,7 +94,7 @@ class TestGetCreateMeasurePage:
 
 
 @pytest.mark.parametrize("cannot_reject_status", ("DRAFT", "APPROVED"))
-def test_can_not_reject_page_if_not_under_review(test_app_client, mock_logged_in_rdu_user, cannot_reject_status):
+def test_can_not_reject_page_if_not_under_review(test_app_client, logged_in_rdu_user, cannot_reject_status):
     measure_version = MeasureVersionFactory(status=cannot_reject_status)
     response = test_app_client.post(
         url_for(
@@ -111,7 +111,7 @@ def test_can_not_reject_page_if_not_under_review(test_app_client, mock_logged_in
     assert measure_version.status == cannot_reject_status
 
 
-def test_can_reject_page_under_review(test_app_client, mock_logged_in_rdu_user):
+def test_can_reject_page_under_review(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
 
     response = test_app_client.post(
@@ -129,7 +129,7 @@ def test_can_reject_page_under_review(test_app_client, mock_logged_in_rdu_user):
     assert measure_version.status == "REJECTED"
 
 
-def test_admin_user_can_publish_page_in_dept_review(test_app_client, mock_logged_in_admin_user, mock_request_build):
+def test_admin_user_can_publish_page_in_dept_review(test_app_client, logged_in_admin_user, mock_request_build):
     measure_version = MeasureVersionFactory(
         title="Test Measure Page", status="DEPARTMENT_REVIEW", published=False, published_at=None, latest=False
     )
@@ -151,8 +151,8 @@ def test_admin_user_can_publish_page_in_dept_review(test_app_client, mock_logged
     assert page.find("div", class_="alert-box").span.string == 'Sent page "Test Measure Page" to APPROVED'
 
     assert measure_version.status == "APPROVED"
-    assert measure_version.last_updated_by == mock_logged_in_admin_user.email
-    assert measure_version.published_by == mock_logged_in_admin_user.email
+    assert measure_version.last_updated_by == logged_in_admin_user.email
+    assert measure_version.published_by == logged_in_admin_user.email
     assert measure_version.published_at == datetime.date.today()
     assert measure_version.published is True
     assert measure_version.latest is True
@@ -161,7 +161,7 @@ def test_admin_user_can_publish_page_in_dept_review(test_app_client, mock_logged
 
 @pytest.mark.parametrize("cannot_publish_status", ("DRAFT", "INTERNAL_REVIEW", "APPROVED", "REJECTED", "UNPUBLISH"))
 def test_admin_user_can_not_publish_page_not_in_department_review(
-    test_app_client, mock_logged_in_admin_user, mock_request_build, cannot_publish_status
+    test_app_client, logged_in_admin_user, mock_request_build, cannot_publish_status
 ):
     measure_version = MeasureVersionFactory(status=cannot_publish_status)
 
@@ -182,9 +182,7 @@ def test_admin_user_can_not_publish_page_not_in_department_review(
     mock_request_build.assert_not_called()
 
 
-def test_non_admin_user_can_not_publish_page_in_dept_review(
-    test_app_client, mock_logged_in_rdu_user, mock_request_build
-):
+def test_non_admin_user_can_not_publish_page_in_dept_review(test_app_client, logged_in_rdu_user, mock_request_build):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", published=False, published_at=None)
     response = test_app_client.post(
         url_for(
@@ -203,7 +201,7 @@ def test_non_admin_user_can_not_publish_page_in_dept_review(
     mock_request_build.assert_not_called()
 
 
-def test_admin_user_can_unpublish_page(test_app_client, mock_logged_in_admin_user, mock_request_build):
+def test_admin_user_can_unpublish_page(test_app_client, logged_in_admin_user, mock_request_build):
     measure_version = MeasureVersionFactory(status="APPROVED", published=True)
 
     response = test_app_client.post(
@@ -220,11 +218,11 @@ def test_admin_user_can_unpublish_page(test_app_client, mock_logged_in_admin_use
 
     assert response.status_code == 200
     assert measure_version.status == "UNPUBLISH"
-    assert measure_version.unpublished_by == mock_logged_in_admin_user.email
+    assert measure_version.unpublished_by == logged_in_admin_user.email
     mock_request_build.assert_called_once()
 
 
-def test_non_admin_user_can_not_unpublish_page(test_app_client, mock_logged_in_rdu_user, mock_request_build):
+def test_non_admin_user_can_not_unpublish_page(test_app_client, logged_in_rdu_user, mock_request_build):
     measure_version = MeasureVersionFactory(status="APPROVED", published=True)
 
     response = test_app_client.post(
@@ -244,7 +242,7 @@ def test_non_admin_user_can_not_unpublish_page(test_app_client, mock_logged_in_r
     mock_request_build.assert_not_called()
 
 
-def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(test_app_client, mock_logged_in_admin_user):
+def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(test_app_client, logged_in_admin_user):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", published=False, published_at=None)
     response = test_app_client.get(
         url_for(
@@ -277,7 +275,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(test_app_clie
     assert page.find_all("button", class_="button")[-1].text.strip().lower() == "unpublish"
 
 
-def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(test_app_client, mock_logged_in_rdu_user):
+def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", published=False, published_at=None)
     response = test_app_client.get(
         url_for(
@@ -310,7 +308,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(test_a
     assert page.find_all("a", class_="button")[-1].text.strip() == "Update"
 
 
-def test_order_measures_in_subtopic(test_app_client, mock_logged_in_rdu_user):
+def test_order_measures_in_subtopic(test_app_client, logged_in_rdu_user):
     subtopic = SubtopicFactory()
     subtopic_page = SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
     ids = [0, 1, 2, 3, 4]
@@ -339,7 +337,7 @@ def test_order_measures_in_subtopic(test_app_client, mock_logged_in_rdu_user):
     assert subtopic.measures[4].slug == "4"
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_logged_in_rdu_user.id
+        session["user_id"] = logged_in_rdu_user.id
 
     updates = []
     for position, id_ in enumerate(reversed(ids)):
@@ -364,7 +362,7 @@ def test_order_measures_in_subtopic(test_app_client, mock_logged_in_rdu_user):
     assert subtopic.measures[4].slug == "0"
 
 
-def test_reorder_measures_triggers_build(test_app_client, mock_logged_in_rdu_user):
+def test_reorder_measures_triggers_build(test_app_client, logged_in_rdu_user):
     subtopic = SubtopicFactory()
     ids = [0, 1]
     reversed_ids = ids[::-1]
@@ -398,7 +396,7 @@ def test_reorder_measures_triggers_build(test_app_client, mock_logged_in_rdu_use
 
 
 def test_order_measures_in_subtopic_sets_order_on_all_versions(
-    test_app_client, mock_logged_in_rdu_user
+    test_app_client, logged_in_rdu_user
 ):  # TODO: Rewrite this test when we stop using the parent/children relationship on MeasureVersion
     subtopic = SubtopicFactory()
     subtopic_page = SubtopicPageFactory(id=subtopic.id, slug=subtopic.slug)  # TODO: Remove
@@ -440,7 +438,7 @@ def test_order_measures_in_subtopic_sets_order_on_all_versions(
     assert subtopic.measures[1].slug == "0"
 
 
-def test_view_edit_measure_page(test_app_client, mock_logged_in_rdu_user, stub_measure_data):
+def test_view_edit_measure_page(test_app_client, logged_in_rdu_user, stub_measure_data):
     data_source = DataSourceFactory(
         title="DWP Stats",
         type_of_data=["SURVEY"],
@@ -574,7 +572,7 @@ def test_view_edit_measure_page(test_app_client, mock_logged_in_rdu_user, stub_m
 
 
 def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
-    test_app_client, mock_logged_in_dept_user, mock_delete_upload
+    test_app_client, logged_in_dept_user, mock_delete_upload
 ):
     measure_version = MeasureVersionFactory(status="DRAFT", uploads__guid="test-download")
 
@@ -606,10 +604,10 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
     mock_delete_upload.assert_not_called()
 
 
-def test_dept_user_should_be_able_to_delete_upload_from_shared_page(test_app_client, mock_logged_in_dept_user):
+def test_dept_user_should_be_able_to_delete_upload_from_shared_page(test_app_client, logged_in_dept_user):
     measure_version = MeasureVersionFactory(
         status="DRAFT",
-        measure__shared_with=[mock_logged_in_dept_user],
+        measure__shared_with=[logged_in_dept_user],
         uploads__guid="test-download",
         uploads__title="upload title",
     )
@@ -633,7 +631,7 @@ def test_dept_user_should_be_able_to_delete_upload_from_shared_page(test_app_cli
 
 
 def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
-    test_app_client, mock_logged_in_dept_user, mock_edit_upload
+    test_app_client, logged_in_dept_user, mock_edit_upload
 ):
     measure_version = MeasureVersionFactory(
         status="DRAFT", uploads__guid="test-download", uploads__file_name="test-download.csv"
@@ -667,10 +665,10 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
     mock_edit_upload.assert_not_called()
 
 
-def test_dept_user_should_be_able_to_edit_upload_on_shared_page(test_app_client, mock_logged_in_dept_user):
+def test_dept_user_should_be_able_to_edit_upload_on_shared_page(test_app_client, logged_in_dept_user):
     measure_version = MeasureVersionFactory(
         status="DRAFT",
-        measure__shared_with=[mock_logged_in_dept_user],
+        measure__shared_with=[logged_in_dept_user],
         uploads__guid="test-download",
         uploads__title="upload title",
     )
@@ -691,9 +689,9 @@ def test_dept_user_should_be_able_to_edit_upload_on_shared_page(test_app_client,
     assert page.find("h1").string == "Edit source data"
 
 
-def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, mock_logged_in_dept_user):
+def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, logged_in_dept_user):
     measure_version = MeasureVersionFactory(
-        status="DRAFT", measure__shared_with=[mock_logged_in_dept_user], title="this will be updated"
+        status="DRAFT", measure__shared_with=[logged_in_dept_user], title="this will be updated"
     )
 
     data = {"title": "this is the update", "db_version_id": measure_version.db_version_id + 1}
@@ -715,7 +713,7 @@ def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, mock_logg
     assert measure_version.title == "this is the update"
 
 
-def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(test_app_client, mock_logged_in_dept_user):
+def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(test_app_client, logged_in_dept_user):
     measure_version = MeasureVersionWithDimensionFactory()
 
     response = test_app_client.get(
@@ -744,8 +742,8 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(tes
     assert response.status_code == 403
 
 
-def test_dept_cannot_publish_a_shared_page(test_app_client, mock_logged_in_dept_user):
-    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", measure__shared_with=[mock_logged_in_dept_user])
+def test_dept_cannot_publish_a_shared_page(test_app_client, logged_in_dept_user):
+    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", measure__shared_with=[logged_in_dept_user])
 
     response = test_app_client.get(
         url_for(
@@ -778,19 +776,21 @@ def test_dept_cannot_publish_a_shared_page(test_app_client, mock_logged_in_dept_
 
 
 @pytest.mark.parametrize(
-    "mock_user, can_see_copy_button",
+    "user_with_type, can_see_copy_button",
     [
         (TypeOfUser.DEPT_USER, False),
         (TypeOfUser.RDU_USER, False),
         (TypeOfUser.ADMIN_USER, False),
         (TypeOfUser.DEV_USER, True),
     ],
-    indirect=["mock_user"],
+    indirect=["user_with_type"],
 )
-def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(test_app_client, mock_user, can_see_copy_button):
+def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(
+    test_app_client, user_with_type, can_see_copy_button
+):
     measure_version = MeasureVersionFactory()
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_user.id
+        session["user_id"] = user_with_type.id
 
     response = test_app_client.get(
         url_for(
@@ -808,7 +808,7 @@ def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(test_app_cl
     assert ("create a copy of this measure" in page_button_texts) is can_see_copy_button
 
 
-def test_copy_measure_page(test_app_client, mock_logged_in_dev_user):
+def test_copy_measure_page(test_app_client, logged_in_dev_user):
     measure_version = MeasureVersionFactory(title="Test Measure Page", status="APPROVED")
 
     response = test_app_client.post(

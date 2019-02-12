@@ -93,7 +93,7 @@ class TestGetDataSourceForms:
 
 
 class TestFlashMessages:
-    def test_markdown_rendered_in_template(self, test_app_client, mock_logged_in_rdu_user):
+    def test_markdown_rendered_in_template(self, test_app_client, logged_in_rdu_user):
         flash("text that should be markdown'd\n\n* a list item")
 
         doc = html.fromstring(render_template("base.html"))

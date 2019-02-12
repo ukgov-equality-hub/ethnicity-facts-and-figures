@@ -17,7 +17,7 @@ from tests.models import (
 
 
 class TestDimensionModel:
-    def test_create_valid_dimension(self, test_app_client, mock_logged_in_rdu_user):
+    def test_create_valid_dimension(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionFactory(
             version="1.0",
@@ -39,7 +39,7 @@ class TestDimensionModel:
         assert resp.status_code == 302, "Should be redirected to edit page for dimension"
         assert re.match(r"http://localhost:5000/cms/topic/subtopic/measure/1.0/[^/]+/edit", resp.location)
 
-    def test_create_dimension_without_specifying_title(self, test_app_client, mock_logged_in_rdu_user):
+    def test_create_dimension_without_specifying_title(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionFactory()
 
@@ -56,7 +56,7 @@ class TestDimensionModel:
 
         assert page.find("title").string == "Error: Create dimension"
 
-    def test_update_dimension_with_valid_data(self, test_app_client, mock_logged_in_rdu_user):
+    def test_update_dimension_with_valid_data(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionWithDimensionFactory(
             version="1.0",
@@ -81,7 +81,7 @@ class TestDimensionModel:
         assert resp.status_code == 302, "Should be redirected to edit page for dimension"
         assert re.match(r"http://localhost:5000/cms/topic/subtopic/measure/1.0/dimension-guid/edit", resp.location)
 
-    def test_update_dimension_with_invalid_data(self, test_app_client, mock_logged_in_rdu_user):
+    def test_update_dimension_with_invalid_data(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionWithDimensionFactory(
             version="1.0",

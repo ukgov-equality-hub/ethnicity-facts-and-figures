@@ -26,7 +26,7 @@ from tests.models import (
         "/dashboards/geographic-breakdown",
     ),
 )
-def test_dashboard_pages_return_200(test_app_client, mock_logged_in_rdu_user, dashboard_url):
+def test_dashboard_pages_return_200(test_app_client, logged_in_rdu_user, dashboard_url):
     data_source = DataSourceFactory()
     topic_page = TopicPageFactory(slug="topic-slug")  # TODO: Remove
     subtopic = SubtopicFactory(topic__slug="topic-slug")  # TODO: Remove

@@ -18,7 +18,7 @@ from tests.models import (
 page_service = PageService()
 
 
-def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_logged_in_rdu_user, app):
+def test_homepage_includes_mailing_list_sign_up(test_app_client, logged_in_rdu_user, app):
 
     response = test_app_client.get(url_for("static_site.index"))
 
@@ -47,10 +47,10 @@ def test_homepage_search_links_to_google_custom_url_before_javascript(test_app_c
     assert search_forms[0].select("[name=cx]")[0]["value"] == Config.GOOGLE_CUSTOM_SEARCH_ID
 
 
-def test_rdu_user_can_see_page_if_not_shared(test_app_client, mock_logged_in_rdu_user):
+def test_rdu_user_can_see_page_if_not_shared(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[])
     assert measure_version.measure.shared_with == []
-    assert mock_logged_in_rdu_user.measures == []
+    assert logged_in_rdu_user.measures == []
 
     resp = test_app_client.get(
         url_for(
@@ -67,10 +67,10 @@ def test_rdu_user_can_see_page_if_not_shared(test_app_client, mock_logged_in_rdu
     assert page.h1.text.strip() == "Test Measure Page"
 
 
-def test_departmental_user_cannot_see_page_unless_shared(test_app_client, mock_logged_in_dept_user):
+def test_departmental_user_cannot_see_page_unless_shared(test_app_client, logged_in_dept_user):
     measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[])
     assert measure_version.measure.shared_with == []
-    assert mock_logged_in_dept_user.measures == []
+    assert logged_in_dept_user.measures == []
 
     resp = test_app_client.get(
         url_for(
@@ -84,7 +84,7 @@ def test_departmental_user_cannot_see_page_unless_shared(test_app_client, mock_l
 
     assert resp.status_code == 403
 
-    measure_version.measure.shared_with.append(mock_logged_in_dept_user)
+    measure_version.measure.shared_with.append(logged_in_dept_user)
 
     resp = test_app_client.get(
         url_for(
@@ -101,7 +101,7 @@ def test_departmental_user_cannot_see_page_unless_shared(test_app_client, mock_l
     assert page.h1.text.strip() == "Test Measure Page"
 
 
-def test_get_file_download_returns_404(test_app_client, mock_logged_in_rdu_user):
+def test_get_file_download_returns_404(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(uploads=[])
     resp = test_app_client.get(
         url_for(
@@ -117,7 +117,7 @@ def test_get_file_download_returns_404(test_app_client, mock_logged_in_rdu_user)
     assert resp.status_code == 404
 
 
-def test_view_export_page(test_app_client, mock_logged_in_rdu_user):
+def test_view_export_page(test_app_client, logged_in_rdu_user):
     data_source = DataSourceFactory(
         title="DWP Stats",
         source_url="http://dwp.gov.uk",
@@ -243,7 +243,7 @@ def test_view_export_page(test_app_client, mock_logged_in_rdu_user):
     assert purpose_of_data_value.text.strip() == "Purpose of data source"
 
 
-def test_view_topic_page(test_app_client, mock_logged_in_rdu_user):
+def test_view_topic_page(test_app_client, logged_in_rdu_user):
     topic = TopicFactory(title="Test topic page")
     resp = test_app_client.get(url_for("static_site.topic", topic_slug=topic.slug))
 
@@ -252,13 +252,11 @@ def test_view_topic_page(test_app_client, mock_logged_in_rdu_user):
     assert page.h1.text.strip() == "Test topic page"
 
 
-def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(
-    test_app_client, mock_rdu_user, mock_admin_user
-):
+def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(test_app_client, rdu_user, admin_user):
     topic = TopicFactory(title="Test topic page")
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
+        session["user_id"] = admin_user.id
 
     resp = test_app_client.get(url_for("static_site.topic", topic_slug=topic.slug))
 
@@ -268,7 +266,7 @@ def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(
     assert len(page.find_all("script", text=re.compile("setupReorderableTables"))) == 1
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
+        session["user_id"] = rdu_user.id
 
     resp = test_app_client.get(url_for("static_site.topic", topic_slug=topic.slug))
 
@@ -278,9 +276,7 @@ def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(
     assert len(page.find_all("script", text=re.compile("setupReorderableTables"))) == 0
 
 
-def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(
-    test_app_client, mock_logged_in_admin_user
-):
+def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(test_app_client, logged_in_admin_user):
     topic = TopicFactory(title="Test topic page")
     resp = test_app_client.get(url_for("static_site.topic", topic_slug=topic.slug))
 
@@ -297,7 +293,7 @@ def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(
     assert len(page.find_all("script", text=re.compile("setupReorderableTables"))) == 0
 
 
-def test_view_index_page_only_contains_one_topic(test_app_client, mock_logged_in_rdu_user):
+def test_view_index_page_only_contains_one_topic(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(status="APPROVED")
     resp = test_app_client.get(url_for("static_site.index"))
 
@@ -309,7 +305,7 @@ def test_view_index_page_only_contains_one_topic(test_app_client, mock_logged_in
     assert topics[0].find("a").text.strip() == measure_version.measure.subtopic.topic.title
 
 
-def test_view_sandbox_topic(test_app_client, mock_logged_in_rdu_user):
+def test_view_sandbox_topic(test_app_client, logged_in_rdu_user):
 
     sandbox_topic = TopicFactory(slug="testing-space", title="Test sandbox topic")
     resp = test_app_client.get(url_for("static_site.topic", topic_slug=sandbox_topic.slug))
@@ -319,7 +315,7 @@ def test_view_sandbox_topic(test_app_client, mock_logged_in_rdu_user):
     assert page.h1.text.strip() == "Test sandbox topic"
 
 
-def test_measure_page_social_sharing(app, test_app_client, mock_logged_in_rdu_user):
+def test_measure_page_social_sharing(app, test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(
         title="Test Measure Page", summary="Unemployment Summary\n * This is a summary bullet"
     )
@@ -354,7 +350,7 @@ def test_measure_page_social_sharing(app, test_app_client, mock_logged_in_rdu_us
         assert twitter_sharing_meta[0].get("content") == value
 
 
-def test_view_measure_page(test_app_client, mock_logged_in_rdu_user):
+def test_view_measure_page(test_app_client, logged_in_rdu_user):
     data_source = DataSourceFactory(
         title="DWP Stats",
         source_url="http://dwp.gov.uk",
@@ -457,7 +453,7 @@ def test_view_measure_page(test_app_client, mock_logged_in_rdu_user):
 
 @pytest.mark.parametrize(["number_of_topics", "row_counts"], ((1, (1,)), (3, (3,)), (5, (3, 2)), (9, (3, 3, 3))))
 def test_homepage_topics_display_in_rows_with_three_columns(
-    number_of_topics, row_counts, test_app_client, mock_logged_in_rdu_user
+    number_of_topics, row_counts, test_app_client, logged_in_rdu_user
 ):
     for i in range(number_of_topics):
         topic = TopicFactory(slug=f"topic-{i}", title=f"Test topic page #{i}")
@@ -490,7 +486,7 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     ((True, True, True), (True, False, True), (False, True, False), (False, False, True)),
 )
 def test_homepage_only_shows_topics_with_published_measures_for_site_type(
-    measure_published, static_mode, topic_should_be_visible, test_app_client, mock_logged_in_rdu_user
+    measure_published, static_mode, topic_should_be_visible, test_app_client, logged_in_rdu_user
 ):
     MeasureVersionFactory(
         status="APPROVED" if measure_published else "DRAFT",
@@ -511,7 +507,7 @@ def test_homepage_only_shows_topics_with_published_measures_for_site_type(
     ((True, True, True), (True, False, True), (False, True, False), (False, False, True)),
 )
 def test_topic_page_only_shows_subtopics_with_published_measures_for_static_site_build(
-    measure_published, static_mode, subtopic_should_be_visible, test_app_client, mock_logged_in_rdu_user
+    measure_published, static_mode, subtopic_should_be_visible, test_app_client, logged_in_rdu_user
 ):
     MeasureVersionFactory(
         status="APPROVED" if measure_published else "DRAFT",
@@ -534,12 +530,12 @@ def test_topic_page_only_shows_subtopics_with_published_measures_for_static_site
     ((True, True, True), (True, False, True), (False, True, True), (False, False, False)),
 )
 def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_dept_user_type(
-    measure_shared, measure_published, subtopic_should_be_visible, test_app_client, mock_logged_in_dept_user
+    measure_shared, measure_published, subtopic_should_be_visible, test_app_client, logged_in_dept_user
 ):
     MeasureVersionFactory(
         status="APPROVED" if measure_published else "DRAFT",
         published=measure_published,
-        measure__shared_with=[mock_logged_in_dept_user] if measure_shared else [],
+        measure__shared_with=[logged_in_dept_user] if measure_shared else [],
         measure__subtopics__topic__slug="test-topic",
         measure__subtopics__topic__title="Test topic page",
         measure__subtopics__title="Test subtopic page",
@@ -555,11 +551,11 @@ def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_d
 
 @pytest.mark.parametrize("user_type, empty_subtopic_should_be_visible", (("DEPT", False), ("RDU", True)))
 def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
-    user_type, empty_subtopic_should_be_visible, test_app_client, mock_rdu_user, mock_dept_user
+    user_type, empty_subtopic_should_be_visible, test_app_client, rdu_user, dept_user
 ):
     SubtopicFactory(title="Test subtopic page", topic__slug="test-topic")
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_dept_user.id if user_type == "DEPT" else mock_rdu_user.id
+        session["user_id"] = dept_user.id if user_type == "DEPT" else rdu_user.id
 
     resp = test_app_client.get(url_for("static_site.topic", topic_slug="test-topic"))
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -569,7 +565,7 @@ def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
 
 
 def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(
-    test_app_client, mock_logged_in_rdu_user
+    test_app_client, logged_in_rdu_user
 ):
     measure_version = MeasureVersionFactory(
         status="DRAFT",
@@ -581,7 +577,7 @@ def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_a
         measure__subtopics__title="Test subtopic page",
     )
     assert measure_version.measure.shared_with == []
-    assert mock_logged_in_rdu_user.measures == []
+    assert logged_in_rdu_user.measures == []
 
     resp = test_app_client.get(
         url_for(
@@ -604,7 +600,7 @@ def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_a
         )
 
 
-def test_latest_published_version_does_not_add_noindex_for_robots(test_app_client, mock_logged_in_admin_user):
+def test_latest_published_version_does_not_add_noindex_for_robots(test_app_client, logged_in_admin_user):
     # GIVEN the latest published version of a page with later draft created
     measure = MeasureFactory()
     # Outdated version
@@ -636,7 +632,7 @@ def test_latest_published_version_does_not_add_noindex_for_robots(test_app_clien
     assert len(robots_tags) == 0
 
 
-def test_previous_version_adds_noindex_for_robots(test_app_client, mock_logged_in_admin_user):
+def test_previous_version_adds_noindex_for_robots(test_app_client, logged_in_admin_user):
     # GIVEN a page with a later published version
     measure = MeasureFactory()
     # Outdated version
@@ -686,7 +682,7 @@ class TestMeasurePage:
         ),
     )
     def test_measure_page_download_table_tabular_data_link_correct(
-        self, test_app_client, mock_logged_in_rdu_user, static_mode, expected_url
+        self, test_app_client, logged_in_rdu_user, static_mode, expected_url
     ):
         from tests.test_data.chart_and_table import chart, simple_table
 
@@ -717,7 +713,7 @@ class TestMeasurePage:
         ),
     )
     def test_measure_page_download_table_source_data_link_correct(
-        self, test_app_client, mock_logged_in_rdu_user, static_mode, expected_url
+        self, test_app_client, logged_in_rdu_user, static_mode, expected_url
     ):
         from tests.test_data.chart_and_table import chart, simple_table
 
@@ -747,7 +743,7 @@ class TestMeasurePage:
         ),
     )
     def test_measure_page_download_measure_source_data_link_correct(
-        self, test_app_client, mock_logged_in_rdu_user, static_mode, expected_url
+        self, test_app_client, logged_in_rdu_user, static_mode, expected_url
     ):
         from tests.test_data.chart_and_table import chart, simple_table
 
