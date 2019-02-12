@@ -4,7 +4,7 @@ from application.cms.classification_service import ClassificationService
 from application.cms.exceptions import ClassificationNotFoundException
 from application.cms.models import Classification, Ethnicity
 
-from tests.models import ClassificationFactory
+from tests.models import ClassificationFactory, EthnicityFactory
 
 classification_service = ClassificationService()
 
@@ -97,7 +97,7 @@ def test_add_values_to_classification_appends_new_values():
 
 def test_remove_value_from_classification_removes_value():
     # given a setup with two classifications with values
-    ethnicities = {colour.lower(): Ethnicity(value=colour) for colour in ["Green", "Red", "Purple", "Pink"]}
+    ethnicities = {colour.lower(): EthnicityFactory(value=colour) for colour in ["Green", "Red", "Purple", "Pink"]}
     c1, c2 = (
         ClassificationFactory(
             id="C1",
@@ -126,7 +126,7 @@ def test_remove_value_from_classification_removes_value():
 def test_add_parent_value_to_classification_appends_new_parent():
     # given a setup with one classification
     people = [
-        Ethnicity(value=person)
+        EthnicityFactory(value=person)
         for person in ["Tom", "Frankie", "Caroline", "Adam", "Cath", "Marcus", "Sylvia", "Katerina"]
     ]
 
@@ -154,7 +154,7 @@ def test_add_parent_value_to_classification_appends_new_parent():
 def test_remove_parent_value_from_classification_removes_value():
     # given a setup with one classification
     people = [
-        Ethnicity(value=person)
+        EthnicityFactory(value=person)
         for person in ["Tom", "Frankie", "Caroline", "Adam", "Cath", "Marcus", "Sylvia", "Katerina"]
     ]
     g2 = ClassificationFactory(
