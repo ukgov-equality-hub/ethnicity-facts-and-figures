@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from unittest.mock import patch
 
 import pytest
@@ -6,6 +7,13 @@ import stopit
 from application.sitebuilder.build import do_it
 from application.sitebuilder.build_service import build_site, request_build
 from manage import refresh_materialized_views
+from tests.models import (
+    MeasureFactory,
+    MeasureVersionWithDimensionFactory,
+    DataSourceFactory,
+    TopicPageFactory,
+    SubtopicPageFactory,
+)
 from tests.utils import GeneralTestException, UnexpectedMockInvocationException
 
 
@@ -21,16 +29,7 @@ def test_build_exceptions_not_suppressed(app):
         assert str(e.value) == "build error"
 
 
-def test_static_site_build(
-    db_session,
-    single_use_app,
-    stub_home_page,
-    # Including these three versioned pages ensures the build test exercises the logic to build multiple page versions
-    stub_measure_page_one_of_three,
-    stub_measure_page_two_of_three,
-    stub_measure_page_three_of_three,
-    stub_page_with_dimension_and_chart_and_table,
-):
+def test_static_site_build(db_session, single_use_app):
     """
     A basic test for the core flow of the static site builder. This patches/mocks a few of the key integrations to
     help prevent calling out to external services accidentally, and where possible, includes two levels of failsafes.
@@ -38,7 +37,7 @@ def test_static_site_build(
     2) We mock out the push_site, so that even if the config setting fails, this test will raise an error.
 
     Unfortunately, due to circular dependencies between build/build_service, it's not easy to mock out `deploy_site`.
-    So we mock out the S3FileSystem, which is initialized within `deloy_site`. This will throw an error if invoked.
+    So we mock out the S3FileSystem, which is initialized within `deploy_site`. This will throw an error if invoked.
 
     `create_versioned_assets` is mocked out because that function is only needed to generate css/js, which is tested
     in a separate step outside of pytest.
@@ -62,10 +61,66 @@ def test_static_site_build(
                                 s3_fs_patch.side_effect = UnexpectedMockInvocationException
                                 trello_service_patch.get_measure_cards.return_value = []
 
-                                # We publish this page to ensure there is an item for each of the dashboard views
-                                stub_page_with_dimension_and_chart_and_table.status = "APPROVED"
-                                db_session.session.add(stub_page_with_dimension_and_chart_and_table)
-                                db_session.session.commit()
+                                # TODO: remove these once dashboard data_helpers no longe rely on them
+                                topic_page = TopicPageFactory()
+                                subtopic_page = SubtopicPageFactory(parent=topic_page)
+                                # TODO END
+
+                                # Including these three versioned pages ensures the build test exercises the logic to
+                                # build multiple page versions
+                                measure = MeasureFactory()
+                                # Outdated version
+                                MeasureVersionWithDimensionFactory(
+                                    measure=measure,
+                                    status="APPROVED",
+                                    latest=False,
+                                    published_at=datetime.now().date(),
+                                    version="1.0",
+                                    data_sources=[DataSourceFactory()],
+                                    parent=subtopic_page,  # TODO: Remove
+                                )
+                                # Latest published version
+                                MeasureVersionWithDimensionFactory(
+                                    measure=measure,
+                                    status="APPROVED",
+                                    latest=False,
+                                    published_at=datetime.now().date(),
+                                    version="2.0",
+                                    data_sources=[DataSourceFactory()],
+                                    parent=subtopic_page,  # TODO: Remove
+                                )
+                                # Newer draft version
+                                MeasureVersionWithDimensionFactory(
+                                    measure=measure,
+                                    status="DRAFT",
+                                    published_at=None,
+                                    latest=True,
+                                    version="2.1",
+                                    data_sources=[DataSourceFactory()],
+                                    parent=subtopic_page,  # TODO: Remove
+                                )
+
+                                # Publish another page with dimension, chart and table to ensure there's an item for
+                                # each of the dashboard views
+                                from tests.test_data.chart_and_table import chart, simple_table
+
+                                MeasureVersionWithDimensionFactory(
+                                    status="APPROVED",
+                                    latest=True,
+                                    published_at=datetime.now().date() - timedelta(weeks=1),
+                                    version="1.0",
+                                    data_sources=[DataSourceFactory()],
+                                    measure__subtopics__topic__slug="topic",
+                                    measure__subtopics__slug="subtopic",
+                                    measure__slug="measure",
+                                    dimensions__guid="dimension-guid",
+                                    dimensions__chart=chart,
+                                    dimensions__table=simple_table(),
+                                    uploads__guid="test-download",
+                                    uploads__title="Test measure page data",
+                                    uploads__file_name="test-measure-page-data.csv",
+                                    parent=subtopic_page,  # TODO: Remove
+                                )
 
                                 # Materialized views are initially empty - populate them with our fixture page data
                                 refresh_materialized_views()

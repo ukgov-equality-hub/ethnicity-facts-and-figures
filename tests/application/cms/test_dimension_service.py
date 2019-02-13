@@ -151,14 +151,14 @@ def test_add_table_to_dimension():
     assert dimension.table == table
 
 
-def test_adding_table_with_data_matching_an_ethnicity_classification(stub_measure_page, two_classifications_2A_5A):
+def test_adding_table_with_data_matching_an_ethnicity_classification(two_classifications_2A_5A):
 
     # Given an existing dimension with no associated table
     dimension = dimension_service.create_dimension(
-        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
+        MeasureVersionFactory(), title="test-dimension", time_period="time_period", summary="summary"
     )
 
-    # When update_dimension is called with table data with classification code '5A' and use_custom False
+    # When update_dimension is called with table data with classification code '2A' and use_custom False
     dimension_service.update_dimension(
         dimension,
         {
@@ -182,11 +182,11 @@ def test_adding_table_with_data_matching_an_ethnicity_classification(stub_measur
     assert dimension.dimension_table.includes_unknown is True
 
 
-def test_adding_chart_with_data_matching_an_ethnicity_classification(stub_measure_page, two_classifications_2A_5A):
+def test_adding_chart_with_data_matching_an_ethnicity_classification(two_classifications_2A_5A):
 
     # Given an existing dimension with no associated chart
     dimension = dimension_service.create_dimension(
-        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
+        MeasureVersionFactory(), title="test-dimension", time_period="time_period", summary="summary"
     )
 
     # When update_dimension is called with chart data with classification code '2A' and use_custom False
@@ -213,11 +213,11 @@ def test_adding_chart_with_data_matching_an_ethnicity_classification(stub_measur
     assert dimension.dimension_chart.includes_unknown is True
 
 
-def test_adding_table_with_custom_data_classification(stub_measure_page, two_classifications_2A_5A):
+def test_adding_table_with_custom_data_classification(two_classifications_2A_5A):
 
     # Given an existing dimension with no associated table
     dimension = dimension_service.create_dimension(
-        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
+        MeasureVersionFactory(), title="test-dimension", time_period="time_period", summary="summary"
     )
 
     # When update_dimension is called with table data with classification code '2A' and use_custom True
@@ -259,11 +259,11 @@ def test_adding_table_with_custom_data_classification(stub_measure_page, two_cla
     assert dimension.dimension_classification.includes_unknown is True
 
 
-def test_adding_chart_with_custom_data_classification(stub_measure_page, two_classifications_2A_5A):
+def test_adding_chart_with_custom_data_classification(two_classifications_2A_5A):
 
     # Given an existing dimension with no associated table
     dimension = dimension_service.create_dimension(
-        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
+        MeasureVersionFactory(), title="test-dimension", time_period="time_period", summary="summary"
     )
 
     # When update_dimension is called with chart data with classification code '2A' and use_custom True
@@ -305,11 +305,11 @@ def test_adding_chart_with_custom_data_classification(stub_measure_page, two_cla
     assert dimension.dimension_classification.includes_unknown is True
 
 
-def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_measure_page, two_classifications_2A_5A):
+def test_adding_table_with_custom_data_and_existing_more_detailed_chart(two_classifications_2A_5A):
 
     # Given an existing dimension with a chart with classification '5A' but no table
     dimension = dimension_service.create_dimension(
-        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
+        MeasureVersionFactory(), title="test-dimension", time_period="time_period", summary="summary"
     )
 
     dimension.chart = {"chart_is_just_a": "dictionary"}
@@ -367,11 +367,11 @@ def test_adding_table_with_custom_data_and_existing_more_detailed_chart(stub_mea
     assert dimension.dimension_classification.includes_unknown is False
 
 
-def test_adding_table_with_custom_data_and_existing_less_detailed_chart(stub_measure_page, two_classifications_2A_5A):
+def test_adding_table_with_custom_data_and_existing_less_detailed_chart(two_classifications_2A_5A):
 
     # Given an existing dimension with a chart with classification '2A' but no table
     dimension = dimension_service.create_dimension(
-        stub_measure_page, title="test-dimension", time_period="time_period", summary="summary"
+        MeasureVersionFactory(), title="test-dimension", time_period="time_period", summary="summary"
     )
 
     dimension.chart = {"chart_is_just_a": "dictionary"}
