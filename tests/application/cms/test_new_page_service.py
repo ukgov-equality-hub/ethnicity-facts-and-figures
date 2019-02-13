@@ -169,37 +169,22 @@ class TestNewPageService:
             )
 
     def test_get_latest_version_of_all_measures(self):
-        measure_1_version_1_0 = MeasureVersionFactory(
-            version="1.0", status="APPROVED", title="Measure 1 version 1.0", published=True
-        )
+        measure_1_version_1_0 = MeasureVersionFactory(version="1.0", status="APPROVED", title="Measure 1 version 1.0")
         measure_1_version_2_0 = MeasureVersionFactory(
-            version="2.0",
-            status="APPROVED",
-            title="Measure 1 version 2.0",
-            published=True,
-            measure=measure_1_version_1_0.measure,
+            version="2.0", status="APPROVED", title="Measure 1 version 2.0", measure=measure_1_version_1_0.measure
         )
         measure_1_version_2_1 = MeasureVersionFactory(
-            version="2.1",
-            status="DRAFT",
-            title="Measure 1 version 2.1",
-            published=False,
-            measure=measure_1_version_1_0.measure,
+            version="2.1", status="DRAFT", title="Measure 1 version 2.1", measure=measure_1_version_1_0.measure
         )
 
         measure_2_version_1_0 = MeasureVersionFactory(
             version="1.0",
             status="APPROVED",
             title="Measure 2 version 1.0",
-            published=True,
             measure__subtopics=measure_1_version_1_0.measure.subtopics,
         )
         measure_2_version_2_0 = MeasureVersionFactory(
-            version="2.0",
-            status="DRAFT",
-            title="Measure 2 version 2.0",
-            published=False,
-            measure=measure_2_version_1_0.measure,
+            version="2.0", status="DRAFT", title="Measure 2 version 2.0", measure=measure_2_version_1_0.measure
         )
 
         assert new_page_service.get_latest_version_of_all_measures(include_drafts=False) == [

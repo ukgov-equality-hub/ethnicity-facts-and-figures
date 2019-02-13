@@ -469,7 +469,6 @@ def test_homepage_topics_display_in_rows_with_three_columns(
             page_type="measure",
             slug=f"measure-{i}",
             status="APPROVED",
-            published=True,
             title=f"Test measure page #{i}",
             version="1.0",
             measure=measure,
@@ -613,15 +612,11 @@ def test_latest_published_version_does_not_add_noindex_for_robots(test_app_clien
     # GIVEN the latest published version of a page with later draft created
     measure = MeasureFactory()
     # Outdated version
-    MeasureVersionFactory(measure=measure, status="APPROVED", published=True, latest=False, version="1.0")
+    MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="1.0")
     # Latest published version
-    latest_published_version = MeasureVersionFactory(
-        measure=measure, status="APPROVED", published=True, latest=False, version="2.0"
-    )
+    latest_published_version = MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="2.0")
     # Newer draft version
-    MeasureVersionFactory(
-        measure=measure, status="DRAFT", published=False, published_at=None, latest=True, version="2.1"
-    )
+    MeasureVersionFactory(measure=measure, status="DRAFT", latest=True, version="2.1")
 
     # WHEN we get the rendered template
 
@@ -645,15 +640,11 @@ def test_previous_version_adds_noindex_for_robots(test_app_client, logged_in_adm
     # GIVEN a page with a later published version
     measure = MeasureFactory()
     # Outdated version
-    outdated_version = MeasureVersionFactory(
-        measure=measure, status="APPROVED", published=True, latest=False, version="1.0"
-    )
+    outdated_version = MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="1.0")
     # Latest published version
-    MeasureVersionFactory(measure=measure, status="APPROVED", published=True, latest=False, version="2.0")
+    MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="2.0")
     # Newer draft version
-    MeasureVersionFactory(
-        measure=measure, status="DRAFT", published=False, published_at=None, latest=True, version="2.1"
-    )
+    MeasureVersionFactory(measure=measure, status="DRAFT", latest=True, version="2.1")
 
     # WHEN we get the rendered template
 

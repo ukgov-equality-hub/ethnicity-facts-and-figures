@@ -73,7 +73,6 @@ def test_static_site_build(db_session, single_use_app):
                                 MeasureVersionWithDimensionFactory(
                                     measure=measure,
                                     status="APPROVED",
-                                    published=True,
                                     latest=False,
                                     published_at=datetime.now().date(),
                                     version="1.0",
@@ -84,7 +83,6 @@ def test_static_site_build(db_session, single_use_app):
                                 MeasureVersionWithDimensionFactory(
                                     measure=measure,
                                     status="APPROVED",
-                                    published=True,
                                     latest=False,
                                     published_at=datetime.now().date(),
                                     version="2.0",
@@ -95,7 +93,6 @@ def test_static_site_build(db_session, single_use_app):
                                 MeasureVersionWithDimensionFactory(
                                     measure=measure,
                                     status="DRAFT",
-                                    published=False,
                                     published_at=None,
                                     latest=True,
                                     version="2.1",
@@ -109,7 +106,6 @@ def test_static_site_build(db_session, single_use_app):
 
                                 MeasureVersionWithDimensionFactory(
                                     status="APPROVED",
-                                    published=True,
                                     latest=True,
                                     published_at=datetime.now().date() - timedelta(weeks=1),
                                     version="1.0",

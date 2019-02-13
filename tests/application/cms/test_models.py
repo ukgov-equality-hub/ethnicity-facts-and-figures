@@ -19,12 +19,7 @@ from tests.models import (
 class TestDimensionModel:
     def test_create_valid_dimension(self, test_app_client, logged_in_rdu_user):
 
-        measure_version = MeasureVersionFactory(
-            version="1.0",
-            measure__slug="measure",
-            measure__subtopics__slug="subtopic",
-            measure__subtopics__topic__slug="topic",
-        )
+        measure_version = MeasureVersionFactory()
         data = {"title": "Test dimension"}
 
         url = url_for(
@@ -37,7 +32,12 @@ class TestDimensionModel:
         resp = test_app_client.post(url, data=data, follow_redirects=False)
 
         assert resp.status_code == 302, "Should be redirected to edit page for dimension"
-        assert re.match(r"http://localhost:5000/cms/topic/subtopic/measure/1.0/[^/]+/edit", resp.location)
+        assert re.match(
+            rf"http://localhost:5000/cms/{measure_version.measure.subtopic.topic.slug}/"
+            rf"{measure_version.measure.subtopic.slug}/{measure_version.measure.slug}/"
+            rf"{measure_version.version}/[^/]+/edit",
+            resp.location,
+        )
 
     def test_create_dimension_without_specifying_title(self, test_app_client, logged_in_rdu_user):
 
@@ -58,13 +58,7 @@ class TestDimensionModel:
 
     def test_update_dimension_with_valid_data(self, test_app_client, logged_in_rdu_user):
 
-        measure_version = MeasureVersionWithDimensionFactory(
-            version="1.0",
-            measure__slug="measure",
-            measure__subtopics__slug="subtopic",
-            measure__subtopics__topic__slug="topic",
-            dimensions__guid="dimension-guid",
-        )
+        measure_version = MeasureVersionWithDimensionFactory()
 
         data = {"title": "Test dimension"}
 
@@ -79,17 +73,16 @@ class TestDimensionModel:
         resp = test_app_client.post(url, data=data, follow_redirects=False)
 
         assert resp.status_code == 302, "Should be redirected to edit page for dimension"
-        assert re.match(r"http://localhost:5000/cms/topic/subtopic/measure/1.0/dimension-guid/edit", resp.location)
+        assert re.match(
+            rf"http://localhost:5000/cms/{measure_version.measure.subtopic.topic.slug}/"
+            rf"{measure_version.measure.subtopic.slug}/{measure_version.measure.slug}/"
+            rf"{measure_version.version}/[^/]+/edit",
+            resp.location,
+        )
 
     def test_update_dimension_with_invalid_data(self, test_app_client, logged_in_rdu_user):
 
-        measure_version = MeasureVersionWithDimensionFactory(
-            version="1.0",
-            measure__slug="measure",
-            measure__subtopics__slug="subtopic",
-            measure__subtopics__topic__slug="topic",
-            dimensions__guid="dimension-guid",
-        )
+        measure_version = MeasureVersionWithDimensionFactory()
 
         data = {"title": ""}
 
@@ -341,7 +334,7 @@ class TestDimensionModel:
     def test_copy_dimension_also_copies_classification_links(self, db_session):
         # Given a dimension with a classification link
         measure_version = MeasureVersionWithDimensionFactory(
-            dimensions__classification_links__classification=ClassificationFactory(id="2A"),
+            dimensions__classification_links__classification__id="2A",
             dimensions__classification_links__includes_parents=False,
             dimensions__classification_links__includes_all=False,
             dimensions__classification_links__includes_unknown=True,
@@ -671,12 +664,13 @@ class TestMeasureVersion:
 
     def test_page_sort_by_version(self):
 
-        first_page = MeasureVersionFactory(guid="test_page", version="1.0")
-        second_page = MeasureVersionFactory(guid="test_page", version="1.1")
-        third_page = MeasureVersionFactory(guid="test_page", version="2.0")
-        fourth_page = MeasureVersionFactory(guid="test_page", version="2.2")
-        fifth_page = MeasureVersionFactory(guid="test_page", version="2.10")
-        sixth_page = MeasureVersionFactory(guid="test_page", version="2.20")
+        measure = MeasureFactory()
+        first_page = MeasureVersionFactory(measure=measure, version="1.0")
+        second_page = MeasureVersionFactory(measure=measure, version="1.1")
+        third_page = MeasureVersionFactory(measure=measure, version="2.0")
+        fourth_page = MeasureVersionFactory(measure=measure, version="2.2")
+        fifth_page = MeasureVersionFactory(measure=measure, version="2.10")
+        sixth_page = MeasureVersionFactory(measure=measure, version="2.20")
 
         pages = [fourth_page, sixth_page, fifth_page, second_page, first_page, third_page]
 
@@ -698,10 +692,10 @@ class TestMeasureVersion:
 
     def test_page_has_later_published_versions(self):
         measure = MeasureFactory()
-        major_version_1 = MeasureVersionFactory(version="1.0", published=True, status="APPROVED", measure=measure)
-        minor_version_2 = MeasureVersionFactory(version="1.1", published=True, status="APPROVED", measure=measure)
-        minor_version_3 = MeasureVersionFactory(version="1.2", published=True, status="APPROVED", measure=measure)
-        minor_version_4 = MeasureVersionFactory(version="1.3", published=False, status="DRAFT", measure=measure)
+        major_version_1 = MeasureVersionFactory(version="1.0", status="APPROVED", measure=measure)
+        minor_version_2 = MeasureVersionFactory(version="1.1", status="APPROVED", measure=measure)
+        minor_version_3 = MeasureVersionFactory(version="1.2", status="APPROVED", measure=measure)
+        minor_version_4 = MeasureVersionFactory(version="1.3", status="DRAFT", measure=measure)
 
         assert major_version_1.has_no_later_published_versions() is False
         assert minor_version_2.has_no_later_published_versions() is False
@@ -753,10 +747,10 @@ class TestMeasureVersion:
 
     def test_measure_latest_published_version_returns_latest_published_version(self):
         measure = MeasureFactory()
-        MeasureVersionFactory(version="1.0", guid=measure.id, latest=False, published=True, measure=measure)
-        MeasureVersionFactory(version="2.0", guid=measure.id, latest=False, published=True, measure=measure)
-        MeasureVersionFactory(version="3.0", guid=measure.id, latest=False, published=True, measure=measure)
-        MeasureVersionFactory(version="3.1", guid=measure.id, latest=True, published=False, measure=measure)
+        MeasureVersionFactory(version="1.0", guid=measure.id, latest=False, status="APPROVED", measure=measure)
+        MeasureVersionFactory(version="2.0", guid=measure.id, latest=False, status="APPROVED", measure=measure)
+        MeasureVersionFactory(version="3.0", guid=measure.id, latest=False, status="APPROVED", measure=measure)
+        MeasureVersionFactory(version="3.1", guid=measure.id, latest=True, status="DEPARTMENT_REVIEW", measure=measure)
 
         assert measure.latest_published_version.version == "3.0"
 
@@ -802,7 +796,7 @@ class TestMeasureVersion:
         ),
     )
     def test_area_covered_formatter(self, countries, formatted_string):
-        measure_version = MeasureVersionFactory(guid="test_page", version="1.0", area_covered=countries)
+        measure_version = MeasureVersionFactory(area_covered=countries)
 
         assert measure_version.format_area_covered() == formatted_string
 

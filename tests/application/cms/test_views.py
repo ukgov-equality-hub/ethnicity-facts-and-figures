@@ -131,9 +131,7 @@ def test_can_reject_page_under_review(test_app_client, logged_in_rdu_user):
 
 
 def test_admin_user_can_publish_page_in_dept_review(test_app_client, logged_in_admin_user, mock_request_build):
-    measure_version = MeasureVersionFactory(
-        title="Test Measure Page", status="DEPARTMENT_REVIEW", published=False, published_at=None, latest=False
-    )
+    measure_version = MeasureVersionFactory(title="Test Measure Page", status="DEPARTMENT_REVIEW", latest=False)
 
     response = test_app_client.post(
         url_for(
@@ -184,7 +182,7 @@ def test_admin_user_can_not_publish_page_not_in_department_review(
 
 
 def test_non_admin_user_can_not_publish_page_in_dept_review(test_app_client, logged_in_rdu_user, mock_request_build):
-    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", published=False, published_at=None)
+    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
     response = test_app_client.post(
         url_for(
             "cms.edit_measure_version",
@@ -203,7 +201,7 @@ def test_non_admin_user_can_not_publish_page_in_dept_review(test_app_client, log
 
 
 def test_admin_user_can_unpublish_page(test_app_client, logged_in_admin_user, mock_request_build):
-    measure_version = MeasureVersionFactory(status="APPROVED", published=True)
+    measure_version = MeasureVersionFactory(status="APPROVED")
 
     response = test_app_client.post(
         url_for(
@@ -224,7 +222,7 @@ def test_admin_user_can_unpublish_page(test_app_client, logged_in_admin_user, mo
 
 
 def test_non_admin_user_can_not_unpublish_page(test_app_client, logged_in_rdu_user, mock_request_build):
-    measure_version = MeasureVersionFactory(status="APPROVED", published=True)
+    measure_version = MeasureVersionFactory(status="APPROVED")
 
     response = test_app_client.post(
         url_for(
@@ -244,7 +242,7 @@ def test_non_admin_user_can_not_unpublish_page(test_app_client, logged_in_rdu_us
 
 
 def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(test_app_client, logged_in_admin_user):
-    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", published=False, published_at=None)
+    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
     response = test_app_client.get(
         url_for(
             "cms.edit_measure_version",
@@ -259,7 +257,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(test_app_clie
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert page.find_all("button", class_="button")[-1].text.strip().lower() == "approve for publishing"
 
-    measure_version = MeasureVersionFactory(status="APPROVED", published=True)
+    measure_version = MeasureVersionFactory(status="APPROVED")
 
     response = test_app_client.get(
         url_for(
@@ -277,7 +275,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(test_app_clie
 
 
 def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(test_app_client, logged_in_rdu_user):
-    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", published=False, published_at=None)
+    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
     response = test_app_client.get(
         url_for(
             "cms.edit_measure_version",
@@ -292,7 +290,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(test_a
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert page.find_all("button", class_="button")[-1].text.strip().lower() == "reject"
 
-    measure_version = MeasureVersionFactory(status="APPROVED", published=True)
+    measure_version = MeasureVersionFactory(status="APPROVED")
 
     response = test_app_client.get(
         url_for(
@@ -715,7 +713,7 @@ def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, logged_in
 
 
 def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(test_app_client, logged_in_dept_user):
-    measure_version = MeasureVersionWithDimensionFactory()
+    measure_version = MeasureVersionWithDimensionFactory(measure__shared_with=[])
 
     response = test_app_client.get(
         url_for(

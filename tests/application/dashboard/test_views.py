@@ -34,7 +34,6 @@ def test_dashboard_pages_return_200(test_app_client, logged_in_rdu_user, dashboa
     MeasureVersionWithDimensionFactory(
         data_sources=[data_source],
         status="APPROVED",
-        published=True,
         published_at=datetime.now().date(),
         parent=subtopic_page,
         dimensions__classification_links__includes_parents=False,

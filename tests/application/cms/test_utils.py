@@ -82,9 +82,9 @@ class TestGetDataSourceForms:
         assert form1.meta.csrf is csrf_enabled
         assert form2.meta.csrf is csrf_enabled
 
-    def test_csrf_disabled_if_sending_to_review(self):
+    def test_csrf_always_disabled_if_sending_to_review(self):
         measure_version = MeasureVersionFactory()
-        assert current_app.config["WTF_CSRF_ENABLED"] is False
+        current_app.config["WTF_CSRF_ENABLED"] = True
 
         form1, form2 = get_data_source_forms(request, measure_version, sending_to_review=True)
 
