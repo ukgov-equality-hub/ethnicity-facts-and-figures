@@ -1,10 +1,15 @@
 from bs4 import BeautifulSoup
+
 from flask import url_for
 
 from application.utils import generate_token
+from application.auth.models import TypeOfUser
+
+from tests.models import UserFactory
 
 
-def test_confirm_account_rejects_easy_password(app, test_app_client, rdu_user):
+def test_confirm_account_rejects_easy_password(app, test_app_client):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, active=False)
 
     token = generate_token(rdu_user.email, app)
     confirmation_url = url_for("register.confirm_account", token=token, _external=True)

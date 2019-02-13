@@ -1,6 +1,10 @@
 import pytest
+
 from flask import url_for
 from bs4 import BeautifulSoup
+
+from application.auth.models import TypeOfUser
+from tests.models import UserFactory
 
 
 @pytest.mark.parametrize(
@@ -51,14 +55,26 @@ def test_logged_out_user_redirects_to_login(test_app_client, cms_url):
     assert resp.location == url_for("security.login", next=cms_url, _external=True)
 
 
-def test_successfully_logged_in_user_goes_to_main_page(test_app_client, rdu_user):
+def test_unhashed_user_password_automatically_hashed_on_login_attempt(test_app_client):
+    user = UserFactory(password="password123", active=True)
+    assert user.password == "password123"
+
+    test_app_client.post(
+        url_for("security.login"), data={"email": user.email, "password": "password123"}, follow_redirects=True
+    )
+
+    assert user.password != "password123"
+
+
+def test_successfully_logged_in_user_goes_to_main_page(test_app_client):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, password="password123", active=True)
 
     resp = test_app_client.post(
         url_for("security.login"), data={"email": rdu_user.email, "password": rdu_user.password}, follow_redirects=True
     )
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert "Ethnicity facts and figures" == page.h1.string.strip()
+    assert page.h1.string.strip() == "Ethnicity facts and figures"
 
 
 def test_unsuccessful_login_returns_to_login_page(test_app_client):

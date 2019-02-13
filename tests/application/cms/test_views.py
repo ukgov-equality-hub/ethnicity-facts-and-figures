@@ -21,6 +21,7 @@ from tests.models import (
     MeasureFactory,
     DataSourceFactory,
     MeasureVersionWithDimensionFactory,
+    UserFactory,
 )
 
 
@@ -776,21 +777,20 @@ def test_dept_cannot_publish_a_shared_page(test_app_client, logged_in_dept_user)
 
 
 @pytest.mark.parametrize(
-    "user_with_type, can_see_copy_button",
-    [
+    "user_type, can_see_copy_button",
+    (
         (TypeOfUser.DEPT_USER, False),
         (TypeOfUser.RDU_USER, False),
         (TypeOfUser.ADMIN_USER, False),
         (TypeOfUser.DEV_USER, True),
-    ],
-    indirect=["user_with_type"],
+    ),
 )
-def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(
-    test_app_client, user_with_type, can_see_copy_button
-):
+def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(test_app_client, user_type, can_see_copy_button):
+    user = UserFactory(user_type=user_type)
     measure_version = MeasureVersionFactory()
+
     with test_app_client.session_transaction() as session:
-        session["user_id"] = user_with_type.id
+        session["user_id"] = user.id
 
     response = test_app_client.get(
         url_for(

@@ -1,8 +1,10 @@
-import pytest
 import re
+
+import pytest
 from bs4 import BeautifulSoup
 from flask import url_for
 
+from application.auth.models import TypeOfUser
 from application.cms.models import UKCountry, TypeOfData
 from application.cms.page_service import PageService
 from application.config import Config
@@ -13,6 +15,7 @@ from tests.models import (
     SubtopicFactory,
     MeasureFactory,
     MeasureVersionWithDimensionFactory,
+    UserFactory,
 )
 
 page_service = PageService()
@@ -252,7 +255,9 @@ def test_view_topic_page(test_app_client, logged_in_rdu_user):
     assert page.h1.text.strip() == "Test topic page"
 
 
-def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(test_app_client, rdu_user, admin_user):
+def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(test_app_client):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER)
+    admin_user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
     topic = TopicFactory(title="Test topic page")
 
     with test_app_client.session_transaction() as session:
@@ -549,13 +554,17 @@ def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_d
     assert bool(page(string=re.compile("Test subtopic page"))) is subtopic_should_be_visible
 
 
-@pytest.mark.parametrize("user_type, empty_subtopic_should_be_visible", (("DEPT", False), ("RDU", True)))
+@pytest.mark.parametrize(
+    "user_type, empty_subtopic_should_be_visible", ((TypeOfUser.DEPT_USER, False), (TypeOfUser.RDU_USER, True))
+)
 def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
-    user_type, empty_subtopic_should_be_visible, test_app_client, rdu_user, dept_user
+    user_type, empty_subtopic_should_be_visible, test_app_client
 ):
+    user = UserFactory(user_type=user_type)
     SubtopicFactory(title="Test subtopic page", topic__slug="test-topic")
+
     with test_app_client.session_transaction() as session:
-        session["user_id"] = dept_user.id if user_type == "DEPT" else rdu_user.id
+        session["user_id"] = user.id
 
     resp = test_app_client.get(url_for("static_site.topic", topic_slug="test-topic"))
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")

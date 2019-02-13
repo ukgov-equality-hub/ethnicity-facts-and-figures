@@ -176,7 +176,10 @@ def test_reset_password_accepts_good_password(app, test_app_client):
     assert page.find("h1").text.strip() == "Password updated"
 
 
-def test_admin_user_can_share_page_with_dept_user(test_app_client, dept_user, admin_user):
+def test_admin_user_can_share_page_with_dept_user(test_app_client):
+    dept_user = UserFactory(user_type=TypeOfUser.DEPT_USER)
+    admin_user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
+
     measure_page = MeasureVersionFactory(id=100)
     with test_app_client.session_transaction() as session:
         session["user_id"] = dept_user.id
@@ -247,7 +250,10 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, dept_user, ad
     assert resp.status_code == 200
 
 
-def test_admin_user_can_remove_share_of_page_with_dept_user(test_app_client, dept_user, admin_user):
+def test_admin_user_can_remove_share_of_page_with_dept_user(test_app_client):
+    dept_user = UserFactory(user_type=TypeOfUser.DEPT_USER)
+    admin_user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
+
     measure_page = MeasureVersionFactory(measure__shared_with=[dept_user])
 
     with test_app_client.session_transaction() as session:
