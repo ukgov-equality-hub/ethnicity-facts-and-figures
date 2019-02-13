@@ -1,6 +1,10 @@
 import pytest
+
 from flask import url_for
 from bs4 import BeautifulSoup
+
+from application.auth.models import TypeOfUser
+from tests.models import UserFactory
 
 
 @pytest.mark.parametrize(
@@ -51,16 +55,26 @@ def test_logged_out_user_redirects_to_login(test_app_client, cms_url):
     assert resp.location == url_for("security.login", next=cms_url, _external=True)
 
 
-def test_successfully_logged_in_user_goes_to_main_page(test_app_client, mock_rdu_user):
+def test_unhashed_user_password_automatically_hashed_on_login_attempt(test_app_client):
+    user = UserFactory(password="password123", active=True)
+    assert user.password == "password123"
+
+    test_app_client.post(
+        url_for("security.login"), data={"email": user.email, "password": "password123"}, follow_redirects=True
+    )
+
+    assert user.password != "password123"
+
+
+def test_successfully_logged_in_user_goes_to_main_page(test_app_client):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, password="password123", active=True)
 
     resp = test_app_client.post(
-        url_for("security.login"),
-        data={"email": mock_rdu_user.email, "password": mock_rdu_user.password},
-        follow_redirects=True,
+        url_for("security.login"), data={"email": rdu_user.email, "password": rdu_user.password}, follow_redirects=True
     )
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert "Ethnicity facts and figures" == page.h1.string.strip()
+    assert page.h1.string.strip() == "Ethnicity facts and figures"
 
 
 def test_unsuccessful_login_returns_to_login_page(test_app_client):
@@ -75,18 +89,19 @@ def test_unsuccessful_login_returns_to_login_page(test_app_client):
     assert page.h1.string.strip() == "Login"
 
 
-def test_should_redirect_to_homepage_on_logout(test_app_client, mock_logged_in_rdu_user):
+def test_should_redirect_to_homepage_on_logout(test_app_client, logged_in_rdu_user):
     res = test_app_client.post("/auth/logout")
     assert res.status_code == 302
     assert res.location == url_for("static_site.index", _external=True)
 
 
-def test_should_expire_session_vars_on_logout(test_app_client, mock_logged_in_rdu_user):
+def test_should_expire_session_vars_on_logout(test_app_client, logged_in_rdu_user):
 
     with test_app_client.session_transaction() as session:
         session["session_data"] = "Secret stuff"
+        assert session.get("session_data") == "Secret stuff"
 
-    test_app_client.post("/auth/logout")  # TODO: Use `url_for`
+    test_app_client.post(url_for("auth.logout"))
 
     with test_app_client.session_transaction() as session:
         assert session.get("session_data") is None

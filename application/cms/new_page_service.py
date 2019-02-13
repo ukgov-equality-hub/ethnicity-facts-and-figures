@@ -347,7 +347,7 @@ class NewPageService(Service):
 
             conflicting_url = [msure for msure in new_subtopic.measures if msure.slug == measure_version.measure.slug]
             if conflicting_url:
-                message = f"A measure with url '{measure_version.slug}' already exists in {new_subtopic.title}"
+                message = f"A measure with url '{measure_version.measure.slug}' already exists in {new_subtopic.title}"
                 raise PageExistsException(message)
             else:
                 measure_version.measure.subtopics = [new_subtopic]
@@ -375,7 +375,7 @@ class NewPageService(Service):
         if measure_version.version == "1.0":
             slug = slugify(title)
 
-            if slug != measure_version.slug and self._new_slug_invalid(measure_version, slug):
+            if slug != measure_version.measure.slug and self._new_slug_invalid(measure_version, slug):
                 message = (
                     f"A page '{title}' with slug '{slug}' already exists under {measure_version.measure.subtopic.title}"
                 )

@@ -7,6 +7,7 @@ from wtforms.validators import DataRequired
 from application.cms.forms import DataSourceForm
 from application.cms.form_fields import RDUStringField
 from application.cms.utils import copy_form_errors, flash_message_with_form_errors, get_data_source_forms
+from tests.models import MeasureVersionFactory
 
 
 class TestCopyFormErrors:
@@ -57,38 +58,42 @@ class TestGetDataSourceForms:
     def teardown(self):
         current_app.config = {**self.saved_config}
 
-    def test_returns_two_data_source_forms(self, stub_measure_page):
-        form1, form2 = get_data_source_forms(request, stub_measure_page)
+    def test_returns_two_data_source_forms(self):
+        measure_version = MeasureVersionFactory()
+        form1, form2 = get_data_source_forms(request, measure_version)
 
         assert isinstance(form1, DataSourceForm)
         assert isinstance(form2, DataSourceForm)
 
-    def test_returned_forms_have_distinct_prefixes(self, stub_measure_page):
-        form1, form2 = get_data_source_forms(request, stub_measure_page)
+    def test_returned_forms_have_distinct_prefixes(self):
+        measure_version = MeasureVersionFactory()
+        form1, form2 = get_data_source_forms(request, measure_version)
 
         assert form1._prefix == "data-source-1-"
         assert form2._prefix == "data-source-2-"
 
     @pytest.mark.parametrize("csrf_enabled", [True, False])
-    def test_csrf_enabled_depending_on_app_config(self, stub_measure_page, csrf_enabled):
+    def test_csrf_enabled_depending_on_app_config(self, csrf_enabled):
+        measure_version = MeasureVersionFactory()
         current_app.config["WTF_CSRF_ENABLED"] = csrf_enabled
 
-        form1, form2 = get_data_source_forms(request, stub_measure_page)
+        form1, form2 = get_data_source_forms(request, measure_version)
 
         assert form1.meta.csrf is csrf_enabled
         assert form2.meta.csrf is csrf_enabled
 
-    def test_csrf_disabled_if_sending_to_review(self, stub_measure_page):
-        assert current_app.config["WTF_CSRF_ENABLED"] is False
+    def test_csrf_always_disabled_if_sending_to_review(self):
+        measure_version = MeasureVersionFactory()
+        current_app.config["WTF_CSRF_ENABLED"] = True
 
-        form1, form2 = get_data_source_forms(request, stub_measure_page, sending_to_review=True)
+        form1, form2 = get_data_source_forms(request, measure_version, sending_to_review=True)
 
         assert form1.meta.csrf is False
         assert form2.meta.csrf is False
 
 
 class TestFlashMessages:
-    def test_markdown_rendered_in_template(self, test_app_client, mock_logged_in_rdu_user):
+    def test_markdown_rendered_in_template(self, test_app_client, logged_in_rdu_user):
         flash("text that should be markdown'd\n\n* a list item")
 
         doc = html.fromstring(render_template("base.html"))

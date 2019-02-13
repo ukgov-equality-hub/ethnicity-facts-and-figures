@@ -162,8 +162,7 @@ def get_random_data(ethnicities, size):
     return data
 
 
-def test_processor_endpoint_responds(test_app_client, test_app_editor):
-    signin(test_app_editor, test_app_client)
+def test_processor_endpoint_responds(test_app_client, logged_in_rdu_user):
 
     response = test_app_client.post(
         url_for("cms.process_input_data"),
@@ -175,8 +174,7 @@ def test_processor_endpoint_responds(test_app_client, test_app_editor):
     assert response is not None
 
 
-def test_processor_endpoint_looks_up_columns(test_app_client, test_app_editor):
-    signin(test_app_editor, test_app_client)
+def test_processor_endpoint_looks_up_columns(test_app_client, logged_in_rdu_user):
 
     # given a simple data set
     data = [["Ethnicity", "Ethnicity_type", "Value"], ["a", "phonetic", "12"]]
@@ -197,11 +195,9 @@ def test_processor_endpoint_looks_up_columns(test_app_client, test_app_editor):
     assert row[6] == "100"
 
 
-def test_processor_endpoint_appends_default_values(test_app_client, test_app_editor):
+def test_processor_endpoint_appends_default_values(test_app_client, logged_in_rdu_user):
 
     # Note: default values for the test_app are ['*','*','Unclassified',960]
-    signin(test_app_editor, test_app_client)
-
     # given a simple data set
     data = [["Ethnicity", "Ethnicity_type", "Value"], ["strange", "", "12"]]
 
@@ -219,8 +215,3 @@ def test_processor_endpoint_appends_default_values(test_app_client, test_app_edi
     assert row[4] == "strange"
     assert row[5] == "Unclassified"
     assert row[6] == 960
-
-
-def signin(user, to_client):
-    with to_client.session_transaction() as session:
-        session["user_id"] = user.id
