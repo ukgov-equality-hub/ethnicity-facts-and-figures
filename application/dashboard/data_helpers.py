@@ -10,7 +10,6 @@ from trello.exceptions import TokenError
 from application.cms.classification_service import classification_service
 from application.cms.models import MeasureVersion, LowestLevelOfGeography
 from application.dashboard.trello_service import trello_service
-from application.factory import page_service
 
 # We import everything from application.dashboard.models locally where needed.
 # This prevents Alembic from discovering the models and trying to create the
@@ -182,10 +181,11 @@ def get_ethnic_group_by_slug_dashboard_data(ethnic_group_slug):
 
 
 def get_ethnicity_classifications_dashboard_data():
-    from application.dashboard.models import CategorisationByDimension
+    from application.dashboard.models import ClassificationByDimension
 
-    dimension_links = CategorisationByDimension.query.all()
-    classification_rows = classification_service.get_all_classifications()
+    all_classifications = classification_service.get_all_classifications()
+    all_dimension_classifications = ClassificationByDimension.query.all()
+
     classifications = {
         classification.id: {
             "id": classification.id,
@@ -198,120 +198,73 @@ def get_ethnicity_classifications_dashboard_data():
             "includes_all_count": 0,
             "includes_unknown_count": 0,
         }
-        for classification in classification_rows
+        for classification in all_classifications
     }
-    for link in dimension_links:
-        classifications[link.categorisation_id]["pages"].add(link.page_guid)
-        classifications[link.categorisation_id]["dimension_count"] += 1
+
+    for link in all_dimension_classifications:
+        classifications[link.classification_id]["pages"].add(link.measure_id)
+        classifications[link.classification_id]["dimension_count"] += 1
+
         if link.includes_parents:
-            classifications[link.categorisation_id]["includes_parents_count"] += 1
+            classifications[link.classification_id]["includes_parents_count"] += 1
         if link.includes_all:
-            classifications[link.categorisation_id]["includes_all_count"] += 1
+            classifications[link.classification_id]["includes_all_count"] += 1
         if link.includes_unknown:
-            classifications[link.categorisation_id]["includes_unknown_count"] += 1
+            classifications[link.classification_id]["includes_unknown_count"] += 1
 
-    classifications = list(classifications.values())
-    classifications = [c for c in classifications if c["dimension_count"] > 0]
-    classifications.sort(key=lambda x: x["position"])
+    ordered_and_filtered_classifications = sorted(
+        filter(lambda x: x["dimension_count"] > 0, classifications.values()), key=lambda x: x["position"]
+    )
 
-    for classification in classifications:
+    for classification in ordered_and_filtered_classifications:
         classification["measure_count"] = len(classification["pages"])
 
-    return classifications
+    return ordered_and_filtered_classifications
 
 
 def get_ethnicity_classification_by_id_dashboard_data(classification_id):
     classification = classification_service.get_classification_by_id(classification_id)
 
-    page_count = 0
-    results = []
     classification_title = ""
+    page_count = 0
+    nested_measures_and_dimensions = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(list))))
 
     if classification:
         classification_title = classification.long_title
-        from application.dashboard.models import CategorisationByDimension
+        from application.dashboard.models import ClassificationByDimension
 
-        dimension_links = (
-            CategorisationByDimension.query.filter_by(categorisation_id=classification_id)
-            .order_by(
-                CategorisationByDimension.subtopic_guid,
-                CategorisationByDimension.page_position,
-                CategorisationByDimension.dimension_position,
+        dimension_links = ClassificationByDimension.query.filter_by(classification_id=classification_id).all()
+
+        for link in sorted(
+            dimension_links,
+            key=lambda rec: (rec.topic_title, rec.subtopic_position, rec.measure_position, rec.dimension_position),
+        ):
+            measure_dict = nested_measures_and_dimensions[link.topic_title][link.subtopic_title][
+                link.measure_version_title
+            ]
+
+            measure_dict["title"] = link.measure_version_title
+            measure_dict["url"] = url_for(
+                "static_site.measure_version",
+                topic_slug=link.topic_slug,
+                subtopic_slug=link.subtopic_slug,
+                measure_slug=link.measure_slug,
+                version="latest",
             )
-            .all()
-        )
-
-        # Build a base tree of subtopics from the database
-        subtopics = [
-            {
-                "guid": page.guid,
-                "title": page.title,
-                "slug": page.slug,
-                "position": page.position,
-                "topic_guid": page.parent_guid,
-                "topic": page.parent.title,
-                "topic_slug": page.parent.slug,
-                "measures": [],
-            }
-            for page in page_service.get_pages_by_type("subtopic")
-        ]
-        subtopics = sorted(subtopics, key=lambda p: (p["topic_guid"], p["position"]))
-
-        # Build a list of dimensions
-        dimension_list = [
-            {
-                "dimension_guid": d.dimension_guid,
-                "dimension_title": d.dimension_title,
-                "dimension_position": d.dimension_position,
-                "page_guid": d.page_guid,
-                "page_title": d.page_title,
-                "page_slug": d.page_slug,
-                "page_position": d.page_position,
-                "page_version": d.page_version,
-                "subtopic_guid": d.subtopic_guid,
-            }
-            for d in dimension_links
-        ]
-
-        # Integrate with the topic tree
-        for subtopic in subtopics:
-            # Build a data structure of unique pages in the subtopic
-            page_list = {
-                d["page_guid"]: {
-                    "guid": d["page_guid"],
-                    "title": d["page_title"],
-                    "slug": d["page_slug"],
-                    "position": d["page_position"],
-                    "url": url_for(
-                        "static_site.measure_version",
-                        topic_slug=subtopic["topic_slug"],
-                        subtopic_slug=subtopic["slug"],
-                        measure_slug=d["page_slug"],
-                        version="latest",
-                    ),
+            measure_dict["dimensions"].append(
+                {
+                    "guid": link.dimension_guid,
+                    "title": link.dimension_title,
+                    "short_title": _calculate_short_title(link.measure_version_title, link.dimension_title),
+                    "position": link.dimension_position,
                 }
-                for d in dimension_list
-                if d["subtopic_guid"] == subtopic["guid"]
-            }
+            )
 
-            # Integrate the list of dimensions
-            for page in page_list.values():
-                page["dimensions"] = [
-                    {
-                        "guid": d["dimension_guid"],
-                        "title": d["dimension_title"],
-                        "short_title": _calculate_short_title(page["title"], d["dimension_title"]),
-                        "position": d["dimension_position"],
-                    }
-                    for d in dimension_list
-                    if d["page_guid"] == page["guid"]
-                ]
+    for (topic, measures_with_dimensions_by_subtopic) in nested_measures_and_dimensions.items():
+        for subtopic, measures_with_dimensions in measures_with_dimensions_by_subtopic.items():
+            page_count += len(measures_with_dimensions)
 
-            subtopic["measures"] = sorted(page_list.values(), key=lambda p: p["position"])
-            page_count += len(page_list)
-        results = [s for s in subtopics if len(s["measures"]) > 0]
-
-    return classification_title, page_count, results
+    return classification_title, page_count, nested_measures_and_dimensions
 
 
 def get_geographic_breakdown_dashboard_data():

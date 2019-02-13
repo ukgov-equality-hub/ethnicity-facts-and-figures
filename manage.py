@@ -329,14 +329,14 @@ def drop_and_create_materialized_views():
         latest_published_measure_versions_view,
         latest_published_measure_versions_by_geography_view,
         ethnic_groups_by_dimension_view,
-        categorisations_by_dimension,
+        classifications_by_dimension,
     )
 
     db.session.execute(drop_all_dashboard_helper_views)
     db.session.execute(latest_published_measure_versions_view)
     db.session.execute(latest_published_measure_versions_by_geography_view)
     db.session.execute(ethnic_groups_by_dimension_view)
-    db.session.execute(categorisations_by_dimension)
+    db.session.execute(classifications_by_dimension)
     db.session.commit()
     print("Drop and create MATERIALIZED VIEWS done")
 

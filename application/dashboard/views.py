@@ -97,12 +97,14 @@ def ethnicity_classifications():
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def ethnicity_classification(classification_id):
-    classification_title, page_count, results = get_ethnicity_classification_by_id_dashboard_data(classification_id)
+    classification_title, page_count, nested_measures_and_dimensions = get_ethnicity_classification_by_id_dashboard_data(  # noqa
+        classification_id
+    )
     return render_template(
         "dashboards/ethnicity_classification.html",
         classification_title=classification_title,
         page_count=page_count,
-        measure_tree=results,
+        nested_measures_and_dimensions=nested_measures_and_dimensions,
     )
 
 
