@@ -257,7 +257,7 @@ class HomePageFactory(factory.alchemy.SQLAlchemyModelFactory):
         model = MeasureVersion
         sqlalchemy_session_persistence = "flush"
 
-    id = factory.Sequence(lambda x: x)
+    id = factory.Sequence(lambda x: x + 3000)
     guid = factory.Faker("uuid4")
     page_type = "homepage"
     version = "1.0"
@@ -268,7 +268,7 @@ class TopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
         model = MeasureVersion
         sqlalchemy_session_persistence = "flush"
 
-    id = factory.Sequence(lambda x: x)
+    id = factory.Sequence(lambda x: x + 2000)
     guid = factory.Faker("uuid4")
     page_type = "topic"
     title = factory.Faker("sentence", nb_words=3)
@@ -288,7 +288,7 @@ class SubtopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
         model = MeasureVersion
         sqlalchemy_session_persistence = "flush"
 
-    id = factory.Sequence(lambda x: x)
+    id = factory.Sequence(lambda x: x + 1000)
     guid = factory.Faker("uuid4")
     page_type = "subtopic"
     title = factory.Faker("sentence", nb_words=3)
