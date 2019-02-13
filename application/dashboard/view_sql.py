@@ -1,23 +1,23 @@
 drop_all_dashboard_helper_views = """
-    DROP INDEX IF EXISTS uix_new_latest_published_measure_versions_by_geography;
-    DROP INDEX IF EXISTS uix_latest_published_measure_versions;
-    DROP INDEX IF EXISTS uix_ethnic_groups_by_dimension;
-    DROP INDEX IF EXISTS uix_categorisations_by_dimension;
-    DROP MATERIALIZED VIEW IF EXISTS new_latest_published_measure_versions_by_geography CASCADE;
-    DROP MATERIALIZED VIEW IF EXISTS latest_published_measure_versions CASCADE;
-    DROP MATERIALIZED VIEW IF EXISTS new_ethnic_groups_by_dimension CASCADE;
-    DROP MATERIALIZED VIEW IF EXISTS new_classifications_by_dimension CASCADE;
+DROP INDEX IF EXISTS uix_new_latest_published_measure_versions_by_geography;
+DROP INDEX IF EXISTS uix_new_latest_published_measure_versions;
+DROP INDEX IF EXISTS uix_new_ethnic_groups_by_dimension;
+DROP INDEX IF EXISTS uix_new_categorisations_by_dimension;
+DROP MATERIALIZED VIEW IF EXISTS new_latest_published_measure_versions_by_geography;
+DROP MATERIALIZED VIEW IF EXISTS new_ethnic_groups_by_dimension;
+DROP MATERIALIZED VIEW IF EXISTS new_classifications_by_dimension;
+DROP MATERIALIZED VIEW IF EXISTS new_latest_published_measure_versions;
 """
 
 refresh_all_dashboard_helper_views = """
-    REFRESH MATERIALIZED VIEW CONCURRENTLY latest_published_measure_versions;
-    REFRESH MATERIALIZED VIEW CONCURRENTLY new_latest_published_measure_versions_by_geography;
-    REFRESH MATERIALIZED VIEW CONCURRENTLY new_ethnic_groups_by_dimension;
-    REFRESH MATERIALIZED VIEW CONCURRENTLY classifications_by_dimension;
+REFRESH MATERIALIZED VIEW CONCURRENTLY new_latest_published_measure_versions;
+REFRESH MATERIALIZED VIEW CONCURRENTLY new_latest_published_measure_versions_by_geography;
+REFRESH MATERIALIZED VIEW CONCURRENTLY new_ethnic_groups_by_dimension;
+REFRESH MATERIALIZED VIEW CONCURRENTLY new_classifications_by_dimension;
 """
 
 latest_published_measure_versions_view = """
-CREATE MATERIALIZED VIEW latest_published_measure_versions AS
+CREATE MATERIALIZED VIEW new_latest_published_measure_versions AS
 (
    SELECT
       mv.*
@@ -40,8 +40,8 @@ CREATE MATERIALIZED VIEW latest_published_measure_versions AS
          AND mv.version = max_approved_measure_versions.max_approved_version
 );
 
-CREATE UNIQUE INDEX uix_latest_published_measure_versions
-ON latest_published_measure_versions (id);
+CREATE UNIQUE INDEX uix_new_latest_published_measure_versions
+ON new_latest_published_measure_versions (id);
 """
 
 latest_published_measure_versions_by_geography_view = """
@@ -60,25 +60,13 @@ CREATE MATERIALIZED VIEW new_latest_published_measure_versions_by_geography AS
       geography.name AS geography_name,
       geography.position AS geography_position
    FROM
-      latest_published_measure_versions AS mv
-      JOIN
-         lowest_level_of_geography AS geography
-         ON mv.lowest_level_of_geography_id = geography.name
-      JOIN
-         measure_version
-         ON measure_version.id = mv.id
-      JOIN
-         measure
-         ON measure.id = measure_version.measure_id
-      JOIN
-         subtopic_measure
-         ON subtopic_measure.measure_id = measure.id
-      JOIN
-         subtopic
-         ON subtopic.id = subtopic_measure.subtopic_id
-      JOIN
-         topic
-         ON topic.id = subtopic.topic_id
+      new_latest_published_measure_versions AS mv
+      JOIN lowest_level_of_geography AS geography ON mv.lowest_level_of_geography_id = geography.name
+      JOIN measure_version ON measure_version.id = mv.id
+      JOIN measure ON measure.id = measure_version.measure_id
+      JOIN subtopic_measure ON subtopic_measure.measure_id = measure.id
+      JOIN subtopic ON subtopic.id = subtopic_measure.subtopic_id
+      JOIN topic ON topic.id = subtopic.topic_id
    ORDER BY
       geography.position ASC
 );
@@ -91,75 +79,65 @@ ON new_latest_published_measure_versions_by_geography (measure_version_id);
 ethnic_groups_by_dimension_view = """
 CREATE MATERIALIZED VIEW new_ethnic_groups_by_dimension AS
 (
-   SELECT
-      all_measure_version_ethnicities.*
-   FROM
-      (
-         (
-         SELECT
-            topic.title AS topic_title,
-            topic.slug AS topic_slug,
-            subtopic.title AS subtopic_title,
-            subtopic.slug AS subtopic_slug,
-            subtopic.position AS subtopic_position,
-            measure.id AS measure_id,
-            measure.slug AS measure_slug,
-            measure.position AS measure_position,
-            latest_published_measure_versions.id AS measure_version_id,
-            latest_published_measure_versions.title AS measure_version_title,
-            dimension.guid AS dimension_guid,
-            dimension.title AS dimension_title,
-            dimension.position AS dimension_position,
-            classification.title AS classification_title,
-            ethnicity.value AS ethnicity_value,
-            ethnicity.position AS ethnicity_position
-         FROM latest_published_measure_versions
-             JOIN measure ON latest_published_measure_versions.measure_id = measure.id
-             JOIN subtopic_measure ON measure.id = subtopic_measure.measure_id
-             JOIN subtopic ON subtopic_measure.subtopic_id = subtopic.id
-             JOIN topic ON subtopic.topic_id = topic.id
-             JOIN dimension ON dimension.measure_version_id = latest_published_measure_versions.id
-             JOIN dimension_categorisation ON dimension.guid = dimension_categorisation.dimension_guid
-             JOIN classification ON dimension_categorisation.classification_id = classification.id
-             JOIN ethnicity_in_classification ON classification.id = ethnicity_in_classification.classification_id
-             JOIN ethnicity ON ethnicity_in_classification.ethnicity_id = ethnicity.id
-         )
-         UNION
-         (
-            SELECT
-               topic.title AS topic_title,
-               topic.slug AS topic_slug,
-               subtopic.title AS subtopic_title,
-               subtopic.slug AS subtopic_slug,
-               subtopic.position AS subtopic_position,
-               measure.id AS measure_id,
-               measure.slug AS measure_slug,
-               measure.position AS measure_position,
-               latest_published_measure_versions.id AS measure_version_id,
-               latest_published_measure_versions.title AS measure_version_title,
-               dimension.guid AS dimension_guid,
-               dimension.title AS dimension_title,
-               dimension.position AS dimension_position,
-               classification.title AS classification_title,
-               ethnicity.value AS ethnicity_value,
-               ethnicity.position AS ethnicity_position
-            FROM latest_published_measure_versions
-                JOIN measure ON latest_published_measure_versions.measure_id = measure.id
-                JOIN subtopic_measure ON measure.id = subtopic_measure.measure_id
-                JOIN subtopic ON subtopic_measure.subtopic_id = subtopic.id
-                JOIN topic ON subtopic.topic_id = topic.id
-                JOIN dimension ON dimension.measure_version_id = latest_published_measure_versions.id
-                JOIN dimension_categorisation ON dimension.guid = dimension_categorisation.dimension_guid
-                JOIN classification ON dimension_categorisation.classification_id = classification.id
-                JOIN parent_ethnicity_in_classification ON classification.id = parent_ethnicity_in_classification.classification_id
-                JOIN ethnicity ON parent_ethnicity_in_classification.ethnicity_id = ethnicity.id
-            WHERE dimension_categorisation.includes_parents
-         )
-      )
-      AS all_measure_version_ethnicities
+     SELECT
+        topic.title AS topic_title,
+        topic.slug AS topic_slug,
+        subtopic.title AS subtopic_title,
+        subtopic.slug AS subtopic_slug,
+        subtopic.position AS subtopic_position,
+        measure.id AS measure_id,
+        measure.slug AS measure_slug,
+        measure.position AS measure_position,
+        new_latest_published_measure_versions.id AS measure_version_id,
+        new_latest_published_measure_versions.title AS measure_version_title,
+        dimension.guid AS dimension_guid,
+        dimension.title AS dimension_title,
+        dimension.position AS dimension_position,
+        classification.title AS classification_title,
+        ethnicity.value AS ethnicity_value,
+        ethnicity.position AS ethnicity_position
+     FROM new_latest_published_measure_versions
+          JOIN measure ON new_latest_published_measure_versions.measure_id = measure.id
+          JOIN subtopic_measure ON measure.id = subtopic_measure.measure_id
+          JOIN subtopic ON subtopic_measure.subtopic_id = subtopic.id
+          JOIN topic ON subtopic.topic_id = topic.id
+          JOIN dimension ON dimension.measure_version_id = new_latest_published_measure_versions.id
+          JOIN dimension_categorisation ON dimension.guid = dimension_categorisation.dimension_guid
+          JOIN classification ON dimension_categorisation.classification_id = classification.id
+          JOIN ethnicity_in_classification ON classification.id = ethnicity_in_classification.classification_id
+          JOIN ethnicity ON ethnicity_in_classification.ethnicity_id = ethnicity.id
+     UNION
+     SELECT
+        topic.title AS topic_title,
+        topic.slug AS topic_slug,
+        subtopic.title AS subtopic_title,
+        subtopic.slug AS subtopic_slug,
+        subtopic.position AS subtopic_position,
+        measure.id AS measure_id,
+        measure.slug AS measure_slug,
+        measure.position AS measure_position,
+        new_latest_published_measure_versions.id AS measure_version_id,
+        new_latest_published_measure_versions.title AS measure_version_title,
+        dimension.guid AS dimension_guid,
+        dimension.title AS dimension_title,
+        dimension.position AS dimension_position,
+        classification.title AS classification_title,
+        ethnicity.value AS ethnicity_value,
+        ethnicity.position AS ethnicity_position
+     FROM new_latest_published_measure_versions
+          JOIN measure ON new_latest_published_measure_versions.measure_id = measure.id
+          JOIN subtopic_measure ON measure.id = subtopic_measure.measure_id
+          JOIN subtopic ON subtopic_measure.subtopic_id = subtopic.id
+          JOIN topic ON subtopic.topic_id = topic.id
+          JOIN dimension ON dimension.measure_version_id = new_latest_published_measure_versions.id
+          JOIN dimension_categorisation ON dimension.guid = dimension_categorisation.dimension_guid
+          JOIN classification ON dimension_categorisation.classification_id = classification.id
+          JOIN parent_ethnicity_in_classification ON classification.id = parent_ethnicity_in_classification.classification_id
+          JOIN ethnicity ON parent_ethnicity_in_classification.ethnicity_id = ethnicity.id
+     WHERE dimension_categorisation.includes_parents
 );
 
-CREATE UNIQUE INDEX uix_ethnic_groups_by_dimension ON new_ethnic_groups_by_dimension (dimension_guid, ethnicity_value);
+CREATE UNIQUE INDEX uix_new_ethnic_groups_by_dimension ON new_ethnic_groups_by_dimension (dimension_guid, ethnicity_value);
 """  # noqa
 
 
@@ -175,8 +153,8 @@ CREATE MATERIALIZED VIEW new_classifications_by_dimension AS
       measure.id AS measure_id,
       measure.slug AS measure_slug,
       measure.position AS measure_position,
-      latest_published_measure_versions.id AS measure_version_id,
-      latest_published_measure_versions.title AS measure_version_title,
+      new_latest_published_measure_versions.id AS measure_version_id,
+      new_latest_published_measure_versions.title AS measure_version_title,
       dimension.guid AS dimension_guid,
       dimension.title AS dimension_title,
       dimension.position AS dimension_position,
@@ -187,15 +165,15 @@ CREATE MATERIALIZED VIEW new_classifications_by_dimension AS
       dimension_categorisation.includes_all AS includes_all,
       dimension_categorisation.includes_unknown AS includes_unknown
    FROM
-      latest_published_measure_versions
-      JOIN measure ON latest_published_measure_versions.measure_id = measure.id
+      new_latest_published_measure_versions
+      JOIN measure ON new_latest_published_measure_versions.measure_id = measure.id
       JOIN subtopic_measure ON measure.id = subtopic_measure.measure_id
       JOIN subtopic ON subtopic_measure.subtopic_id = subtopic.id
       JOIN topic ON subtopic.topic_id = topic.id
-      JOIN dimension ON dimension.measure_version_id = latest_published_measure_versions.id
+      JOIN dimension ON dimension.measure_version_id = new_latest_published_measure_versions.id
       JOIN dimension_categorisation ON dimension.guid = dimension_categorisation.dimension_guid
       JOIN classification ON dimension_categorisation.classification_id = classification.id
 );
 
-CREATE UNIQUE INDEX uix_categorisations_by_dimension ON new_classifications_by_dimension (dimension_guid, classification_id);
+CREATE UNIQUE INDEX uix_new_categorisations_by_dimension ON new_classifications_by_dimension (dimension_guid, classification_id);
 """  # noqa

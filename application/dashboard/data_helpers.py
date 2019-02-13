@@ -137,16 +137,13 @@ def get_ethnic_group_by_slug_dashboard_data(ethnic_group_slug):
 
     ethnic_group_title = ""
     page_count = 0
-    nested_measures_and_dimensions = {}
+    nested_measures_and_dimensions = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(list))))
+
     if ethnicity:
         ethnic_group_title = ethnicity.value
         from application.dashboard.models import EthnicGroupByDimension
 
         dimension_links = EthnicGroupByDimension.query.filter_by(ethnicity_value=ethnicity.value).all()
-
-        nested_measures_and_dimensions = defaultdict(
-            lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
-        )
 
         for link in sorted(
             dimension_links,
