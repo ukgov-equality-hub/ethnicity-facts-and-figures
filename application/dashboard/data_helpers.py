@@ -115,19 +115,19 @@ def get_ethnic_groups_dashboard_data():
                 "value": link.ethnicity_value,
                 "position": link.ethnicity_position,
                 "url": url_for("dashboards.ethnic_group", value_slug=slugify(link.ethnicity_value)),
-                "measure_ids": {link.measure_id},  # temporary list to allow calculating `count_measures` later
-                "count_measures": 0,  # calculated afterwards using `measure_ids`
-                "count_dimensions": 1,
+                "measure_ids": {link.measure_id},  # temporary list to allow calculating `measure_count` later
+                "measure_count": 0,  # calculated afterwards using `measure_ids`
+                "dimension_count": 1,
                 "classifications": {link.classification_title},
             }
         else:
             ethnicities[link.ethnicity_value]["measure_ids"].add(link.measure_id)
-            ethnicities[link.ethnicity_value]["count_dimensions"] += 1
+            ethnicities[link.ethnicity_value]["dimension_count"] += 1
             ethnicities[link.ethnicity_value]["classifications"].add(link.classification_title)
 
     # Count the number of distinct measures for each ethnic group
     for ethnic_group in ethnicities.values():
-        ethnic_group["count_measures"] = len(ethnic_group.pop("measure_ids"))
+        ethnic_group["measure_count"] = len(ethnic_group.pop("measure_ids"))
 
     return ethnicities.values()
 
