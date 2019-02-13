@@ -56,8 +56,17 @@
                                                                                     version='latest') }}">{{ measure_version.title }}
                                                                 </a>
 
-                                                                {% if not static_mode and not measure_version.status == "APPROVED" %}
-                                                                    &nbsp;({{ measure_version.status | format_status | safe }}&nbsp;{{ measure_version.version }})
+
+                                                                {% if not static_mode and current_user.is_authenticated %}
+
+                                                                    {% if measure_version.status == 'APPROVED' and current_user in measure.shared_with %}
+                                                                        &nbsp;(You can update this)
+                                                                    {% endif %}
+
+                                                                    {% if not measure_version.status == 'APPROVED' and (not current_user.is_departmental_user() or current_user in measure.shared_with) %}
+                                                                        &nbsp;({{ measure_version.status | format_status | safe }}&nbsp;{{ measure_version.version }})
+                                                                    {% endif %}
+
 
                                                                 {% endif %}
                                                             </li>
