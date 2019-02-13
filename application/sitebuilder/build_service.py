@@ -155,7 +155,11 @@ def _delete_files_not_needed_for_deploy(build_dir):
 def _start_build(app, build, session):
     build_exception = None
     try:
-        print("DEBUG _start_build(): Marking build as started...")
+        print("DEBUG _start_build(): Refreshing materialized views...")
+        from manage import refresh_materialized_views
+
+        refresh_materialized_views()
+        print("DEBUG _start_build(): Doing it...")
         do_it(app, build)
         print("DEBUG _start_build(): Done it!")
 
