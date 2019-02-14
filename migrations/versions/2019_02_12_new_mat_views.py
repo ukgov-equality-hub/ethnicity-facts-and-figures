@@ -1,20 +1,21 @@
-drop_all_dashboard_helper_views = """
-DROP INDEX IF EXISTS uix_new_latest_published_measure_versions_by_geography;
-DROP INDEX IF EXISTS uix_new_latest_published_measure_versions;
-DROP INDEX IF EXISTS uix_new_ethnic_groups_by_dimension;
-DROP INDEX IF EXISTS uix_new_categorisations_by_dimension;
-DROP MATERIALIZED VIEW IF EXISTS new_latest_published_measure_versions_by_geography;
-DROP MATERIALIZED VIEW IF EXISTS new_ethnic_groups_by_dimension;
-DROP MATERIALIZED VIEW IF EXISTS new_classifications_by_dimension;
-DROP MATERIALIZED VIEW IF EXISTS new_latest_published_measure_versions;
-"""
+"""Create new materialized views for updated database model.
 
-refresh_all_dashboard_helper_views = """
-REFRESH MATERIALIZED VIEW CONCURRENTLY new_latest_published_measure_versions;
-REFRESH MATERIALIZED VIEW CONCURRENTLY new_latest_published_measure_versions_by_geography;
-REFRESH MATERIALIZED VIEW CONCURRENTLY new_ethnic_groups_by_dimension;
-REFRESH MATERIALIZED VIEW CONCURRENTLY new_classifications_by_dimension;
+This migration only adds new materialized views - it leaves the existing ones intact to be removed by a later
+migration/PR.
+
+Revision ID: 2019_02_12_new_mat_views
+Revises: 2019_01_15_uq_measure_version
+Create Date: 2019-01-15 12:25:28.892266
+
 """
+from alembic import op
+
+
+# revision identifiers, used by Alembic.
+revision = "2019_02_12_new_mat_views"
+down_revision = "2019_01_15_uq_measure_version"
+branch_labels = None
+depends_on = None
 
 latest_published_measure_versions_view = """
 CREATE MATERIALIZED VIEW new_latest_published_measure_versions AS
@@ -177,3 +178,25 @@ CREATE MATERIALIZED VIEW new_classifications_by_dimension AS
 
 CREATE UNIQUE INDEX uix_new_categorisations_by_dimension ON new_classifications_by_dimension (dimension_guid, classification_id);
 """  # noqa
+
+drop_all_dashboard_helper_views = """
+DROP INDEX IF EXISTS uix_new_latest_published_measure_versions;
+DROP INDEX IF EXISTS uix_new_latest_published_measure_versions_by_geography;
+DROP INDEX IF EXISTS uix_new_ethnic_groups_by_dimension;
+DROP INDEX IF EXISTS uix_new_categorisations_by_dimension;
+DROP MATERIALIZED VIEW IF EXISTS new_latest_published_measure_versions_by_geography;
+DROP MATERIALIZED VIEW IF EXISTS new_ethnic_groups_by_dimension;
+DROP MATERIALIZED VIEW IF EXISTS new_classifications_by_dimension;
+DROP MATERIALIZED VIEW IF EXISTS new_latest_published_measure_versions;
+"""
+
+
+def upgrade():
+    op.execute(latest_published_measure_versions_view)
+    op.execute(latest_published_measure_versions_by_geography_view)
+    op.execute(ethnic_groups_by_dimension_view)
+    op.execute(classifications_by_dimension)
+
+
+def downgrade():
+    op.execute(drop_all_dashboard_helper_views)
