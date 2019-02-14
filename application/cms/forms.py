@@ -241,7 +241,7 @@ class MeasureVersionForm(FlaskForm):
 
     # Edit summaries
     update_corrects_data_mistake = RDURadioField(
-        label="Does this update correct a mistake in the data?",
+        label="Does this update correct a mistake in the data, commentary, charts, or tables?",
         choices=((True, "Yes"), (False, "No")),
         coerce=lambda value: None if value is None else get_bool(value),
         validators=[

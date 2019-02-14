@@ -570,6 +570,43 @@ def test_view_edit_measure_page(test_app_client, logged_in_rdu_user, stub_measur
     assert further_technical_information.text == "Further technical information"
 
 
+@pytest.mark.parametrize("measure_version, should_show_data_correction_radio", (("1.0", False), ("1.1", True)))
+def test_view_edit_measure_page_for_minor_update_shows_data_correction_radio(
+    test_app_client, logged_in_rdu_user, measure_version, should_show_data_correction_radio
+):
+    measure_version = MeasureVersionFactory(status="DRAFT", version=measure_version, update_corrects_data_mistake=None)
+
+    response = test_app_client.get(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+
+    assert page.h1.text.strip() == "Edit page"
+
+    update_corrects_data_mistake = page.find("div", id="update_corrects_data_mistake")
+    if should_show_data_correction_radio:
+        legend = update_corrects_data_mistake.find("legend")
+        labels = update_corrects_data_mistake.findAll("label")
+
+        assert legend.text.strip() == "Does this update correct a mistake in the data, commentary, charts, or tables?"
+        assert labels[0].text.strip() == "Yes"
+        assert labels[1].text.strip() == "No"
+        assert (
+            update_corrects_data_mistake.findAll("input", {"type": "radio", "checked": True}) == []
+        ), "One of the radio options is checked, but they should both be unchecked by default."
+
+    else:
+        assert update_corrects_data_mistake is None
+
+
 def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
     test_app_client, logged_in_dept_user, mock_delete_upload
 ):
