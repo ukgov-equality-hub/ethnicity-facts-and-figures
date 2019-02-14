@@ -216,14 +216,7 @@ class MeasureVersion(db.Model, CopyableModel):
 
     # metadata
     __tablename__ = "measure_version"
-    __table_args__ = (
-        ForeignKeyConstraint(
-            ["parent_id", "parent_guid", "parent_version"],
-            ["measure_version.id", "measure_version.guid", "measure_version.version"],
-        ),
-        ForeignKeyConstraint(["measure_id"], ["measure.id"]),
-        UniqueConstraint("measure_id", "version"),
-    )
+    __table_args__ = (ForeignKeyConstraint(["measure_id"], ["measure.id"]), UniqueConstraint("measure_id", "version"))
 
     def __eq__(self, other):
         return self.id == other.id
@@ -269,15 +262,6 @@ class MeasureVersion(db.Model, CopyableModel):
 
     unpublished_at = db.Column(db.Date, nullable=True)
     unpublished_by = db.Column(db.String(255))  # email address of user who unpublished the page
-
-    # parent_guid defines the hierarchy between pages of the site
-    # TOPIC pages have "homepage" as parent_guid
-    # SUBTOPIC pages have "topic_xxx" as parent_guid
-    # MEASURE pages have "subtopic_xxx" as parent_guid
-    # The homepage and test area topic page have no parent_guid
-    parent_id = db.Column(db.Integer)  # TODO: Remove
-    parent_guid = db.Column(db.String(255))  # TODO: Remove
-    parent_version = db.Column(db.String())  # TODO: Remove
 
     db_version_id = db.Column(db.Integer, nullable=False)  # used to detect and prevent stale updates
     __mapper_args__ = {"version_id_col": db_version_id}
