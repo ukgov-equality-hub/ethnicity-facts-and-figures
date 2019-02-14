@@ -2,8 +2,9 @@ from flask_wtf import FlaskForm
 from markupsafe import Markup
 from wtforms import StringField, TextAreaField, FileField, HiddenField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, Optional, ValidationError, Length, InputRequired
+from wtforms.validators import DataRequired, Optional, ValidationError, Length, StopValidation, InputRequired
 
+from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
 from application.cms.models import (
     TypeOfData,
     UKCountry,
@@ -13,7 +14,7 @@ from application.cms.models import (
     FrequencyOfRelease,
     TypeOfStatistic,
 )
-from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
+from application.utils import get_bool
 
 
 class TypeOfDataRequiredValidator:
@@ -140,6 +141,12 @@ class DataSourceForm(FlaskForm):
 
 
 class MeasureVersionForm(FlaskForm):
+    class NotRequiredForMajorVersions:
+        def __call__(self, form: "MeasureVersionForm", field):
+            if not form.is_minor_update:
+                field.errors[:] = []
+                raise StopValidation()
+
     db_version_id = HiddenField()
     title = RDUStringField(
         label="Title",
@@ -233,6 +240,15 @@ class MeasureVersionForm(FlaskForm):
     )
 
     # Edit summaries
+    update_corrects_data_mistake = RDURadioField(
+        label="Does this update correct a mistake in the data?",
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda value: None if value is None else get_bool(value),
+        validators=[
+            NotRequiredForMajorVersions(),
+            RequiredForReviewValidator("This field is required", else_optional=True),
+        ],
+    )
     external_edit_summary = RDUTextAreaField(
         label="Changes to previous version",
         validators=[RequiredForReviewValidator()],
@@ -249,10 +265,16 @@ class MeasureVersionForm(FlaskForm):
         strip_whitespace=True,
     )
 
-    def __init__(self, sending_to_review=False, *args, **kwargs):
+    def __init__(self, is_minor_update: bool, sending_to_review=False, *args, **kwargs):
         super(MeasureVersionForm, self).__init__(*args, **kwargs)
 
+        self.is_minor_update = is_minor_update
         self.sending_to_review = sending_to_review
+
+        # Major versions are not considered "corrections to data mistakes", and the question is not shown to end users.
+        # So let's provide the default value here.
+        if not self.is_minor_update:
+            self.update_corrects_data_mistake.data = False
 
         choices = []
         geographic_choices = LowestLevelOfGeography.query.order_by("position").all()

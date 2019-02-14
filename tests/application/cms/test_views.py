@@ -36,7 +36,7 @@ class TestGetCreateMeasurePage:
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
         SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
-        form = MeasureVersionForm(**stub_measure_data)
+        form = MeasureVersionForm(is_minor_update=False, **stub_measure_data)
 
         response = test_app_client.post(
             url_for("cms.create_measure", topic_slug=subtopic.topic.slug, subtopic_slug=subtopic.slug),
@@ -54,7 +54,7 @@ class TestGetCreateMeasurePage:
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
         SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
-        form = MeasureVersionForm(**stub_measure_data)
+        form = MeasureVersionForm(is_minor_update=False, **stub_measure_data)
         request_mock = mock.Mock()
         request_mock.method = "POST"
         data_source_form, data_source_2_form = get_data_source_forms(request_mock, None)

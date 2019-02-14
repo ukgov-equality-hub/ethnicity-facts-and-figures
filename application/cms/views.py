@@ -53,7 +53,9 @@ def create_measure(topic_slug, subtopic_slug):
     except PageNotFoundException:
         abort(404)
 
-    form = MeasureVersionForm(internal_edit_summary="Initial version", external_edit_summary="First published")
+    form = MeasureVersionForm(
+        is_minor_update=False, internal_edit_summary="Initial version", external_edit_summary="First published"
+    )
     data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=None)
 
     if form.validate_on_submit() and data_source_form.validate_on_submit() and data_source_2_form.validate_on_submit():
@@ -267,9 +269,11 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
     data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=measure_version)
 
     if request.method == "GET":
-        measure_version_form = MeasureVersionForm(obj=measure_version)
+        measure_version_form = MeasureVersionForm(
+            is_minor_update=measure_version.is_minor_version(), obj=measure_version
+        )
     elif request.method == "POST":
-        measure_version_form = MeasureVersionForm()
+        measure_version_form = MeasureVersionForm(is_minor_update=measure_version.is_minor_version())
 
     saved = False
     if (
@@ -414,7 +418,10 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
     if measure_version.status != "INTERNAL_REVIEW":
 
         measure_version_form_to_validate = MeasureVersionForm(
-            obj=measure_version, meta={"csrf": False}, sending_to_review=True
+            is_minor_update=measure_version.is_minor_version(),
+            obj=measure_version,
+            meta={"csrf": False},
+            sending_to_review=True,
         )
 
         data_source_form_to_validate, data_source_2_form_to_validate = get_data_source_forms(
@@ -448,7 +455,9 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             session.pop("_flashes", None)
 
             # Recreate form with csrf token for next update
-            measure_version_form = MeasureVersionForm(obj=measure_version)
+            measure_version_form = MeasureVersionForm(
+                is_minor_update=measure_version.is_minor_version(), obj=measure_version
+            )
 
             # If the page was saved before sending to review form's db_version_id will be out of sync, so update it
             measure_version_form.db_version_id.data = measure_version.db_version_id
