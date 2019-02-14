@@ -33,35 +33,22 @@
       </thead>
 
     <tbody>
-    {% for subtopic in measure_tree %}
+    {% for topic_title, measure_titles_and_urls_by_subtopic in measure_titles_and_urls_by_topic_and_subtopic.items() %}
+        {% for subtopic_title, measure_titles_and_urls in measure_titles_and_urls_by_subtopic.items() %}
         <tr>
-            <td>{{ subtopic.topic }}</td>
-            <td>{{ subtopic.title }}</td>
-                    <td>
+            <td>{{ topic_title }}</td>
+            <td>{{ subtopic_title }}</td>
 
-            {% for page in subtopic.measures %}
+            <td>
+            {% for measure_title_and_url in measure_titles_and_urls %}
                 <ul class="dimensions">
-                    <a href="{{ page.url }}">{{ page.title }}</a>
+                    <a href="{{ measure_title_and_url.url }}">{{ measure_title_and_url.title }}</a>
                 </ul>
             {%  endfor %}
             </td>
 
           </tr>
-    {%  endfor %}
-
-    {% for page in pages %}
-        <tr>
-        <td>{{ page.topic }}</td>
-        <td>{{ page.subtopic }}</td>
-        <td>
-          <a href="{{ page.measure_url }}">{{ page.measure }}</a>
-            {% for dimension in page.dimensions %}
-                <ul class="dimensions">
-                   <li><a href="{{ page.measure_url }}#{{ dimension.dimension|slugify_value }}">… {{ dimension.short_title }}</a></li>
-                </ul>
-            {%  endfor %}
-        </td>
-      </tr>
+        {% endfor %}
     {%  endfor %}
     </tbody>
   </table>
