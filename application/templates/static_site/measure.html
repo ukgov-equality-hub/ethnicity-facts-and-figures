@@ -405,6 +405,11 @@
           </div>
         </div>
 
+        <div itemscope itemtype="http://schema.org/Dataset">
+          <meta itemprop="version" content=" {{ measure_version.version }}">
+          <div itemprop="spatialCoverage" itemscope itemtype="http://schema.org/Place">
+            <meta itemprop="name" content="{{ measure_version.format_area_covered() }}">
+          </div>
         <div class="accordion-section">
 
           <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Data sources" class="accordion-section-header">
@@ -412,9 +417,9 @@
           </div>
 
           <div class="accordion-section-body">
-
+            <div itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
             <h3 class="heading-small">Source</h3>
-            <p><a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.title }}">
+            <p itemprop="name"><a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.title }}" itemprop="url">
                 {{ measure_version.primary_data_source.title }}</a>
             </p>
 
@@ -431,7 +436,7 @@
 
               {% if measure_version.primary_data_source.publisher %}
                 <h3 class="heading-small">Publisher</h3>
-                <p>{{ measure_version.primary_data_source.publisher.name }}</p>
+                <p itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><span itemprop="name">{{ measure_version.primary_data_source.publisher.name }}</span></p>
               {% endif %}
 
               {% if measure_version.primary_data_source.note_on_corrections_or_updates %}
@@ -454,10 +459,11 @@
               {% endif %}
             {% endif %}
 
+            </div>
             {% if measure_version.secondary_data_source %}
-              <div class="secondary-source">
+              <div class="secondary-source" itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
                 <h3 class="heading-small">Secondary source</h3>
-                <p><a href="{{ measure_version.secondary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.secondary_data_source.title }}">
+                <p itemprop="name"><a href="{{ measure_version.secondary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.secondary_data_source.title }}" itemprop="url">
                     {{ measure_version.secondary_data_source.title }}
                 </a></p>
 
@@ -473,7 +479,7 @@
 
                 {% if measure_version.secondary_data_source.publisher %}
                   <h3 class="heading-small">Publisher</h3>
-                  <p>{{ measure_version.secondary_data_source.publisher.name }}</p>
+                  <p itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><span itemprop="name">{{ measure_version.secondary_data_source.publisher.name }}</span></p>
                 {% endif %}
 
               {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
@@ -514,10 +520,11 @@
             <h2 id="download-the-data" class="heading-medium">Download the data</h2>
           </div>
 
-          <div class="accordion-section-body downloads" itemscope itemtype="http://schema.org/Dataset">
+          <div class="accordion-section-body downloads">
             <meta itemprop="license" content="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">
             <meta itemprop="name" content="{{ measure_version.title | striptags }}">
             <meta itemprop="description" content="{{ measure_version.summary | first_bullet | render_markdown | striptags }}">
+
             {% for file in measure_version.uploads  %}
               {% if file.file_name %}
                 {% set measure_version_data_url =
@@ -533,7 +540,9 @@
 
                 <div itemprop="distribution" itemscope itemtype="http://schema.org/DataDownload">
                   <meta itemprop="encodingFormat" content="text/csv">
-                  <a itemprop="url" href="{{ measure_version_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
+                  <meta itemprop="contentSize" content="{{ file.size|filesize }}">
+                  <meta itemprop="name" content="{{ file.title | striptags }}">
+                  <a itemprop="contentUrl" href="{{ measure_version_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
                         {{ file.title }}
                         {{ " - Spreadsheet " if file.extension() == "csv" }}
                         {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
@@ -550,6 +559,12 @@
               {% endif %}
             {% endfor %}
             <button class="js--print print-btn" data-on="click" data-event-category="Page printed" data-event-action="Link clicked">Print this page</button>
+          </div>
+        </div>
+
+          <div itemprop="includedInDataCatalog" itemscope itemtype="http://schema.org/DataCatalog">
+            <meta itemprop="name" content="Ethnicity facts and figures">
+            <meta itemprop="url" content="{{ url_for('static_site.index') }}">
           </div>
         </div>
 
