@@ -1,6 +1,6 @@
 """Create new materialized views for updated database model.
 
-This migration only adds new materialized views - it leaves the existing ones in tact to be removed by a later
+This migration only adds new materialized views - it leaves the existing ones intact to be removed by a later
 migration/PR.
 
 Revision ID: 2019_02_12_new_mat_views

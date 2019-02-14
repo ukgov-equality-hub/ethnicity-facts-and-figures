@@ -34,22 +34,23 @@
 
     <tbody>
     {% for topic_title, measures_with_dimensions_by_subtopic in nested_measures_and_dimensions.items() %}
-        {% for subtopic_title, measures_with_dimensions in measures_with_dimensions_by_subtopic.items() %}
-            {% for measure_title, measure_with_dimensions in measures_with_dimensions.items() %}
+      {% for subtopic_title, measures_with_dimensions in measures_with_dimensions_by_subtopic.items() %}
+        {% for measure_title, measure_with_dimensions in measures_with_dimensions.items() %}
           <tr>
             <td>{{ topic_title }}</td>
             <td>{{ subtopic_title }}</td>
             <td>
               <a href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
-                    {% for dimension in measure_with_dimensions.dimensions %}
-                    <ul class="dimensions">
-                       <li><a href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
-                    </ul>
-                {%  endfor %}
+
+              {% for dimension in measure_with_dimensions.dimensions %}
+                <ul class="dimensions">
+                   <li><a href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
+                </ul>
+              {%  endfor %}
             </td>
           </tr>
-            {%  endfor %}
         {%  endfor %}
+      {%  endfor %}
     {%  endfor %}
 
     {% for page in pages %}
