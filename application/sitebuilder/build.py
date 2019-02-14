@@ -349,9 +349,12 @@ def build_dashboards(build_dir):
     # Individual ethnic group dashboards
     for ethnicity in sorted_ethnicity_list:
         slug = ethnicity["url"][ethnicity["url"].rindex("/") + 1 :]  # The part of the url after the final /
-        value_title, page_count, results = get_ethnic_group_by_slug_dashboard_data(slug)
+        value_title, page_count, nested_measures_and_dimensions = get_ethnic_group_by_slug_dashboard_data(slug)
         content = render_template(
-            "dashboards/ethnic_group.html", ethnic_group=value_title, measure_count=page_count, measure_tree=results
+            "dashboards/ethnic_group.html",
+            ethnic_group=value_title,
+            measure_count=page_count,
+            nested_measures_and_dimensions=nested_measures_and_dimensions,
         )
         dir_path = os.path.join(dashboards_dir, f"ethnic-groups/{slug}")
         os.makedirs(dir_path, exist_ok=True)
@@ -365,14 +368,14 @@ def build_dashboards(build_dir):
 
     # Individual ethnicity classifications dashboards
     for classification in classifications:
-        classification_title, page_count, results = get_ethnicity_classification_by_id_dashboard_data(
+        classification_title, page_count, nested_measures_and_dimensions = get_ethnicity_classification_by_id_dashboard_data(  # noqa
             classification["id"]
         )
         content = render_template(
             "dashboards/ethnicity_classification.html",
             classification_title=classification_title,
             page_count=page_count,
-            measure_tree=results,
+            nested_measures_and_dimensions=nested_measures_and_dimensions,
         )
         dir_path = os.path.join(dashboards_dir, f'ethnicity-classifications/{classification["id"]}')
         os.makedirs(dir_path, exist_ok=True)
@@ -387,12 +390,14 @@ def build_dashboards(build_dir):
     # Individual geographic area dashboards
     for loc_level in location_levels:
         slug = loc_level["url"][loc_level["url"].rindex("/") + 1 :]  # The part of the url after the final /
-        loc, page_count, subtopics = get_geographic_breakdown_by_slug_dashboard_data(slug)
+        geography, page_count, measure_titles_and_urls_by_topic_and_subtopic = get_geographic_breakdown_by_slug_dashboard_data(  # noqa
+            slug
+        )
         content = render_template(
             "dashboards/lowest-level-of-geography.html",
-            level_of_geography=loc.name,
+            level_of_geography=geography.name,
             page_count=page_count,
-            measure_tree=subtopics,
+            measure_titles_and_urls_by_topic_and_subtopic=measure_titles_and_urls_by_topic_and_subtopic,
         )
         dir_path = os.path.join(dashboards_dir, f"geographic-breakdown/{slug}")
         os.makedirs(dir_path, exist_ok=True)
