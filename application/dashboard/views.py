@@ -76,9 +76,12 @@ def ethnic_groups():
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def ethnic_group(value_slug):
-    value_title, page_count, results = get_ethnic_group_by_slug_dashboard_data(value_slug)
+    value_title, page_count, nested_measures_and_dimensions = get_ethnic_group_by_slug_dashboard_data(value_slug)
     return render_template(
-        "dashboards/ethnic_group.html", ethnic_group=value_title, measure_count=page_count, measure_tree=results
+        "dashboards/ethnic_group.html",
+        ethnic_group=value_title,
+        measure_count=page_count,
+        nested_measures_and_dimensions=nested_measures_and_dimensions,
     )
 
 
@@ -94,12 +97,14 @@ def ethnicity_classifications():
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def ethnicity_classification(classification_id):
-    classification_title, page_count, results = get_ethnicity_classification_by_id_dashboard_data(classification_id)
+    classification_title, page_count, nested_measures_and_dimensions = get_ethnicity_classification_by_id_dashboard_data(  # noqa
+        classification_id
+    )
     return render_template(
         "dashboards/ethnicity_classification.html",
         classification_title=classification_title,
         page_count=page_count,
-        measure_tree=results,
+        nested_measures_and_dimensions=nested_measures_and_dimensions,
     )
 
 
@@ -115,10 +120,12 @@ def locations():
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def location(slug):
-    loc, page_count, subtopics = get_geographic_breakdown_by_slug_dashboard_data(slug)
+    geography, page_count, measure_titles_and_urls_by_topic_and_subtopic = get_geographic_breakdown_by_slug_dashboard_data(  # noqa
+        slug
+    )
     return render_template(
         "dashboards/lowest-level-of-geography.html",
-        level_of_geography=loc.name,
+        level_of_geography=geography.name,
         page_count=page_count,
-        measure_tree=subtopics,
+        measure_titles_and_urls_by_topic_and_subtopic=measure_titles_and_urls_by_topic_and_subtopic,
     )
