@@ -277,8 +277,6 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
         if publish_status[o.status] >= publish_status["DEPARTMENT_REVIEW"]
         else None
     )
-    description = factory.Faker("paragraph", nb_sentences=3)
-    additional_description = factory.Faker("paragraph", nb_sentences=5)
     status = factory.LazyFunction(lambda: random.choice([status for status in publish_status.keys()]))
     created_at = factory.Faker("date_between", start_date="-30d", end_date="-7d")
     created_by = factory.SelfAttribute("_creator.email")

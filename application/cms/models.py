@@ -252,8 +252,6 @@ class MeasureVersion(db.Model, CopyableModel):
 
     slug = db.Column(db.String(255))  # TODO: Remove
     review_token = db.Column(db.String())  # used for review page URLs
-    description = db.Column(db.Text)  # TOPIC PAGES ONLY: a sentence below topic heading on homepage
-    additional_description = db.Column(db.TEXT)  # TOPIC PAGES ONLY: short paragraph displayed on topic page itself
 
     # status for measure pages is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
     # but it's free text in the DB and for other page types we have NULL or "draft" ¯\_(ツ)_/¯
