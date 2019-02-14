@@ -6,7 +6,6 @@ from flask import url_for
 
 from application.auth.models import TypeOfUser
 from application.cms.models import UKCountry, TypeOfData
-from application.cms.page_service import PageService
 from application.config import Config
 from tests.models import (
     MeasureVersionFactory,
@@ -17,8 +16,6 @@ from tests.models import (
     MeasureVersionWithDimensionFactory,
     UserFactory,
 )
-
-page_service = PageService()
 
 
 def test_homepage_includes_mailing_list_sign_up(test_app_client, logged_in_rdu_user, app):
