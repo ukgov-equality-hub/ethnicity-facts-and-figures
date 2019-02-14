@@ -463,7 +463,6 @@ def test_homepage_topics_display_in_rows_with_three_columns(
         measure = MeasureFactory(slug=f"measure-{i}", subtopics=[subtopic])
         MeasureVersionFactory(
             guid=f"measure_version_{i}",
-            page_type="measure",
             slug=f"measure-{i}",
             status="APPROVED",
             title=f"Test measure page #{i}",

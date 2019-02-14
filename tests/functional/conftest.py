@@ -107,17 +107,7 @@ def stub_compatible_topic(db_session):
 
 @pytest.fixture(scope="function")
 def stub_topic_page(db_session, stub_home_page, stub_compatible_topic):
-    page = MeasureVersion(
-        id=98,
-        guid="topic_test",
-        parent_id=97,
-        parent_guid="homepage",
-        page_type="topic",
-        slug="test",
-        status="DRAFT",
-        title="Test topic page",
-        version="1.0",
-    )
+    page = MeasureVersion(id=98, guid="topic_test", slug="test", status="DRAFT", title="Test topic page", version="1.0")
 
     page.page_json = json.dumps({"guid": "topic_test", "title": "Test topic page"})
 
@@ -140,16 +130,7 @@ def stub_compatible_subtopic(db_session, stub_compatible_topic):
 @pytest.fixture(scope="function")
 def stub_subtopic_page(db_session, stub_topic_page, stub_compatible_subtopic):
     page = MeasureVersion(
-        id=99,
-        guid="subtopic_example",
-        parent_id=stub_topic_page.id,
-        parent_guid=stub_topic_page.guid,
-        parent_version=stub_topic_page.version,
-        page_type="subtopic",
-        slug="example",
-        status="DRAFT",
-        title="Test subtopic page",
-        version="1.0",
+        id=99, guid="subtopic_example", slug="example", status="DRAFT", title="Test subtopic page", version="1.0"
     )
 
     page.page_json = json.dumps({"guid": "subtopic_example", "title": "Test subtopic page"})
@@ -162,15 +143,7 @@ def stub_subtopic_page(db_session, stub_topic_page, stub_compatible_subtopic):
 
 @pytest.fixture(scope="function")
 def stub_home_page(db_session):
-    page = MeasureVersion(
-        id=97,
-        guid="homepage",
-        page_type="homepage",
-        slug="/",
-        status="DRAFT",
-        title="Test homepage page",
-        version="1.0",
-    )
+    page = MeasureVersion(id=97, guid="homepage", slug="/", status="DRAFT", title="Test homepage page", version="1.0")
 
     db_session.session.add(page)
     db_session.session.commit()
@@ -258,10 +231,6 @@ def stub_measure_page(
     page = MeasureVersion(
         id=100,
         guid="test-measure-page",
-        parent_id=stub_subtopic_page.id,
-        parent_guid=stub_subtopic_page.guid,
-        parent_version=stub_subtopic_page.version,
-        page_type="measure",
         slug="test-measure-page",
         status="DRAFT",
         published=False,
@@ -295,10 +264,6 @@ def stub_published_measure_page(
     page = MeasureVersion(
         id=_get_random_unused_measure_version_id(),
         guid="test-published-measure-page",
-        parent_id=stub_subtopic_page.id,
-        parent_guid=stub_subtopic_page.guid,
-        parent_version=stub_subtopic_page.version,
-        page_type="measure",
         slug="test-published-measure-page",
         status="APPROVED",
         published=True,
@@ -310,7 +275,7 @@ def stub_published_measure_page(
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
-    measure = Measure(id=page.id, slug=page.slug, position=page.position, reference=page.internal_reference)
+    measure = Measure(id=page.id, slug=page.slug, reference=page.internal_reference)
     measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
     page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
 

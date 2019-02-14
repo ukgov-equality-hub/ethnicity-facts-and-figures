@@ -7,13 +7,7 @@ import stopit
 from application.sitebuilder.build import do_it
 from application.sitebuilder.build_service import build_site, request_build
 from manage import refresh_materialized_views
-from tests.models import (
-    MeasureFactory,
-    MeasureVersionWithDimensionFactory,
-    DataSourceFactory,
-    TopicPageFactory,
-    SubtopicPageFactory,
-)
+from tests.models import MeasureFactory, MeasureVersionWithDimensionFactory, DataSourceFactory
 from tests.utils import GeneralTestException, UnexpectedMockInvocationException
 
 
@@ -61,11 +55,6 @@ def test_static_site_build(db_session, single_use_app):
                                 s3_fs_patch.side_effect = UnexpectedMockInvocationException
                                 trello_service_patch.get_measure_cards.return_value = []
 
-                                # TODO: remove these once dashboard data_helpers no longe rely on them
-                                topic_page = TopicPageFactory()
-                                subtopic_page = SubtopicPageFactory(parent=topic_page)
-                                # TODO END
-
                                 # Including these three versioned pages ensures the build test exercises the logic to
                                 # build multiple page versions
                                 measure = MeasureFactory()
@@ -77,7 +66,6 @@ def test_static_site_build(db_session, single_use_app):
                                     published_at=datetime.now().date(),
                                     version="1.0",
                                     data_sources=[DataSourceFactory()],
-                                    parent=subtopic_page,  # TODO: Remove
                                 )
                                 # Latest published version
                                 MeasureVersionWithDimensionFactory(
@@ -87,7 +75,6 @@ def test_static_site_build(db_session, single_use_app):
                                     published_at=datetime.now().date(),
                                     version="2.0",
                                     data_sources=[DataSourceFactory()],
-                                    parent=subtopic_page,  # TODO: Remove
                                 )
                                 # Newer draft version
                                 MeasureVersionWithDimensionFactory(
@@ -97,7 +84,6 @@ def test_static_site_build(db_session, single_use_app):
                                     latest=True,
                                     version="2.1",
                                     data_sources=[DataSourceFactory()],
-                                    parent=subtopic_page,  # TODO: Remove
                                 )
 
                                 # Publish another page with dimension, chart and table to ensure there's an item for
@@ -119,7 +105,6 @@ def test_static_site_build(db_session, single_use_app):
                                     uploads__guid="test-download",
                                     uploads__title="Test measure page data",
                                     uploads__file_name="test-measure-page-data.csv",
-                                    parent=subtopic_page,  # TODO: Remove
                                 )
 
                                 # Materialized views are initially empty - populate them with our fixture page data

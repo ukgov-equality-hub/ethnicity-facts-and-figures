@@ -7,7 +7,7 @@ from typing import Optional, Iterable
 import sqlalchemy
 from bidict import bidict
 from dictalchemy import DictableModel
-from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, Index, asc, text, desc
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, asc, text, desc
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -207,15 +207,11 @@ user_measure = db.Table(
 @total_ordering
 class MeasureVersion(db.Model, CopyableModel):
     """
-    The Page model holds data about all pages in the page hierarchy of the website:
-    Homepage (root) -> Topics -> Subtopics -> Measure pages (leaves)
+    The MeasureVersion model holds data about all measure versions in the website.
 
-    Most of our Pages are measure pages, and many of the fields in this model are only relevant to measure pages.
-    Home, topic and subtopic pages define the structure of the site through parent-child relationships.
-
-    A measure page can have multiple versions in different states (e.g. versions 1.0 and 1.1 published, 2.0 in draft).
-    Each version of a measure page is one record in the Page model, so we have a compound key consisting of `guid`
-    coupled with `version`.
+    A Measure page can have multiple MeasureVersions in different states (e.g. versions 1.0 and 1.1 published, 2.0 in
+    draft).
+    Each version of a measure page is one record in the MeasureVersion model.
     """
 
     # metadata
@@ -225,7 +221,6 @@ class MeasureVersion(db.Model, CopyableModel):
             ["parent_id", "parent_guid", "parent_version"],
             ["measure_version.id", "measure_version.guid", "measure_version.version"],
         ),
-        Index("ix_page_type_uri", "page_type", "slug"),
         ForeignKeyConstraint(["measure_id"], ["measure.id"]),
         UniqueConstraint("measure_id", "version"),
     )
@@ -259,8 +254,6 @@ class MeasureVersion(db.Model, CopyableModel):
     review_token = db.Column(db.String())  # used for review page URLs
     description = db.Column(db.Text)  # TOPIC PAGES ONLY: a sentence below topic heading on homepage
     additional_description = db.Column(db.TEXT)  # TOPIC PAGES ONLY: short paragraph displayed on topic page itself
-    page_type = db.Column(db.String(255))  # TODO: Remove
-    position = db.Column(db.Integer, default=0)  # ordering for MEASURE and SUBTOPIC pages
 
     # status for measure pages is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
     # but it's free text in the DB and for other page types we have NULL or "draft" ¯\_(ツ)_/¯
@@ -322,12 +315,6 @@ class MeasureVersion(db.Model, CopyableModel):
     further_technical_information = db.Column(db.TEXT)  # "Further technical information"
 
     # relationships
-    parent = db.relationship(  # TODO: Remove
-        "MeasureVersion",
-        foreign_keys=[parent_id, parent_guid, parent_version],
-        remote_side=[id, guid, version],
-        backref=db.backref("children", order_by="MeasureVersion.position"),
-    )
     measure = db.relationship("Measure", back_populates="versions")
     lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="pages")
     uploads = db.relationship("Upload", back_populates="page", lazy="dynamic", cascade="all,delete")
@@ -351,24 +338,19 @@ class MeasureVersion(db.Model, CopyableModel):
     # eg (2.0, 3.0, 4.0) but not a minor update (1.1 or 2.1).
     @classmethod
     def published_major_versions(cls):
-        return cls.query.filter(cls.published_at.isnot(None), cls.version.endswith(".0"), cls.page_type == "measure")
+        return cls.query.filter(cls.published_at.isnot(None), cls.version.endswith(".0"))
 
     # Returns an array of measures which have been published, and which
     # were the first version (1.0)
     @classmethod
     def published_first_versions(cls):
-        return cls.query.filter(cls.published_at.isnot(None), cls.version == "1.0", cls.page_type == "measure")
+        return cls.query.filter(cls.published_at.isnot(None), cls.version == "1.0")
 
     # Returns an array of published subsequent (major) updates at their initial
     # release (eg 2.0, 3.0, 4.0 and so on...)
     @classmethod
     def published_updates_first_versions(cls):
-        return cls.query.filter(
-            cls.published_at.isnot(None),
-            cls.page_type == "measure",
-            cls.version.endswith(".0"),
-            not_(cls.version == "1.0"),
-        )
+        return cls.query.filter(cls.published_at.isnot(None), cls.version.endswith(".0"), not_(cls.version == "1.0"))
 
     def get_dimension(self, guid):
         try:

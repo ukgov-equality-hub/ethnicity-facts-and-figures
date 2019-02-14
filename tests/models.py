@@ -251,61 +251,6 @@ class MeasureFactory(factory.alchemy.SQLAlchemyModelFactory):
             self.subtopics = [SubtopicFactory(**kwargs)]
 
 
-# TODO: REMOVE
-class HomePageFactory(factory.alchemy.SQLAlchemyModelFactory):
-    class Meta:
-        model = MeasureVersion
-        sqlalchemy_session_persistence = "flush"
-
-    id = factory.Sequence(lambda x: x + 3000)
-    guid = factory.Faker("uuid4")
-    page_type = "homepage"
-    version = "1.0"
-
-
-class TopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
-    class Meta:
-        model = MeasureVersion
-        sqlalchemy_session_persistence = "flush"
-
-    id = factory.Sequence(lambda x: x + 2000)
-    guid = factory.Faker("uuid4")
-    page_type = "topic"
-    title = factory.Faker("sentence", nb_words=3)
-    slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
-    description = factory.Faker("paragraph", nb_sentences=3)
-    additional_description = factory.Faker("paragraph", nb_sentences=5)
-    version = "1.0"
-
-    parent = factory.SubFactory(HomePageFactory)
-    parent_id = factory.SelfAttribute("parent.id")
-    parent_guid = factory.SelfAttribute("parent.guid")
-    parent_version = factory.SelfAttribute("parent.version")
-
-
-class SubtopicPageFactory(factory.alchemy.SQLAlchemyModelFactory):
-    class Meta:
-        model = MeasureVersion
-        sqlalchemy_session_persistence = "flush"
-
-    id = factory.Sequence(lambda x: x + 1000)
-    guid = factory.Faker("uuid4")
-    page_type = "subtopic"
-    title = factory.Faker("sentence", nb_words=3)
-    slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
-    description = factory.Faker("paragraph", nb_sentences=3)
-    additional_description = factory.Faker("paragraph", nb_sentences=5)
-    version = "1.0"
-
-    parent = factory.SubFactory(TopicPageFactory)
-    parent_id = factory.SelfAttribute("parent.id")
-    parent_guid = factory.SelfAttribute("parent.guid")
-    parent_version = factory.SelfAttribute("parent.version")
-
-
-# TODO: END REMOVE
-
-
 class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = MeasureVersion
@@ -334,8 +279,6 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     )
     description = factory.Faker("paragraph", nb_sentences=3)
     additional_description = factory.Faker("paragraph", nb_sentences=5)
-    page_type = factory.LazyFunction(lambda: "measure")
-    position = factory.Sequence(lambda x: x)
     status = factory.LazyFunction(lambda: random.choice([status for status in publish_status.keys()]))
     created_at = factory.Faker("date_between", start_date="-30d", end_date="-7d")
     created_by = factory.SelfAttribute("_creator.email")
@@ -366,14 +309,6 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     related_publications = factory.Faker("paragraph", nb_sentences=3)
     qmi_url = factory.Faker("paragraph", nb_sentences=3)
     further_technical_information = factory.Faker("paragraph", nb_sentences=3)
-
-    # TODO: REMOVE
-    # unsupported: old way of doing things
-    parent = factory.SubFactory(SubtopicPageFactory)
-    parent_id = factory.SelfAttribute("parent.id")
-    parent_guid = factory.SelfAttribute("parent.guid")
-    parent_version = factory.SelfAttribute("parent.version")
-    # TODO: END REMOVE
 
     # scalar relationships
     measure = factory.SubFactory(MeasureFactory)

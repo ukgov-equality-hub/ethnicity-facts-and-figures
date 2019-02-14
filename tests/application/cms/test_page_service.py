@@ -14,7 +14,6 @@ from tests.models import (
     MeasureVersionFactory,
     MeasureVersionWithDimensionFactory,
     UserFactory,
-    SubtopicPageFactory,
 )
 
 page_service = PageService()
@@ -197,7 +196,6 @@ class TestPageService:
 
     def test_create_measure(self):
         subtopic = SubtopicFactory()
-        SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         created_measure_version = page_service.create_measure(
             subtopic=subtopic,
@@ -221,7 +219,6 @@ class TestPageService:
 
     def test_create_page_with_title_and_slug_already_exists_under_subtopic_raises_exception(self):
         subtopic = SubtopicFactory()
-        SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         created_page = page_service.create_measure(
             subtopic=subtopic,
@@ -244,7 +241,6 @@ class TestPageService:
 
     def test_create_page_trims_whitespace(self):
         subtopic = SubtopicFactory()
-        SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         page = page_service.create_measure(
             subtopic=subtopic,
@@ -263,7 +259,6 @@ class TestPageService:
 
     def test_first_version_of_page_title_and_url_match(self):
         subtopic = SubtopicFactory()
-        SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         created_page = page_service.create_measure(
             subtopic=subtopic,
@@ -291,7 +286,6 @@ class TestPageService:
 
     def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_changing(self):
         subtopic = SubtopicFactory()
-        SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         created_page = page_service.create_measure(
             subtopic=subtopic,
