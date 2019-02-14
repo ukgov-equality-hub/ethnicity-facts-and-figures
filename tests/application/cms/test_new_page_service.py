@@ -7,7 +7,6 @@ from application.cms.exceptions import PageNotFoundException, InvalidPageHierarc
 from application.cms.forms import MeasureVersionForm
 from application.cms.models import Measure, NewVersionType
 from application.cms.new_page_service import NewPageService
-from application.cms.page_service import PageService
 from tests.models import (
     TopicFactory,
     SubtopicFactory,
@@ -19,7 +18,6 @@ from tests.models import (
 )
 
 new_page_service = NewPageService()
-page_service = PageService()
 
 
 class TestNewPageService:
