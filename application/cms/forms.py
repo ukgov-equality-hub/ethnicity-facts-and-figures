@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from markupsafe import Markup
 from wtforms import StringField, TextAreaField, FileField, HiddenField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, Optional, ValidationError, Length
+from wtforms.validators import DataRequired, Optional, ValidationError, Length, InputRequired
 
 from application.cms.models import (
     TypeOfData,
@@ -37,15 +37,15 @@ class FrequencyOfReleaseOtherRequiredValidator:
                 raise ValidationError(message)
 
 
-class RequiredForReviewValidator(DataRequired):
+class RequiredForReviewValidator(InputRequired):
     """
     This validator is designed for measure pages which can have their progress saved half-way through filling in
     fields, but need to ensure certain fields have been filled in when the measure page is being submitted for review.
 
     This validator checks whether the form has been called with the `sending_to_review` argument. If it has, then
-    it applies the DataRequired validator to all fields with this validator. If it has not, then you can specify whether
-    or not the field should be considered optional - this is useful for e.g. radio fields, which by default need a
-    value selected.
+    it applies the InputRequired validator to all fields with this validator. If it has not, then you can specify
+    whether or not the field should be considered optional - this is useful for e.g. radio fields, which by default need
+    a value selected.
 
     Note: if you use the `else_optional` functionality of this validator, the validator should be the last entry in the
     validation chain, as `Optional` validators end the validation chain.
