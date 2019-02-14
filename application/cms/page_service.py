@@ -26,7 +26,7 @@ from application.sitebuilder.build_service import request_build
 from application.utils import create_guid, generate_review_token
 
 
-class NewPageService(Service):
+class PageService(Service):
     def __init__(self):
         super().__init__()
 
@@ -111,10 +111,10 @@ class NewPageService(Service):
         self, topic_slug, subtopic_slug, measure_slug, version, dimension_guid=None, upload_guid=None
     ):
         try:
-            topic = new_page_service.get_topic(topic_slug)
-            subtopic = new_page_service.get_subtopic(topic_slug, subtopic_slug)
-            measure = new_page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
-            measure_version = new_page_service.get_measure_version(topic_slug, subtopic_slug, measure_slug, version)
+            topic = page_service.get_topic(topic_slug)
+            subtopic = page_service.get_subtopic(topic_slug, subtopic_slug)
+            measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
+            measure_version = page_service.get_measure_version(topic_slug, subtopic_slug, measure_slug, version)
             dimension_object = measure_version.get_dimension(dimension_guid) if dimension_guid else None
             upload_object = measure_version.get_upload(upload_guid) if upload_guid else None
         except PageNotFoundException:
@@ -158,7 +158,7 @@ class NewPageService(Service):
     def _is_stale_update(data, page):
         update_db_version_id = int(data.pop("db_version_id"))
         if update_db_version_id < page.db_version_id:
-            return new_page_service._page_and_data_have_diffs(data, page)
+            return page_service._page_and_data_have_diffs(data, page)
         else:
             return False
 
@@ -330,7 +330,7 @@ class NewPageService(Service):
             )
             self.logger.error(message)
             raise PageUnEditable(message)
-        elif new_page_service._is_stale_update(measure_version_form.data, measure_version):
+        elif page_service._is_stale_update(measure_version_form.data, measure_version):
             raise StaleUpdateException("")
 
         # Possibly temporary to work out issue with data deletions
@@ -532,4 +532,4 @@ class NewPageService(Service):
             db.session.commit()
 
 
-new_page_service = NewPageService()
+page_service = PageService()

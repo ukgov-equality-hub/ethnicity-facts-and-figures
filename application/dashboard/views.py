@@ -16,7 +16,7 @@ from application.dashboard.data_helpers import (
     get_published_measures_by_years_and_months,
 )
 
-from application.factory import new_page_service
+from application.factory import page_service
 from application.utils import user_can
 
 
@@ -46,7 +46,7 @@ def published():
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def measures_list():
-    topics = new_page_service.get_all_topics()
+    topics = page_service.get_all_topics()
     return render_template("dashboards/measures.html", topics=topics)
 
 

@@ -6,7 +6,7 @@ from application.auth.models import TypeOfUser
 from application.cms.exceptions import PageNotFoundException, InvalidPageHierarchy, PageExistsException, PageUnEditable
 from application.cms.forms import MeasureVersionForm
 from application.cms.models import Measure, NewVersionType
-from application.cms.new_page_service import NewPageService
+from application.cms.page_service import PageService
 from tests.models import (
     TopicFactory,
     SubtopicFactory,
@@ -17,49 +17,49 @@ from tests.models import (
     SubtopicPageFactory,
 )
 
-new_page_service = NewPageService()
+page_service = PageService()
 
 
-class TestNewPageService:
+class TestPageService:
     def test_get_topic_finds_topic_by_slug(self):
         topic = TopicFactory(slug="topic-slug")
-        assert new_page_service.get_topic("topic-slug") is topic
+        assert page_service.get_topic("topic-slug") is topic
 
     def test_get_topic_raises_if_no_topic_found(self):
         TopicFactory(slug="topic-slug")
         with pytest.raises(PageNotFoundException):
-            new_page_service.get_topic("not-the-right-slug")
+            page_service.get_topic("not-the-right-slug")
 
     def test_get_subtopic_finds_subtopic_by_slug(self):
         subtopic = SubtopicFactory(slug="subtopic-slug", topic__slug="topic-slug")
-        assert new_page_service.get_subtopic("topic-slug", "subtopic-slug") is subtopic
+        assert page_service.get_subtopic("topic-slug", "subtopic-slug") is subtopic
 
     def test_get_subtopic_raises_if_wrong_topic_slug(self):
         SubtopicFactory(slug="subtopic-slug", topic__slug="topic-slug")
         with pytest.raises(PageNotFoundException):
-            new_page_service.get_subtopic("not-the-right-topic", "subtopic-slug")
+            page_service.get_subtopic("not-the-right-topic", "subtopic-slug")
 
     def test_get_measure_finds_measure_by_slug(self):
         measure = MeasureFactory(
             slug="measure-slug", subtopics__slug="subtopic-slug", subtopics__topic__slug="topic-slug"
         )
-        assert new_page_service.get_measure("topic-slug", "subtopic-slug", "measure-slug") is measure
+        assert page_service.get_measure("topic-slug", "subtopic-slug", "measure-slug") is measure
 
     def test_get_measure_raises_if_wrong_topic_slug(self):
         MeasureFactory(slug="measure-slug", subtopics__slug="subtopic-slug", subtopics__topic__slug="topic-slug")
         with pytest.raises(PageNotFoundException):
-            new_page_service.get_measure("not-the-right-topic", "subtopic-slug", "measure-slug")
+            page_service.get_measure("not-the-right-topic", "subtopic-slug", "measure-slug")
 
     def test_get_measure_raises_if_wrong_subtopic_slug(self):
         MeasureFactory(slug="measure-slug", subtopics__slug="subtopic-slug", subtopics__topic__slug="topic-slug")
         with pytest.raises(PageNotFoundException):
-            new_page_service.get_measure("topic-slug", "not-the-right-subtopic", "measure-slug")
+            page_service.get_measure("topic-slug", "not-the-right-subtopic", "measure-slug")
 
     def test_get_measure_version_gets_measure_version_if_hierarchy_is_good(self):
         measure_version = MeasureVersionFactory()
 
         assert (
-            new_page_service.get_measure_version(
+            page_service.get_measure_version(
                 measure_version.measure.subtopic.topic.slug,
                 measure_version.measure.subtopic.slug,
                 measure_version.measure.slug,
@@ -72,7 +72,7 @@ class TestNewPageService:
         measure_version = MeasureVersionFactory(measure__subtopics__slug="subtopic-slug")
 
         with pytest.raises(PageNotFoundException):
-            new_page_service.get_measure_version(
+            page_service.get_measure_version(
                 measure_version.measure.subtopic.topic.slug,
                 "not-the-right-subtopic",
                 measure_version.measure.slug,
@@ -81,18 +81,18 @@ class TestNewPageService:
 
     def test_get_measure_from_measure_version_id(self):
         measure_version = MeasureVersionFactory(id=345)
-        assert new_page_service.get_measure_from_measure_version_id(345) is measure_version.measure
+        assert page_service.get_measure_from_measure_version_id(345) is measure_version.measure
 
     def test_get_measure_from_measure_version_id_raises_if_not_found(self):
         MeasureVersionFactory(id=345)
         with pytest.raises(PageNotFoundException):
-            new_page_service.get_measure_from_measure_version_id(456)
+            page_service.get_measure_from_measure_version_id(456)
 
     def test_get_measure_page_hierarchy_gets_if_hierarchy_is_good(self):
         measure_version = MeasureVersionWithDimensionFactory()
 
         assert list(
-            new_page_service.get_measure_version_hierarchy(
+            page_service.get_measure_version_hierarchy(
                 measure_version.measure.subtopic.topic.slug,
                 measure_version.measure.subtopic.slug,
                 measure_version.measure.slug,
@@ -106,7 +106,7 @@ class TestNewPageService:
         ]
 
         assert list(
-            new_page_service.get_measure_version_hierarchy(
+            page_service.get_measure_version_hierarchy(
                 measure_version.measure.subtopic.topic.slug,
                 measure_version.measure.subtopic.slug,
                 measure_version.measure.slug,
@@ -122,7 +122,7 @@ class TestNewPageService:
         ]
 
         assert list(
-            new_page_service.get_measure_version_hierarchy(
+            page_service.get_measure_version_hierarchy(
                 measure_version.measure.subtopic.topic.slug,
                 measure_version.measure.subtopic.slug,
                 measure_version.measure.slug,
@@ -138,7 +138,7 @@ class TestNewPageService:
         ]
 
         assert list(
-            new_page_service.get_measure_version_hierarchy(
+            page_service.get_measure_version_hierarchy(
                 measure_version.measure.subtopic.topic.slug,
                 measure_version.measure.subtopic.slug,
                 measure_version.measure.slug,
@@ -159,7 +159,7 @@ class TestNewPageService:
         measure_version = MeasureVersionWithDimensionFactory(measure__slug="measure-slug")
 
         with pytest.raises(InvalidPageHierarchy):
-            new_page_service.get_measure_version_hierarchy(
+            page_service.get_measure_version_hierarchy(
                 measure_version.measure.subtopic.topic.slug,
                 measure_version.measure.subtopic.slug,
                 "not-the-right-slug",
@@ -185,12 +185,12 @@ class TestNewPageService:
             version="2.0", status="DRAFT", title="Measure 2 version 2.0", measure=measure_2_version_1_0.measure
         )
 
-        assert new_page_service.get_latest_version_of_all_measures(include_drafts=False) == [
+        assert page_service.get_latest_version_of_all_measures(include_drafts=False) == [
             measure_1_version_2_0,
             measure_2_version_1_0,
         ]
 
-        assert new_page_service.get_latest_version_of_all_measures(include_drafts=True) == [
+        assert page_service.get_latest_version_of_all_measures(include_drafts=True) == [
             measure_1_version_2_1,
             measure_2_version_2_0,
         ]
@@ -199,7 +199,7 @@ class TestNewPageService:
         subtopic = SubtopicFactory()
         SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        created_measure_version = new_page_service.create_measure(
+        created_measure_version = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
                 title="I care", published_at=datetime.now().date(), internal_reference="abc123"
@@ -223,7 +223,7 @@ class TestNewPageService:
         subtopic = SubtopicFactory()
         SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        created_page = new_page_service.create_measure(
+        created_page = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(title="I care", published_at=datetime.now().date()),
             data_source_forms=[],
@@ -231,7 +231,7 @@ class TestNewPageService:
         )
 
         with pytest.raises(PageExistsException):
-            new_page_service.create_measure(
+            page_service.create_measure(
                 subtopic=subtopic,
                 measure_version_form=MeasureVersionForm(
                     title=created_page.title, published_at=created_page.published_at
@@ -244,7 +244,7 @@ class TestNewPageService:
         subtopic = SubtopicFactory()
         SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        page = new_page_service.create_measure(
+        page = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
                 title="\n\t   I care\n", published_at=datetime.now().date(), methodology="\n\n\n\n\n\n"
@@ -260,7 +260,7 @@ class TestNewPageService:
         subtopic = SubtopicFactory()
         SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        created_page = new_page_service.create_measure(
+        created_page = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(title="the title", published_at=datetime.now().date()),
             created_by_email=user.email,
@@ -270,7 +270,7 @@ class TestNewPageService:
         assert "the title" == created_page.title
         assert "the-title" == created_page.slug == created_page.slug
 
-        updated_page = new_page_service.update_measure_version(
+        updated_page = page_service.update_measure_version(
             created_page,
             measure_version_form=MeasureVersionForm(title="an updated title", db_version_id=created_page.db_version_id),
             data_source_forms=[],
@@ -284,7 +284,7 @@ class TestNewPageService:
         subtopic = SubtopicFactory()
         SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        created_page = new_page_service.create_measure(
+        created_page = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(title="the title", published_at=datetime.now().date()),
             created_by_email=user.email,
@@ -294,7 +294,7 @@ class TestNewPageService:
         assert "the title" == created_page.title
         assert "the-title" == created_page.slug
 
-        new_page_service.update_measure_version(
+        page_service.update_measure_version(
             created_page,
             measure_version_form=MeasureVersionForm(
                 title="the title", status="APPROVED", db_version_id=created_page.db_version_id
@@ -303,12 +303,12 @@ class TestNewPageService:
             last_updated_by_email=user.email,
         )
 
-        copied_page = new_page_service.create_measure_version(created_page, NewVersionType.MINOR_UPDATE, user=user)
+        copied_page = page_service.create_measure_version(created_page, NewVersionType.MINOR_UPDATE, user=user)
 
         assert "the title" == copied_page.title
         assert "the-title" == copied_page.slug
 
-        new_page_service.update_measure_version(
+        page_service.update_measure_version(
             copied_page,
             measure_version_form=MeasureVersionForm(title="the updated title", db_version_id=copied_page.db_version_id),
             data_source_forms=[],
@@ -323,7 +323,7 @@ class TestNewPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         assert measure_version.latest is True
 
-        new_version = new_page_service.create_measure_version(measure_version, NewVersionType.MINOR_UPDATE, user=user)
+        new_version = page_service.create_measure_version(measure_version, NewVersionType.MINOR_UPDATE, user=user)
 
         assert new_version.version == "1.1"
         assert new_version.status == "DRAFT"
@@ -336,7 +336,7 @@ class TestNewPageService:
 
         assert new_version.get_previous_version().latest is False
 
-        next_version = new_page_service.create_measure_version(measure_version, NewVersionType.MAJOR_UPDATE, user=user)
+        next_version = page_service.create_measure_version(measure_version, NewVersionType.MAJOR_UPDATE, user=user)
 
         assert next_version.get_previous_version().latest is False
 
@@ -360,7 +360,7 @@ class TestNewPageService:
         original_version = old_dimension.page_version
 
         # when we copy the page
-        new_version = new_page_service.create_measure_version(measure_version, NewVersionType.MINOR_UPDATE, user=user)
+        new_version = page_service.create_measure_version(measure_version, NewVersionType.MINOR_UPDATE, user=user)
 
         # then
         assert new_version.dimensions.count() > 0
@@ -386,7 +386,7 @@ class TestNewPageService:
         assert measure_version.dimensions[0].classification_links.count() > 0
 
         # when we copy the page
-        new_version = new_page_service.create_measure_version(measure_version, NewVersionType.MINOR_UPDATE, user=user)
+        new_version = page_service.create_measure_version(measure_version, NewVersionType.MINOR_UPDATE, user=user)
 
         # then
         assert new_version.dimensions.count() > 0
@@ -404,7 +404,7 @@ class TestNewPageService:
         measure_version = MeasureVersionFactory(latest=True)
         assert measure_version.latest
 
-        first_copy = new_page_service.create_measure_version(measure_version, NewVersionType.NEW_MEASURE, user=user)
+        first_copy = page_service.create_measure_version(measure_version, NewVersionType.NEW_MEASURE, user=user)
         first_copy_guid = first_copy.guid
         first_copy_title = first_copy.title
         first_copy_slug = first_copy.slug
@@ -418,7 +418,7 @@ class TestNewPageService:
         assert first_copy.created_by == user.email
         assert first_copy.latest
 
-        second_copy = new_page_service.create_measure_version(first_copy, NewVersionType.NEW_MEASURE, user=user)
+        second_copy = page_service.create_measure_version(first_copy, NewVersionType.NEW_MEASURE, user=user)
 
         assert second_copy.version == "1.0"
         assert second_copy.status == "DRAFT"
@@ -437,7 +437,7 @@ class TestNewPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         measure_version = MeasureVersionFactory(status="DRAFT")
 
-        new_page_service.update_measure_version(
+        page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(
                 title="I care too much!", db_version_id=measure_version.db_version_id
@@ -446,7 +446,7 @@ class TestNewPageService:
             last_updated_by_email=user.email,
         )
 
-        measure_version_from_db = new_page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_id(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.title == "I care too much!"
@@ -456,12 +456,12 @@ class TestNewPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         measure_version = MeasureVersionFactory(status="DRAFT")
 
-        measure_version_from_db = new_page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_id(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.status == "DRAFT"
 
-        new_page_service.update_measure_version(
+        page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(title="Who cares", db_version_id=measure_version.db_version_id),
             data_source_forms=[],
@@ -469,13 +469,13 @@ class TestNewPageService:
             **{"status": "APPROVED"},
         )
 
-        measure_version_from_db = new_page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_id(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.status == "APPROVED"
 
         with pytest.raises(PageUnEditable):
-            new_page_service.update_measure_version(
+            page_service.update_measure_version(
                 measure_version,
                 measure_version_form=MeasureVersionForm(
                     title="I care too much!", db_version_id=measure_version.db_version_id
@@ -488,7 +488,7 @@ class TestNewPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         measure_version = MeasureVersionFactory(status="DRAFT")
 
-        new_page_service.update_measure_version(
+        page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(
                 title="Who cares",
@@ -502,7 +502,7 @@ class TestNewPageService:
 
         assert measure_version.ethnicity_definition_summary == "This is what should be left"
 
-        new_page_service.update_measure_version(
+        page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(
                 title="Who cares",
@@ -513,7 +513,7 @@ class TestNewPageService:
             last_updated_by_email=user.email,
         )
 
-        measure_version_from_db = new_page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_id(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.ethnicity_definition_summary == "How about some more whitespace?"
@@ -524,7 +524,7 @@ class TestNewPageService:
 
         assert measure_version.status == "DRAFT"
 
-        new_page_service.update_measure_version(
+        page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(title="Who cares", db_version_id=measure_version.db_version_id),
             last_updated_by_email=user.email,
@@ -533,7 +533,7 @@ class TestNewPageService:
         )
         assert measure_version.status == "DEPARTMENT_REVIEW"
 
-        message = new_page_service.reject_measure_version(measure_version)
+        message = page_service.reject_measure_version(measure_version)
 
         assert message == 'Sent page "Who cares" to REJECTED'
         assert measure_version.status == "REJECTED"
@@ -544,15 +544,15 @@ class TestNewPageService:
 
         assert measure_version.status == "DRAFT"
 
-        new_page_service.move_measure_version_to_next_state(measure_version, updated_by=user.email)
+        page_service.move_measure_version_to_next_state(measure_version, updated_by=user.email)
         assert measure_version.status == "INTERNAL_REVIEW"
         assert measure_version.last_updated_by == user.email
 
-        new_page_service.move_measure_version_to_next_state(measure_version, updated_by=user.email)
+        page_service.move_measure_version_to_next_state(measure_version, updated_by=user.email)
         assert measure_version.status == "DEPARTMENT_REVIEW"
         assert measure_version.last_updated_by == user.email
 
-        new_page_service.move_measure_version_to_next_state(measure_version, updated_by=user.email)
+        page_service.move_measure_version_to_next_state(measure_version, updated_by=user.email)
         assert measure_version.status == "APPROVED"
         assert measure_version.last_updated_by == user.email
         assert measure_version.published_by == user.email
@@ -567,7 +567,7 @@ class TestNewPageService:
         measure_2 = MeasureFactory(subtopics=measure.subtopics)
         MeasureVersionFactory(version="1.0", status="DRAFT", measure=measure_2)
 
-        measures = new_page_service.get_publishable_measures_for_subtopic(measure.subtopic)
+        measures = page_service.get_publishable_measures_for_subtopic(measure.subtopic)
         assert len(measures) == 1
         assert measures[0] == measure
         assert measure.versions_to_publish == [latest_publishable_version]
