@@ -156,6 +156,14 @@ def create_measure(driver, live_server, page, topic, subtopic):
     create_measure_page.click_save()
 
 
+def new_create_measure(driver, live_server, measure_version):
+    create_measure_page = MeasureCreatePage(
+        driver, live_server, measure_version.measure.subtopic.topic, measure_version.measure.subtopic
+    )
+    create_measure_page.set_title(measure_version.title)
+    create_measure_page.click_save()
+
+
 def shuffle_table(table):
     table_body = table[1:]
     shuffle(table_body)

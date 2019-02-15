@@ -216,8 +216,8 @@ class CmsIndexPage(BasePage):
 
 
 class TopicPage(BasePage):
-    def __init__(self, driver, live_server, page):
-        super().__init__(driver=driver, base_url="http://localhost:%s/%s" % (live_server.port, page.slug))
+    def __init__(self, driver, live_server, topic):
+        super().__init__(driver=driver, base_url="http://localhost:%s/%s" % (live_server.port, topic.slug))
 
     def get(self):
         url = self.base_url
@@ -900,7 +900,6 @@ class RandomMeasure:
     def __init__(self):
         factory = Faker()
         self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
-        self.slug = self.guid.replace("_", "-")
         self.title = " ".join(factory.words(4))
         self.measure_summary = factory.text()
         self.summary = factory.text()
@@ -956,7 +955,6 @@ class MinimalRandomMeasure:
     def __init__(self):
         factory = Faker()
         self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
-        self.slug = self.guid.replace("_", "-")
         self.version = "1.0"
         self.published_at = factory.date("%d%m%Y")
         self.published = False
