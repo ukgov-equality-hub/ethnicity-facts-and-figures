@@ -10,6 +10,8 @@
 {% block socialTitle %}{{ topic.title }}{% endblock %}
 {% block googleAnalytics %}ga('set','contentGroup1','Topic');{% endblock %}
 
+{% block bodyStart %}{{ super( )}}<div itemscope itemtype="http://schema.org/DataCatalog">{% endblock %}
+
 {% block content %}
         <div class="grid-row">
             <div class="column-two-thirds">
@@ -48,13 +50,13 @@
                                                 <ul class="links js-reorderable">
                                                     {% for measure in measures_by_subtopic[subtopic.id] %}
                                                         {% with measure_version = measure.latest_version %}
-                                                            <li data-measure-id="{{ measure.id }}" data-subtopic-id="{{ subtopic.id }}">
-                                                                <a href="{{ url_for('static_site.measure_version',
+                                                            <li data-measure-id="{{ measure.id }}" data-subtopic-id="{{ subtopic.id }}" itemprop="dataset" itemscope itemtype="http://schema.org/Dataset">
+                                                                <span itemprop="name"><a href="{{ url_for('static_site.measure_version',
                                                                                     topic_slug=topic.slug,
                                                                                     subtopic_slug=subtopic.slug,
                                                                                     measure_slug=measure.slug,
-                                                                                    version='latest') }}">{{ measure_version.title }}
-                                                                </a>
+                                                                                    version='latest') }}" itemprop="url">{{ measure_version.title }}
+                                                                </a></span>
 
                                                                 {% if not static_mode and not measure_version.status == "APPROVED" %}
                                                                     &nbsp;({{ measure_version.status | format_status | safe }}&nbsp;{{ measure_version.version }})
@@ -79,6 +81,7 @@
 
     {% block bodyEnd %}
         {{ super( )}}
+        </div>
 
         {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}
 

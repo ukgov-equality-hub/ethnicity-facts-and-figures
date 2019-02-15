@@ -10,9 +10,9 @@
     <div class="header-proposition">
       <div class="content">
         <nav id="proposition-menu">
-          <a href="{{ url_for('static_site.index') }}" id="proposition-name">
+          <span itemprop="name"><a itemprop="url" href="{{ url_for('static_site.index',_external=True) }}" id="proposition-name">
             Ethnicity facts and figures
-          </a>
+          </a></span>
           <ul class="header-nav">
             <li><a href="{{ url_for('static_site.ethnicity_in_the_uk') }}">Ethnicity in the UK</a></li>
             <li><a href="{{ url_for('static_site.background') }}">Background</a></li>
