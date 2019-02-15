@@ -143,12 +143,8 @@ def test_departmental_user_can_see_latest_published_version(test_app_client, log
 
     measure = MeasureFactory(shared_with=[])
 
-    MeasureVersionFactory(
-        title="Old Test Measure Page", status="APPROVED", measure=measure, version="1.0"
-    )
-    MeasureVersionFactory(
-        title="Updated Test Measure Page", status="DRAFT", measure=measure, version="2.0"
-    )
+    MeasureVersionFactory(title="Old Test Measure Page", status="APPROVED", measure=measure, version="1.0")
+    MeasureVersionFactory(title="Updated Test Measure Page", status="DRAFT", measure=measure, version="2.0")
 
     resp = test_app_client.get(
         url_for(
@@ -170,12 +166,8 @@ def test_departmental_user_can_see_latest_draft_version_if_they_have_access(test
     measure = MeasureFactory(shared_with=[])
     measure.shared_with.append(logged_in_dept_user)
 
-    MeasureVersionFactory(
-        title="Old Test Measure Page", status="APPROVED", measure=measure, version="1.0"
-    )
-    MeasureVersionFactory(
-        title="Updated Test Measure Page", status="DRAFT", measure=measure, version="2.0"
-    )
+    MeasureVersionFactory(title="Old Test Measure Page", status="APPROVED", measure=measure, version="1.0")
+    MeasureVersionFactory(title="Updated Test Measure Page", status="DRAFT", measure=measure, version="2.0")
 
     resp = test_app_client.get(
         url_for(
@@ -196,12 +188,8 @@ def test_rdu_user_cans_see_latest_draft_version(test_app_client, logged_in_rdu_u
 
     measure = MeasureFactory(shared_with=[])
 
-    MeasureVersionFactory(
-        title="Old Test Measure Page", status="APPROVED", measure=measure, version="1.0"
-    )
-    MeasureVersionFactory(
-        title="Updated Test Measure Page", status="DRAFT", measure=measure, version="2.0"
-    )
+    MeasureVersionFactory(title="Old Test Measure Page", status="APPROVED", measure=measure, version="1.0")
+    MeasureVersionFactory(title="Updated Test Measure Page", status="DRAFT", measure=measure, version="2.0")
 
     resp = test_app_client.get(
         url_for(
