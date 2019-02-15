@@ -67,8 +67,8 @@ def test_rdu_user_can_see_page_if_not_shared(test_app_client, logged_in_rdu_user
     assert page.h1.text.strip() == "Test Measure Page"
 
 
-def test_departmental_user_cannot_see_page_unless_shared(test_app_client, logged_in_dept_user):
-    measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[])
+def test_departmental_user_cannot_see_draft(test_app_client, logged_in_dept_user):
+    measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[], status="DRAFT")
     assert measure_version.measure.shared_with == []
     assert logged_in_dept_user.measures == []
 
@@ -83,6 +83,9 @@ def test_departmental_user_cannot_see_page_unless_shared(test_app_client, logged
     )
 
     assert resp.status_code == 403
+
+def test_departmental_user_can_see_draft_measure_if_they_have_access(test_app_client, logged_in_dept_user):
+    measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[], status="DRAFT")
 
     measure_version.measure.shared_with.append(logged_in_dept_user)
 
@@ -100,6 +103,101 @@ def test_departmental_user_cannot_see_page_unless_shared(test_app_client, logged
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.h1.text.strip() == "Test Measure Page"
 
+def test_departmental_user_cannot_see_draft_measure(test_app_client, logged_in_dept_user):
+    measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[], status="DRAFT")
+
+    resp = test_app_client.get(
+        url_for(
+            "static_site.measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+    )
+
+    assert resp.status_code == 403
+
+def test_departmental_user_can_see_published_measure(test_app_client, logged_in_dept_user):
+    measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[], status="APPROVED")
+
+    resp = test_app_client.get(
+        url_for(
+            "static_site.measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+    )
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    assert page.h1.text.strip() == "Test Measure Page"
+
+def test_departmental_user_can_see_latest_published_version(test_app_client, logged_in_dept_user):
+
+    measure = MeasureFactory(shared_with=[])
+
+    published_measure_version = MeasureVersionFactory(title="Old Test Measure Page", status="APPROVED", measure=measure, version="1.0")
+    draft_measure_version = MeasureVersionFactory(title="Updated Test Measure Page", status="DRAFT", measure=measure, version="2.0")
+
+    resp = test_app_client.get(
+        url_for(
+            "static_site.measure_version",
+            topic_slug=measure.subtopic.topic.slug,
+            subtopic_slug=measure.subtopic.slug,
+            measure_slug=measure.slug,
+            version='latest',
+        )
+    )
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    assert page.h1.text.strip() == "Old Test Measure Page"
+
+def test_departmental_user_can_see_latest_draft_version_if_they_have_access(test_app_client, logged_in_dept_user):
+
+    measure = MeasureFactory(shared_with=[])
+    measure.shared_with.append(logged_in_dept_user)
+
+    published_measure_version = MeasureVersionFactory(title="Old Test Measure Page", status="APPROVED", measure=measure, version="1.0")
+    draft_measure_version = MeasureVersionFactory(title="Updated Test Measure Page", status="DRAFT", measure=measure, version="2.0")
+
+    resp = test_app_client.get(
+        url_for(
+            "static_site.measure_version",
+            topic_slug=measure.subtopic.topic.slug,
+            subtopic_slug=measure.subtopic.slug,
+            measure_slug=measure.slug,
+            version='latest',
+        )
+    )
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    assert page.h1.text.strip() == "Updated Test Measure Page"
+
+def test_rdu_user_cans_see_latest_draft_version(test_app_client, logged_in_rdu_user):
+
+    measure = MeasureFactory(shared_with=[])
+
+    published_measure_version = MeasureVersionFactory(title="Old Test Measure Page", status="APPROVED", measure=measure, version="1.0")
+    draft_measure_version = MeasureVersionFactory(title="Updated Test Measure Page", status="DRAFT", measure=measure, version="2.0")
+
+    resp = test_app_client.get(
+        url_for(
+            "static_site.measure_version",
+            topic_slug=measure.subtopic.topic.slug,
+            subtopic_slug=measure.subtopic.slug,
+            measure_slug=measure.slug,
+            version='latest',
+        )
+    )
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    assert page.h1.text.strip() == "Updated Test Measure Page"
 
 def test_get_file_download_returns_404(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(uploads=[])
