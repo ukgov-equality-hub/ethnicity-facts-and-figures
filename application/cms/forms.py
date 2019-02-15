@@ -197,6 +197,13 @@ class MeasureVersionForm(FlaskForm):
         strip_whitespace=True,
     )
 
+    description = RDUTextAreaField(
+        label="Short summary",
+        validators=[RequiredForReviewValidator()],
+        hint="This is used by search engines and social sharing platforms. Aim for less than 160 characters.",
+        strip_whitespace=True,
+    )
+
     need_to_know = RDUTextAreaField(
         label="Things you need to know",
         validators=[RequiredForReviewValidator()],
