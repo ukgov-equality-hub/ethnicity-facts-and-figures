@@ -1,6 +1,8 @@
 import uuid
+
+
 from datetime import datetime, date
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, List
 
 from slugify import slugify
 from sqlalchemy import func, desc
@@ -505,6 +507,27 @@ class PageService(Service):
             measure_version.published_at = None
 
             db.session.commit()
+
+    @staticmethod
+    def get_measure_version_pairs_with_data_corrections() -> List[Tuple[MeasureVersion, MeasureVersion]]:
+        measures_versions_with_data_corrections = (
+            MeasureVersion.query.filter(
+                MeasureVersion.update_corrects_data_mistake == True,
+                MeasureVersion.status == "APPROVED",
+                MeasureVersion.published_at != None,
+            )  # noqa
+            .order_by(desc(MeasureVersion.published_at))
+            .all()
+        )
+
+        measure_versions_corrected_and_published = []
+        for measure_version in measures_versions_with_data_corrections:
+            published_version_with_correction = next(
+                filter(lambda mv: mv.major() == measure_version.major(), measure_version.measure.versions_to_publish)
+            )
+            measure_versions_corrected_and_published.append((measure_version, published_version_with_correction))
+
+        return measure_versions_corrected_and_published
 
 
 page_service = PageService()
