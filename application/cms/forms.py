@@ -200,7 +200,7 @@ class MeasureVersionForm(FlaskForm):
     description = RDUTextAreaField(
         label="Short summary",
         validators=[RequiredForReviewValidator()],
-        hint="This is used by search engines and social sharing platforms. Aim for less than 160 characters.",
+        hint="This may appear in search results. Aim for less than 160 characters, and end with a full stop.",
         strip_whitespace=True,
     )
 
