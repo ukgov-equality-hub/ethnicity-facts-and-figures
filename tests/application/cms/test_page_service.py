@@ -208,12 +208,11 @@ class TestPageService:
 
         assert created_measure_version.title == "I care"
         assert created_measure_version.created_by == user.email
-        # # TODO: remove these once MeasureVersions don't have slug or reference
-        assert created_measure_version.slug == "i-care"
+        # # TODO: remove this once MeasureVersions don't have reference
         assert created_measure_version.internal_reference == "abc123"
 
         created_measure = Measure.query.get(created_measure_version.measure_id)
-        assert created_measure.slug == created_measure_version.slug
+        assert created_measure.slug == "i-care"
         assert created_measure.position == len(subtopic.measures) - 1
         assert created_measure.reference == "abc123"
 
@@ -270,7 +269,7 @@ class TestPageService:
         )
 
         assert "the title" == created_page.title
-        assert "the-title" == created_page.slug == created_page.slug
+        assert "the-title" == created_page.measure.slug
 
         updated_page = page_service.update_measure_version(
             created_page,
@@ -282,7 +281,7 @@ class TestPageService:
         )
 
         assert "an updated title" == updated_page.title
-        assert "an-updated-title" == updated_page.slug
+        assert "an-updated-title" == updated_page.measure.slug
 
     def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_changing(self):
         subtopic = SubtopicFactory()
@@ -297,7 +296,7 @@ class TestPageService:
         )
 
         assert "the title" == created_page.title
-        assert "the-title" == created_page.slug
+        assert "the-title" == created_page.measure.slug
 
         page_service.update_measure_version(
             created_page,
@@ -311,7 +310,7 @@ class TestPageService:
         copied_page = page_service.create_measure_version(created_page, NewVersionType.MINOR_UPDATE, user=user)
 
         assert "the title" == copied_page.title
-        assert "the-title" == copied_page.slug
+        assert "the-title" == copied_page.measure.slug
 
         page_service.update_measure_version(
             copied_page,
@@ -323,7 +322,7 @@ class TestPageService:
         )
 
         assert "the updated title" == copied_page.title
-        assert "the-title" == copied_page.slug
+        assert "the-title" == copied_page.measure.slug
 
     def test_create_new_version_of_page(self):
         measure_version = MeasureVersionFactory(latest=True)
@@ -408,13 +407,13 @@ class TestPageService:
 
     def test_create_copy_of_page(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        measure_version = MeasureVersionFactory(latest=True)
+        measure_version = MeasureVersionFactory(latest=True, measure__slug="slug")
         assert measure_version.latest
 
         first_copy = page_service.create_measure_version(measure_version, NewVersionType.NEW_MEASURE, user=user)
         first_copy_guid = first_copy.guid
         first_copy_title = first_copy.title
-        first_copy_slug = first_copy.slug
+        first_copy_slug = first_copy.measure.slug
 
         assert first_copy.version == "1.0"
         assert first_copy.status == "DRAFT"
@@ -438,7 +437,7 @@ class TestPageService:
 
         assert first_copy_guid != second_copy.guid
         assert second_copy.title == f"COPY OF {first_copy_title}"
-        assert second_copy.slug == f"{first_copy_slug}-copy"
+        assert second_copy.measure.slug == f"{first_copy_slug}-copy"
 
     def test_update_measure_version(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)

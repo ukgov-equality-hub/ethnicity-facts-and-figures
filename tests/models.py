@@ -271,7 +271,6 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     version = factory.LazyFunction(lambda: "1.0")
     internal_reference = factory.Faker("sentence", nb_words=2)
     latest = True  # TODO: Add smarter logic
-    slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
     review_token = factory.LazyAttribute(
         lambda o: generate_review_token(o.guid, o.version)
         if publish_status[o.status] >= publish_status["DEPARTMENT_REVIEW"]

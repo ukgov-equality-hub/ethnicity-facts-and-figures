@@ -243,7 +243,6 @@ class MeasureVersion(db.Model, CopyableModel):
     latest = db.Column(db.Boolean, default=True)  # True if the current row is the latest version of a measure
     #                                               (latest created, not latest published, so could be a new draft)
 
-    slug = db.Column(db.String(255))  # TODO: Remove
     review_token = db.Column(db.String())  # used for review page URLs
 
     # status for measure pages is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED

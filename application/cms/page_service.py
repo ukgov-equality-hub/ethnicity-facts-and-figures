@@ -224,7 +224,6 @@ class PageService(Service):
         measure_version = MeasureVersion(
             guid=guid,
             version="1.0",
-            slug=slug,
             title=title,
             measure_id=measure.id,
             status=publish_status.inv[1],
@@ -260,22 +259,24 @@ class PageService(Service):
             new_version.guid = str(uuid.uuid4())
             new_version.title = f"COPY OF {measure_version.title}"
 
-            # TODO: Remove this later when we stop duplicating to the MeasureVersion table.
+            new_slug = f"{measure_version.measure.slug}-copy"
+            # In case there are multiple -copy measures, try this...
             try:
                 while self.get_measure(
-                    measure_version.measure.subtopic.topic.slug, measure_version.measure.subtopic.slug, new_version.slug
+                    measure_version.measure.subtopic.topic.slug, measure_version.measure.subtopic.slug, new_slug
                 ):
-                    new_version.slug = f"{new_version.slug}-copy"
-
+                    new_slug = f"{new_slug}-copy"
             except PageNotFoundException:
                 pass
 
             new_version.measure = Measure(
-                slug=new_version.slug,
+                slug=new_slug,
                 position=len(measure_version.measure.subtopic.measures),
                 reference=measure_version.internal_reference,
             )
             new_version.measure.subtopics = measure_version.measure.subtopics
+        else:
+            new_version.measure = measure_version.measure
 
         new_version.version = next_version_number
         new_version.status = "DRAFT"
@@ -359,7 +360,6 @@ class PageService(Service):
                 )
                 raise PageExistsException(message)
             measure_version.measure.slug = slug
-            measure_version.slug = slug  # TODO: Remove this once slug is gone from MeasureVersion
 
         # Update main fields of MeasureVersion
         measure_version_form.populate_obj(measure_version)

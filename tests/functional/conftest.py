@@ -107,7 +107,7 @@ def stub_compatible_topic(db_session):
 
 @pytest.fixture(scope="function")
 def stub_topic_page(db_session, stub_home_page, stub_compatible_topic):
-    page = MeasureVersion(id=98, guid="topic_test", slug="test", status="DRAFT", title="Test topic page", version="1.0")
+    page = MeasureVersion(id=98, guid="topic_test", status="DRAFT", title="Test topic page", version="1.0")
 
     page.page_json = json.dumps({"guid": "topic_test", "title": "Test topic page"})
 
@@ -119,9 +119,7 @@ def stub_topic_page(db_session, stub_home_page, stub_compatible_topic):
 
 @pytest.fixture(scope="function")
 def stub_compatible_subtopic(db_session, stub_compatible_topic):
-    subtopic = Subtopic(
-        id=99, slug="example", title="Test subtopic page", position=0, topic_id=stub_compatible_topic.id
-    )
+    subtopic = Subtopic(id=99, slug="example", title="Test subtopic page", topic_id=stub_compatible_topic.id)
     db_session.session.add(subtopic)
     db_session.session.commit()
     return subtopic
@@ -129,9 +127,7 @@ def stub_compatible_subtopic(db_session, stub_compatible_topic):
 
 @pytest.fixture(scope="function")
 def stub_subtopic_page(db_session, stub_topic_page, stub_compatible_subtopic):
-    page = MeasureVersion(
-        id=99, guid="subtopic_example", slug="example", status="DRAFT", title="Test subtopic page", version="1.0"
-    )
+    page = MeasureVersion(id=99, guid="subtopic_example", status="DRAFT", title="Test subtopic page", version="1.0")
 
     page.page_json = json.dumps({"guid": "subtopic_example", "title": "Test subtopic page"})
 
@@ -143,7 +139,7 @@ def stub_subtopic_page(db_session, stub_topic_page, stub_compatible_subtopic):
 
 @pytest.fixture(scope="function")
 def stub_home_page(db_session):
-    page = MeasureVersion(id=97, guid="homepage", slug="/", status="DRAFT", title="Test homepage page", version="1.0")
+    page = MeasureVersion(id=97, guid="homepage", status="DRAFT", title="Test homepage page", version="1.0")
 
     db_session.session.add(page)
     db_session.session.commit()
@@ -231,7 +227,6 @@ def stub_measure_page(
     page = MeasureVersion(
         id=100,
         guid="test-measure-page",
-        slug="test-measure-page",
         status="DRAFT",
         published=False,
         published_at=None,
@@ -264,7 +259,6 @@ def stub_published_measure_page(
     page = MeasureVersion(
         id=_get_random_unused_measure_version_id(),
         guid="test-published-measure-page",
-        slug="test-published-measure-page",
         status="APPROVED",
         published=True,
         published_at=datetime.now().date(),
@@ -275,7 +269,7 @@ def stub_published_measure_page(
         lowest_level_of_geography=stub_geography,
         latest=True,
     )
-    measure = Measure(id=page.id, slug=page.slug, reference=page.internal_reference)
+    measure = Measure(id=page.id, slug="test-published-measure-page", reference=page.internal_reference)
     measure.subtopics = [Subtopic.query.get(stub_subtopic_page.id)]
     page.measure_id = page.id  # Duplicating page ID for simplicity during migration to new data model
 
