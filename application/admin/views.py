@@ -8,7 +8,7 @@ from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS
 from application.cms.models import user_measure
-from application.cms.new_page_service import new_page_service
+from application.cms.page_service import page_service
 from application.utils import create_and_send_activation_email, user_can
 
 
@@ -34,7 +34,7 @@ def users():
 def user_by_id(user_id):
     user = User.query.filter_by(id=user_id).one()
     if user.user_type == TypeOfUser.DEPT_USER:
-        latest_measure_versions = new_page_service.get_latest_version_of_all_measures(include_drafts=True)
+        latest_measure_versions = page_service.get_latest_version_of_all_measures(include_drafts=True)
         shared = user.measures
     else:
         latest_measure_versions = []
@@ -48,7 +48,7 @@ def user_by_id(user_id):
 @user_can(MANAGE_USERS)
 def share_page_with_user(user_id):
     measure_id = request.form.get("measure-picker")
-    measure = new_page_service.get_measure_from_measure_version_id(measure_id)
+    measure = page_service.get_measure_from_measure_version_id(measure_id)
     user = User.query.get(user_id)
     if not user.is_departmental_user():
         flash("User %s is not a departmental user" % user.email, "error")

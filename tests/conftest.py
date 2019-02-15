@@ -11,7 +11,6 @@ from flask_script import Manager
 from application import db as app_db
 from application.auth.models import TypeOfUser
 from application.cms.classification_service import ClassificationService
-from application.cms.page_service import PageService
 from application.cms.scanner_service import ScannerService
 from application.cms.upload_service import UploadService
 from application.config import TestConfig
@@ -228,8 +227,8 @@ def mock_request_build(mocker):
 
 
 @pytest.fixture(scope="function")
-def mock_new_page_service_mark_measure_version_published(mocker):
-    return mocker.patch("application.cms.new_page_service.new_page_service.mark_measure_version_published")
+def mock_page_service_mark_measure_version_published(mocker):
+    return mocker.patch("application.cms.page_service.page_service.mark_measure_version_published")
 
 
 @pytest.fixture(scope="function")
@@ -292,10 +291,3 @@ def upload_service(app):
     upload_service.init_app(app)
     upload_service.enabled = True
     return upload_service
-
-
-@pytest.fixture(scope="function")
-def page_service(app):
-    page_service = PageService()
-    page_service.init_app(app)
-    return page_service

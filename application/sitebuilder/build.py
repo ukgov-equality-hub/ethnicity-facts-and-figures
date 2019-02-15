@@ -118,9 +118,9 @@ def build_and_upload_error_pages(application):
 def build_homepage_and_topic_hierarchy(build_dir, config):
 
     os.makedirs(build_dir, exist_ok=True)
-    from application.cms.new_page_service import new_page_service
+    from application.cms.page_service import page_service
 
-    topics = new_page_service.get_all_topics()
+    topics = page_service.get_all_topics()
     content = render_template("static_site/index.html", topics=topics, static_mode=True)
 
     file_path = os.path.join(build_dir, "index.html")
@@ -140,10 +140,10 @@ def write_topic_html(topic, build_dir, config):
     measures_by_subtopic = {}
     subtopics = []
 
-    from application.cms.new_page_service import new_page_service
+    from application.cms.page_service import page_service
 
     for subtopic in topic.subtopics:
-        measures = new_page_service.get_publishable_measures_for_subtopic(subtopic)
+        measures = page_service.get_publishable_measures_for_subtopic(subtopic)
         if measures:
             measures_by_subtopic[subtopic.id] = measures
             subtopics.append(subtopic)
@@ -265,9 +265,9 @@ def process_dimensions(measure_version, slug):
 
 
 def unpublish_pages(build_dir):
-    from application.cms.new_page_service import new_page_service
+    from application.cms.page_service import page_service
 
-    measure_versions_to_unpublish = new_page_service.get_measure_versions_to_unpublish()
+    measure_versions_to_unpublish = page_service.get_measure_versions_to_unpublish()
     for measure_version in measure_versions_to_unpublish:
         if measure_version.get_previous_version() is None:
             page_dir = os.path.join(
@@ -280,7 +280,7 @@ def unpublish_pages(build_dir):
             if os.path.exists(page_dir):
                 shutil.rmtree(page_dir, ignore_errors=True)
 
-    new_page_service.mark_measure_versions_unpublished(measure_versions_to_unpublish)
+    page_service.mark_measure_versions_unpublished(measure_versions_to_unpublish)
     return measure_versions_to_unpublish
 
 
@@ -349,9 +349,12 @@ def build_dashboards(build_dir):
     # Individual ethnic group dashboards
     for ethnicity in sorted_ethnicity_list:
         slug = ethnicity["url"][ethnicity["url"].rindex("/") + 1 :]  # The part of the url after the final /
-        value_title, page_count, results = get_ethnic_group_by_slug_dashboard_data(slug)
+        value_title, page_count, nested_measures_and_dimensions = get_ethnic_group_by_slug_dashboard_data(slug)
         content = render_template(
-            "dashboards/ethnic_group.html", ethnic_group=value_title, measure_count=page_count, measure_tree=results
+            "dashboards/ethnic_group.html",
+            ethnic_group=value_title,
+            measure_count=page_count,
+            nested_measures_and_dimensions=nested_measures_and_dimensions,
         )
         dir_path = os.path.join(dashboards_dir, f"ethnic-groups/{slug}")
         os.makedirs(dir_path, exist_ok=True)
@@ -365,14 +368,14 @@ def build_dashboards(build_dir):
 
     # Individual ethnicity classifications dashboards
     for classification in classifications:
-        classification_title, page_count, results = get_ethnicity_classification_by_id_dashboard_data(
+        classification_title, page_count, nested_measures_and_dimensions = get_ethnicity_classification_by_id_dashboard_data(  # noqa
             classification["id"]
         )
         content = render_template(
             "dashboards/ethnicity_classification.html",
             classification_title=classification_title,
             page_count=page_count,
-            measure_tree=results,
+            nested_measures_and_dimensions=nested_measures_and_dimensions,
         )
         dir_path = os.path.join(dashboards_dir, f'ethnicity-classifications/{classification["id"]}')
         os.makedirs(dir_path, exist_ok=True)
@@ -387,12 +390,14 @@ def build_dashboards(build_dir):
     # Individual geographic area dashboards
     for loc_level in location_levels:
         slug = loc_level["url"][loc_level["url"].rindex("/") + 1 :]  # The part of the url after the final /
-        loc, page_count, subtopics = get_geographic_breakdown_by_slug_dashboard_data(slug)
+        geography, page_count, measure_titles_and_urls_by_topic_and_subtopic = get_geographic_breakdown_by_slug_dashboard_data(  # noqa
+            slug
+        )
         content = render_template(
             "dashboards/lowest-level-of-geography.html",
-            level_of_geography=loc.name,
+            level_of_geography=geography.name,
             page_count=page_count,
-            measure_tree=subtopics,
+            measure_titles_and_urls_by_topic_and_subtopic=measure_titles_and_urls_by_topic_and_subtopic,
         )
         dir_path = os.path.join(dashboards_dir, f"geographic-breakdown/{slug}")
         os.makedirs(dir_path, exist_ok=True)

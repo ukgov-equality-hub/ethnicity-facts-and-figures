@@ -755,39 +755,6 @@ class TestMeasureVersion:
         assert measure.latest_published_version.version == "3.0"
 
     @pytest.mark.parametrize(
-        "page_versions, page_titles, expected_version_order, expected_title_order",
-        (
-            (["1.0", "2.0"], ["Test", "Test"], ["2.0", "1.0"], ["Test", "Test"]),
-            (["2.0", "1.0"], ["Test", "Test"], ["2.0", "1.0"], ["Test", "Test"]),
-            (["1.0", "2.0"], ["Test 1", "Test 2"], ["1.0", "2.0"], ["Test 1", "Test 2"]),
-            (["2.0", "1.0"], ["Test 1", "Test 2"], ["2.0", "1.0"], ["Test 1", "Test 2"]),
-            (
-                ["2.0", "1.0", "3.0", "1.1"],
-                ["Test", "Test", "Test", "Test"],
-                ["3.0", "2.0", "1.1", "1.0"],
-                ["Test", "Test", "Test", "Test"],
-            ),
-            (
-                ["2.0", "1.0", "3.0", "1.1"],
-                ["Test 1", "Test 3", "Test 2", "Test 2"],
-                ["2.0", "3.0", "1.1", "1.0"],
-                ["Test 1", "Test 2", "Test 2", "Test 3"],
-            ),
-        ),
-    )
-    def test_get_pages_by_type_returns_pages_ordered_by_title_and_version(
-        self, page_service, page_versions, page_titles, expected_version_order, expected_title_order
-    ):
-        measure = MeasureFactory()
-        for version, title in zip(page_versions, page_titles):
-            MeasureVersionFactory(measure=measure, version=version, title=title, page_type="measure")
-
-        pages = page_service.get_pages_by_type("measure")
-
-        assert [page.title for page in pages] == expected_title_order
-        assert [page.version for page in pages] == expected_version_order
-
-    @pytest.mark.parametrize(
         "countries, formatted_string",
         (
             ([UKCountry.ENGLAND], "England"),
