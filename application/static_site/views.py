@@ -149,7 +149,7 @@ def measure_version(topic_slug, subtopic_slug, measure_slug, version):
                 topic_slug, subtopic_slug, measure_slug, version
             )
 
-            if not (current_user.can_access_measure(measure) or measure_version.status == 'APPROVED'):
+            if not (current_user.can_access_measure(measure) or measure_version.status == "APPROVED"):
                 abort(403)
 
     except PageNotFoundException:
