@@ -10,7 +10,7 @@
     <div class="header-proposition">
       <div class="content">
         <nav id="proposition-menu">
-          <span itemprop="name"><a itemprop="url" href="{{ url_for('static_site.index',_external=True) }}" id="proposition-name">
+          <span itemprop="name"><a itemprop="url" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.index') }}" id="proposition-name">
             Ethnicity facts and figures
           </a></span>
           <ul class="header-nav">
