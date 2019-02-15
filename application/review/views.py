@@ -13,19 +13,22 @@ from application import db
 def review_page(review_token):
     try:
         id, version = decode_review_token(review_token, current_app.config)
-        page = MeasureVersion.query.filter_by(guid=id, version=version, review_token=review_token).one()
+        measure_version = MeasureVersion.query.filter_by(guid=id, version=version, review_token=review_token).one()
 
-        if page.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
+        if measure_version.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html", preview=True)
 
-        dimensions = [dimension.to_dict() for dimension in page.dimensions]
+        dimensions = [dimension.to_dict() for dimension in measure_version.dimensions]
 
         return render_template(
             "static_site/measure.html",
-            topic_slug=page.parent.parent.slug,
-            subtopic_slug=page.parent.slug,
-            measure_page=page,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_version=measure_version,
             dimensions=dimensions,
+            versions=measure_version.previous_major_versions,
+            first_published_date=measure_version.first_published_date,
+            edit_history=measure_version.previous_minor_versions,
             preview=True,
         )
 
@@ -43,11 +46,11 @@ def review_page(review_token):
 def get_new_review_url(id, version):
     try:
         token = generate_review_token(id, version)
-        page = MeasureVersion.query.filter_by(guid=id, version=version).one()
-        page.review_token = token
+        measure_version = MeasureVersion.query.filter_by(guid=id, version=version).one()
+        measure_version.review_token = token
         db.session.commit()
-        url = url_for("review.review_page", review_token=page.review_token, _external=True)
-        expires = page.review_token_expires_in(current_app.config)
+        url = url_for("review.review_page", review_token=measure_version.review_token, _external=True)
+        expires = measure_version.review_token_expires_in(current_app.config)
         day = "day" if expires == 1 else "days"
         return """<a href="{url}">Review link</a> expires in {expires} {day}
                     <button id="copy-to-clipboard" class="button neutral">Copy link</button>

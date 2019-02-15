@@ -70,10 +70,10 @@
                               <p>New measures:</p>
                               <ul>
                                 {% for page in  week['publications'] %}
-                                    <li><a href="{{ url_for('static_site.measure_page',
-                                                            topic_slug=page.parent.parent.slug,
-                                                            subtopic_slug=page.parent.slug,
-                                                            measure_slug=page.slug,
+                                    <li><a href="{{ url_for('static_site.measure_version',
+                                                            topic_slug=page.measure.subtopic.topic.slug,
+                                                            subtopic_slug=page.measure.subtopic.slug,
+                                                            measure_slug=page.measure.slug,
                                                             version='latest') }}">{{ page.title }}</a>
                                         <span class="source">{{ page.primary_data_source.publisher.name }}</span>{{ page.published_at | format_friendly_short_date}}</li>
                                 {% endfor %}
@@ -83,10 +83,10 @@
                               <p>Updates:</p>
                               <ul>
                                 {% for page in week['major_updates'] %}
-                                    <li><a href="{{ url_for('static_site.measure_page',
-                                                            topic_slug=page.parent.parent.slug,
-                                                            subtopic_slug=page.parent.slug,
-                                                            measure_slug=page.slug,
+                                    <li><a href="{{ url_for('static_site.measure_version',
+                                                            topic_slug=page.measure.subtopic.topic.slug,
+                                                            subtopic_slug=page.measure.subtopic.slug,
+                                                            measure_slug=page.measure.slug,
                                                             version='latest') }}">{{ page.title }}</a>
                                         <span class="source">{{ page.primary_data_source.publisher.name }}</span>{{ page.published_at | format_friendly_short_date}}</li>
                                 {% endfor %}

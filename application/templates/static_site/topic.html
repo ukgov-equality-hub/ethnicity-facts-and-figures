@@ -30,36 +30,38 @@
 
                 <div class="accordion">
                     <div class="container">
-                        {% for subtopic in (subtopics|selectattr('is_published_measure_or_parent_of') if static_mode else subtopics) %}
-                            {% if measures[subtopic.guid]|length > 0 or current_user.can(CREATE_MEASURE) %}
+                        {% for subtopic in (subtopics|selectattr('has_published_measures') if static_mode else subtopics) %}
+                            {% if measures_by_subtopic[subtopic.id]|length > 0 or (current_user.is_authenticated and current_user.can(CREATE_MEASURE)) %}
                                 <div class="accordion-section">
                                     <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="{{ subtopic.title }}" >
                                         <h2 class="heading-medium">
-                                            {{- subtopic.title -}}{% if subtopic.is_published_measure_or_parent_of == false %} (not published){% endif %}
+                                            {{- subtopic.title -}}{% if subtopic.has_published_measures == false %} (not published){% endif %}
                                         </h2>
                                     </div>
                                     <div class="accordion-section-body {% if not static_mode %}eff-!-padding-bottom-40{% endif %}">
                                         {% if not static_mode %}
-                                            {% if current_user.can(CREATE_MEASURE) %}
-                                                <p class="button-container"><a href="{{ url_for('cms.create_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}" class="button">Create a new page</a></p>
+                                            {% if current_user.is_authenticated and current_user.can(CREATE_MEASURE) %}
+                                                <p class="button-container"><a href="{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}" class="button">Create a new page</a></p>
                                             {% endif %}
                                         {% endif %}
-                                        {% if measures[subtopic.guid] %}
+                                        {% if measures_by_subtopic[subtopic.id] %}
                                                 <ul class="links js-reorderable">
-                                                    {% for m in measures[subtopic.guid] %}
-                                                        <li data-guid="{{ m.guid }}" data-subtopic="{{ subtopic.guid }}">
-                                                            <a href="{{ url_for('static_site.measure_page',
-                                                                                topic_slug=topic.slug,
-                                                                                subtopic_slug=subtopic.slug,
-                                                                                measure_slug=m.slug,
-                                                                                version='latest') }}">{{ m.title }}
-                                                            </a>
+                                                    {% for measure in measures_by_subtopic[subtopic.id] %}
+                                                        {% with measure_version = measure.latest_version %}
+                                                            <li data-measure-id="{{ measure.id }}" data-subtopic-id="{{ subtopic.id }}">
+                                                                <a href="{{ url_for('static_site.measure_version',
+                                                                                    topic_slug=topic.slug,
+                                                                                    subtopic_slug=subtopic.slug,
+                                                                                    measure_slug=measure.slug,
+                                                                                    version='latest') }}">{{ measure_version.title }}
+                                                                </a>
 
-                                                            {% if not static_mode and not m.status == "APPROVED" %}
-                                                                &nbsp;({{ m.status | format_status | safe }}&nbsp;{{ m.version }})
+                                                                {% if not static_mode and not measure_version.status == "APPROVED" %}
+                                                                    &nbsp;({{ measure_version.status | format_status | safe }}&nbsp;{{ measure_version.version }})
 
-                                                            {% endif %}
-                                                        </li>
+                                                                {% endif %}
+                                                            </li>
+                                                        {% endwith %}
                                                     {% endfor %}
                                                 </ul>
                                         {% endif %}
@@ -78,7 +80,7 @@
     {% block bodyEnd %}
         {{ super( )}}
 
-        {% if not static_mode and current_user.can(ORDER_MEASURES) %}
+        {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}
 
         <script type="text/javascript">
 
@@ -123,8 +125,8 @@
                 var positions = [];
                 for(var i = 0; i < list.children.length; i++) {
                      positions.push({"position": i,
-                                     "guid": list.children[i].dataset.guid,
-                                     "subtopic": list.children[i].dataset.subtopic})
+                                     "measure_id": list.children[i].dataset.measureId,
+                                     "subtopic_id": list.children[i].dataset.subtopicId})
                 }
 
                 status.classList.remove('status-invisible');

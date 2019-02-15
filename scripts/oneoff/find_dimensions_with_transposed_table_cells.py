@@ -34,7 +34,7 @@ def measure_page_url_from_dimension(dimension):
     subtopic_page = measure_page.parent
     topic_page = subtopic_page.parent
     return url_for(
-        "static_site.measure_page",
+        "static_site.measure_version",
         topic_uri=topic_page.uri,
         subtopic_uri=subtopic_page.uri,
         measure_uri=measure_page.uri,

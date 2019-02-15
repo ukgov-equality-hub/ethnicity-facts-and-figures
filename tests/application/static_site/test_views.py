@@ -1,22 +1,24 @@
 import re
-from datetime import datetime
 
 import pytest
 from bs4 import BeautifulSoup
 from flask import url_for
 
-from application.cms.models import MeasureVersion
-from application.cms.page_service import PageService
+from application.auth.models import TypeOfUser
+from application.cms.models import UKCountry, TypeOfData
 from application.config import Config
+from tests.models import (
+    MeasureVersionFactory,
+    DataSourceFactory,
+    TopicFactory,
+    SubtopicFactory,
+    MeasureFactory,
+    MeasureVersionWithDimensionFactory,
+    UserFactory,
+)
 
-page_service = PageService()
 
-
-def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_rdu_user, app):
-
-    # Set the user_id for the session to the logged-in user
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
+def test_homepage_includes_mailing_list_sign_up(test_app_client, logged_in_rdu_user, app):
 
     response = test_app_client.get(url_for("static_site.index"))
 
@@ -32,9 +34,7 @@ def test_homepage_includes_mailing_list_sign_up(test_app_client, mock_rdu_user, 
     assert page.find_all("button", text="Subscribe")[0], "Subscribe button should be present"
 
 
-def test_homepage_search_links_to_google_custom_url_before_javascript(
-    test_app_client, mock_admin_user, stub_topic_page
-):
+def test_homepage_search_links_to_google_custom_url_before_javascript(test_app_client):
     resp = test_app_client.get(url_for("static_site.search"))
 
     assert resp.status_code == 200
@@ -47,22 +47,18 @@ def test_homepage_search_links_to_google_custom_url_before_javascript(
     assert search_forms[0].select("[name=cx]")[0]["value"] == Config.GOOGLE_CUSTOM_SEARCH_ID
 
 
-def test_rdu_user_can_see_page_if_not_shared(
-    test_app_client, db_session, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
-):
-    assert stub_measure_page.shared_with == []
-    assert mock_rdu_user.pages == []
-
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
+def test_rdu_user_can_see_page_if_not_shared(test_app_client, logged_in_rdu_user):
+    measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[])
+    assert measure_version.measure.shared_with == []
+    assert logged_in_rdu_user.measures == []
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            "static_site.measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
@@ -71,38 +67,32 @@ def test_rdu_user_can_see_page_if_not_shared(
     assert page.h1.text.strip() == "Test Measure Page"
 
 
-def test_departmental_user_cannot_see_page_unless_shared(
-    test_app_client, db_session, mock_dept_user, stub_topic_page, stub_subtopic_page, stub_measure_page
-):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_dept_user.id
-
-    assert stub_measure_page.shared_with == []
-    assert mock_dept_user.pages == []
+def test_departmental_user_cannot_see_page_unless_shared(test_app_client, logged_in_dept_user):
+    measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[])
+    assert measure_version.measure.shared_with == []
+    assert logged_in_dept_user.measures == []
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            "static_site.measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
     assert resp.status_code == 403
 
-    stub_measure_page.shared_with.append(mock_dept_user)
-    db_session.session.add(stub_measure_page)
-    db_session.session.commit()
+    measure_version.measure.shared_with.append(logged_in_dept_user)
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            "static_site.measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
@@ -110,26 +100,16 @@ def test_departmental_user_cannot_see_page_unless_shared(
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.h1.text.strip() == "Test Measure Page"
 
-    stub_measure_page.shared_with = []
-    mock_dept_user.pages = []
-    db_session.session.add(mock_dept_user)
-    db_session.session.add(stub_measure_page)
-    db_session.session.commit()
 
-
-def test_get_file_download_returns_404(
-    test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
-):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
-
+def test_get_file_download_returns_404(test_app_client, logged_in_rdu_user):
+    measure_version = MeasureVersionFactory(uploads=[])
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page_file_download",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            "static_site.measure_version_file_download",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
             filename="nofile.csv",
         )
     )
@@ -137,21 +117,41 @@ def test_get_file_download_returns_404(
     assert resp.status_code == 404
 
 
-def test_view_export_page(
-    test_app_client, db_session, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
-):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
-
-    assert stub_measure_page.status == "DRAFT"
+def test_view_export_page(test_app_client, logged_in_rdu_user):
+    data_source = DataSourceFactory(
+        title="DWP Stats",
+        source_url="http://dwp.gov.uk",
+        note_on_corrections_or_updates="Note on corrections or updates",
+        publication_date="15th May 2017",
+        publisher__name="Department for Work and Pensions",
+        type_of_data=[TypeOfData.SURVEY],
+        type_of_statistic__external="National",
+        frequency_of_release__description="Quarterly",
+        purpose="Purpose of data source",
+    )
+    measure_version = MeasureVersionFactory(
+        status="DRAFT",
+        title="Test Measure Page",
+        guid="test-measure-page-guid",
+        slug="test-measure-page-slug",
+        area_covered=[UKCountry.ENGLAND],
+        lowest_level_of_geography__name="UK",
+        time_covered="4 months",
+        need_to_know="Need to know this",
+        measure_summary="Unemployment measure summary",
+        ethnicity_definition_summary="This is a summary of ethnicity definitions",
+        methodology="how we measure unemployment",
+        suppression_and_disclosure="Suppression rules and disclosure control",
+        data_sources=[data_source],
+    )
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page_markdown",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            "static_site.measure_version_markdown",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
@@ -243,26 +243,24 @@ def test_view_export_page(
     assert purpose_of_data_value.text.strip() == "Purpose of data source"
 
 
-def test_view_topic_page(test_app_client, mock_rdu_user, stub_topic_page):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
-
-    resp = test_app_client.get(url_for("static_site.topic", topic_slug=stub_topic_page.slug))
+def test_view_topic_page(test_app_client, logged_in_rdu_user):
+    topic = TopicFactory(title="Test topic page")
+    resp = test_app_client.get(url_for("static_site.topic", topic_slug=topic.slug))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.h1.text.strip() == "Test topic page"
 
 
-def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(
-    test_app_client, mock_rdu_user, mock_admin_user, stub_topic_page
-):
-    import re
+def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(test_app_client):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER)
+    admin_user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
+    topic = TopicFactory(title="Test topic page")
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
+        session["user_id"] = admin_user.id
 
-    resp = test_app_client.get(url_for("static_site.topic", topic_slug=stub_topic_page.slug))
+    resp = test_app_client.get(url_for("static_site.topic", topic_slug=topic.slug))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -270,9 +268,9 @@ def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(
     assert len(page.find_all("script", text=re.compile("setupReorderableTables"))) == 1
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
+        session["user_id"] = rdu_user.id
 
-    resp = test_app_client.get(url_for("static_site.topic", topic_slug=stub_topic_page.slug))
+    resp = test_app_client.get(url_for("static_site.topic", topic_slug=topic.slug))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -280,22 +278,16 @@ def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(
     assert len(page.find_all("script", text=re.compile("setupReorderableTables"))) == 0
 
 
-def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(
-    test_app_client, mock_admin_user, stub_topic_page
-):
-    import re
-
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
-
-    resp = test_app_client.get(url_for("static_site.topic", topic_slug=stub_topic_page.slug))
+def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(test_app_client, logged_in_admin_user):
+    topic = TopicFactory(title="Test topic page")
+    resp = test_app_client.get(url_for("static_site.topic", topic_slug=topic.slug))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.h1.text.strip() == "Test topic page"
     assert len(page.find_all("script", text=re.compile("setupReorderableTables"))) == 1
 
-    resp = test_app_client.get(url_for("static_site.topic", topic_slug=stub_topic_page.slug, static_mode=True))
+    resp = test_app_client.get(url_for("static_site.topic", topic_slug=topic.slug, static_mode=True))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -303,12 +295,8 @@ def test_view_topic_page_in_static_mode_does_not_contain_reordering_javascript(
     assert len(page.find_all("script", text=re.compile("setupReorderableTables"))) == 0
 
 
-def test_view_index_page_only_contains_one_topic(
-    test_app_client, mock_rdu_user, stub_home_page, stub_topic_page, stub_published_measure_page
-):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
-
+def test_view_index_page_only_contains_one_topic(test_app_client, logged_in_rdu_user):
+    measure_version = MeasureVersionFactory(status="APPROVED")
     resp = test_app_client.get(url_for("static_site.index"))
 
     assert resp.status_code == 200
@@ -316,33 +304,30 @@ def test_view_index_page_only_contains_one_topic(
     assert page.h1.text.strip() == "Ethnicity facts and figures"
     topics = page.find_all("div", class_="topic")
     assert len(topics) == 1
-    assert topics[0].find("a").text.strip() == stub_topic_page.title
+    assert topics[0].find("a").text.strip() == measure_version.measure.subtopic.topic.title
 
 
-def test_view_sandbox_topic(test_app_client, mock_rdu_user, stub_sandbox_topic_page):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
+def test_view_sandbox_topic(test_app_client, logged_in_rdu_user):
 
-    resp = test_app_client.get(url_for("static_site.topic", topic_slug=stub_sandbox_topic_page.slug))
+    sandbox_topic = TopicFactory(slug="testing-space", title="Test sandbox topic")
+    resp = test_app_client.get(url_for("static_site.topic", topic_slug=sandbox_topic.slug))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.h1.text.strip() == "Test sandbox topic page"
+    assert page.h1.text.strip() == "Test sandbox topic"
 
 
-def test_measure_page_social_sharing(
-    app, test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
-):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
-
+def test_measure_page_social_sharing(app, test_app_client, logged_in_rdu_user):
+    measure_version = MeasureVersionFactory(
+        title="Test Measure Page", summary="Unemployment Summary\n * This is a summary bullet"
+    )
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            "static_site.measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
@@ -367,41 +352,66 @@ def test_measure_page_social_sharing(
         assert twitter_sharing_meta[0].get("content") == value
 
 
-def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
+def test_view_measure_page(test_app_client, logged_in_rdu_user):
+    data_source = DataSourceFactory(
+        title="DWP Stats",
+        source_url="http://dwp.gov.uk",
+        note_on_corrections_or_updates="Note on corrections or updates",
+        publication_date="15th May 2017",
+        publisher__name="Department for Work and Pensions",
+        type_of_data=[TypeOfData.SURVEY],
+        type_of_statistic__external="National",
+        frequency_of_release__description="Quarterly",
+        purpose="Purpose of data source",
+    )
+    measure_version = MeasureVersionFactory(
+        status="DRAFT",
+        title="Test Measure Page",
+        guid="test-measure-page-guid",
+        slug="test-measure-page-slug",
+        area_covered=[UKCountry.ENGLAND],
+        lowest_level_of_geography__name="UK",
+        time_covered="4 months",
+        need_to_know="Need to know this",
+        measure_summary="Unemployment measure summary",
+        ethnicity_definition_summary="This is a summary of ethnicity definitions",
+        methodology="how we measure unemployment",
+        suppression_and_disclosure="Suppression rules and disclosure control",
+        data_sources=[data_source],
+    )
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            "static_site.measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
-    assert page.h1.text.strip() == stub_measure_page.title
+    assert page.h1.text.strip() == measure_version.title
+
+    # check that the status bar is shown
+    assert page.find("div", class_="status")
 
     # check metadata
     metadata_titles = page.find("div", class_="metadata").find_all("dt")
-    assert len(metadata_titles) == 5
+    assert len(metadata_titles) == 4
     assert metadata_titles[0].text == "Department:"
-    assert metadata_titles[1].text == "Published:"
-    assert metadata_titles[2].text == "Source:"
-    assert metadata_titles[3].text == "Area covered:"
-    assert metadata_titles[4].text == "Time period:"
+    assert metadata_titles[1].text == "Source:"
+    assert metadata_titles[2].text == "Area covered:"
+    assert metadata_titles[3].text == "Time period:"
 
     metadata_values = page.find("div", class_="metadata").find_all("dd")
-    assert len(metadata_titles) == 5
+    assert len(metadata_values) == 4
     assert metadata_values[0].text.strip() == "Department for Work and Pensions"
-    assert metadata_values[1].text.strip() == datetime.now().date().strftime("%d %B %Y").lstrip("0")
-    assert metadata_values[2].text.strip() == "DWP Stats"
-    assert metadata_values[3].text.strip() == "England"
-    assert metadata_values[4].text.strip() == "4 months"
+    assert metadata_values[1].text.strip() == "DWP Stats"
+    assert metadata_values[2].text.strip() == "England"
+    assert metadata_values[3].text.strip() == "4 months"
 
     things_to_know = page.find("span", attrs={"id": "things-you-need-to-know"})
     assert things_to_know
@@ -445,51 +455,21 @@ def test_view_measure_page(test_app_client, mock_rdu_user, stub_topic_page, stub
 
 @pytest.mark.parametrize(["number_of_topics", "row_counts"], ((1, (1,)), (3, (3,)), (5, (3, 2)), (9, (3, 3, 3))))
 def test_homepage_topics_display_in_rows_with_three_columns(
-    number_of_topics, row_counts, test_app_client, mock_rdu_user, stub_home_page, db_session
+    number_of_topics, row_counts, test_app_client, logged_in_rdu_user
 ):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
-
-    MeasureVersion.query.filter(MeasureVersion.page_type == "topic").delete()
-    db_session.session.commit()
-
     for i in range(number_of_topics):
-        topic = MeasureVersion(
-            guid=f"topic_{i}",
-            parent_guid="homepage",
-            page_type="topic",
-            slug=f"topic-{i}",
-            status="DRAFT",
-            title=f"Test topic page #{i}",
-            version="1.0",
-        )
-        subtopic = MeasureVersion(
-            guid=f"subtopic_{i}",
-            parent_guid=f"topic_{i}",
-            page_type="subtopic",
-            slug=f"subtopic-{i}",
-            status="DRAFT",
-            title=f"Test subtopic page #{i}",
-            version="1.0",
-        )
-        measure = MeasureVersion(
-            guid=f"measure_{i}",
-            parent_guid=f"topic_{i}",
+        topic = TopicFactory(slug=f"topic-{i}", title=f"Test topic page #{i}")
+        subtopic = SubtopicFactory(slug=f"subtopic-{i}", title=f"Test subtopic page #{i}", topic=topic)
+        measure = MeasureFactory(slug=f"measure-{i}", subtopics=[subtopic])
+        MeasureVersionFactory(
+            guid=f"measure_version_{i}",
             page_type="measure",
             slug=f"measure-{i}",
             status="APPROVED",
-            published=True,
             title=f"Test measure page #{i}",
             version="1.0",
+            measure=measure,
         )
-
-        topic.children = [subtopic]
-        subtopic.children = [measure]
-
-        db_session.session.add(topic)
-        db_session.session.add(subtopic)
-        db_session.session.add(measure)
-        db_session.session.commit()
 
     resp = test_app_client.get(url_for("static_site.index"))
     assert resp.status_code == 200
@@ -507,20 +487,13 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     ((True, True, True), (True, False, True), (False, True, False), (False, False, True)),
 )
 def test_homepage_only_shows_topics_with_published_measures_for_site_type(
-    measure_published,
-    static_mode,
-    topic_should_be_visible,
-    test_app_client,
-    mock_rdu_user,
-    stub_measure_page,
-    db_session,
+    measure_published, static_mode, topic_should_be_visible, test_app_client, logged_in_rdu_user
 ):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
-
-    stub_measure_page.published = measure_published
-    db_session.session.add(stub_measure_page)
-    db_session.session.commit()
+    MeasureVersionFactory(
+        status="APPROVED" if measure_published else "DRAFT",
+        published=measure_published,
+        measure__subtopics__topic__title="Test topic page",
+    )
 
     resp = test_app_client.get(url_for("static_site.index", static_mode=static_mode))
     assert resp.status_code == 200
@@ -535,22 +508,17 @@ def test_homepage_only_shows_topics_with_published_measures_for_site_type(
     ((True, True, True), (True, False, True), (False, True, False), (False, False, True)),
 )
 def test_topic_page_only_shows_subtopics_with_published_measures_for_static_site_build(
-    measure_published,
-    static_mode,
-    subtopic_should_be_visible,
-    test_app_client,
-    mock_rdu_user,
-    stub_measure_page,
-    db_session,
+    measure_published, static_mode, subtopic_should_be_visible, test_app_client, logged_in_rdu_user
 ):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
+    MeasureVersionFactory(
+        status="APPROVED" if measure_published else "DRAFT",
+        published=measure_published,
+        measure__subtopics__topic__slug="test-topic",
+        measure__subtopics__topic__title="Test topic page",
+        measure__subtopics__title="Test subtopic page",
+    )
 
-    stub_measure_page.published = measure_published
-    db_session.session.add(stub_measure_page)
-    db_session.session.commit()
-
-    resp = test_app_client.get(url_for("static_site.topic", topic_slug="test", static_mode=static_mode))
+    resp = test_app_client.get(url_for("static_site.topic", topic_slug="test-topic", static_mode=static_mode))
     assert resp.status_code == 200
 
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -563,26 +531,18 @@ def test_topic_page_only_shows_subtopics_with_published_measures_for_static_site
     ((True, True, True), (True, False, True), (False, True, True), (False, False, False)),
 )
 def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_dept_user_type(
-    measure_shared,
-    measure_published,
-    subtopic_should_be_visible,
-    test_app_client,
-    mock_dept_user,
-    stub_measure_page,
-    db_session,
+    measure_shared, measure_published, subtopic_should_be_visible, test_app_client, logged_in_dept_user
 ):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_dept_user.id
+    MeasureVersionFactory(
+        status="APPROVED" if measure_published else "DRAFT",
+        published=measure_published,
+        measure__shared_with=[logged_in_dept_user] if measure_shared else [],
+        measure__subtopics__topic__slug="test-topic",
+        measure__subtopics__topic__title="Test topic page",
+        measure__subtopics__title="Test subtopic page",
+    )
 
-    if measure_shared:
-        stub_measure_page.shared_with.append(mock_dept_user)
-        db_session.session.add(stub_measure_page)
-
-    stub_measure_page.published = measure_published
-    db_session.session.add(stub_measure_page)
-    db_session.session.commit()
-
-    resp = test_app_client.get(url_for("static_site.topic", topic_slug="test"))
+    resp = test_app_client.get(url_for("static_site.topic", topic_slug="test-topic"))
     assert resp.status_code == 200
 
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -590,14 +550,19 @@ def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_d
     assert bool(page(string=re.compile("Test subtopic page"))) is subtopic_should_be_visible
 
 
-@pytest.mark.parametrize("user_type, empty_subtopic_should_be_visible", (("DEPT", False), ("RDU", True)))
+@pytest.mark.parametrize(
+    "user_type, empty_subtopic_should_be_visible", ((TypeOfUser.DEPT_USER, False), (TypeOfUser.RDU_USER, True))
+)
 def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
-    user_type, empty_subtopic_should_be_visible, test_app_client, mock_rdu_user, mock_dept_user, stub_subtopic_page
+    user_type, empty_subtopic_should_be_visible, test_app_client
 ):
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_dept_user.id if user_type == "DEPT" else mock_rdu_user.id
+    user = UserFactory(user_type=user_type)
+    SubtopicFactory(title="Test subtopic page", topic__slug="test-topic")
 
-    resp = test_app_client.get(url_for("static_site.topic", topic_slug="test"))
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = user.id
+
+    resp = test_app_client.get(url_for("static_site.topic", topic_slug="test-topic"))
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
     assert resp.status_code == 200
@@ -605,21 +570,27 @@ def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
 
 
 def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(
-    test_app_client, db_session, mock_rdu_user, stub_topic_page, stub_subtopic_page, stub_measure_page
+    test_app_client, logged_in_rdu_user
 ):
-    assert stub_measure_page.shared_with == []
-    assert mock_rdu_user.pages == []
-
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_rdu_user.id
+    measure_version = MeasureVersionFactory(
+        status="DRAFT",
+        measure__shared_with=[],
+        measure__subtopics__topic__slug="topic",
+        measure__subtopics__slug="subtopic",
+        measure__slug="measure",
+        measure__subtopics__topic__title="Test topic page",
+        measure__subtopics__title="Test subtopic page",
+    )
+    assert measure_version.measure.shared_with == []
+    assert logged_in_rdu_user.measures == []
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=stub_measure_page.slug,
-            version=stub_measure_page.version,
+            "static_site.measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
@@ -630,36 +601,29 @@ def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_a
 
     for share_link in share_links:
         assert (
-            "https%3A//www.ethnicity-facts-figures.service.gov.uk/test/example/test-measure-page/latest"
-            in share_link["href"]
+            "https%3A//www.ethnicity-facts-figures.service.gov.uk/topic/subtopic/measure/latest" in share_link["href"]
         )
 
 
-def test_latest_version_does_not_add_noindex_for_robots(
-    app,
-    db,
-    db_session,
-    test_app_client,
-    mock_admin_user,
-    stub_topic_page,
-    stub_subtopic_page,
-    stub_measure_page_one_of_three,
-    stub_measure_page_two_of_three,
-):
-    # GIVEN the latest version of a page
-    latest_version_of_page = stub_measure_page_two_of_three
+def test_latest_published_version_does_not_add_noindex_for_robots(test_app_client, logged_in_admin_user):
+    # GIVEN the latest published version of a page with later draft created
+    measure = MeasureFactory()
+    # Outdated version
+    MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="1.0")
+    # Latest published version
+    latest_published_version = MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="2.0")
+    # Newer draft version
+    MeasureVersionFactory(measure=measure, status="DRAFT", latest=True, version="2.1")
+
     # WHEN we get the rendered template
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
-    from flask import url_for
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=latest_version_of_page.slug,
-            version=latest_version_of_page.version,
+            "static_site.measure_version",
+            topic_slug=latest_published_version.measure.subtopic.topic.slug,
+            subtopic_slug=latest_published_version.measure.subtopic.slug,
+            measure_slug=latest_published_version.measure.slug,
+            version=latest_published_version.version,
         )
     )
     # THEN it should not contain a noindex tag
@@ -669,67 +633,25 @@ def test_latest_version_does_not_add_noindex_for_robots(
     assert len(robots_tags) == 0
 
 
-def test_latest_version_does_not_add_noindex_for_robots_when_newer_draft_exists(
-    app,
-    db,
-    db_session,
-    test_app_client,
-    mock_admin_user,
-    stub_topic_page,
-    stub_subtopic_page,
-    stub_measure_page_one_of_three,
-    stub_measure_page_two_of_three,
-    stub_measure_page_three_of_three,
-):
-    # GIVEN the latest version of a page and a newer draft (ie the stub_measure_page_three_of_three fixture)
-    latest_published_version_of_page = stub_measure_page_two_of_three
-
-    # WHEN we get the rendered template
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
-    from flask import url_for
-
-    resp = test_app_client.get(
-        url_for(
-            "static_site.measure_page",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=latest_published_version_of_page.slug,
-            version=latest_published_version_of_page.version,
-        )
-    )
-    # THEN it should not contain a noindex tag
-    assert resp.status_code == 200
-    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    robots_tags = page.find_all("meta", attrs={"name": "robots"}, content=lambda value: value and "noindex" in value)
-    assert len(robots_tags) == 0
-
-
-def test_previous_version_adds_noindex_for_robots(
-    app,
-    db,
-    db_session,
-    test_app_client,
-    mock_admin_user,
-    stub_topic_page,
-    stub_subtopic_page,
-    stub_measure_page_one_of_three,
-    stub_measure_page_two_of_three,
-):
+def test_previous_version_adds_noindex_for_robots(test_app_client, logged_in_admin_user):
     # GIVEN a page with a later published version
-    outdated_page = stub_measure_page_one_of_three
+    measure = MeasureFactory()
+    # Outdated version
+    outdated_version = MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="1.0")
+    # Latest published version
+    MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="2.0")
+    # Newer draft version
+    MeasureVersionFactory(measure=measure, status="DRAFT", latest=True, version="2.1")
+
     # WHEN we get the rendered template
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = mock_admin_user.id
-    from flask import url_for
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_page",
-            topic_slug=stub_topic_page.slug,
-            subtopic_slug=stub_subtopic_page.slug,
-            measure_slug=outdated_page.slug,
-            version=outdated_page.version,
+            "static_site.measure_version",
+            topic_slug=outdated_version.measure.subtopic.topic.slug,
+            subtopic_slug=outdated_version.measure.subtopic.slug,
+            measure_slug=outdated_version.measure.slug,
+            version=outdated_version.version,
         )
     )
     # THEN it should contain a noindex tag
@@ -753,20 +675,27 @@ class TestMeasurePage:
         "static_mode, expected_url",
         (
             # ("yes", "<some_url>"),
-            ("no", "/test/example/test-measure-page/1.0/dimension/stub_dimension/tabular-download"),
+            ("no", "/topic/subtopic/measure/1.0/dimension/dimension-guid/tabular-download"),
         ),
     )
     def test_measure_page_download_table_tabular_data_link_correct(
-        self,
-        test_app_client,
-        mock_logged_in_rdu_user,
-        stub_page_with_upload_and_dimension_and_chart_and_table,
-        static_mode,
-        expected_url,
+        self, test_app_client, logged_in_rdu_user, static_mode, expected_url
     ):
-        resp = test_app_client.get(
-            f"/test/example/test-measure-page/latest?static_mode={static_mode}", follow_redirects=False
+        from tests.test_data.chart_and_table import chart, simple_table
+
+        MeasureVersionWithDimensionFactory(
+            status="DRAFT",
+            version="1.0",
+            measure__subtopics__topic__slug="topic",
+            measure__subtopics__slug="subtopic",
+            measure__slug="measure",
+            dimensions__guid="dimension-guid",
+            dimensions__chart=chart,
+            dimensions__table=simple_table(),
+            uploads__guid="test-download",
         )
+
+        resp = test_app_client.get(f"/topic/subtopic/measure/latest?static_mode={static_mode}", follow_redirects=False)
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
         data_links = page.findAll("a", href=True, text="Download table data (CSV)")
@@ -777,20 +706,26 @@ class TestMeasurePage:
         "static_mode, expected_url",
         (
             # ("yes", "<some_url>"),
-            ("no", "/test/example/test-measure-page/1.0/dimension/stub_dimension/download"),
+            ("no", "/topic/subtopic/measure/1.0/dimension/dimension-guid/download"),
         ),
     )
     def test_measure_page_download_table_source_data_link_correct(
-        self,
-        test_app_client,
-        mock_logged_in_rdu_user,
-        stub_page_with_upload_and_dimension_and_chart_and_table,
-        static_mode,
-        expected_url,
+        self, test_app_client, logged_in_rdu_user, static_mode, expected_url
     ):
-        resp = test_app_client.get(
-            f"/test/example/test-measure-page/latest?static_mode={static_mode}", follow_redirects=False
+        from tests.test_data.chart_and_table import chart, simple_table
+
+        MeasureVersionWithDimensionFactory(
+            status="DRAFT",
+            version="1.0",
+            measure__subtopics__topic__slug="topic",
+            measure__subtopics__slug="subtopic",
+            measure__slug="measure",
+            dimensions__guid="dimension-guid",
+            dimensions__chart=chart,
+            dimensions__table=simple_table(),
+            uploads__guid="test-download",
         )
+        resp = test_app_client.get(f"/topic/subtopic/measure/latest?static_mode={static_mode}", follow_redirects=False)
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
         data_links = page.findAll("a", href=True, text="Source data (CSV)")
@@ -801,20 +736,29 @@ class TestMeasurePage:
         "static_mode, expected_url",
         (
             # ("yes", "<some_url>"),
-            ("no", "/test/example/test-measure-page/1.0/downloads/test-measure-page-data.csv"),
+            ("no", "/topic/subtopic/measure/1.0/downloads/test-measure-page-data.csv"),
         ),
     )
     def test_measure_page_download_measure_source_data_link_correct(
-        self,
-        test_app_client,
-        mock_logged_in_rdu_user,
-        stub_page_with_upload_and_dimension_and_chart_and_table,
-        static_mode,
-        expected_url,
+        self, test_app_client, logged_in_rdu_user, static_mode, expected_url
     ):
-        resp = test_app_client.get("/test/example/test-measure-page/latest", follow_redirects=False)
-        page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+        from tests.test_data.chart_and_table import chart, simple_table
 
+        MeasureVersionWithDimensionFactory(
+            status="DRAFT",
+            version="1.0",
+            measure__subtopics__topic__slug="topic",
+            measure__subtopics__slug="subtopic",
+            measure__slug="measure",
+            dimensions__guid="dimension-guid",
+            dimensions__chart=chart,
+            dimensions__table=simple_table(),
+            uploads__guid="test-download",
+            uploads__title="Test measure page data",
+            uploads__file_name="test-measure-page-data.csv",
+        )
+        resp = test_app_client.get("/topic/subtopic/measure/latest", follow_redirects=False)
+        page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
         data_links = page.findAll("a", href=True, text=re.compile(r"Test measure page data\s+-\s+Spreadsheet"))
         assert len(data_links) == 1
         assert data_links[0].attrs["href"] == expected_url

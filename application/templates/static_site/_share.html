@@ -4,9 +4,9 @@
     <h4>Share this page</h4>
     <div class="share">
 
-      {% set encoded_url = (config.RDU_SITE.rstrip('/') + url_for('static_site.measure_page', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_page.slug, version='latest')) | urlencode %}
+      {% set encoded_url = (config.RDU_SITE.rstrip('/') + url_for('static_site.measure_version', topic_slug=measure_version.measure.subtopic.topic.slug, subtopic_slug=measure_version.measure.subtopic.slug, measure_slug=measure_version.measure.slug, version='latest')) | urlencode %}
 
-      {% set encoded_title = (measure_page.title | urlencode ) %}
+      {% set encoded_title = (measure_version.title | urlencode ) %}
 
       {% set links = [
         ['Twitter',  'https://twitter.com/intent/tweet?text=' + encoded_title  + '&url=' + encoded_url + '&hashtags=ethnicityfacts&via=cabinetofficeuk'],

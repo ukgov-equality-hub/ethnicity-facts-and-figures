@@ -12,7 +12,6 @@ from sqlalchemy import desc
 from sqlalchemy.orm import sessionmaker
 
 from application import db
-from application.cms.page_service import page_service
 from application.cms.file_service import S3FileSystem
 from application.sitebuilder.models import Build, BuildStatus
 from application.sitebuilder.build import do_it, get_static_dir
@@ -89,7 +88,7 @@ def build_site(app):
         print("DEBUG _build_site(): Finished build.")
 
 
-def s3_deployer(app, build_dir, deletions=[]):
+def s3_deployer(app, build_dir, measure_versions_to_delete=[]):
     _delete_files_not_needed_for_deploy(build_dir)
 
     site_bucket_name = app.config["S3_STATIC_SITE_BUCKET"]
@@ -97,11 +96,14 @@ def s3_deployer(app, build_dir, deletions=[]):
     resource = boto3.resource("s3")
     bucket = resource.Bucket(site_bucket_name)
 
-    for page in deletions:
-        version = "latest" if page.latest else page.version
-        subtopic = page_service.get_page(page.parent_guid)
-        topic = page_service.get_page(subtopic.parent_guid)
-        prefix = "%s/%s/%s/%s" % (topic.uri, subtopic.uri, page.uri, version)
+    for measure_version in measure_versions_to_delete:
+        version = (
+            "latest" if measure_version == measure_version.measure.latest_published_version else measure_version.version
+        )
+
+        topic_slug = measure_version.measure.subtopic.topic.slug
+        subtopic_slug = measure_version.measure.subtopic.slug
+        prefix = f"{topic_slug}/{subtopic_slug}/{measure_version.measure.slug}/{version}"
         to_delete = list(bucket.objects.filter(Prefix=prefix))
 
         for d in to_delete:
@@ -153,7 +155,11 @@ def _delete_files_not_needed_for_deploy(build_dir):
 def _start_build(app, build, session):
     build_exception = None
     try:
-        print("DEBUG _start_build(): Marking build as started...")
+        print("DEBUG _start_build(): Refreshing materialized views...")
+        from manage import refresh_materialized_views
+
+        refresh_materialized_views()
+        print("DEBUG _start_build(): Doing it...")
         do_it(app, build)
         print("DEBUG _start_build(): Done it!")
 

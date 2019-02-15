@@ -1,6 +1,6 @@
 <div class=" govuk-!-margin-top-4">
-  <h2 class="govuk-heading-s govuk-!-margin-bottom-1">Subscribe to our monthly updates</h2>
-  <p class="govuk-body">We send out monthly updates on new and updated pages, and policy activity.</p>
+  <h2 class="govuk-heading-s govuk-!-margin-bottom-1">Sign up for updates</h2>
+  <p class="govuk-body">Get monthly updates on new and updated pages and policy activity, as well as details of one-off events. <br><a href="{{ url_for('static_site.privacy_policy').rstrip('/') }}">How we use and protect your data</a></p>
 
   <form action="{{ config.NEWSLETTER_SUBSCRIBE_URL }}" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>

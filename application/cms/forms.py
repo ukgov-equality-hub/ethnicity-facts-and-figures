@@ -1,10 +1,18 @@
 from flask_wtf import FlaskForm
 from markupsafe import Markup
-from wtforms import StringField, TextAreaField, FileField, RadioField, HiddenField
+from wtforms import StringField, TextAreaField, FileField, HiddenField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length
 
-from application.cms.models import TypeOfData, UKCountry
+from application.cms.models import (
+    TypeOfData,
+    UKCountry,
+    MeasureVersion,
+    NewVersionType,
+    LowestLevelOfGeography,
+    FrequencyOfRelease,
+    TypeOfStatistic,
+)
 from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
 
 
@@ -15,18 +23,6 @@ class TypeOfDataRequiredValidator:
 
         if not any([administrative, survey]):
             raise ValidationError("Select at least one")
-
-
-class AreaCoveredRequiredForReviewValidator:
-    def __call__(self, form, field):
-        if getattr(form, "sending_to_review", False):
-            england = form.data.get("england", False)
-            wales = form.data.get("wales", False)
-            scotland = form.data.get("scotland", False)
-            northern_ireland = form.data.get("northern_ireland", False)
-
-            if not any([england, wales, scotland, northern_ireland]):
-                raise ValidationError("Select at least one")
 
 
 class FrequencyOfReleaseOtherRequiredValidator:
@@ -133,37 +129,35 @@ class DataSourceForm(FlaskForm):
 
         self.sending_to_review = sending_to_review
 
-        type_of_statistic_choices = []
-        type_of_statistic_model = kwargs.get("type_of_statistic_model", None)
-        if type_of_statistic_model:
-            type_of_statistic_choices = type_of_statistic_model.query.order_by("position").all()
-        self.type_of_statistic_id.choices = [(choice.id, choice.internal) for choice in type_of_statistic_choices]
+        self.type_of_statistic_id.choices = [
+            (choice.id, choice.internal) for choice in TypeOfStatistic.query.order_by("position").all()
+        ]
 
-        frequency_of_release_choices = []
-        frequency_of_release_model = kwargs.get("frequency_of_release_model", None)
-        if frequency_of_release_model:
-            frequency_of_release_choices = frequency_of_release_model.query.order_by("position").all()
         self.frequency_of_release_id.choices = [
-            (choice.id, choice.description) for choice in frequency_of_release_choices
+            (choice.id, choice.description) for choice in FrequencyOfRelease.query.order_by("position").all()
         ]
         self.frequency_of_release_id.set_other_field(self.frequency_of_release_other)
 
 
-class MeasurePageForm(FlaskForm):
+class MeasureVersionForm(FlaskForm):
     db_version_id = HiddenField()
     title = RDUStringField(
         label="Title",
         validators=[DataRequired(), Length(max=255)],
         hint="For example, ‘Self-harm by young people in custody’",
+        strip_whitespace=True,
     )
     internal_reference = RDUStringField(
-        label="Measure code (optional)", hint="This is for internal use by the Race Disparity Unit"
+        label="Measure code (optional)",
+        hint="This is for internal use by the Race Disparity Unit",
+        strip_whitespace=True,
     )
     published_at = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
     time_covered = RDUStringField(
         label="Time period covered",
         validators=[RequiredForReviewValidator()],
         hint="For example, ‘2016 to 2017’, or ‘2014/15 to 2016/17’",
+        strip_whitespace=True,
     )
 
     area_covered = RDUCheckboxField(label="Areas covered", enum=UKCountry, validators=[RequiredForReviewValidator()])
@@ -177,9 +171,12 @@ class MeasurePageForm(FlaskForm):
         label="Suppression rules and disclosure control (optional)",
         hint="If any data has been excluded from the analysis, explain why",
         extended_hint="_suppression_and_disclosure.html",
+        strip_whitespace=True,
     )
     estimation = RDUTextAreaField(
-        label="Rounding (optional)", hint="For example, ‘Percentages are rounded to one decimal place’"
+        label="Rounding (optional)",
+        hint="For example, ‘Percentages are rounded to one decimal place’",
+        strip_whitespace=True,
     )
 
     summary = RDUTextAreaField(
@@ -187,6 +184,7 @@ class MeasurePageForm(FlaskForm):
         validators=[RequiredForReviewValidator()],
         hint="Summarise the main findings and highlight any serious caveats in the quality of the data",
         extended_hint="_summary.html",
+        strip_whitespace=True,
     )
 
     measure_summary = RDUTextAreaField(
@@ -196,6 +194,7 @@ class MeasurePageForm(FlaskForm):
             "Explain what the data is analysing, what’s included in categories labelled as ‘Other’ and define any "
             "terms users might not understand"
         ),
+        strip_whitespace=True,
     )
 
     need_to_know = RDUTextAreaField(
@@ -203,6 +202,7 @@ class MeasurePageForm(FlaskForm):
         validators=[RequiredForReviewValidator()],
         hint="Outline how the data was collected and explain any limitations",
         extended_hint="_things_you_need_to_know.html",
+        strip_whitespace=True,
     )
 
     ethnicity_definition_summary = RDUTextAreaField(
@@ -214,6 +214,7 @@ class MeasurePageForm(FlaskForm):
             '<a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z#ethnic-categories" target="_blank">'
             "Style guide A to Z</a> (this will open a new page)."
         ),
+        strip_whitespace=True,
     )
 
     methodology = RDUTextAreaField(
@@ -221,12 +222,15 @@ class MeasurePageForm(FlaskForm):
         validators=[RequiredForReviewValidator()],
         hint="Explain your methods in clear, simple language",
         extended_hint="_methodology.html",
+        strip_whitespace=True,
     )
     related_publications = RDUTextAreaField(
-        label="Related publications (optional)", extended_hint="_related_publications.html"
+        label="Related publications (optional)", extended_hint="_related_publications.html", strip_whitespace=True
     )
-    qmi_url = RDUURLField(label="Link to quality and methodology information")
-    further_technical_information = RDUTextAreaField(label="Further technical information (optional)")
+    qmi_url = RDUURLField(label="Link to quality and methodology information", strip_whitespace=True)
+    further_technical_information = RDUTextAreaField(
+        label="Further technical information (optional)", strip_whitespace=True
+    )
 
     # Edit summaries
     external_edit_summary = RDUTextAreaField(
@@ -237,27 +241,27 @@ class MeasurePageForm(FlaskForm):
             "what’s changed in the latest version (for example, ‘Updated with new data’ or ‘Minor changes for style "
             "and accuracy’)."
         ),
+        strip_whitespace=True,
     )
     internal_edit_summary = RDUTextAreaField(
         label="Notes (for internal use - optional)",
         hint="Include any additional information someone might need if they’re working on this page in the future",
+        strip_whitespace=True,
     )
 
     def __init__(self, sending_to_review=False, *args, **kwargs):
-        super(MeasurePageForm, self).__init__(*args, **kwargs)
+        super(MeasureVersionForm, self).__init__(*args, **kwargs)
 
         self.sending_to_review = sending_to_review
 
-        choice_model = kwargs.get("lowest_level_of_geography_choices", None)
         choices = []
-        if choice_model:
-            geographic_choices = choice_model.query.order_by("position").all()
-            for choice in geographic_choices:
-                if choice.description is not None:
-                    description = "%s %s" % (choice.name, choice.description)
-                    choices.append((choice.name, description))
-                else:
-                    choices.append((choice.name, choice.name))
+        geographic_choices = LowestLevelOfGeography.query.order_by("position").all()
+        for choice in geographic_choices:
+            if choice.description is not None:
+                description = "%s %s" % (choice.name, choice.description)
+                choices.append((choice.name, description))
+            else:
+                choices.append((choice.name, choice.name))
 
         self.lowest_level_of_geography_id.choices = choices
 
@@ -291,6 +295,21 @@ class DimensionRequiredForm(DimensionForm):
 
 
 class NewVersionForm(FlaskForm):
-    version_type = RadioField(
-        label="New version type", validators=[DataRequired()], choices=[("minor", "Minor"), ("major", "Major")]
-    )
+    version_type = RDURadioField(label=Markup("<b>New version type:</b>"), validators=[DataRequired()])
+
+    def __init__(self, measure_version: MeasureVersion, *args, **kwargs):
+        super(NewVersionForm, self).__init__(*args, **kwargs)
+
+        next_minor_version = measure_version.next_minor_version()
+        next_major_version = measure_version.next_major_version()
+
+        self.version_type.choices = [
+            (
+                NewVersionType.MINOR_UPDATE.value,
+                Markup(f"<b>{next_minor_version}</b>Edit this edition (eg for clarifications or corrections)"),
+            ),
+            (
+                NewVersionType.MAJOR_UPDATE.value,
+                Markup(f"<b>{next_major_version}</b>Create new edition (eg after new data becomes available)"),
+            ),
+        ]

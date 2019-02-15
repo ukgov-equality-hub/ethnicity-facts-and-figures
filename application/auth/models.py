@@ -56,12 +56,12 @@ class User(db.Model, RoleFreeUserMixin):
     capabilities = db.Column(MutableList.as_mutable(ARRAY(db.String)), default=[])
 
     # relationships
-    pages = db.relationship(
-        "MeasureVersion",
-        lazy=True,
+    measures = db.relationship(
+        "Measure",
+        lazy="subquery",
         secondary="user_measure",
         primaryjoin="User.id == user_measure.columns.user_id",
-        secondaryjoin="MeasureVersion.measure_id == user_measure.columns.measure_id",
+        secondaryjoin="Measure.id == user_measure.columns.measure_id",
         back_populates="shared_with",
     )
 
@@ -82,12 +82,11 @@ class User(db.Model, RoleFreeUserMixin):
     def can(self, capability):
         return capability in self.capabilities
 
-    def can_access(self, page_id):
+    def can_access(self, measure_slug):
         if self.user_type != TypeOfUser.DEPT_USER:
             return True
         else:
-            for page in self.pages:
-                if page.guid == page_id or page.slug == page_id:
-                    return True
+            if any(measure.slug == measure_slug for measure in self.measures):
+                return True
             else:
                 return False

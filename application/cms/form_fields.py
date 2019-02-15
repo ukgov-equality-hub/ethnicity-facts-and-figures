@@ -24,6 +24,20 @@ def _coerce_enum_to_text(enum):
     return coerce
 
 
+def _coerce_none_to_blank_string(value):
+    return value or ""
+
+
+def _coerce_string_none_to_python_none(value):
+    return None if value == "None" else value
+
+
+def _strip_whitespace(value):
+    if value is not None and hasattr(value, "strip"):
+        return value.strip()
+    return value
+
+
 class _FormFieldTemplateRenderer:
     def __call__(self, field, id_, name, class_, diffs, disabled, render_params, field_params):
         if disabled:
@@ -160,6 +174,10 @@ class RDURadioField(RadioField):
     option_widget = _RDUChoiceInput(type_=_ChoiceInputs.RADIO)
 
     def __init__(self, label=None, validators=None, hint=None, **kwargs):
+        kwargs["filters"] = kwargs.get("filters", [])
+        if _coerce_string_none_to_python_none not in kwargs["filters"]:
+            kwargs["filters"].append(_coerce_string_none_to_python_none)
+
         super().__init__(label, validators, **kwargs)
         self.hint = hint
 
@@ -173,12 +191,17 @@ class RDURadioField(RadioField):
 class RDUStringField(StringField):
     widget = _RDUTextInput()
 
-    def __init__(self, label=None, validators=None, hint=None, extended_hint=None, **kwargs):
-        kwargs["filters"] = kwargs.get("filters", [])
-
+    def __init__(self, label=None, validators=None, hint=None, extended_hint=None, strip_whitespace=False, **kwargs):
         # Automatically coalesce `None` values to blank strings
         # If we get null values from the database, we don't want to render these as 'None' strings in form fields.
-        kwargs["filters"].append(lambda x: x or "")
+        kwargs["filters"] = kwargs.get("filters", [])
+        if _coerce_none_to_blank_string not in kwargs["filters"]:
+            kwargs["filters"].append(_coerce_none_to_blank_string)
+
+        if strip_whitespace and _strip_whitespace not in kwargs["filters"]:
+            kwargs["filters"].append(_strip_whitespace)
+        elif not strip_whitespace and _strip_whitespace in kwargs["filters"]:
+            kwargs["filters"].remove(_strip_whitespace)
 
         super().__init__(label, validators, **kwargs)
         self.hint = hint

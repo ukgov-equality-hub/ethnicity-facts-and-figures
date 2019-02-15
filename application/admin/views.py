@@ -7,7 +7,8 @@ from application import db
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS
-from application.cms.models import MeasureVersion, user_measure
+from application.cms.models import user_measure
+from application.cms.page_service import page_service
 from application.utils import create_and_send_activation_email, user_can
 
 
@@ -33,34 +34,28 @@ def users():
 def user_by_id(user_id):
     user = User.query.filter_by(id=user_id).one()
     if user.user_type == TypeOfUser.DEPT_USER:
-        measures = (
-            db.session.query(MeasureVersion.guid, MeasureVersion.title)
-            .filter(MeasureVersion.page_type == "measure")
-            .order_by(MeasureVersion.title)
-            .distinct()
-            .all()
-        )
-        shared = MeasureVersion.query.with_parent(user).distinct(MeasureVersion.guid)
+        latest_measure_versions = page_service.get_latest_version_of_all_measures(include_drafts=True)
+        shared = user.measures
     else:
-        measures = []
+        latest_measure_versions = []
         shared = []
 
-    return render_template("admin/user.html", user=user, measures=measures, shared=shared)
+    return render_template("admin/user.html", user=user, latest_measure_versions=latest_measure_versions, shared=shared)
 
 
 @admin_blueprint.route("/users/<int:user_id>/share", methods=["POST"])
 @login_required
 @user_can(MANAGE_USERS)
 def share_page_with_user(user_id):
-    page_id = request.form.get("measure-picker")
-    page = MeasureVersion.query.filter_by(guid=page_id).order_by(MeasureVersion.created_at).first()
+    measure_id = request.form.get("measure-picker")
+    measure = page_service.get_measure_from_measure_version_id(measure_id)
     user = User.query.get(user_id)
     if not user.is_departmental_user():
         flash("User %s is not a departmental user" % user.email, "error")
-    if user in page.shared_with:
-        flash("User %s already has access to %s " % (user.email, page.title), "error")
+    if user in measure.shared_with:
+        flash("User %s already has access to %s " % (user.email, measure.latest_version.title), "error")
     else:
-        page.shared_with.append(user)
+        measure.shared_with.append(user)
         db.session.commit()
     return redirect(url_for("admin.user_by_id", user_id=user_id, _anchor="departmental-sharing"))
 
@@ -145,11 +140,11 @@ def deactivate_user(user_id):
 def delete_user(user_id):
     try:
         user = User.query.get(user_id)
-        for page in user.pages:
+        for measure in user.measures:
             db.session.execute(
                 user_measure.delete()
                 .where(user_measure.c.user_id == user.id)
-                .where(user_measure.c.measure_id == page.measure_id)
+                .where(user_measure.c.measure_id == measure.id)
             )
             db.session.commit()
         db.session.delete(user)

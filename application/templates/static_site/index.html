@@ -42,12 +42,12 @@
         </div>
     </div>
 
-    {% for topic_batch in (topics|selectattr('is_published_measure_or_parent_of') if static_mode else topics)|batch(3) %}
+    {% for topic_batch in (topics|selectattr('has_published_measures') if static_mode else topics)|batch(3) %}
       <div class="grid-row topic-row">
           {% for topic in topic_batch %}
           <div class="column-one-third topic">
               <span class="heading-small">
-                  <a href="{{ url_for('static_site.topic', topic_slug=topic.slug) }}">{{ topic.title }}{% if topic.is_published_measure_or_parent_of == false %} (not published){% endif %}</a>
+                  <a href="{{ url_for('static_site.topic', topic_slug=topic.slug) }}">{{ topic.title }}{% if topic.has_published_measures == false %} (not published){% endif %}</a>
               </span>
               <p>{{ topic.description }}</p>
           </div>

@@ -10,7 +10,6 @@ from slugify import slugify
 
 from application.data.dimensions import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, UploadNotFoundException
-from application.cms.models import MeasureVersion
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
@@ -26,15 +25,10 @@ from application.utils import (
 @static_site_blueprint.route("")
 @login_required
 def index():
-    topics = sorted(
-        MeasureVersion.query.filter(
-            MeasureVersion.page_type == "topic", MeasureVersion.parent_guid == "homepage"
-        ).all(),
-        key=lambda topic: topic.title,
-    )
-
     return render_template(
-        "static_site/index.html", topics=topics, static_mode=get_bool(request.args.get("static_mode", False))
+        "static_site/index.html",
+        topics=page_service.get_all_topics(),
+        static_mode=get_bool(request.args.get("static_mode", False)),
     )
 
 
@@ -81,30 +75,30 @@ def privacy_policy():
 @static_site_blueprint.route("/<topic_slug>")
 @login_required
 def topic(topic_slug):
-    try:
-        topic = page_service.get_page_by_slug_and_type(topic_slug, "topic")
-    except PageNotFoundException:
-        abort(404)
+    topic = page_service.get_topic_with_subtopics_and_measures(topic_slug)
 
     # We want to avoid passing measures into the template that the current user should not be able to see listed.
     # Departmental users should not be able to see unpublished measures that have not been explicitly shared with them.
     def user_can_see_measure(measure):
-        if measure.published or current_user in measure.shared_with or not current_user.is_departmental_user():
+        if (
+            any(measure_version.published for measure_version in measure.versions)
+            or current_user in measure.shared_with
+            or not current_user.is_departmental_user()
+        ):
             return True
         else:
             return False
 
-    subtopics = topic.children
-    measures = {
-        subtopic.guid: list(filter(user_can_see_measure, page_service.get_latest_measures(subtopic)))
-        for subtopic in subtopics
+    subtopics = topic.subtopics
+    measures_by_subtopic = {
+        subtopic.id: list(filter(user_can_see_measure, subtopic.measures)) for subtopic in subtopics
     }
 
     return render_template(
         "static_site/topic.html",
         topic=topic,
         subtopics=subtopics,
-        measures=measures,
+        measures_by_subtopic=measures_by_subtopic,
         static_mode=get_bool(request.args.get("static_mode", False)),
     )
 
@@ -112,24 +106,26 @@ def topic(topic_slug):
 @static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/export")
 @login_required
 @user_has_access
-def measure_page_markdown(topic_slug, subtopic_slug, measure_slug, version):
+def measure_version_markdown(topic_slug, subtopic_slug, measure_slug, version):
     try:
         if version == "latest":
-            measure_page = page_service.get_latest_version(topic_slug, subtopic_slug, measure_slug)
+            measure_version = page_service.get_measure(topic_slug, subtopic_slug, measure_slug).latest_version
         else:
-            *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
+            *_, measure_version = page_service.get_measure_version_hierarchy(
+                topic_slug, subtopic_slug, measure_slug, version
+            )
     except PageNotFoundException:
         abort(404)
     if current_user.is_departmental_user():
-        if measure_page.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
+        if measure_version.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html")
 
-    dimensions = [dimension.to_dict() for dimension in measure_page.dimensions]
+    dimensions = [dimension.to_dict() for dimension in measure_version.dimensions]
     return render_template(
         "static_site/export/measure_export.html",
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
-        measure_page=measure_page,
+        measure_version=measure_version,
         dimensions=dimensions,
     )
 
@@ -137,40 +133,38 @@ def measure_page_markdown(topic_slug, subtopic_slug, measure_slug, version):
 @static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>")
 @login_required
 @user_has_access
-def measure_page(topic_slug, subtopic_slug, measure_slug, version):
+def measure_version(topic_slug, subtopic_slug, measure_slug, version):
 
     try:
         if version == "latest":
-            measure_page = page_service.get_latest_version(topic_slug, subtopic_slug, measure_slug)
+            measure_version = page_service.get_measure(topic_slug, subtopic_slug, measure_slug).latest_version
         else:
-            *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
+            *_, measure_version = page_service.get_measure_version_hierarchy(
+                topic_slug, subtopic_slug, measure_slug, version
+            )
     except PageNotFoundException:
         abort(404)
-
-    versions = page_service.get_previous_major_versions(measure_page)
-    edit_history = page_service.get_previous_minor_versions(measure_page)
-    first_published_date = page_service.get_first_published_date(measure_page)
-
-    dimensions = [dimension.to_dict() for dimension in measure_page.dimensions]
 
     return render_template(
         "static_site/measure.html",
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
-        measure_page=measure_page,
-        dimensions=dimensions,
-        versions=versions,
-        first_published_date=first_published_date,
-        edit_history=edit_history,
+        measure_version=measure_version,
+        dimensions=[dimension.to_dict() for dimension in measure_version.dimensions],
+        versions=measure_version.previous_major_versions,
+        first_published_date=measure_version.first_published_date,
+        edit_history=measure_version.previous_minor_versions,
         static_mode=get_bool(request.args.get("static_mode", False)),
     )
 
 
 @static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/downloads/<filename>")
-def measure_page_file_download(topic_slug, subtopic_slug, measure_slug, version, filename):
+def measure_version_file_download(topic_slug, subtopic_slug, measure_slug, version, filename):
     try:
-        *_, measure_page = page_service.get_measure_page_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
-        upload_obj = upload_service.get_upload(measure_page, filename)
+        *_, measure_version = page_service.get_measure_version_hierarchy(
+            topic_slug, subtopic_slug, measure_slug, version
+        )
+        upload_obj = upload_service.get_upload(measure_version, filename)
         downloaded_file = upload_service.get_measure_download(upload_obj, filename, "source")
         content = get_csv_data_for_download(downloaded_file)
         if os.path.exists(downloaded_file):
@@ -193,7 +187,7 @@ def measure_page_file_download(topic_slug, subtopic_slug, measure_slug, version,
 )
 def dimension_file_download(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     try:
-        *_, dimension = page_service.get_measure_page_hierarchy(
+        *_, dimension = page_service.get_measure_version_hierarchy(
             topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
         )
         dimension_obj = DimensionObjectBuilder.build(dimension)
@@ -219,7 +213,7 @@ def dimension_file_download(topic_slug, subtopic_slug, measure_slug, version, di
 )
 def dimension_file_table_download(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     try:
-        *_, dimension = page_service.get_measure_page_hierarchy(
+        *_, dimension = page_service.get_measure_version_hierarchy(
             topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
         )
         dimension_obj = DimensionObjectBuilder.build(dimension)

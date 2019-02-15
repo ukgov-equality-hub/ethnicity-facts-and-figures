@@ -2,6 +2,10 @@ class AlreadyApproved(Exception):
     pass
 
 
+class CannotChangeSubtopicOncePublished(Exception):
+    pass
+
+
 class CannotPublishRejected(Exception):
     pass
 

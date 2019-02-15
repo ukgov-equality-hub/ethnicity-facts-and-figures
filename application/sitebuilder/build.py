@@ -10,8 +10,6 @@ from flask import current_app, render_template
 from git import Repo
 from slugify import slugify
 
-from application.cms.models import MeasureVersion
-from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.data.dimensions import DimensionObjectBuilder
 from application.utils import get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv
@@ -55,10 +53,8 @@ def do_it(application, build):
 
         local_build = application.config["LOCAL_BUILD"]
 
-        print("DEBUG do_it(): Getting homepage...")
-        homepage = MeasureVersion.query.filter_by(page_type="homepage").one()
         print("DEBUG do_it(): Building from homepage...")
-        build_from_homepage(homepage, build_dir, config=application.config)
+        build_homepage_and_topic_hierarchy(build_dir, config=application.config)
 
         print("DEBUG do_it(): Unpublishing pages...")
         pages_unpublished = unpublish_pages(build_dir)
@@ -77,7 +73,7 @@ def do_it(application, build):
         if application.config["DEPLOY_SITE"]:
             from application.sitebuilder.build_service import s3_deployer
 
-            s3_deployer(application, build_dir, deletions=pages_unpublished)
+            s3_deployer(application, build_dir, measure_versions_to_delete=pages_unpublished)
             print("Static site deployed")
 
         if not local_build:
@@ -119,16 +115,18 @@ def build_and_upload_error_pages(application):
             clear_up(build_dir)
 
 
-def build_from_homepage(page, build_dir, config):
+def build_homepage_and_topic_hierarchy(build_dir, config):
 
     os.makedirs(build_dir, exist_ok=True)
-    topics = sorted(page.children, key=lambda topic: topic.title)
-    content = render_template("static_site/index.html", topics=topics, build_timestamp=None)
+    from application.cms.page_service import page_service
+
+    topics = page_service.get_all_topics()
+    content = render_template("static_site/index.html", topics=topics, static_mode=True)
 
     file_path = os.path.join(build_dir, "index.html")
     write_html(file_path, content)
 
-    for topic in page.children:
+    for topic in topics:
         write_topic_html(topic, build_dir, config)
 
 
@@ -139,65 +137,71 @@ def write_topic_html(topic, build_dir, config):
 
     local_build = config["LOCAL_BUILD"]
 
-    subtopic_measures = {}
+    measures_by_subtopic = {}
     subtopics = []
-    for st in topic.children:
-        ms = page_service.get_latest_publishable_measures(st)
-        if ms:
-            subtopic_measures[st.guid] = ms
-            subtopics.append(st)
 
-    content = render_template("static_site/topic.html", topic=topic, subtopics=subtopics, measures=subtopic_measures)
+    from application.cms.page_service import page_service
 
-    file_path = os.path.join(slug, "index.html")
-    write_html(file_path, content)
-
-    for measures in subtopic_measures.values():
-        for m in measures:
-            write_measure_page(m, build_dir, latest=True, local_build=local_build)
-
-
-def write_measure_page(page, build_dir, latest=False, local_build=False):
-
-    slug = os.path.join(
-        build_dir, page.parent.parent.slug, page.parent.slug, page.slug, "latest" if latest else page.version
-    )
-
-    os.makedirs(slug, exist_ok=True)
-    versions = page_service.get_previous_major_versions(page)
-    edit_history = page_service.get_previous_minor_versions(page)
-    first_published_date = page_service.get_first_published_date(page)
-
-    dimensions = process_dimensions(page, slug)
+    for subtopic in topic.subtopics:
+        measures = page_service.get_publishable_measures_for_subtopic(subtopic)
+        if measures:
+            measures_by_subtopic[subtopic.id] = measures
+            subtopics.append(subtopic)
 
     content = render_template(
-        "static_site/measure.html",
-        topic_slug=page.parent.parent.slug,
-        subtopic_slug=page.parent.slug,
-        measure_page=page,
-        dimensions=dimensions,
-        versions=versions,
-        first_published_date=first_published_date,
-        edit_history=edit_history,
+        "static_site/topic.html",
+        topic=topic,
+        subtopics=subtopics,
+        measures_by_subtopic=measures_by_subtopic,
+        static_mode=True,
     )
 
     file_path = os.path.join(slug, "index.html")
     write_html(file_path, content)
 
-    if not local_build:
-        write_measure_page_downloads(page, slug)
-
-    for v in versions:
-        write_measure_page(v, build_dir)
+    for measures in measures_by_subtopic.values():
+        for measure in measures:
+            write_measure_versions(measure, build_dir, local_build=local_build)
 
 
-def write_measure_page_downloads(page, slug):
+def write_measure_versions(measure, build_dir, local_build=False):
 
-    if page.uploads:
+    for measure_version in measure.versions_to_publish:
+        slug = os.path.join(
+            build_dir,
+            measure.subtopic.topic.slug,
+            measure.subtopic.slug,
+            measure.slug,
+            "latest" if measure_version == measure.latest_published_version else measure_version.version,
+        )
+        os.makedirs(slug, exist_ok=True)
+
+        dimensions = process_dimensions(measure_version, slug)
+        content = render_template(
+            "static_site/measure.html",
+            topic_slug=measure.subtopic.topic.slug,
+            subtopic_slug=measure.subtopic.slug,
+            measure_version=measure_version,
+            dimensions=dimensions,
+            versions=measure_version.previous_major_versions,
+            first_published_date=measure_version.first_published_date,
+            edit_history=measure_version.previous_minor_versions,
+        )
+
+        file_path = os.path.join(slug, "index.html")
+        write_html(file_path, content)
+
+        if not local_build:
+            write_measure_version_downloads(measure_version, slug)
+
+
+def write_measure_version_downloads(measure_version, slug):
+
+    if measure_version.uploads:
         download_dir = os.path.join(slug, "downloads")
         os.makedirs(download_dir, exist_ok=True)
 
-    for d in page.uploads:
+    for d in measure_version.uploads:
         try:
             filename = upload_service.get_measure_download(d, d.file_name, "source")
             content = get_csv_data_for_download(filename)
@@ -210,30 +214,30 @@ def write_measure_page_downloads(page, slug):
             print(e)
 
 
-def process_dimensions(page, slug):
+def process_dimensions(measure_version, slug):
 
-    if page.dimensions:
+    if measure_version.dimensions:
         download_dir = os.path.join(slug, "downloads")
         os.makedirs(download_dir, exist_ok=True)
     else:
         return
 
     dimensions = []
-    for d in page.dimensions:
+    for dimension in measure_version.dimensions:
 
-        if d.chart and d.chart["type"] != "panel_bar_chart":
+        if dimension.chart and dimension.chart["type"] != "panel_bar_chart":
             chart_dir = "%s/charts" % slug
             os.makedirs(chart_dir, exist_ok=True)
 
-        dimension_obj = DimensionObjectBuilder.build(d)
+        dimension_obj = DimensionObjectBuilder.build(dimension)
         output = write_dimension_csv(dimension=dimension_obj)
 
-        if d.title:
-            filename = "%s.csv" % cleanup_filename(d.title)
-            table_filename = "%s-table.csv" % cleanup_filename(d.title)
+        if dimension.title:
+            filename = "%s.csv" % cleanup_filename(dimension.title)
+            table_filename = "%s-table.csv" % cleanup_filename(dimension.title)
         else:
-            filename = "%s.csv" % d.guid
-            table_filename = "%s-table.csv" % d.guid
+            filename = "%s.csv" % dimension.guid
+            table_filename = "%s-table.csv" % dimension.guid
 
         try:
             file_path = os.path.join(download_dir, filename)
@@ -243,10 +247,10 @@ def process_dimensions(page, slug):
             print(f"Could not write file path {file_path}")
             print(e)
 
-        d_as_dict = d.to_dict()
+        d_as_dict = dimension.to_dict()
         d_as_dict["static_file_name"] = filename
 
-        if d.table:
+        if dimension.table:
             table_output = write_dimension_tabular_csv(dimension=dimension_obj)
 
             table_file_path = os.path.join(download_dir, table_filename)
@@ -261,15 +265,23 @@ def process_dimensions(page, slug):
 
 
 def unpublish_pages(build_dir):
-    pages_to_unpublish = page_service.get_pages_to_unpublish()
-    for page in pages_to_unpublish:
-        if page.get_previous_version() is None:
-            page_dir = os.path.join(build_dir, page.parent.parent.slug, page.parent.slug, page.slug, "latest")
+    from application.cms.page_service import page_service
+
+    measure_versions_to_unpublish = page_service.get_measure_versions_to_unpublish()
+    for measure_version in measure_versions_to_unpublish:
+        if measure_version.get_previous_version() is None:
+            page_dir = os.path.join(
+                build_dir,
+                measure_version.measure.subtopic.topic.slug,
+                measure_version.measure.subtopic.slug,
+                measure_version.measure.slug,
+                "latest",
+            )
             if os.path.exists(page_dir):
                 shutil.rmtree(page_dir, ignore_errors=True)
 
-    page_service.mark_pages_unpublished(pages_to_unpublish)
-    return pages_to_unpublish
+    page_service.mark_measure_versions_unpublished(measure_versions_to_unpublish)
+    return measure_versions_to_unpublish
 
 
 def build_dashboards(build_dir):
@@ -337,9 +349,12 @@ def build_dashboards(build_dir):
     # Individual ethnic group dashboards
     for ethnicity in sorted_ethnicity_list:
         slug = ethnicity["url"][ethnicity["url"].rindex("/") + 1 :]  # The part of the url after the final /
-        value_title, page_count, results = get_ethnic_group_by_slug_dashboard_data(slug)
+        value_title, page_count, nested_measures_and_dimensions = get_ethnic_group_by_slug_dashboard_data(slug)
         content = render_template(
-            "dashboards/ethnic_group.html", ethnic_group=value_title, measure_count=page_count, measure_tree=results
+            "dashboards/ethnic_group.html",
+            ethnic_group=value_title,
+            measure_count=page_count,
+            nested_measures_and_dimensions=nested_measures_and_dimensions,
         )
         dir_path = os.path.join(dashboards_dir, f"ethnic-groups/{slug}")
         os.makedirs(dir_path, exist_ok=True)
@@ -353,14 +368,14 @@ def build_dashboards(build_dir):
 
     # Individual ethnicity classifications dashboards
     for classification in classifications:
-        classification_title, page_count, results = get_ethnicity_classification_by_id_dashboard_data(
+        classification_title, page_count, nested_measures_and_dimensions = get_ethnicity_classification_by_id_dashboard_data(  # noqa
             classification["id"]
         )
         content = render_template(
             "dashboards/ethnicity_classification.html",
             classification_title=classification_title,
             page_count=page_count,
-            measure_tree=results,
+            nested_measures_and_dimensions=nested_measures_and_dimensions,
         )
         dir_path = os.path.join(dashboards_dir, f'ethnicity-classifications/{classification["id"]}')
         os.makedirs(dir_path, exist_ok=True)
@@ -375,12 +390,14 @@ def build_dashboards(build_dir):
     # Individual geographic area dashboards
     for loc_level in location_levels:
         slug = loc_level["url"][loc_level["url"].rindex("/") + 1 :]  # The part of the url after the final /
-        loc, page_count, subtopics = get_geographic_breakdown_by_slug_dashboard_data(slug)
+        geography, page_count, measure_titles_and_urls_by_topic_and_subtopic = get_geographic_breakdown_by_slug_dashboard_data(  # noqa
+            slug
+        )
         content = render_template(
             "dashboards/lowest-level-of-geography.html",
-            level_of_geography=loc.name,
+            level_of_geography=geography.name,
             page_count=page_count,
-            measure_tree=subtopics,
+            measure_titles_and_urls_by_topic_and_subtopic=measure_titles_and_urls_by_topic_and_subtopic,
         )
         dir_path = os.path.join(dashboards_dir, f"geographic-breakdown/{slug}")
         os.makedirs(dir_path, exist_ok=True)

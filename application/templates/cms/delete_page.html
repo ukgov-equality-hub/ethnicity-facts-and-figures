@@ -5,7 +5,7 @@
 {% set breadcrumbs =
   [
     {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
-    {"url": url_for('cms.edit_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_page.slug, version=measure_page.version), "text": measure_page.title},
+    {"url": url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version), "text": measure_version.title},
   ]
 %}
 
@@ -17,17 +17,17 @@
     <div class="column-two-thirds">
       <h1 class='heading-large'>
         Delete
-        ‘{{ measure_page.title }}’?
+        ‘{{ measure_version.title }}’?
       </h1>
 
-      <form method="POST" action="{{ url_for('cms.delete_measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_page.slug, version=measure_page.version) }}">
+      <form method="POST" action="{{ url_for('cms.delete_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="form-group">
           <button class="button delete">Yes, delete</button>
         </div>
       </form>
 
-      <a href="{{ url_for('static_site.measure_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_page.slug, version=measure_page.version) }}">No, return</a>
+      <a href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">No, return</a>
     </div>
   </div>
 {% endblock %}
