@@ -241,7 +241,8 @@ class MeasureVersionForm(FlaskForm):
 
     # Edit summaries
     update_corrects_data_mistake = RDURadioField(
-        label="Does this update correct a mistake in the data, commentary, charts, or tables?",
+        label="Are you correcting something that’s factually incorrect?",
+        hint="For example, in the data or commentary",
         choices=((True, "Yes"), (False, "No")),
         coerce=lambda value: None if value is None else get_bool(value),
         validators=[
@@ -253,9 +254,8 @@ class MeasureVersionForm(FlaskForm):
         label="Changes to previous version",
         validators=[RequiredForReviewValidator()],
         hint=(
-            "If you’ve updated only a sentence or two, add the updated content here. Otherwise, briefly summarise "
-            "what’s changed in the latest version (for example, ‘Updated with new data’ or ‘Minor changes for style "
-            "and accuracy’)."
+            "If you’ve corrected the data, explain what’s changed and why. Otherwise, summarise what you’ve updated "
+            "(for example, ‘Updated with the latest available data’)."
         ),
         strip_whitespace=True,
     )

@@ -197,7 +197,7 @@
 
                     {{ form.further_technical_information(disabled=form_disabled, diffs=diffs) }}
 
-                    <h3 class="heading-medium">Additional information</h3>
+                    <h3 class="heading-medium">Updates and corrections</h3>
                     <div class="{% if new or measure_version.version == '1.0' %} hidden{% endif %}">
                         {% if form.is_minor_update %}
                             {{ form.update_corrects_data_mistake(disabled=form_disabled, diffs=diffs, fieldset_class="inline") }}

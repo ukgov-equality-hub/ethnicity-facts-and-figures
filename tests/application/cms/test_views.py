@@ -596,7 +596,7 @@ def test_view_edit_measure_page_for_minor_update_shows_data_correction_radio(
         legend = update_corrects_data_mistake.find("legend")
         labels = update_corrects_data_mistake.findAll("label")
 
-        assert legend.text.strip() == "Does this update correct a mistake in the data, commentary, charts, or tables?"
+        assert legend.text.strip() == "Are you correcting something that’s factually incorrect?"
         assert labels[0].text.strip() == "Yes"
         assert labels[1].text.strip() == "No"
         assert (
