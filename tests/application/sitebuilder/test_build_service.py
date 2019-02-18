@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+
 from unittest.mock import patch
 
 import pytest
@@ -7,7 +8,7 @@ import stopit
 from application.sitebuilder.build import do_it
 from application.sitebuilder.build_service import build_site, request_build
 from manage import refresh_materialized_views
-from tests.models import MeasureFactory, MeasureVersionWithDimensionFactory, DataSourceFactory
+from tests.models import MeasureFactory, MeasureVersionWithDimensionFactory
 from tests.utils import GeneralTestException, UnexpectedMockInvocationException
 
 
@@ -65,7 +66,6 @@ def test_static_site_build(db_session, single_use_app):
                                     latest=False,
                                     published_at=datetime.now().date(),
                                     version="1.0",
-                                    data_sources=[DataSourceFactory()],
                                 )
                                 # Latest published version
                                 MeasureVersionWithDimensionFactory(
@@ -74,16 +74,10 @@ def test_static_site_build(db_session, single_use_app):
                                     latest=False,
                                     published_at=datetime.now().date(),
                                     version="2.0",
-                                    data_sources=[DataSourceFactory()],
                                 )
                                 # Newer draft version
                                 MeasureVersionWithDimensionFactory(
-                                    measure=measure,
-                                    status="DRAFT",
-                                    published_at=None,
-                                    latest=True,
-                                    version="2.1",
-                                    data_sources=[DataSourceFactory()],
+                                    measure=measure, status="DRAFT", published_at=None, latest=True, version="2.1"
                                 )
 
                                 # Publish another page with dimension, chart and table to ensure there's an item for
@@ -95,7 +89,6 @@ def test_static_site_build(db_session, single_use_app):
                                     latest=True,
                                     published_at=datetime.now().date() - timedelta(weeks=1),
                                     version="1.0",
-                                    data_sources=[DataSourceFactory()],
                                     measure__subtopics__topic__slug="topic",
                                     measure__subtopics__slug="subtopic",
                                     measure__slug="measure",

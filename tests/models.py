@@ -10,8 +10,8 @@ import itertools
 import random
 
 from faker import Faker
-
 import factory
+
 from application.auth.models import CAPABILITIES, TypeOfUser, User
 from application.cms.models import (
     publish_status,
@@ -48,10 +48,14 @@ def _random_combination(from_iterable):
     return random.choice(list(itertools.combinations(from_iterable, random.randint(1, len(list(from_iterable))))))
 
 
+def _get_factory_generator_for_strategy(factory_class, create):
+    return factory_class.create if create else factory_class.build
+
+
 class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = User
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
         exclude = ("_password_to_hash",)
 
     _password_to_hash = factory.Faker("word")
@@ -69,7 +73,7 @@ class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
 class FrequencyOfReleaseFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = FrequencyOfRelease
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
     id = factory.Sequence(lambda x: x)
     description = factory.Faker("text")
@@ -79,7 +83,7 @@ class FrequencyOfReleaseFactory(factory.alchemy.SQLAlchemyModelFactory):
 class LowestLevelOfGeographyFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = LowestLevelOfGeography
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
     name = factory.Faker("sentence", nb_words=3)
     description = factory.Faker("sentence", nb_words=6)
@@ -89,7 +93,7 @@ class LowestLevelOfGeographyFactory(factory.alchemy.SQLAlchemyModelFactory):
 class TypeOfStatisticFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = TypeOfStatistic
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
     id = factory.Sequence(lambda x: x)
     internal = factory.Faker("sentence", nb_words=5)
@@ -100,9 +104,9 @@ class TypeOfStatisticFactory(factory.alchemy.SQLAlchemyModelFactory):
 class OrganisationFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Organisation
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
-    id = factory.Sequence(lambda x: x)
+    id = factory.Sequence(lambda x: str(x))
     name = factory.Faker("company")
     other_names = factory.LazyFunction(lambda: [])
     abbreviations = factory.LazyFunction(lambda: [])
@@ -112,7 +116,7 @@ class OrganisationFactory(factory.alchemy.SQLAlchemyModelFactory):
 class DataSourceFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = DataSource
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
     id = factory.Sequence(lambda x: x)
     title = factory.Faker("sentence", nb_words=5)
@@ -134,10 +138,7 @@ class DataSourceFactory(factory.alchemy.SQLAlchemyModelFactory):
     # array-based relationships
     @factory.post_generation
     def pages(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        # If some pages were passed into the create invocation: eg factory.Create(pages=[page1, page2])
+        # If some pages were passed into the create invocation: eg factory.create(pages=[page1, page2])
         if extracted is not None:
             # Attach those pages to this newly-created instance.
             for page in extracted:
@@ -147,7 +148,7 @@ class DataSourceFactory(factory.alchemy.SQLAlchemyModelFactory):
 class UploadFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Upload
-        sqlalchemy_session_persistence = None
+        sqlalchemy_session_persistence = "commit"
 
     guid = factory.Faker("uuid4")
     title = factory.Faker("sentence", nb_words=5)
@@ -155,27 +156,18 @@ class UploadFactory(factory.alchemy.SQLAlchemyModelFactory):
     description = factory.Faker("paragraph", nb_sentences=3)
     size = factory.LazyFunction(lambda: random.randint(0, 100_000))
 
-    measure_version_id = None
-    page_id = None
-    page_version = None
+    measure_version_id = factory.Maybe("page", factory.SelfAttribute("page.id"))
+    page_id = factory.Maybe("page", factory.SelfAttribute("page.guid"))
+    page_version = factory.Maybe("page", factory.SelfAttribute("page.version"))
 
-    # array-based relationships
-    @factory.post_generation
-    def page(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        if extracted:
-            self.page = extracted
-            self.measure_version_id = self.page.id
-            self.page_id = self.page.guid
-            self.page_version = self.page.version
+    # scalar relationships
+    page = None  # Don't generate relationships 'towards' MeasureVersionFactory; see tests/README.md
 
 
 class TopicFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Topic
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
     id = factory.Sequence(lambda x: x)
     slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
@@ -186,10 +178,7 @@ class TopicFactory(factory.alchemy.SQLAlchemyModelFactory):
     # array-based relationships
     @factory.post_generation
     def subtopics(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        # If some subtopics were passed into the create invocation: eg factory.Create(subtopics=[subtopic1, subtopic2])
+        # If some subtopics were passed into the create invocation: eg factory.create(subtopics=[subtopic1, subtopic2])
         if extracted is not None:
             # Attach those subtopics to this newly-created instance.
             for subtopic in extracted:
@@ -201,7 +190,7 @@ class TopicFactory(factory.alchemy.SQLAlchemyModelFactory):
 class SubtopicFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Subtopic
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
     id = factory.Sequence(lambda x: x)
     slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
@@ -214,9 +203,6 @@ class SubtopicFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     @factory.post_generation
     def measures(self, create, extracted, **kwargs):
-        if not create:
-            return
-
         if extracted is not None:
             for measure in extracted:
                 self.measures.append(measure)
@@ -227,7 +213,7 @@ class SubtopicFactory(factory.alchemy.SQLAlchemyModelFactory):
 class MeasureFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Measure
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
     id = factory.Sequence(lambda x: x)
     slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
@@ -237,10 +223,7 @@ class MeasureFactory(factory.alchemy.SQLAlchemyModelFactory):
     # array-based relationships
     @factory.post_generation
     def subtopics(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        # If some subtopics were passed into the create invocation: eg factory.Create(subtopics=[subtopic1, subtopic2])
+        # If some subtopics were passed into the create invocation: eg factory.create(subtopics=[subtopic1, subtopic2])
         if extracted is not None:
             # Attach those subtopics to this newly-created instance.
             for subtopic in extracted:
@@ -248,7 +231,8 @@ class MeasureFactory(factory.alchemy.SQLAlchemyModelFactory):
 
         # Otherwise, just create an subtopic and attach it.
         else:
-            self.subtopics = [SubtopicFactory(**kwargs)]
+            factory_method = _get_factory_generator_for_strategy(SubtopicFactory, create)
+            self.subtopics = [factory_method(**kwargs)]
 
 
 class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -311,20 +295,30 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     measure = factory.SubFactory(MeasureFactory)
     lowest_level_of_geography = factory.SubFactory(LowestLevelOfGeographyFactory)
 
-    # one-to-many relatioships
+    # one-to-many relationships
     @factory.post_generation
     def uploads(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        # If some uploads were passed into the create invocation: eg factory.Create(uploads=[upload1, upload2])
+        # If some uploads were passed into the create invocation: eg factory.create(uploads=[upload1, upload2])
         if extracted:
             # Attach those uploads to this newly-created instance.
             for upload in extracted:
                 self.uploads.append(upload)
 
         else:
-            UploadFactory(page=self, **kwargs)
+            factory_method = _get_factory_generator_for_strategy(UploadFactory, create)
+            factory_method(page=self, **kwargs)
+
+    @factory.post_generation
+    def data_sources(self, create, extracted, **kwargs):
+        # If some uploads were passed into the create invocation: eg factory.create(data_sources=[data_source1])
+        if extracted:
+            # Attach those uploads to this newly-created instance.
+            for data_source in extracted:
+                self.data_sources.append(data_source)
+
+        else:
+            factory_method = _get_factory_generator_for_strategy(DataSourceFactory, create)
+            factory_method(pages=[self], **kwargs)
 
     # By default, do not create any dimensions. See alternative factory, `MeasureVersionWithDimensionFactory`
     dimensions = factory.LazyFunction(lambda: [])
@@ -333,11 +327,8 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
 class MeasureVersionWithDimensionFactory(MeasureVersionFactory):
     @factory.post_generation
     def dimensions(self, create, extracted, **kwargs):
-        if not create:
-            return
-
         # If some dimensions were passed into the create invocation:
-        #   eg factory.Create(dimensions=[dimension1, dimension2])
+        #   eg factory.create(dimensions=[dimension1, dimension2])
         if extracted is not None:
             # Attach those dimensions to this newly-created instance.
             for dimension in extracted:
@@ -345,13 +336,14 @@ class MeasureVersionWithDimensionFactory(MeasureVersionFactory):
 
         else:
             # self.dimensions.append(DimensionFactory(page=self, **kwargs))
-            DimensionFactory(page=self, **kwargs)
+            factory_method = _get_factory_generator_for_strategy(DimensionFactory, create)
+            factory_method(page=self, **kwargs)
 
 
 class EthnicityFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Ethnicity
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
     id = factory.Sequence(lambda x: x)
     value = factory.Iterator([child for children in PARENT_AND_CHILD_ETHNICITIES.values() for child in children])
@@ -361,7 +353,7 @@ class EthnicityFactory(factory.alchemy.SQLAlchemyModelFactory):
 class ClassificationFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Classification
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
         exclude = ("_parent_child_ethnicities",)
 
     _parent_child_ethnicities = factory.LazyFunction(
@@ -383,7 +375,7 @@ class ClassificationFactory(factory.alchemy.SQLAlchemyModelFactory):
         parent_values = []
 
         for i, parent in enumerate(self._parent_child_ethnicities.keys()):
-            parent_values.append(EthnicityFactory(value=parent, position=i * 1000))
+            parent_values.append(EthnicityFactory.build(value=parent, position=i * 1000))
 
         return parent_values
 
@@ -393,7 +385,7 @@ class ClassificationFactory(factory.alchemy.SQLAlchemyModelFactory):
 
         for i, children in enumerate(self._parent_child_ethnicities.values()):
             for j, child in enumerate(children, start=1):
-                ethnicities.append(EthnicityFactory(value=child, position=(i * 1000) + j))
+                ethnicities.append(EthnicityFactory.build(value=child, position=(i * 1000) + j))
 
         return ethnicities
 
@@ -401,7 +393,7 @@ class ClassificationFactory(factory.alchemy.SQLAlchemyModelFactory):
 class DimensionClassificationFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = DimensionClassification
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
     # columns
     dimension_guid = factory.SelfAttribute("dimension.guid")
@@ -431,13 +423,13 @@ class _ChartAndTableFactoryMixin(factory.alchemy.SQLAlchemyModelFactory):
 class ChartFactory(_ChartAndTableFactoryMixin):
     class Meta:
         model = Chart
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
 
 class TableFactory(_ChartAndTableFactoryMixin):
     class Meta:
         model = Table
-        sqlalchemy_session_persistence = "flush"
+        sqlalchemy_session_persistence = "commit"
 
 
 class DimensionFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -447,7 +439,7 @@ class DimensionFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     class Meta:
         model = Dimension
-        sqlalchemy_session_persistence = None
+        sqlalchemy_session_persistence = "commit"
 
     guid = factory.Faker("uuid4")
     title = factory.Faker("sentence", nb_words=5)
@@ -469,9 +461,9 @@ class DimensionFactory(factory.alchemy.SQLAlchemyModelFactory):
     table_builder_version = 2
     table_2_source_data = {}
 
-    measure_version_id = None  # Configured via `page` post_generation attribute
-    page_id = None  # Configured via `page` post_generation attribute
-    page_version = None  # Configured via `page` post_generation attribute
+    measure_version_id = factory.Maybe("page", factory.SelfAttribute("page.id"))
+    page_id = factory.Maybe("page", factory.SelfAttribute("page.guid"))
+    page_version = factory.Maybe("page", factory.SelfAttribute("page.version"))
 
     position = factory.Sequence(lambda x: x)
 
@@ -484,38 +476,19 @@ class DimensionFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     # array-based relationships
     @factory.post_generation
-    def page(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        if extracted:
-            self.page = extracted
-            self.measure_version_id = self.page.id
-            self.page_id = self.page.guid
-            self.page_version = self.page.version
-
-        else:
-            self.page = MeasureVersionFactory(dimensions=[self])
-            self.measure_version_id = self.page.id
-            self.page_id = self.page.guid
-            self.page_version = self.page.version
-
-    @factory.post_generation
     def classification_links(self, create, extracted, **kwargs):
-        if not create:
-            return
-
         # If some classification_links were passed into the create invocation:
-        #   eg factory.Create(classification_links=[classification_link1, classification_link2])
+        #   eg factory.create(classification_links=[classification_link1, classification_link2])
         if extracted is not None:
             # Attach those classification_links to this newly-created instance.
             for classification_link in extracted:
                 self.classification_links.append(classification_link)
 
         else:
-            self.classification_links = [DimensionClassificationFactory(dimension=self, **kwargs)]
+            factory_method = _get_factory_generator_for_strategy(DimensionClassificationFactory, create)
+            self.classification_links = [factory_method(dimension=self, **kwargs)]
 
-    # NOTE: Not including relationships 'towards' MeasureVersionFactory; see tests/README.md
+    page = None  # Don't generate relationships 'towards' MeasureVersionFactory; see tests/README.md
 
 
 def __get_all_subclasses(cls):

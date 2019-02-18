@@ -375,7 +375,7 @@ def test_reorder_measures_triggers_build(test_app_client, logged_in_rdu_user):
 
 
 def test_view_edit_measure_page(test_app_client, logged_in_rdu_user, stub_measure_data):
-    data_source = DataSourceFactory(
+    data_source = DataSourceFactory.build(
         title="DWP Stats",
         type_of_data=["SURVEY"],
         source_url="http://dwp.gov.uk",

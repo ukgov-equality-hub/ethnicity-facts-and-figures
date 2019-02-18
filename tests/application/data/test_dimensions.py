@@ -36,7 +36,7 @@ def test_table_object_builder_does_build_object_from_grouped_table():
 
 
 def test_table_object_builder_does_build_with_page_level_data_from_simple_table():
-    data_source = DataSourceFactory(
+    data_source = DataSourceFactory.build(
         title="DWP Stats", source_url="http://dwp.gov.uk", publisher__name="Department for Work and Pensions"
     )
     measure_version = MeasureVersionWithDimensionFactory(
@@ -65,7 +65,7 @@ def test_table_object_builder_does_build_with_page_level_data_from_simple_table(
 
 
 def test_dimension_object_builder_does_build_with_page_level_data_from_grouped_table():
-    data_source = DataSourceFactory(
+    data_source = DataSourceFactory.build(
         title="DWP Stats", source_url="http://dwp.gov.uk", publisher__name="Department for Work and Pensions"
     )
     measure_version = MeasureVersionWithDimensionFactory(

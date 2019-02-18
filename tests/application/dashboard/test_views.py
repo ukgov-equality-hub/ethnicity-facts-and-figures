@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from manage import refresh_materialized_views
-from tests.models import MeasureVersionWithDimensionFactory, DataSourceFactory
+from tests.models import MeasureVersionWithDimensionFactory
 
 
 @pytest.mark.parametrize(
@@ -21,9 +21,7 @@ from tests.models import MeasureVersionWithDimensionFactory, DataSourceFactory
     ),
 )
 def test_dashboard_pages_return_200(test_app_client, logged_in_rdu_user, dashboard_url):
-    data_source = DataSourceFactory()
     MeasureVersionWithDimensionFactory(
-        data_sources=[data_source],
         status="APPROVED",
         published_at=datetime.now().date(),
         dimensions__classification_links__includes_parents=False,
