@@ -20,6 +20,8 @@ from application.cms.models import (
 )
 from application.auth.models import User, TypeOfUser, CAPABILITIES
 
+from tests.models import OrganisationFactory, FrequencyOfReleaseFactory
+
 
 @pytest.fixture(scope="module")
 def _driver():
@@ -294,3 +296,38 @@ def _get_random_unused_measure_version_id():
 
 
 # TODO: END REMOVE THESE STUBS
+
+
+@pytest.fixture(scope="function")
+def frequencies_of_release(_configure_factory_sessions):
+    frequencies = [
+        FrequencyOfReleaseFactory(description="Monthly"),
+        FrequencyOfReleaseFactory(description="Quarterly"),
+        FrequencyOfReleaseFactory(description="3 times a year"),
+        FrequencyOfReleaseFactory(description="Twice a year"),
+        FrequencyOfReleaseFactory(description="Yearly"),
+        FrequencyOfReleaseFactory(description="Every 2 years"),
+        FrequencyOfReleaseFactory(description="Every 3 years"),
+        FrequencyOfReleaseFactory(description="Every 4 years"),
+        FrequencyOfReleaseFactory(description="Every 5 years"),
+        FrequencyOfReleaseFactory(description="Ad-hoc"),
+        FrequencyOfReleaseFactory(description="Other"),
+    ]
+
+    return frequencies
+
+
+@pytest.fixture(scope="function")
+def government_departments(_configure_factory_sessions):
+    organisations = [
+        OrganisationFactory(name="Race Disparity Unit", other_names=[], abbreviations=["RDU"]),
+        OrganisationFactory(name="Ministry of Justice", other_names=[], abbreviations=["MoJ", "MOJ"]),
+        OrganisationFactory(name="Crown Prosecution Service", other_names=[], abbreviations=["CPS"]),
+        OrganisationFactory(
+            name="Department for Work and Pensions",
+            other_names=["Department for Work & Pensions"],
+            abbreviations=["DWP"],
+        ),
+    ]
+
+    return organisations

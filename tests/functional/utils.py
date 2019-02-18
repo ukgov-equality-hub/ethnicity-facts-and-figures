@@ -1,14 +1,6 @@
 from random import shuffle
 
-from tests.functional.pages import (
-    HomePage,
-    LogInPage,
-    MeasureCreatePage,
-    MeasureEditPage,
-    RandomMeasure,
-    TopicPage,
-    RandomDataSource,
-)
+from tests.functional.pages import HomePage, LogInPage, MeasureCreatePage, MeasureEditPage, TopicPage
 from tests.utils import get_page_with_title
 
 EXPECTED_STATUSES = {
@@ -40,38 +32,38 @@ def assert_page_details(driver, page):
     pass
 
 
-def create_measure_starting_at_topic_page(driver, live_server, stub_subtopic_page, stub_topic_page):
+def create_measure_starting_at_topic_page(
+    driver, live_server, topic, subtopic, sample_measure_version, sample_data_source
+):
     """
     CREATE v1 1: Click through to subtopic topic page
     """
-    topic_page = TopicPage(driver, live_server, stub_topic_page)
+    topic_page = TopicPage(driver, live_server, topic)
     assert topic_page.is_current()
-    topic_page.expand_accordion_for_subtopic(stub_subtopic_page)
+    topic_page.expand_accordion_for_subtopic(subtopic)
     """
     CREATE v1 2: Add measure page
     """
-    topic_page.click_add_measure(stub_subtopic_page)
-    measure_create_page = MeasureCreatePage(driver, live_server, stub_topic_page, stub_subtopic_page)
+    topic_page.click_add_measure(subtopic)
+    measure_create_page = MeasureCreatePage(driver, live_server, topic, subtopic)
     assert measure_create_page.is_current()
     """
     CREATE v1 3: Fill measure create page
     """
-    page = RandomMeasure()
-    data_source = RandomDataSource()
-    measure_create_page.set_title(page.title)
+    measure_create_page.set_title(sample_measure_version.title)
     measure_create_page.click_save()
     """
     CREATE v1 4: Add some content
     """
     measure_edit_page = MeasureEditPage(driver)
-    measure_edit_page.fill_measure_page(page, data_source)
+    measure_edit_page.fill_measure_page(sample_measure_version, sample_data_source)
     measure_edit_page.click_save()
     """
     CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so
     we may have to retrieve the page again
     """
-    page = get_page_with_title(page.title)
-    return measure_edit_page, page
+    created_measure_version = get_page_with_title(sample_measure_version.title)
+    return measure_edit_page, created_measure_version
 
 
 def navigate_to_topic_page(driver, live_server, topic_page):

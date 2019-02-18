@@ -488,25 +488,25 @@ class MeasureEditPage(BasePage):
     def set_methodology(self, value):
         self.set_text_field(EditMeasureLocators.METHODOLOGY_TEXTAREA, value)
 
-    def fill_measure_page(self, page, data_source):
-        self.set_time_period_covered(page.time_covered)
+    def fill_measure_page(self, measure_version, data_source):
+        self.set_time_period_covered(measure_version.time_covered)
         self.set_area_covered(area="England")
         self.set_lowest_level_of_geography(lowest_level="0")
 
         self.set_primary_title(value=data_source.title)
-        self.set_primary_publisher(value="DWP\n")
+        self.set_primary_publisher(value=f"{data_source.publisher.name}\n")
         self.set_primary_url(value=data_source.source_url)
         self.set_primary_frequency()
         self.set_primary_type_of_statistic()
 
-        self.set_measure_summary(page.measure_summary)
-        self.set_summary(page.summary)
-        self.set_things_you_need_to_know(page.need_to_know)
-        self.set_what_the_data_measures(page.measure_summary)
-        self.set_ethnicity_categories(page.ethnicity_definition_summary)
+        self.set_measure_summary(measure_version.measure_summary)
+        self.set_summary(measure_version.summary)
+        self.set_things_you_need_to_know(measure_version.need_to_know)
+        self.set_what_the_data_measures(measure_version.measure_summary)
+        self.set_ethnicity_categories(measure_version.ethnicity_definition_summary)
         self.set_purpose(data_source.purpose)
         self.set_primary_source_type_of_data(0)
-        self.set_methodology(page.methodology)
+        self.set_methodology(measure_version.methodology)
 
 
 class DimensionAddPage(BasePage):
