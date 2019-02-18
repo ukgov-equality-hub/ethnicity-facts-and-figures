@@ -36,7 +36,7 @@ class TestGetCreateMeasurePage:
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
         SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
-        form = MeasureVersionForm(**stub_measure_data)
+        form = MeasureVersionForm(is_minor_update=False, **stub_measure_data)
 
         response = test_app_client.post(
             url_for("cms.create_measure", topic_slug=subtopic.topic.slug, subtopic_slug=subtopic.slug),
@@ -54,7 +54,7 @@ class TestGetCreateMeasurePage:
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
         SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
-        form = MeasureVersionForm(**stub_measure_data)
+        form = MeasureVersionForm(is_minor_update=False, **stub_measure_data)
         request_mock = mock.Mock()
         request_mock.method = "POST"
         data_source_form, data_source_2_form = get_data_source_forms(request_mock, None)
@@ -568,6 +568,43 @@ def test_view_edit_measure_page(test_app_client, logged_in_rdu_user, stub_measur
     further_technical_information = page.find("textarea", attrs={"id": "further_technical_information"})
     assert further_technical_information
     assert further_technical_information.text == "Further technical information"
+
+
+@pytest.mark.parametrize("measure_version, should_show_data_correction_radio", (("1.0", False), ("1.1", True)))
+def test_view_edit_measure_page_for_minor_update_shows_data_correction_radio(
+    test_app_client, logged_in_rdu_user, measure_version, should_show_data_correction_radio
+):
+    measure_version = MeasureVersionFactory(status="DRAFT", version=measure_version, update_corrects_data_mistake=None)
+
+    response = test_app_client.get(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+
+    assert page.h1.text.strip() == "Edit page"
+
+    update_corrects_data_mistake = page.find("div", id="update_corrects_data_mistake")
+    if should_show_data_correction_radio:
+        legend = update_corrects_data_mistake.find("legend")
+        labels = update_corrects_data_mistake.findAll("label")
+
+        assert legend.text.strip() == "Are you correcting something that’s factually incorrect?"
+        assert labels[0].text.strip() == "Yes"
+        assert labels[1].text.strip() == "No"
+        assert (
+            update_corrects_data_mistake.findAll("input", {"type": "radio", "checked": True}) == []
+        ), "One of the radio options is checked, but they should both be unchecked by default."
+
+    else:
+        assert update_corrects_data_mistake is None
 
 
 def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
