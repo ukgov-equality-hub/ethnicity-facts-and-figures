@@ -1,5 +1,3 @@
-import pytest
-
 from tests.functional.data_sets import inject_data, simple_data, ethnicity_by_gender_data
 from tests.functional.pages import (
     LogInPage,
@@ -7,21 +5,20 @@ from tests.functional.pages import (
     TopicPage,
     MeasureEditPage,
     MeasureCreatePage,
-    RandomMeasure,
     MeasurePreviewPage,
     RandomDimension,
     DimensionAddPage,
     DimensionEditPage,
     TableBuilderPage,
 )
+from tests.models import MeasureVersionFactory
 
-pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
 
+def test_can_create_a_measure_page(driver, app, test_app_editor, live_server, db_session):
+    measure_version = MeasureVersionFactory(status="APPROVED")
 
-def test_can_create_a_measure_page(
-    driver, app, test_app_editor, live_server, stub_topic_page, stub_subtopic_page, stub_published_measure_page
-):
-    page = RandomMeasure()
+    # Need to commit explicitly because functional tests run in a separate process with a separate session/transaction
+    db_session.session.commit()
 
     login(driver, live_server, test_app_editor)
 
@@ -29,17 +26,19 @@ def test_can_create_a_measure_page(
     BROWSE TO POINT WHERE WE CAN ADD A MEASURE
     """
     home_page = HomePage(driver, live_server)
-    home_page.click_topic_link(stub_topic_page)
+    home_page.click_topic_link(measure_version.measure.subtopic.topic)
 
-    topic_page = TopicPage(driver, live_server, stub_topic_page)
-    topic_page.expand_accordion_for_subtopic(stub_subtopic_page)
+    topic_page = TopicPage(driver, live_server, measure_version.measure.subtopic.topic)
+    topic_page.expand_accordion_for_subtopic(measure_version.measure.subtopic)
 
     """
     CREATE A NEW MEASURE
     """
-    topic_page.click_add_measure(stub_subtopic_page)
+    topic_page.click_add_measure(measure_version.measure.subtopic)
     topic_page.wait_until_url_contains("/measure/new")
-    create_measure(driver, live_server, page, stub_topic_page, stub_subtopic_page)
+    create_measure(
+        driver, live_server, measure_version, measure_version.measure.subtopic.topic, measure_version.measure.subtopic
+    )
 
     """
     EDIT THE MEASURE
@@ -47,8 +46,8 @@ def test_can_create_a_measure_page(
     topic_page.wait_until_url_contains("/edit")
     edit_measure_page = MeasureEditPage(driver)
 
-    edit_measure_page.set_measure_summary(page.measure_summary)
-    edit_measure_page.set_summary(page.summary)
+    edit_measure_page.set_measure_summary(measure_version.measure_summary)
+    edit_measure_page.set_summary(measure_version.summary)
     edit_measure_page.click_save()
     assert edit_measure_page.is_current()
 
@@ -61,9 +60,9 @@ def test_can_create_a_measure_page(
     preview_measure_page = MeasurePreviewPage(driver)
     assert preview_measure_page.is_current()
 
-    assert_page_contains(preview_measure_page, page.title)
-    assert_page_contains(preview_measure_page, page.measure_summary)
-    assert_page_contains(preview_measure_page, page.summary)
+    assert_page_contains(preview_measure_page, measure_version.title)
+    assert_page_contains(preview_measure_page, measure_version.measure_summary)
+    assert_page_contains(preview_measure_page, measure_version.summary)
 
     """
     ADD A DIMENSION
