@@ -12,7 +12,7 @@ from application import db
 
 
 class LatestPublishedMeasureVersionByGeography(db.Model):
-    __tablename__ = "new_latest_published_measure_versions_by_geography"
+    __tablename__ = "latest_published_measure_versions_by_geography"
 
     topic_title = db.Column("topic_title", db.String())
     topic_slug = db.Column("topic_slug", db.String())
@@ -30,7 +30,7 @@ class LatestPublishedMeasureVersionByGeography(db.Model):
 
 
 class EthnicGroupByDimension(db.Model):
-    __tablename__ = "new_ethnic_groups_by_dimension"
+    __tablename__ = "ethnic_groups_by_dimension"
 
     topic_title = db.Column("topic_title", db.String())
     topic_slug = db.Column("topic_slug", db.String())
@@ -55,7 +55,7 @@ class EthnicGroupByDimension(db.Model):
 
 
 class ClassificationByDimension(db.Model):
-    __tablename__ = "new_classifications_by_dimension"
+    __tablename__ = "classifications_by_dimension"
 
     topic_title = db.Column("topic_title", db.String())
     topic_slug = db.Column("topic_slug", db.String())
