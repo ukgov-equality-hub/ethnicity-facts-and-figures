@@ -168,3 +168,10 @@ def shuffle_table(table):
     table_body = table[1:]
     shuffle(table_body)
     return [table[0]] + table_body
+
+
+def driver_login(driver, live_server, user):
+    login_page = LogInPage(driver, live_server)
+    login_page.get()
+    if login_page.is_current():
+        login_page.login(user.email, user.password)

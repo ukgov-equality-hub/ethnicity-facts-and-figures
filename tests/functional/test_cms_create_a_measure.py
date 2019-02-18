@@ -1,6 +1,7 @@
+from application.auth.models import TypeOfUser
+
 from tests.functional.data_sets import inject_data, simple_data, ethnicity_by_gender_data
 from tests.functional.pages import (
-    LogInPage,
     HomePage,
     TopicPage,
     MeasureEditPage,
@@ -11,16 +12,15 @@ from tests.functional.pages import (
     DimensionEditPage,
     TableBuilderPage,
 )
-from tests.models import MeasureVersionFactory
+from tests.functional.utils import driver_login
+from tests.models import MeasureVersionFactory, UserFactory
 
 
-def test_can_create_a_measure_page(driver, app, test_app_editor, live_server, db_session):
+def test_can_create_a_measure_page(driver, app, live_server):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, active=True)
     measure_version = MeasureVersionFactory(status="APPROVED")
 
-    # Need to commit explicitly because functional tests run in a separate process with a separate session/transaction
-    db_session.session.commit()
-
-    login(driver, live_server, test_app_editor)
+    driver_login(driver, live_server, rdu_user)
 
     """
     BROWSE TO POINT WHERE WE CAN ADD A MEASURE
@@ -159,10 +159,3 @@ def create_measure(driver, live_server, page, topic, subtopic):
     create_measure_page = MeasureCreatePage(driver, live_server, topic, subtopic)
     create_measure_page.set_title(page.title)
     create_measure_page.click_save()
-
-
-def login(driver, live_server, test_app_editor):
-    login_page = LogInPage(driver, live_server)
-    login_page.get()
-    if login_page.is_current():
-        login_page.login(test_app_editor.email, test_app_editor.password)

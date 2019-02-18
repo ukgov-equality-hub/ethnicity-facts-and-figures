@@ -1,7 +1,10 @@
 from application.cms.models import Measure
+from application.auth.models import TypeOfUser
 
-from tests.functional.pages import LogInPage, HomePage, TopicPage, MeasureEditPage, MeasureCreatePage, RandomMeasure
-from tests.models import MeasureVersionFactory
+
+from tests.functional.pages import HomePage, TopicPage, MeasureEditPage, MeasureCreatePage, RandomMeasure
+from tests.functional.utils import driver_login
+from tests.models import MeasureVersionFactory, UserFactory
 from tests.utils import get_page_with_title
 
 """
@@ -11,14 +14,14 @@ THIS TEST CREATES THEN DELETES A MEASURE AT THE DRAFT 1.0 STAGE
 """
 
 
-def test_delete_a_draft_1_0_measure(db, driver, test_app_editor, live_server, db_session):
-    # Add an approved measure so that a topic/subtopic is available in the 'published' state
+def test_delete_a_draft_1_0_measure(driver, live_server):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, active=True)
     measure_version = MeasureVersionFactory(status="APPROVED", published=True)
 
     assert Measure.query.count() == 1
 
     # GIVEN we create a version 1.0 measure
-    login(driver, live_server, test_app_editor)
+    driver_login(driver, live_server, rdu_user)
     navigate_to_topic_page(driver, live_server, measure_version.measure.subtopic.topic)
     measure = create_measure_with_minimal_content(
         driver, live_server, measure_version.measure.subtopic, measure_version.measure.subtopic.topic
@@ -116,10 +119,3 @@ def navigate_to_edit_page(driver, live_server, topic, subtopic, measure):
 
     topic_page.expand_accordion_for_subtopic(subtopic)
     topic_page.click_get_measure(measure)
-
-
-def login(driver, live_server, test_app_editor):
-    login_page = LogInPage(driver, live_server)
-    login_page.get()
-    if login_page.is_current():
-        login_page.login(test_app_editor.email, test_app_editor.password)

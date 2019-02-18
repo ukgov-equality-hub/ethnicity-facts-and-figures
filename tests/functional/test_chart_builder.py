@@ -1,5 +1,3 @@
-import pytest
-
 from application.auth.models import TypeOfUser
 from tests.functional.data_sets import (
     inject_data,
@@ -21,16 +19,10 @@ from tests.functional.pages import (
 from tests.functional.utils import spaceless, login, shuffle_table, new_create_measure
 from tests.models import MeasureVersionFactory, UserFactory
 
-pytestmark = pytest.mark.usefixtures("app", "db_session")
 
-
-def test_can_build_charts(driver, app, live_server, db_session):
-
-    rdu_user = UserFactory(
-        user_type=TypeOfUser.RDU_USER, email="editor@methods.co.uk", password="password123", active=True
-    )
+def test_can_build_charts(driver, app, live_server):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, active=True)
     published_measure_version = MeasureVersionFactory(status="APPROVED", published=True)
-    db_session.session.commit()
 
     chart_builder_page = construct_test_chart_builder_page(driver, live_server, published_measure_version, rdu_user)
 
