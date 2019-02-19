@@ -17,8 +17,6 @@ from tests.models import (
     MeasureVersionFactory,
     SubtopicFactory,
     LowestLevelOfGeographyFactory,
-    SubtopicPageFactory,
-    MeasureFactory,
     DataSourceFactory,
     MeasureVersionWithDimensionFactory,
     UserFactory,
@@ -35,7 +33,6 @@ class TestGetCreateMeasurePage:
     def test_create_measure_page(self, test_app_client, logged_in_rdu_user, stub_measure_data):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
-        SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         form = MeasureVersionForm(is_minor_update=False, **stub_measure_data)
 
         response = test_app_client.post(
@@ -53,7 +50,6 @@ class TestGetCreateMeasurePage:
     ):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
-        SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         form = MeasureVersionForm(is_minor_update=False, **stub_measure_data)
         request_mock = mock.Mock()
         request_mock.method = "POST"
@@ -81,7 +77,6 @@ class TestGetCreateMeasurePage:
     def test_measure_pages_have_csrf_protection(self, test_app_client, logged_in_rdu_user, stub_measure_data):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
-        SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
         current_app.config["WTF_CSRF_ENABLED"] = True
         res = test_app_client.get(
             url_for("cms.create_measure", topic_slug=subtopic.topic.slug, subtopic_slug=subtopic.slug),
@@ -309,11 +304,9 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(test_a
 
 def test_order_measures_in_subtopic(test_app_client, logged_in_rdu_user):
     subtopic = SubtopicFactory()
-    subtopic_page = SubtopicPageFactory(slug=subtopic.slug)  # TODO: Remove
     ids = [0, 1, 2, 3, 4]
     for id_ in ids:
-        # TODO: No need to assign to mv or append to children once subtopic pages are gone, just create the versions
-        mv = MeasureVersionFactory(
+        MeasureVersionFactory(
             id=id_,
             guid=str(id_),
             measure__position=id_,
@@ -321,13 +314,6 @@ def test_order_measures_in_subtopic(test_app_client, logged_in_rdu_user):
             measure__subtopics=[subtopic],
             measure__slug=str(id_),
         )
-        subtopic_page.children.append(mv)
-
-    assert subtopic_page.children[0].guid == "0"
-    assert subtopic_page.children[1].guid == "1"
-    assert subtopic_page.children[2].guid == "2"
-    assert subtopic_page.children[3].guid == "3"
-    assert subtopic_page.children[4].guid == "4"
 
     assert subtopic.measures[0].slug == "0"
     assert subtopic.measures[1].slug == "1"
@@ -347,12 +333,6 @@ def test_order_measures_in_subtopic(test_app_client, logged_in_rdu_user):
     )
 
     assert response.status_code == 200
-
-    assert subtopic_page.children[0].guid == "4"
-    assert subtopic_page.children[1].guid == "3"
-    assert subtopic_page.children[2].guid == "2"
-    assert subtopic_page.children[3].guid == "1"
-    assert subtopic_page.children[4].guid == "0"
 
     assert subtopic.measures[0].slug == "4"
     assert subtopic.measures[1].slug == "3"
@@ -394,51 +374,8 @@ def test_reorder_measures_triggers_build(test_app_client, logged_in_rdu_user):
     assert len(builds) == 1
 
 
-def test_order_measures_in_subtopic_sets_order_on_all_versions(
-    test_app_client, logged_in_rdu_user
-):  # TODO: Rewrite this test when we stop using the parent/children relationship on MeasureVersion
-    subtopic = SubtopicFactory()
-    subtopic_page = SubtopicPageFactory(id=subtopic.id, slug=subtopic.slug)  # TODO: Remove
-    m0 = MeasureFactory(id=0, slug="0", position=0, subtopics=[subtopic])
-    m1 = MeasureFactory(id=1, slug="1", position=1, subtopics=[subtopic])
-
-    subtopic_page.children.append(MeasureVersionFactory(id=0, guid="0", version="1.0", measure=m0))
-    subtopic_page.children.append(MeasureVersionFactory(id=1, guid="0", version="1.1", measure=m0))
-    subtopic_page.children.append(MeasureVersionFactory(id=2, guid="0", version="2.0", measure=m0))
-    subtopic_page.children.append(MeasureVersionFactory(id=3, guid="1", version="1.0", measure=m1))
-    subtopic_page.children.append(MeasureVersionFactory(id=4, guid="1", version="2.0", measure=m1))
-
-    assert subtopic_page.children[0].guid == "0"
-    assert subtopic_page.children[1].guid == "0"
-    assert subtopic_page.children[2].guid == "0"
-    assert subtopic_page.children[3].guid == "1"
-    assert subtopic_page.children[4].guid == "1"
-
-    assert subtopic.measures[0].slug == "0"
-    assert subtopic.measures[1].slug == "1"
-
-    updates = [
-        {"position": 0, "measure_id": "1", "subtopic_id": subtopic.id},
-        {"position": 1, "measure_id": "0", "subtopic_id": subtopic.id},
-    ]
-
-    response = test_app_client.post(
-        url_for("cms.set_measure_order"), data=json.dumps({"positions": updates}), content_type="application/json"
-    )
-
-    assert response.status_code == 200
-    assert subtopic_page.children[0].guid == "1"
-    assert subtopic_page.children[1].guid == "1"
-    assert subtopic_page.children[2].guid == "0"
-    assert subtopic_page.children[3].guid == "0"
-    assert subtopic_page.children[4].guid == "0"
-
-    assert subtopic.measures[0].slug == "1"
-    assert subtopic.measures[1].slug == "0"
-
-
 def test_view_edit_measure_page(test_app_client, logged_in_rdu_user, stub_measure_data):
-    data_source = DataSourceFactory(
+    data_source = DataSourceFactory.build(
         title="DWP Stats",
         type_of_data=["SURVEY"],
         source_url="http://dwp.gov.uk",

@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask import abort
 from markupsafe import Markup
 from wtforms import StringField, TextAreaField, FileField, HiddenField
 from wtforms.fields.html5 import DateField
@@ -30,11 +31,16 @@ class FrequencyOfReleaseOtherRequiredValidator:
     def __call__(self, form, field):
         message = "Other selected but no value has been entered"
 
-        if (
-            form.frequency_of_release_id.data
-            and form.frequency_of_release_id.choices[form.frequency_of_release_id.data - 1][1].lower() == "other"
-        ):
-            if not form.frequency_of_release_other.data:
+        if form.frequency_of_release_id.data:
+            try:
+                choice = next(
+                    filter(lambda c: c[0] == form.frequency_of_release_id.data, form.frequency_of_release_id.choices)
+                )
+
+            except StopIteration:
+                abort(403, "Invalid choice for frequency of release")
+
+            if choice[1].lower() == "other" and not form.frequency_of_release_other.data:
                 raise ValidationError(message)
 
 
