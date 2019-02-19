@@ -1151,7 +1151,12 @@ def new_version(topic_slug, subtopic_slug, measure_slug, version):
             )
 
     return render_template(
-        "cms/create_new_version.html", topic=topic, subtopic=subtopic, measure=measure_version, form=form
+        "cms/create_new_version.html",
+        topic=topic,
+        subtopic=subtopic,
+        measure=measure,
+        measure_version=measure_version,
+        form=form,
     )
 
 

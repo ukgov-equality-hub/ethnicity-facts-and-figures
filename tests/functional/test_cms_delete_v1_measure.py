@@ -1,11 +1,11 @@
-import pytest
-
 from application.cms.models import Measure
+from application.auth.models import TypeOfUser
 
-from tests.functional.pages import LogInPage, HomePage, TopicPage, MeasureEditPage, MeasureCreatePage, RandomMeasure
+
+from tests.functional.pages import HomePage, TopicPage, MeasureEditPage, MeasureCreatePage, RandomMeasure
+from tests.functional.utils import driver_login
+from tests.models import MeasureVersionFactory, UserFactory
 from tests.utils import get_page_with_title
-
-pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
 
 """
 
@@ -14,22 +14,25 @@ THIS TEST CREATES THEN DELETES A MEASURE AT THE DRAFT 1.0 STAGE
 """
 
 
-def test_delete_a_draft_1_0_measure(
-    db, driver, test_app_editor, live_server, stub_topic_page, stub_subtopic_page, stub_published_measure_page
-):
-    assert Measure.query.count() == 2  # From fixtures :facepalm:
+def test_delete_a_draft_1_0_measure(driver, live_server):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, active=True)
+    measure_version = MeasureVersionFactory(status="APPROVED", published=True)
+
+    assert Measure.query.count() == 1
 
     # GIVEN we create a version 1.0 measure
-    login(driver, live_server, test_app_editor)
-    navigate_to_topic_page(driver, live_server, stub_topic_page)
-    measure = create_measure_with_minimal_content(driver, live_server, stub_subtopic_page, stub_topic_page)
+    driver_login(driver, live_server, rdu_user)
+    navigate_to_topic_page(driver, live_server, measure_version.measure.subtopic.topic)
+    measure = create_measure_with_minimal_content(
+        driver, live_server, measure_version.measure.subtopic, measure_version.measure.subtopic.topic
+    )
 
-    assert Measure.query.count() == 3  # From new measure
+    assert Measure.query.count() == 2
 
     # WHEN we go to the topic page
-    topic_page = TopicPage(driver, live_server, stub_topic_page)
+    topic_page = TopicPage(driver, live_server, measure_version.measure.subtopic.topic)
     topic_page.get()
-    topic_page.expand_accordion_for_subtopic(stub_subtopic_page)
+    topic_page.expand_accordion_for_subtopic(measure_version.measure.subtopic)
 
     # THEN measure is listed
     assert topic_page.measure_is_listed(measure) is True
@@ -47,7 +50,7 @@ def test_delete_a_draft_1_0_measure(
     # TODO: Maybe assert 200 responses after all get()s in functional tests?
     assert topic_page.measure_is_listed(measure) is False
 
-    assert Measure.query.count() == 2  # Back to number of measures from fixtures
+    assert Measure.query.count() == 1
 
 
 def create_measure_with_minimal_content(driver, live_server, stub_subtopic_page, stub_topic_page):
@@ -116,10 +119,3 @@ def navigate_to_edit_page(driver, live_server, topic, subtopic, measure):
 
     topic_page.expand_accordion_for_subtopic(subtopic)
     topic_page.click_get_measure(measure)
-
-
-def login(driver, live_server, test_app_editor):
-    login_page = LogInPage(driver, live_server)
-    login_page.get()
-    if login_page.is_current():
-        login_page.login(test_app_editor.email, test_app_editor.password)

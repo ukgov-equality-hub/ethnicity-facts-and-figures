@@ -1,13 +1,15 @@
-import pytest
+import random
+
+from application.auth.models import TypeOfUser
 
 from tests.functional.utils import (
     EXPECTED_STATUSES,
     create_measure_starting_at_topic_page,
     navigate_to_topic_page,
-    login,
+    driver_login,
 )
 
-pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
+from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory
 
 """
 
@@ -16,22 +18,31 @@ THIS TEST MAKES SURE THAT MEASURES CAN BE REJECTED WHILE UNDER REVIEW
 """
 
 
-def test_can_reject_a_measure_in_review_as_editor(
-    driver,
-    test_app_editor,
-    test_app_admin,
-    live_server,
-    stub_topic_page,
-    stub_subtopic_page,
-    stub_published_measure_page,
-):
+def test_can_reject_a_measure_in_review_as_editor(driver, live_server, government_departments, frequencies_of_release):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, active=True)
+    approved_measure_version = MeasureVersionFactory(
+        status="APPROVED",
+        data_sources__publisher=random.choice(government_departments),
+        data_sources__frequency_of_release=random.choice(frequencies_of_release),
+    )
+    sample_measure_version = MeasureVersionFactory.build(data_sources=[])
+    sample_data_source = DataSourceFactory.build(
+        publisher__name=random.choice(government_departments).name,
+        frequency_of_release__description=random.choice(frequencies_of_release).description,
+    )
+
     # GIVEN a setup with Topic and Subtopic
-    login(driver, live_server, test_app_editor)
-    navigate_to_topic_page(driver, live_server, stub_topic_page)
+    driver_login(driver, live_server, rdu_user)
+    navigate_to_topic_page(driver, live_server, approved_measure_version.measure.subtopic.topic)
 
     # WHEN an editor creates and saves a new measure page
     measure_edit_page, page = create_measure_starting_at_topic_page(
-        driver, live_server, stub_subtopic_page, stub_topic_page
+        driver,
+        live_server,
+        approved_measure_version.measure.subtopic.topic,
+        approved_measure_version.measure.subtopic,
+        sample_measure_version,
+        sample_data_source,
     )
 
     # THEN the status should be draft

@@ -405,7 +405,6 @@ def build_dashboards(build_dir):
 
 
 def build_other_static_pages(build_dir):
-
     template_path = os.path.join(os.getcwd(), "application/templates/static_site/static_pages")
 
     for root, dirs, files in os.walk(template_path):
@@ -425,6 +424,19 @@ def build_other_static_pages(build_dir):
             file_path = os.path.join(output_dir, "index.html")
             content = render_template(template_path)
             write_html(file_path, content)
+
+    # Data corrections page - relies on being run *after* publishing (and marking published) any new measure versions.
+    from application.cms.page_service import page_service
+
+    output_dir = os.path.join(build_dir, "corrections")
+    os.makedirs(output_dir, exist_ok=True)
+    write_html(
+        os.path.join(output_dir, "index.html"),
+        render_template(
+            "static_site/corrections.html",
+            measure_versions_corrected_and_published=page_service.get_measure_version_pairs_with_data_corrections(),
+        ),
+    )
 
 
 def build_error_pages(build_dir):
