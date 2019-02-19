@@ -410,6 +410,9 @@
           <div itemprop="spatialCoverage" itemscope itemtype="http://schema.org/Place">
             <meta itemprop="name" content="{{ measure_version.format_area_covered() }}">
           </div>
+          {% if measure_version.published_at %}<meta itemprop="dateModified" content="{{ measure_version.published_at }}">{% endif %}
+          {% if first_published_date %}<meta itemprop="datePublished" content="{{ first_published_date }}">{% endif %}
+
         <div class="accordion-section">
 
           <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Data sources" class="accordion-section-header">
