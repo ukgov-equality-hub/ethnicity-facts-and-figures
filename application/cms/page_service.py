@@ -263,7 +263,7 @@ class PageService(Service):
         ):
             raise UpdateAlreadyExists()
 
-        new_version = measure_version.copy()
+        new_version = measure_version.copy(exclude_fields=["update_corrects_data_mistake"])
         new_version.guid = measure_version.guid
 
         if update_type == NewVersionType.NEW_MEASURE:

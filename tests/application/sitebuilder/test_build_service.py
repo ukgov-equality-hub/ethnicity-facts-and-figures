@@ -23,7 +23,7 @@ def test_build_exceptions_not_suppressed(app):
 
         request_build()
 
-        with pytest.raises(GeneralTestException) as e, stopit.SignalTimeout(1):
+        with pytest.raises(GeneralTestException) as e, stopit.SignalTimeout(2):
             build_site(app)
 
         assert str(e.value) == "build error"
