@@ -132,16 +132,26 @@ def measure_version_markdown(topic_slug, subtopic_slug, measure_slug, version):
 
 @static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>")
 @login_required
-@user_has_access
 def measure_version(topic_slug, subtopic_slug, measure_slug, version):
+
+    measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
 
     try:
         if version == "latest":
-            measure_version = page_service.get_measure(topic_slug, subtopic_slug, measure_slug).latest_version
+
+            if current_user.can_access_measure(measure):
+                measure_version = measure.latest_version
+            else:
+                measure_version = measure.latest_published_version
+
         else:
             *_, measure_version = page_service.get_measure_version_hierarchy(
                 topic_slug, subtopic_slug, measure_slug, version
             )
+
+            if not (current_user.can_access_measure(measure) or measure_version.status == "APPROVED"):
+                abort(403)
+
     except PageNotFoundException:
         abort(404)
 
