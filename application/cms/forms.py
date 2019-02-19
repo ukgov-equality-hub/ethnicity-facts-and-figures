@@ -2,8 +2,9 @@ from flask_wtf import FlaskForm
 from markupsafe import Markup
 from wtforms import StringField, TextAreaField, FileField, HiddenField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, Optional, ValidationError, Length
+from wtforms.validators import DataRequired, Optional, ValidationError, Length, StopValidation, InputRequired
 
+from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
 from application.cms.models import (
     TypeOfData,
     UKCountry,
@@ -13,7 +14,7 @@ from application.cms.models import (
     FrequencyOfRelease,
     TypeOfStatistic,
 )
-from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
+from application.utils import get_bool
 
 
 class TypeOfDataRequiredValidator:
@@ -37,15 +38,15 @@ class FrequencyOfReleaseOtherRequiredValidator:
                 raise ValidationError(message)
 
 
-class RequiredForReviewValidator(DataRequired):
+class RequiredForReviewValidator(InputRequired):
     """
     This validator is designed for measure pages which can have their progress saved half-way through filling in
     fields, but need to ensure certain fields have been filled in when the measure page is being submitted for review.
 
     This validator checks whether the form has been called with the `sending_to_review` argument. If it has, then
-    it applies the DataRequired validator to all fields with this validator. If it has not, then you can specify whether
-    or not the field should be considered optional - this is useful for e.g. radio fields, which by default need a
-    value selected.
+    it applies the InputRequired validator to all fields with this validator. If it has not, then you can specify
+    whether or not the field should be considered optional - this is useful for e.g. radio fields, which by default need
+    a value selected.
 
     Note: if you use the `else_optional` functionality of this validator, the validator should be the last entry in the
     validation chain, as `Optional` validators end the validation chain.
@@ -140,6 +141,12 @@ class DataSourceForm(FlaskForm):
 
 
 class MeasureVersionForm(FlaskForm):
+    class NotRequiredForMajorVersions:
+        def __call__(self, form: "MeasureVersionForm", field):
+            if not form.is_minor_update:
+                field.errors[:] = []
+                raise StopValidation()
+
     db_version_id = HiddenField()
     title = RDUStringField(
         label="Title",
@@ -233,13 +240,22 @@ class MeasureVersionForm(FlaskForm):
     )
 
     # Edit summaries
+    update_corrects_data_mistake = RDURadioField(
+        label="Are you correcting something that’s factually incorrect?",
+        hint="For example, in the data or commentary",
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda value: None if value is None else get_bool(value),
+        validators=[
+            NotRequiredForMajorVersions(),
+            RequiredForReviewValidator("This field is required", else_optional=True),
+        ],
+    )
     external_edit_summary = RDUTextAreaField(
         label="Changes to previous version",
         validators=[RequiredForReviewValidator()],
         hint=(
-            "If you’ve updated only a sentence or two, add the updated content here. Otherwise, briefly summarise "
-            "what’s changed in the latest version (for example, ‘Updated with new data’ or ‘Minor changes for style "
-            "and accuracy’)."
+            "If you’ve corrected the data, explain what’s changed and why. Otherwise, summarise what you’ve updated "
+            "(for example, ‘Updated with the latest available data’)."
         ),
         strip_whitespace=True,
     )
@@ -249,10 +265,16 @@ class MeasureVersionForm(FlaskForm):
         strip_whitespace=True,
     )
 
-    def __init__(self, sending_to_review=False, *args, **kwargs):
+    def __init__(self, is_minor_update: bool, sending_to_review=False, *args, **kwargs):
         super(MeasureVersionForm, self).__init__(*args, **kwargs)
 
+        self.is_minor_update = is_minor_update
         self.sending_to_review = sending_to_review
+
+        # Major versions are not considered "corrections to data mistakes", and the question is not shown to end users.
+        # So let's provide the default value here.
+        if not self.is_minor_update:
+            self.update_corrects_data_mistake.data = False
 
         choices = []
         geographic_choices = LowestLevelOfGeography.query.order_by("position").all()
