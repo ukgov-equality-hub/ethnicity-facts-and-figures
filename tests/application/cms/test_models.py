@@ -738,19 +738,21 @@ class TestMeasureVersion:
 
     def test_measure_latest_version_returns_latest_measure_version(self):
         measure = MeasureFactory()
-        MeasureVersionFactory(version="1.0", guid=measure.id, latest=False, measure=measure)
-        MeasureVersionFactory(version="3.1", guid=measure.id, latest=True, measure=measure)
-        MeasureVersionFactory(version="2.0", guid=measure.id, latest=False, measure=measure)
-        MeasureVersionFactory(version="3.0", guid=measure.id, latest=False, measure=measure)
+        MeasureVersionFactory(version="1.0", guid=str(measure.id), latest=False, measure=measure)
+        MeasureVersionFactory(version="3.1", guid=str(measure.id), latest=True, measure=measure)
+        MeasureVersionFactory(version="2.0", guid=str(measure.id), latest=False, measure=measure)
+        MeasureVersionFactory(version="3.0", guid=str(measure.id), latest=False, measure=measure)
 
         assert measure.latest_version.version == "3.1"
 
     def test_measure_latest_published_version_returns_latest_published_version(self):
         measure = MeasureFactory()
-        MeasureVersionFactory(version="1.0", guid=measure.id, latest=False, status="APPROVED", measure=measure)
-        MeasureVersionFactory(version="2.0", guid=measure.id, latest=False, status="APPROVED", measure=measure)
-        MeasureVersionFactory(version="3.0", guid=measure.id, latest=False, status="APPROVED", measure=measure)
-        MeasureVersionFactory(version="3.1", guid=measure.id, latest=True, status="DEPARTMENT_REVIEW", measure=measure)
+        MeasureVersionFactory(version="1.0", guid=str(measure.id), latest=False, status="APPROVED", measure=measure)
+        MeasureVersionFactory(version="2.0", guid=str(measure.id), latest=False, status="APPROVED", measure=measure)
+        MeasureVersionFactory(version="3.0", guid=str(measure.id), latest=False, status="APPROVED", measure=measure)
+        MeasureVersionFactory(
+            version="3.1", guid=str(measure.id), latest=True, status="DEPARTMENT_REVIEW", measure=measure
+        )
 
         assert measure.latest_published_version.version == "3.0"
 

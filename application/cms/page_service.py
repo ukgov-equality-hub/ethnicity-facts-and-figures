@@ -221,24 +221,13 @@ class PageService(Service):
         db.session.add(measure)
         db.session.flush()
 
-        # TODO: Remove me. A bit of a hack to tie a measure version up to a subtopic measure version, so that `.parent`
-        # references resolve. This eases the development process.
-        subtopic_page = MeasureVersion.query.filter(
-            MeasureVersion.page_type == "subtopic", MeasureVersion.slug == subtopic.slug
-        ).one()
-
         measure_version = MeasureVersion(
             guid=guid,
             version="1.0",
-            slug=slug,
             title=title,
             measure_id=measure.id,
             status=publish_status.inv[1],
             created_by=created_by_email,
-            position=len(subtopic.measures),
-            parent_id=subtopic_page.id,
-            parent_guid=subtopic_page.guid,
-            parent_version=subtopic_page.version,
         )
 
         measure_version_form.populate_obj(measure_version)
@@ -270,22 +259,24 @@ class PageService(Service):
             new_version.guid = str(uuid.uuid4())
             new_version.title = f"COPY OF {measure_version.title}"
 
-            # TODO: Remove this later when we stop duplicating to the MeasureVersion table.
+            new_slug = f"{measure_version.measure.slug}-copy"
+            # In case there are multiple -copy measures, try this...
             try:
                 while self.get_measure(
-                    measure_version.measure.subtopic.topic.slug, measure_version.measure.subtopic.slug, new_version.slug
+                    measure_version.measure.subtopic.topic.slug, measure_version.measure.subtopic.slug, new_slug
                 ):
-                    new_version.slug = f"{new_version.slug}-copy"
-
+                    new_slug = f"{new_slug}-copy"
             except PageNotFoundException:
                 pass
 
             new_version.measure = Measure(
-                slug=new_version.slug,
+                slug=new_slug,
                 position=len(measure_version.measure.subtopic.measures),
                 reference=measure_version.internal_reference,
             )
             new_version.measure.subtopics = measure_version.measure.subtopics
+        else:
+            new_version.measure = measure_version.measure
 
         new_version.version = next_version_number
         new_version.status = "DRAFT"
@@ -353,18 +344,6 @@ class PageService(Service):
                 measure_version.measure.subtopics = [new_subtopic]
                 measure_version.measure.position = len(new_subtopic.measures)
 
-                # TODO: Remove this once we drop the parent relationship and remove subtopic/topics from MeasureVersion
-                subtopic_pages_matching_slug = MeasureVersion.query.filter_by(
-                    page_type="subtopic", slug=new_subtopic.slug
-                ).all()
-                # This will raise StopIteration if no subtopic page is found with a matching topic
-                new_subtopic_page = next(
-                    filter(lambda st: st.parent.slug == new_subtopic.topic.slug, subtopic_pages_matching_slug)
-                )
-                measure_version.parent = new_subtopic_page
-                measure_version.position = len(new_subtopic_page.children)
-                # TODO: End of code to remove
-
         status = kwargs.get("status")
         if status is not None:
             measure_version.status = status
@@ -381,7 +360,6 @@ class PageService(Service):
                 )
                 raise PageExistsException(message)
             measure_version.measure.slug = slug
-            measure_version.slug = slug  # TODO: Remove this once slug is gone from MeasureVersion
 
         # Update main fields of MeasureVersion
         measure_version_form.populate_obj(measure_version)
@@ -486,9 +464,6 @@ class PageService(Service):
                 MeasureVersion.measure_id == measure_id,
                 MeasureVersion.measure.has(Measure.subtopics.any(Subtopic.id == subtopic_id)),
             ).all()
-
-            for page in measure_version:  # TODO: Remove when we clean up the sitemap refactor
-                page.position = position
 
             if measure_version:
                 measure = Measure.query.get(measure_version[0].measure_id)

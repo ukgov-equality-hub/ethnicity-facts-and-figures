@@ -221,7 +221,6 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
         status="DRAFT",
         title="Test Measure Page",
         guid="test-measure-page-guid",
-        slug="test-measure-page-slug",
         area_covered=[UKCountry.ENGLAND],
         lowest_level_of_geography__name="UK",
         time_covered="4 months",
@@ -231,6 +230,7 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
         methodology="how we measure unemployment",
         suppression_and_disclosure="Suppression rules and disclosure control",
         data_sources=[data_source],
+        measure__slug="test-measure-page-slug",
     )
 
     resp = test_app_client.get(
@@ -456,7 +456,6 @@ def test_view_measure_page(test_app_client, logged_in_rdu_user):
         status="DRAFT",
         title="Test Measure Page",
         guid="test-measure-page-guid",
-        slug="test-measure-page-slug",
         area_covered=[UKCountry.ENGLAND],
         lowest_level_of_geography__name="UK",
         time_covered="4 months",
@@ -551,8 +550,6 @@ def test_homepage_topics_display_in_rows_with_three_columns(
         measure = MeasureFactory(slug=f"measure-{i}", subtopics=[subtopic])
         MeasureVersionFactory(
             guid=f"measure_version_{i}",
-            page_type="measure",
-            slug=f"measure-{i}",
             status="APPROVED",
             title=f"Test measure page #{i}",
             version="1.0",
