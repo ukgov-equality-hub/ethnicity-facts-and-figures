@@ -121,6 +121,12 @@ def slugify_value(value):
         return ""
 
 
+def format_iso8601_date(date):
+    if date is None:
+        return ""
+    return date.strftime("%Y-%m-%d")
+
+
 def first_bullet(value):
     if value:
         regex = re.compile(r"\*\s[^\n]*")

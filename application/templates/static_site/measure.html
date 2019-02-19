@@ -133,15 +133,13 @@
 
           {%  if first_published_date %}
             <dt>Published:</dt>
-            <dd itemprop="datePublished">
-                {{ first_published_date | format_friendly_date }}
+            <dd><time itemprop="datePublished" datetime="{{ first_published_date | format_iso8601_date }}">{{ first_published_date | format_friendly_date }}</time>
             </dd>
           {%  endif %}
 
           {% if measure_version.version != '1.0' and measure_version.published_at %}
             <dt>Last updated:</dt>
-            <dd itemprop="dateModified">
-              {{ measure_version.published_at | format_friendly_date }}, <a href="#history">see all updates</a>
+            <dd><time itemprop="dateModified" datetime="{{ measure_version.published_at | format_iso8601_date }}">{{ measure_version.published_at | format_friendly_date }}</time>, <a href="#history">see all updates</a>
             </dd>
           {% endif %}
 
