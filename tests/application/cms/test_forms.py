@@ -1,4 +1,6 @@
+import pytest
 from werkzeug.datastructures import ImmutableMultiDict
+
 
 from application.cms.models import DataSource
 from application.cms.forms import DataSourceForm, MeasureVersionForm
@@ -40,7 +42,7 @@ class TestDataSourceForm:
 
 class TestMeasurePageForm:
     def test_runs_full_validation_when_sending_to_review(self):
-        form = MeasureVersionForm(sending_to_review=True)
+        form = MeasureVersionForm(is_minor_update=False, sending_to_review=True)
 
         form.validate()
 
@@ -56,3 +58,11 @@ class TestMeasurePageForm:
             "methodology",
             "external_edit_summary",
         }
+
+    @pytest.mark.parametrize("is_minor_update, form_should_error", ((False, False), (True, True)))
+    def test_update_corrects_data_mistake_only_on_minor_versions(self, is_minor_update, form_should_error):
+        form = MeasureVersionForm(is_minor_update, sending_to_review=True)
+
+        form.validate()
+
+        assert ("update_corrects_data_mistake" in form.errors.keys()) == form_should_error

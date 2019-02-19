@@ -310,13 +310,14 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = MeasureVersion
         sqlalchemy_session_persistence = "flush"
-        exclude = {"_creator", "_publisher", "_unpublished", "_unpublisher"}
+        exclude = {"_creator", "_publisher", "_unpublished", "_unpublisher", "_is_major_version"}
 
     # Underscored attributes are helpers that assist in the creation of a valid (business-logic-wise) measure version.
     _creator = factory.SubFactory(UserFactory)
     _publisher = factory.SubFactory(UserFactory)
     _unpublished = factory.LazyAttribute(lambda o: o.status == "UNPUBLISHED")
     _unpublisher = factory.Maybe("_unpublished", yes_declaration=factory.SubFactory(UserFactory))
+    _is_major_version = factory.LazyAttribute(lambda o: o.version.endswith(".0"))
 
     # columns
     id = factory.Sequence(lambda x: x)
@@ -355,6 +356,9 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     time_covered = factory.Faker("paragraph", nb_sentences=3)
     external_edit_summary = factory.Faker("sentence", nb_words=10)
     internal_edit_summary = factory.Faker("sentence", nb_words=10)
+    update_corrects_data_mistake = factory.LazyAttribute(
+        lambda o: False if o._is_major_version else random.choice((True, False))
+    )
     lowest_level_of_geography_id = factory.SelfAttribute("lowest_level_of_geography.name")
     methodology = factory.Faker("paragraph", nb_sentences=3)
     suppression_and_disclosure = factory.Faker("paragraph", nb_sentences=3)
