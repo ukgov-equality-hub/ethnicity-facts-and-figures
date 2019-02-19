@@ -521,7 +521,10 @@
           </div>
 
           <div class="accordion-section-body downloads">
-            <meta itemprop="license" content="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">
+            <div itemprop="license" itemscope itemtype="http://schema.org/CreativeWork">
+              <meta itemprop="url" content="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">
+              <meta itemprop="name" content="Open Government Licence">
+            </div>
             <meta itemprop="name" content="{{ measure_version.title | striptags }}">
             <meta itemprop="description" content="{{ measure_version.summary | first_bullet | render_markdown | striptags }}">
 
