@@ -408,8 +408,8 @@
           <div itemprop="spatialCoverage" itemscope itemtype="http://schema.org/Place">
             <meta itemprop="name" content="{{ measure_version.format_area_covered() }}">
           </div>
-          {% if measure_version.published_at %}<meta itemprop="dateModified" content="{{ measure_version.published_at }}">{% endif %}
-          {% if first_published_date %}<meta itemprop="datePublished" content="{{ first_published_date }}">{% endif %}
+          {% if measure_version.published_at %}<meta itemprop="dateModified" content="{{ measure_version.published_at | format_iso8601_date }}">{% endif %}
+          {% if first_published_date %}<meta itemprop="datePublished" content="{{ first_published_date | format_iso8601_date }}">{% endif %}
           <div itemprop="creator" itemscope itemtype="http://schema.org/Organization">
             <meta itemprop="name" content="Race Disparity Unit">
             <meta itemprop="url" content="https://www.gov.uk/government/organisations/race-disparity-unit">
