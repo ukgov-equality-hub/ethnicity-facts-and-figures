@@ -86,9 +86,9 @@ def test_departmental_user_cannot_see_draft(test_app_client, logged_in_dept_user
 
 
 def test_departmental_user_can_see_draft_measure_if_they_have_access(test_app_client, logged_in_dept_user):
-    measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[], status="DRAFT")
-
-    measure_version.measure.shared_with.append(logged_in_dept_user)
+    measure_version = MeasureVersionFactory(
+        title="Test Measure Page", measure__shared_with=[logged_in_dept_user], status="DRAFT"
+    )
 
     resp = test_app_client.get(
         url_for(
@@ -147,8 +147,7 @@ def test_departmental_user_can_see_latest_published_version(test_app_client, log
 
 def test_departmental_user_can_see_latest_draft_version_if_they_have_access(test_app_client, logged_in_dept_user):
 
-    measure = MeasureFactory(shared_with=[])
-    measure.shared_with.append(logged_in_dept_user)
+    measure = MeasureFactory(shared_with=[logged_in_dept_user])
 
     MeasureVersionFactory(title="Old Test Measure Page", status="APPROVED", measure=measure, version="1.0")
     MeasureVersionFactory(title="Updated Test Measure Page", status="DRAFT", measure=measure, version="2.0")
