@@ -245,3 +245,14 @@ def search():
     )
     response._allow_google_custom_search_in_csp = True
     return response
+
+
+@static_site_blueprint.route("/corrections")
+@login_required
+def corrections():
+    measure_versions_corrected_and_published = page_service.get_measure_version_pairs_with_data_corrections()
+
+    return render_template(
+        "static_site/corrections.html",
+        measure_versions_corrected_and_published=measure_versions_corrected_and_published,
+    )

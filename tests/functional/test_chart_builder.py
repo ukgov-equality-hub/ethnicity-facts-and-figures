@@ -1,5 +1,4 @@
-import pytest
-
+from application.auth.models import TypeOfUser
 from tests.functional.data_sets import (
     inject_data,
     simple_data,
@@ -15,22 +14,17 @@ from tests.functional.pages import (
     DimensionAddPage,
     DimensionEditPage,
     ChartBuilderPage,
-    MinimalRandomMeasure,
     MinimalRandomDimension,
 )
-from tests.functional.utils import spaceless, create_measure, login, shuffle_table
+from tests.functional.utils import spaceless, login, shuffle_table, new_create_measure
+from tests.models import MeasureVersionFactory, UserFactory
 
-pytestmark = pytest.mark.usefixtures("app", "db_session", "stub_measure_page")
 
+def test_can_build_charts(driver, app, live_server):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, active=True)
+    published_measure_version = MeasureVersionFactory(status="APPROVED", published=True)
 
-def test_can_build_charts(
-    driver, app, test_app_editor, live_server, stub_topic_page, stub_subtopic_page, stub_published_measure_page
-):
-    page = MinimalRandomMeasure()
-
-    chart_builder_page = construct_test_chart_builder_page(
-        driver, live_server, page, stub_subtopic_page, stub_topic_page, test_app_editor, stub_published_measure_page
-    )
+    chart_builder_page = construct_test_chart_builder_page(driver, live_server, published_measure_version, rdu_user)
 
     run_bar_chart_scenarios(chart_builder_page, driver)
 
@@ -49,23 +43,21 @@ def test_can_build_charts(
     run_save_and_load_scenario(chart_builder_page, driver)
 
 
-def construct_test_chart_builder_page(
-    driver, live_server, page, stub_subtopic_page, stub_topic_page, test_app_editor, stub_published_measure_page
-):
-    login(driver, live_server, test_app_editor)
+def construct_test_chart_builder_page(driver, live_server, measure_version, rdu_user):
+    login(driver, live_server, rdu_user)
     """
     BROWSE TO POINT WHERE WE CAN ADD A MEASURE
     """
     home_page = HomePage(driver, live_server)
-    home_page.click_topic_link(stub_topic_page)
-    topic_page = TopicPage(driver, live_server, stub_topic_page)
-    topic_page.expand_accordion_for_subtopic(stub_subtopic_page)
+    home_page.click_topic_link(measure_version.measure.subtopic.topic)
+    topic_page = TopicPage(driver, live_server, measure_version.measure.subtopic.topic)
+    topic_page.expand_accordion_for_subtopic(measure_version.measure.subtopic)
     """
     SET UP A SIMPLE DIMENSION WE CAN BUILD TEST CHARTS ON
     """
-    topic_page.click_add_measure(stub_subtopic_page)
+    topic_page.click_add_measure(measure_version.measure.subtopic)
     topic_page.wait_until_url_contains("/measure/new")
-    create_measure(driver, live_server, page, stub_topic_page, stub_subtopic_page)
+    new_create_measure(driver, live_server, measure_version)
     topic_page.wait_until_url_contains("/edit")
     edit_measure_page = MeasureEditPage(driver)
     edit_measure_page.get()
