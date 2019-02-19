@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+  ]
+%}
+
+{% block pageTitle %}Corrections to published data - GOV.UK{% endblock %}
+
+{% block content %}
+    <h1 class="heading-xlarge">Corrections to published data</h1>
+
+    {% if measure_versions_corrected_and_published|length > 0 %}
+      {% for corrected_measure_version, published_version_with_correction in measure_versions_corrected_and_published %}
+        <div class="corrected-measure-version">
+        <h2 class="heading-small">
+          <a href="{{ url_for('static_site.measure_version',
+                               topic_slug=corrected_measure_version.measure.subtopic.topic.slug,
+                               subtopic_slug=corrected_measure_version.measure.subtopic.slug,
+                               measure_slug=corrected_measure_version.measure.slug,
+                               version=published_version_with_correction.version) }}">
+            {{ corrected_measure_version.title }}
+          </a>
+        </h2>
+        Version: {{ corrected_measure_version.version }}
+        <br>
+        {{ corrected_measure_version.published_at | format_friendly_date }}
+        <br>
+        {{ corrected_measure_version.external_edit_summary }}
+        </div>
+        <br>
+      {% endfor %}
+    {% else %}
+      <p>No data corrections have been published.</p>
+    {% endif %}
+{% endblock %}
