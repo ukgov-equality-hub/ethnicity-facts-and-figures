@@ -305,6 +305,7 @@ class MeasureVersion(db.Model, CopyableModel):
     time_covered = db.Column(db.String(255))  # public metadata
     external_edit_summary = db.Column(db.TEXT)  # notes on new version, displayed on public measure page
     internal_edit_summary = db.Column(db.TEXT)  # internal notes on new version, not displayed on public measure page
+    update_corrects_data_mistake = db.Column(db.Boolean)  # Whether or not a minor updates fixes a mistake in the data
 
     # lowest_level_of_geography is not displayed on the public site but is used for geographic dashboard
     lowest_level_of_geography_id = db.Column(

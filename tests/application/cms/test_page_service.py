@@ -202,7 +202,7 @@ class TestPageService:
         created_measure_version = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
-                title="I care", published_at=datetime.now().date(), internal_reference="abc123"
+                is_minor_update=False, title="I care", published_at=datetime.now().date(), internal_reference="abc123"
             ),
             data_source_forms=[],
             created_by_email=user.email,
@@ -225,7 +225,9 @@ class TestPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         created_page = page_service.create_measure(
             subtopic=subtopic,
-            measure_version_form=MeasureVersionForm(title="I care", published_at=datetime.now().date()),
+            measure_version_form=MeasureVersionForm(
+                is_minor_update=False, title="I care", published_at=datetime.now().date()
+            ),
             data_source_forms=[],
             created_by_email=user.email,
         )
@@ -234,7 +236,7 @@ class TestPageService:
             page_service.create_measure(
                 subtopic=subtopic,
                 measure_version_form=MeasureVersionForm(
-                    title=created_page.title, published_at=created_page.published_at
+                    is_minor_update=False, title=created_page.title, published_at=created_page.published_at
                 ),
                 data_source_forms=[],
                 created_by_email=user.email,
@@ -247,7 +249,10 @@ class TestPageService:
         page = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
-                title="\n\t   I care\n", published_at=datetime.now().date(), methodology="\n\n\n\n\n\n"
+                is_minor_update=False,
+                title="\n\t   I care\n",
+                published_at=datetime.now().date(),
+                methodology="\n\n\n\n\n\n",
             ),
             created_by_email=user.email,
             data_source_forms=[],
@@ -262,7 +267,9 @@ class TestPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         created_page = page_service.create_measure(
             subtopic=subtopic,
-            measure_version_form=MeasureVersionForm(title="the title", published_at=datetime.now().date()),
+            measure_version_form=MeasureVersionForm(
+                is_minor_update=False, title="the title", published_at=datetime.now().date()
+            ),
             created_by_email=user.email,
             data_source_forms=[],
         )
@@ -272,7 +279,9 @@ class TestPageService:
 
         updated_page = page_service.update_measure_version(
             created_page,
-            measure_version_form=MeasureVersionForm(title="an updated title", db_version_id=created_page.db_version_id),
+            measure_version_form=MeasureVersionForm(
+                is_minor_update=True, title="an updated title", db_version_id=created_page.db_version_id
+            ),
             data_source_forms=[],
             last_updated_by_email=user.email,
         )
@@ -286,7 +295,9 @@ class TestPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         created_page = page_service.create_measure(
             subtopic=subtopic,
-            measure_version_form=MeasureVersionForm(title="the title", published_at=datetime.now().date()),
+            measure_version_form=MeasureVersionForm(
+                is_minor_update=False, title="the title", published_at=datetime.now().date()
+            ),
             created_by_email=user.email,
             data_source_forms=[],
         )
@@ -297,7 +308,7 @@ class TestPageService:
         page_service.update_measure_version(
             created_page,
             measure_version_form=MeasureVersionForm(
-                title="the title", status="APPROVED", db_version_id=created_page.db_version_id
+                is_minor_update=True, title="the title", status="APPROVED", db_version_id=created_page.db_version_id
             ),
             data_source_forms=[],
             last_updated_by_email=user.email,
@@ -310,7 +321,9 @@ class TestPageService:
 
         page_service.update_measure_version(
             copied_page,
-            measure_version_form=MeasureVersionForm(title="the updated title", db_version_id=copied_page.db_version_id),
+            measure_version_form=MeasureVersionForm(
+                is_minor_update=True, title="the updated title", db_version_id=copied_page.db_version_id
+            ),
             data_source_forms=[],
             last_updated_by_email=user.email,
         )
@@ -435,12 +448,12 @@ class TestPageService:
 
     def test_update_measure_version(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        measure_version = MeasureVersionFactory(status="DRAFT")
+        measure_version = MeasureVersionFactory(version="1.0", status="DRAFT")
 
         page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(
-                title="I care too much!", db_version_id=measure_version.db_version_id
+                is_minor_update=True, title="I care too much!", db_version_id=measure_version.db_version_id
             ),
             data_source_forms=[],
             last_updated_by_email=user.email,
@@ -454,7 +467,7 @@ class TestPageService:
 
     def test_update_measure_version_raises_if_page_not_editable(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        measure_version = MeasureVersionFactory(status="DRAFT")
+        measure_version = MeasureVersionFactory(version="1.0", status="DRAFT")
 
         measure_version_from_db = page_service.get_measure_version_by_id(
             measure_version.measure.id, measure_version.version
@@ -463,7 +476,9 @@ class TestPageService:
 
         page_service.update_measure_version(
             measure_version,
-            measure_version_form=MeasureVersionForm(title="Who cares", db_version_id=measure_version.db_version_id),
+            measure_version_form=MeasureVersionForm(
+                is_minor_update=True, title="Who cares", db_version_id=measure_version.db_version_id
+            ),
             data_source_forms=[],
             last_updated_by_email=user.email,
             **{"status": "APPROVED"},
@@ -478,7 +493,7 @@ class TestPageService:
             page_service.update_measure_version(
                 measure_version,
                 measure_version_form=MeasureVersionForm(
-                    title="I care too much!", db_version_id=measure_version.db_version_id
+                    is_minor_update=True, title="I care too much!", db_version_id=measure_version.db_version_id
                 ),
                 data_source_forms=[],
                 last_updated_by_email=user.email,
@@ -486,11 +501,12 @@ class TestPageService:
 
     def test_update_measure_version_trims_whitespace(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        measure_version = MeasureVersionFactory(status="DRAFT")
+        measure_version = MeasureVersionFactory(version="1.0", status="DRAFT")
 
         page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(
+                is_minor_update=False,
                 title="Who cares",
                 db_version_id=measure_version.db_version_id,
                 published_at=datetime.now().date(),
@@ -505,6 +521,7 @@ class TestPageService:
         page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(
+                is_minor_update=False,
                 title="Who cares",
                 db_version_id=measure_version.db_version_id,
                 ethnicity_definition_summary="\n   How about some more whitespace? \n             \n",
@@ -520,13 +537,15 @@ class TestPageService:
 
     def test_reject_measure_version(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        measure_version = MeasureVersionFactory(status="DRAFT")
+        measure_version = MeasureVersionFactory(version="1.0", status="DRAFT")
 
         assert measure_version.status == "DRAFT"
 
         page_service.update_measure_version(
             measure_version,
-            measure_version_form=MeasureVersionForm(title="Who cares", db_version_id=measure_version.db_version_id),
+            measure_version_form=MeasureVersionForm(
+                is_minor_update=False, title="Who cares", db_version_id=measure_version.db_version_id
+            ),
             last_updated_by_email=user.email,
             data_source_forms=[],
             **{"status": "DEPARTMENT_REVIEW"},
