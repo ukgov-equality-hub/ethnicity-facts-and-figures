@@ -902,7 +902,7 @@ def save_chart_to_page(topic_slug, subtopic_slug, measure_slug, version, dimensi
     )
 
     if measure_version.not_editable():
-        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_version.guid)
+        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_version.title)
         current_app.logger.exception(message)
         raise PageUnEditable(message)
 
@@ -958,7 +958,7 @@ def save_table_to_page(topic_slug, subtopic_slug, measure_slug, version, dimensi
     )
 
     if measure_version.not_editable():
-        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_version.guid)
+        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_version.title)
         current_app.logger.exception(message)
         raise PageUnEditable(message)
 

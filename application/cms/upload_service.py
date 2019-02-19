@@ -109,7 +109,7 @@ class UploadService(Service):
 
     def delete_upload_obj(self, page, upload):
         if page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.title)
             self.logger.error(message)
             raise PageUnEditable(message)
         try:
@@ -136,7 +136,7 @@ class UploadService(Service):
             file_name = upload.filename
 
         if page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.title)
             self.logger.error(message)
             raise PageUnEditable(message)
 
@@ -161,7 +161,7 @@ class UploadService(Service):
 
     def edit_upload(self, measure, upload, data, file=None):
         if measure.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure.guid)
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure.title)
             self.logger.error(message)
             raise PageUnEditable(message)
 
