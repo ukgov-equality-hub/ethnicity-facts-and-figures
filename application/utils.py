@@ -182,11 +182,10 @@ def write_dimension_tabular_csv(dimension):
         return output.getvalue()
 
 
-def generate_review_token(page_id, page_version):
+def generate_review_token(page_id):
     key = os.environ.get("SECRET_KEY")
     serializer = URLSafeTimedSerializer(key)
-    token = "%s|%s" % (page_id, page_version)
-    return serializer.dumps(token)
+    return serializer.dumps(str(page_id))
 
 
 def decode_review_token(token, config):
@@ -195,7 +194,9 @@ def decode_review_token(token, config):
     seconds_in_day = 24 * 60 * 60
     max_age_seconds = seconds_in_day * config.get("PREVIEW_TOKEN_MAX_AGE_DAYS")
     decoded_token = serializer.loads(token, max_age=max_age_seconds)
-    page_id, page_version = decoded_token.split("|")
+
+    # TODO: Once all guid-based tokens have expired adjust this to not split and return ID only
+    page_id, page_version = decoded_token.split("|") if "|" in decoded_token else (decoded_token, None)
     return page_id, page_version
 
 

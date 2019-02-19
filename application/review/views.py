@@ -12,8 +12,14 @@ from application import db
 @review_blueprint.route("/<review_token>")
 def review_page(review_token):
     try:
+        # TODO: Once all guid-based tokens have expired adjust this to only filter by ID & token.
         id, version = decode_review_token(review_token, current_app.config)
-        measure_version = MeasureVersion.query.filter_by(guid=id, version=version, review_token=review_token).one()
+        measure_version = MeasureVersion.query.filter_by(
+            guid=id, version=version, review_token=review_token
+        ).one_or_none()
+        if not measure_version:
+            measure_version = MeasureVersion.query.filter_by(id=id, review_token=review_token).one()
+        # TODO End
 
         if measure_version.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html", preview=True)
@@ -41,12 +47,12 @@ def review_page(review_token):
         abort(404)
 
 
-@review_blueprint.route("/new-review-url/<id>/<version>")
+@review_blueprint.route("/new-review-url/<id>")
 @login_required
-def get_new_review_url(id, version):
+def get_new_review_url(id):
     try:
-        token = generate_review_token(id, version)
-        measure_version = MeasureVersion.query.filter_by(guid=id, version=version).one()
+        token = generate_review_token(id)
+        measure_version = MeasureVersion.query.filter_by(id=id).one()
         measure_version.review_token = token
         db.session.commit()
         url = url_for("review.review_page", review_token=measure_version.review_token, _external=True)

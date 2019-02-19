@@ -402,7 +402,7 @@
             event.preventDefault();
             $.ajax({
                 type: 'GET',
-                url: "{{ url_for('review.get_new_review_url', id=measure_version.guid, version=measure_version.version)}}",
+                url: "{{ url_for('review.get_new_review_url', id=measure_version.id)}}",
                 success: function (data) {
                     $('#review-url').html(data);
                     initialiseCopy();

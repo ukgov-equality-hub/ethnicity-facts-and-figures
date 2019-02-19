@@ -452,7 +452,7 @@ class PageService(Service):
         message = measure_version.next_state()
         measure_version.last_updated_by = updated_by
         if measure_version.status == "DEPARTMENT_REVIEW":
-            measure_version.review_token = generate_review_token(measure_version.guid, measure_version.version)
+            measure_version.review_token = generate_review_token(measure_version.id)
         if measure_version.status == "APPROVED":
             measure_version.published_by = updated_by
         db.session.commit()

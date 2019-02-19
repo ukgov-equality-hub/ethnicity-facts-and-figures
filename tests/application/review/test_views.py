@@ -2,7 +2,7 @@ import pytest
 
 from bs4 import BeautifulSoup
 from flask import url_for
-from itsdangerous import SignatureExpired, BadSignature
+from itsdangerous import SignatureExpired, BadSignature, URLSafeTimedSerializer
 
 from application.utils import decode_review_token
 from tests.models import MeasureVersionFactory, MeasureVersionWithDimensionFactory
@@ -44,7 +44,24 @@ def test_review_link_returns_404_if_token_incomplete(test_app_client):
 
 def test_review_token_decoded_if_not_expired(app):
 
+    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
+
+    expires_tomorrow = 1
+    decoded_guid, decoded_version = decode_review_token(
+        measure_version.review_token,
+        {"SECRET_KEY": app.config["SECRET_KEY"], "PREVIEW_TOKEN_MAX_AGE_DAYS": expires_tomorrow},
+    )
+
+    assert decoded_guid == str(measure_version.id)
+    assert decoded_version is None
+
+
+def test_old_style_review_token_decoded_if_not_expired(app):
+
+    serializer = URLSafeTimedSerializer(app.config["SECRET_KEY"])
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", guid="test-measure-page")
+    old_style_token = serializer.dumps(f"{measure_version.guid}|{measure_version.version}")
+    measure_version.review_token = old_style_token
 
     expires_tomorrow = 1
     decoded_guid, decoded_version = decode_review_token(
