@@ -1,20 +1,18 @@
-drop_all_dashboard_helper_views = """
-DROP INDEX IF EXISTS uix_latest_published_measure_versions_by_geography;
-DROP INDEX IF EXISTS uix_latest_published_measure_versions;
-DROP INDEX IF EXISTS uix_ethnic_groups_by_dimension;
-DROP INDEX IF EXISTS uix_categorisations_by_dimension;
-DROP MATERIALIZED VIEW IF EXISTS latest_published_measure_versions_by_geography;
-DROP MATERIALIZED VIEW IF EXISTS ethnic_groups_by_dimension;
-DROP MATERIALIZED VIEW IF EXISTS classifications_by_dimension;
-DROP MATERIALIZED VIEW IF EXISTS latest_published_measure_versions;
-"""
+"""Create new materialized views with the `new_` prefix removed.
 
-refresh_all_dashboard_helper_views = """
-REFRESH MATERIALIZED VIEW CONCURRENTLY latest_published_measure_versions;
-REFRESH MATERIALIZED VIEW CONCURRENTLY latest_published_measure_versions_by_geography;
-REFRESH MATERIALIZED VIEW CONCURRENTLY ethnic_groups_by_dimension;
-REFRESH MATERIALIZED VIEW CONCURRENTLY classifications_by_dimension;
+Revision ID: 2019_02_15_rename_matviews
+Revises: 2019_02_15_remove_old_matviews
+Create Date: 2019-01-15 13:01:00.000000
+
 """
+from alembic import op
+
+
+# revision identifiers, used by Alembic.
+revision = "2019_02_15_rename_matviews"
+down_revision = "2019_02_15_remove_old_matviews"
+branch_labels = None
+depends_on = None
 
 latest_published_measure_versions_view = """
 CREATE MATERIALIZED VIEW latest_published_measure_versions AS
@@ -177,3 +175,25 @@ CREATE MATERIALIZED VIEW classifications_by_dimension AS
 
 CREATE UNIQUE INDEX uix_categorisations_by_dimension ON classifications_by_dimension (dimension_guid, classification_id);
 """  # noqa
+
+drop_all_dashboard_helper_views = """
+DROP INDEX IF EXISTS uix_latest_published_measure_versions_by_geography;
+DROP INDEX IF EXISTS uix_latest_published_measure_versions;
+DROP INDEX IF EXISTS uix_ethnic_groups_by_dimension;
+DROP INDEX IF EXISTS uix_categorisations_by_dimension;
+DROP MATERIALIZED VIEW IF EXISTS latest_published_measure_versions_by_geography;
+DROP MATERIALIZED VIEW IF EXISTS ethnic_groups_by_dimension;
+DROP MATERIALIZED VIEW IF EXISTS classifications_by_dimension;
+DROP MATERIALIZED VIEW IF EXISTS latest_published_measure_versions;
+"""
+
+
+def upgrade():
+    op.execute(latest_published_measure_versions_view)
+    op.execute(latest_published_measure_versions_by_geography_view)
+    op.execute(ethnic_groups_by_dimension_view)
+    op.execute(classifications_by_dimension)
+
+
+def downgrade():
+    op.execute(drop_all_dashboard_helper_views)
