@@ -235,10 +235,8 @@ class MeasureVersion(db.Model, CopyableModel):
     # columns
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     measure_id = db.Column(db.Integer, nullable=True)  # FK to `measure` table
-    guid = db.Column(db.String(255), nullable=False, primary_key=True)  # TODO: Remove, but needs dentangling first.
-    version = db.Column(
-        db.String(), nullable=False, primary_key=True
-    )  # The version number of this measure version in the format `X.y`.
+    guid = db.Column(db.String(255), nullable=False)  # TODO: Remove, but needs dentangling first.
+    version = db.Column(db.String(), nullable=False)  # The version number of this measure version in the format `X.y`.
     internal_reference = db.Column(db.String())  # optional internal reference number for measures
     latest = db.Column(db.Boolean, default=True)  # True if the current row is the latest version of a measure
     #                                               (latest created, not latest published, so could be a new draft)

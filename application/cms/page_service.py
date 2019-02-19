@@ -103,10 +103,10 @@ class PageService(Service):
 
     @staticmethod
     def get_measure_from_measure_version_id(measure_version_id):
-        try:
-            # TODO: Use `query.get` instead of `query.filter_by` after removing guid+version from MeasureVersion PK
-            return MeasureVersion.query.filter_by(id=measure_version_id).one().measure
-        except NoResultFound:
+        measure_version = MeasureVersion.query.get(measure_version_id)
+        if measure_version:
+            return measure_version.measure
+        else:
             raise PageNotFoundException()
 
     def get_measure_version_hierarchy(
