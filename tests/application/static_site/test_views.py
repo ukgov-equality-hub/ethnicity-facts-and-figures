@@ -105,22 +105,6 @@ def test_departmental_user_can_see_draft_measure_if_they_have_access(test_app_cl
     assert page.h1.text.strip() == "Test Measure Page"
 
 
-def test_departmental_user_cannot_see_draft_measure(test_app_client, logged_in_dept_user):
-    measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[], status="DRAFT")
-
-    resp = test_app_client.get(
-        url_for(
-            "static_site.measure_version",
-            topic_slug=measure_version.measure.subtopic.topic.slug,
-            subtopic_slug=measure_version.measure.subtopic.slug,
-            measure_slug=measure_version.measure.slug,
-            version=measure_version.version,
-        )
-    )
-
-    assert resp.status_code == 403
-
-
 def test_departmental_user_can_see_published_measure(test_app_client, logged_in_dept_user):
     measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[], status="APPROVED")
 
