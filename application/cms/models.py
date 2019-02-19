@@ -244,6 +244,7 @@ class MeasureVersion(db.Model, CopyableModel):
     #                                               (latest created, not latest published, so could be a new draft)
 
     review_token = db.Column(db.String())  # used for review page URLs
+    description = db.Column(db.Text)  # Short description aimed at search result listings and social media sharing
 
     # status for measure pages is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
     # but it's free text in the DB and for other page types we have NULL or "draft" ¯\_(ツ)_/¯
