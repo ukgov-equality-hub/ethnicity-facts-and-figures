@@ -30,26 +30,26 @@ class DimensionObjectBuilder:
     def get_context(dimension):
         title, source_url, publisher, publication_date = "", "", "", ""
 
-        if dimension.page.primary_data_source:
-            title = dimension.page.primary_data_source.title
-            source_url = dimension.page.primary_data_source.source_url
+        if dimension.measure_version.primary_data_source:
+            title = dimension.measure_version.primary_data_source.title
+            source_url = dimension.measure_version.primary_data_source.source_url
 
-            if dimension.page.primary_data_source.publisher:
-                publisher = dimension.page.primary_data_source.publisher.name
+            if dimension.measure_version.primary_data_source.publisher:
+                publisher = dimension.measure_version.primary_data_source.publisher.name
 
-            publication_date = dimension.page.primary_data_source.publication_date
+            publication_date = dimension.measure_version.primary_data_source.publication_date
 
         return {
-            "measure": dimension.page.title,
+            "measure": dimension.measure_version.title,
             "dimension": dimension.title,
-            "dimension_slug": "%s/%s" % (dimension.page.measure.slug, dimension.guid)
-            if dimension.page.measure.slug
+            "dimension_slug": "%s/%s" % (dimension.measure_version.measure.slug, dimension.guid)
+            if dimension.measure_version.measure.slug
             else "",
             "guid": dimension.guid,
-            "measure_guid": dimension.page.guid if dimension.page.guid else "",
-            "measure_slug": dimension.page.measure.slug if dimension.page.measure.slug else "",
+            "measure_guid": dimension.measure_version.guid if dimension.measure_version.guid else "",
+            "measure_slug": dimension.measure_version.measure.slug if dimension.measure_version.measure.slug else "",
             "time_period": dimension.time_period if dimension.time_period else "",
-            "location": dimension.page.format_area_covered(),
+            "location": dimension.measure_version.format_area_covered(),
             "title": title,
             "source_url": source_url,
             "publisher": publisher,

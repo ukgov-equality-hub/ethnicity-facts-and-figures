@@ -178,9 +178,9 @@ class PageService(Service):
                         return True
         return False
 
-    def _set_data_sources(self, page, data_source_forms):
-        current_data_sources = page.data_sources
-        page.data_sources = []
+    def _set_data_sources(self, measure_version, data_source_forms):
+        current_data_sources = measure_version.data_sources
+        measure_version.data_sources = []
 
         for i, data_source_form in enumerate(data_source_forms):
             existing_source = len(current_data_sources) > i
@@ -202,7 +202,7 @@ class PageService(Service):
                 )
 
                 if existing_source or source_has_truthy_values:
-                    page.data_sources.append(data_source)
+                    measure_version.data_sources.append(data_source)
 
     def create_measure(self, subtopic, measure_version_form, data_source_forms, created_by_email):
         title = measure_version_form.data.pop("title", "").strip()
@@ -234,7 +234,7 @@ class PageService(Service):
 
         measure_version_form.populate_obj(measure_version)
 
-        self._set_data_sources(page=measure_version, data_source_forms=data_source_forms)
+        self._set_data_sources(measure_version=measure_version, data_source_forms=data_source_forms)
 
         db.session.add(measure_version)
         db.session.commit()
@@ -365,7 +365,7 @@ class PageService(Service):
 
         # Update main fields of MeasureVersion
         measure_version_form.populate_obj(measure_version)
-        self._set_data_sources(page=measure_version, data_source_forms=data_source_forms)
+        self._set_data_sources(measure_version=measure_version, data_source_forms=data_source_forms)
 
         # Update fields in the parent Measure
         if "internal_reference" in measure_version_form.data:

@@ -299,7 +299,11 @@ class MeasureVersion(db.Model, CopyableModel):
     lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="pages")
     uploads = db.relationship("Upload", back_populates="measure_version", lazy="dynamic", cascade="all,delete")
     dimensions = db.relationship(
-        "Dimension", back_populates="page", lazy="dynamic", order_by="Dimension.position", cascade="all,delete"
+        "Dimension",
+        back_populates="measure_version",
+        lazy="dynamic",
+        order_by="Dimension.position",
+        cascade="all,delete",
     )
     data_sources = db.relationship(
         "DataSource", secondary="data_source_in_measure_version", back_populates="pages", order_by=asc(DataSource.id)
@@ -334,7 +338,7 @@ class MeasureVersion(db.Model, CopyableModel):
 
     def get_dimension(self, guid):
         try:
-            dimension = Dimension.query.filter_by(guid=guid, page=self).one()
+            dimension = Dimension.query.filter_by(guid=guid, measure_version=self).one()
             return dimension
         except NoResultFound:
             raise DimensionNotFoundException
@@ -577,7 +581,7 @@ class Dimension(db.Model):
     # relationships
     dimension_chart = db.relationship("Chart")
     dimension_table = db.relationship("Table")
-    page = db.relationship("MeasureVersion", back_populates="dimensions")
+    measure_version = db.relationship("MeasureVersion", back_populates="dimensions")
     classification_links = db.relationship(
         "DimensionClassification", back_populates="dimension", lazy="dynamic", cascade="all,delete"
     )
@@ -682,7 +686,7 @@ class Dimension(db.Model):
         return {
             "guid": self.guid,
             "title": self.title,
-            "measure": self.page.guid,
+            "measure": self.measure_version.measure.id,
             "time_period": self.time_period,
             "summary": self.summary,
             "chart": self.chart,

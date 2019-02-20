@@ -340,7 +340,7 @@ class MeasureVersionWithDimensionFactory(MeasureVersionFactory):
         else:
             # self.dimensions.append(DimensionFactory(page=self, **kwargs))
             factory_method = _get_factory_generator_for_strategy(DimensionFactory, create)
-            factory_method(page=self, **kwargs)
+            factory_method(measure_version=self, **kwargs)
 
 
 class EthnicityFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -464,9 +464,9 @@ class DimensionFactory(factory.alchemy.SQLAlchemyModelFactory):
     table_builder_version = 2
     table_2_source_data = {}
 
-    measure_version_id = factory.Maybe("page", factory.SelfAttribute("page.id"))
-    page_id = factory.Maybe("page", factory.SelfAttribute("page.guid"))
-    page_version = factory.Maybe("page", factory.SelfAttribute("page.version"))
+    measure_version_id = factory.Maybe("measure_version", factory.SelfAttribute("measure_version.id"))
+    # page_id = factory.Maybe("page", factory.SelfAttribute("page.guid"))
+    # page_version = factory.Maybe("page", factory.SelfAttribute("page.version"))
 
     position = factory.Sequence(lambda x: x)
 
@@ -491,7 +491,7 @@ class DimensionFactory(factory.alchemy.SQLAlchemyModelFactory):
             factory_method = _get_factory_generator_for_strategy(DimensionClassificationFactory, create)
             self.classification_links = [factory_method(dimension=self, **kwargs)]
 
-    page = None  # Don't generate relationships 'towards' MeasureVersionFactory; see tests/README.md
+    measure_version = None  # Don't generate relationships 'towards' MeasureVersionFactory; see tests/README.md
 
 
 def __get_all_subclasses(cls):

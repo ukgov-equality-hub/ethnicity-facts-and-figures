@@ -612,7 +612,7 @@ def _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version):
     if form.validate():
         try:
             dimension = dimension_service.create_dimension(
-                page=measure_version,
+                measure_version=measure_version,
                 title=form.data["title"],
                 time_period=form.data["time_period"],
                 summary=form.data["summary"],
