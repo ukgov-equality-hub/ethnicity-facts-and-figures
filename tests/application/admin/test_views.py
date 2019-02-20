@@ -254,7 +254,7 @@ def test_admin_user_can_remove_share_of_page_with_dept_user(test_app_client):
     dept_user = UserFactory(user_type=TypeOfUser.DEPT_USER)
     admin_user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
 
-    measure_page = MeasureVersionFactory(measure__shared_with=[dept_user])
+    measure_page = MeasureVersionFactory(status="DRAFT", measure__shared_with=[dept_user])
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = dept_user.id
