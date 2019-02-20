@@ -1,23 +1,15 @@
-<div class="newsletter-sign-up">
-  <div class="grid-row">
-    <div class="column-two-thirds">
+<div class=" govuk-!-margin-top-4">
+  <h2 class="govuk-heading-s govuk-!-margin-bottom-1">Sign up for updates</h2>
+  <p class="govuk-body">Get monthly updates on new and updated pages and policy activity, as well as details of one-off events. <br><a href="{{ url_for('static_site.privacy_policy').rstrip('/') }}">How we use and protect your data</a></p>
 
-      <div class="section">
-        <h2 class="heading-small">Sign up for updates</h2>
-        <p>Get monthly updates on new and updated pages and policy activity, as well as details of one-off events. <br><a href="{{ url_for('static_site.privacy_policy').rstrip('/') }}">How we use and protect your data</a></p>
+  <form action="{{ config.NEWSLETTER_SUBSCRIBE_URL }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-        <form action="{{ config.NEWSLETTER_SUBSCRIBE_URL }}" method="post">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          <div class="form-group email">
-            <label class="form-label" for="newsletter-email">Email address</label>
-            <input id="newsletter-email" type="email" class="form-control" name="EMAIL" />
-          </div>
-
-          <div class="form-group subscribe">
-            <button class="button">Subscribe</button>
-          </div>
-        </form>
-      </div>
+    <div class="govuk-form-group email">
+      <label class="govuk-label" for="newsletter-email">Email address</label>
+      <input id="newsletter-email" type="email" class="govuk-input" name="EMAIL" />
+      <button class="govuk-button">Subscribe</button>
     </div>
-  </div>
+
+  </form>
 </div>
