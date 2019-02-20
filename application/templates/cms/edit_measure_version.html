@@ -117,7 +117,7 @@
         {% endcall %}
 
         <div class="grid-row">
-            <div class="column-full">
+            <div class="column-two-thirds">
                 <h1 class="heading-large">{% if new %}Create{% else %}Edit{% endif %} page</h1>
                     {% if not new %}{{ form.db_version_id }}{% endif %}
                     {% if measure_version.published_at %}
@@ -125,6 +125,9 @@
                     {% endif %}
 
                     {{ form.title(disabled=form_disabled, diffs=diffs) }}
+
+                    {{ form.description(disabled=form_disabled, diffs=diffs,rows="3") }}
+
 
                     <div class="form-group">
                         <label class="form-label" for="subtopic">Topic</label>
@@ -176,8 +179,6 @@
                     <h3 class="heading-medium">Commentary</h3>
 
                     {{ form.summary(disabled=form_disabled, diffs=diffs) }}
-
-                    {{ form.description(disabled=form_disabled, diffs=diffs,rows="3") }}
 
                     {{ form.need_to_know(disabled=form_disabled, diffs=diffs) }}
 
