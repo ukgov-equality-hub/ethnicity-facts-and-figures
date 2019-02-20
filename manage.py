@@ -1,10 +1,9 @@
 #! /usr/bin/env python
 import ast
+import os
+import sys
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
-import sys
-
-import os
 
 from flask_migrate import Migrate, MigrateCommand, upgrade
 from flask_script import Manager, Server
@@ -18,6 +17,7 @@ from application import db
 from application.admin.forms import is_gov_email
 from application.auth.models import User, TypeOfUser, CAPABILITIES
 from application.cms.classification_service import classification_service
+from application.cms.models import MeasureVersion
 from application.config import Config, DevConfig
 from application.data.ethnicity_classification_synchroniser import EthnicityClassificationSynchroniser
 from application.factory import create_app
@@ -417,6 +417,50 @@ def refresh_error_pages():
 def synchronise_classifications():
     synchroniser = EthnicityClassificationSynchroniser(classification_service=classification_service)
     synchroniser.synchronise_classifications(app.classification_finder.get_classification_collection())
+
+
+# TODO: START Delete me after migrating uploads
+def get_latest_versions_for_all_measures():
+    max_measure_versions = (
+        MeasureVersion.query.with_entities(
+            MeasureVersion.measure_id, func.max(MeasureVersion.version).label("max_version")
+        )
+        .group_by(MeasureVersion.measure_id)
+        .cte("max_measure_versions")
+    )
+
+    latest_measure_versions = MeasureVersion.query.filter(
+        MeasureVersion.version == max_measure_versions.c.max_version,
+        MeasureVersion.measure_id == max_measure_versions.c.measure_id,
+    ).all()
+
+    return latest_measure_versions
+
+
+@manager.command
+def copy_guid_uploads_to_measure_id_uploads():
+    latest_measure_versions = get_latest_versions_for_all_measures()
+
+    for latest_measure_version in latest_measure_versions:
+        for current_key in app.file_service.system.list_paths(latest_measure_version.guid):
+            path_fragments = current_key.split("/")
+            path_fragments[0] = str(latest_measure_version.measure.id)
+            new_key = "/".join(path_fragments)
+            print(f"Copying '{current_key}' to '{new_key}'")
+            app.file_service.system.copy_file(current_key, new_key)
+
+
+@manager.command
+def delete_guid_based_uploads():
+    latest_measure_versions = get_latest_versions_for_all_measures()
+
+    for latest_measure_version in latest_measure_versions:
+        for key_using_guid in app.file_service.system.list_paths(latest_measure_version.guid):
+            print(f"Deleting '{key_using_guid}'")
+            app.file_service.system.delete(key_using_guid)
+
+
+# TODO: END
 
 
 if __name__ == "__main__":
