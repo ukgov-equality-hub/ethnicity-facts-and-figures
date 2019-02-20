@@ -300,7 +300,7 @@
     {% if current_user.can(COPY_MEASURE) %}
     <div class="grid-row">
         <div class="column-two-thirds">
-            <form id="measure-action-section__copy_measure_form-{{ measure_version.guid }}" method="POST" action="{{ url_for('cms.copy_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
+            <form id="measure-action-section__copy_measure_form-{{ measure_version.id }}" method="POST" action="{{ url_for('cms.copy_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
                 {{ form.csrf_token }}
                 <button class="button copy-button" type="submit">Create a copy of this measure</button>
             </form>
@@ -402,7 +402,7 @@
             event.preventDefault();
             $.ajax({
                 type: 'GET',
-                url: "{{ url_for('review.get_new_review_url', id=measure_version.guid, version=measure_version.version)}}",
+                url: "{{ url_for('review.get_new_review_url', id=measure_version.id)}}",
                 success: function (data) {
                     $('#review-url').html(data);
                     initialiseCopy();

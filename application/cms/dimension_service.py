@@ -95,7 +95,7 @@ class DimensionService(Service):
 
     def delete_dimension(self, page, guid):
         if page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.title)
             self.logger.error(message)
             raise PageUnEditable(message)
 

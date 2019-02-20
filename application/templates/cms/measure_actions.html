@@ -1,6 +1,6 @@
 {% macro render_actions(topic, subtopic, measure, include_delete) -%}
     <div class="measure-action-section">
-        <div class="measure-action-section__main" id='measure-action-section-{{ measure.guid }}'>
-            <a href="{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}" id="measure-action-section__view_form_link-{{ measure.guid }}">View&nbsp;form</a>
+        <div class="measure-action-section__main" id='measure-action-section-{{ measure.id }}'>
+            <a href="{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.version) }}" id="measure-action-section__view_form_link-{{ measure.id }}">View&nbsp;form</a>
     </div>
 {%- endmacro %}
