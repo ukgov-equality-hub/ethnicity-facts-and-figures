@@ -126,7 +126,9 @@
 
                     {{ form.title(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ form.description(disabled=form_disabled, diffs=diffs,rows="3") }}
+                    <div class="govuk-character-count" data-module="character-count" data-maxlength="160">
+                        {{ form.description(disabled=form_disabled, diffs=diffs,rows="3", class_="govuk-textarea js-character-count") }}
+                    </div>
 
 
                     <div class="form-group">
