@@ -5,7 +5,8 @@ from flask import url_for
 from itsdangerous import SignatureExpired, BadSignature, URLSafeTimedSerializer
 
 from application.utils import decode_review_token
-from tests.models import MeasureVersionFactory, MeasureVersionWithDimensionFactory
+from application.auth.models import TypeOfUser
+from tests.models import MeasureVersionFactory, MeasureVersionWithDimensionFactory, UserFactory
 
 
 def test_review_link_returns_page(test_app_client):
@@ -104,6 +105,34 @@ def test_review_token_messed_up_throws_bad_signature(app):
         decode_review_token(
             broken_token, {"SECRET_KEY": app.config["SECRET_KEY"], "PREVIEW_TOKEN_MAX_AGE_DAYS": expires_tomorrow}
         )
+
+
+@pytest.mark.parametrize("user_type", (TypeOfUser.RDU_USER, TypeOfUser.ADMIN_USER, TypeOfUser.DEV_USER))
+def test_users_can_generate_new_review_tokens(test_app_client, user_type):
+    user = UserFactory(user_type=user_type)
+
+    with test_app_client.session_transaction() as session:
+        session["user_id"] = user.id
+
+    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", review_token=None, measure__shared_with=[])
+    resp = test_app_client.get(url_for("review.get_new_review_url", id=measure_version.id))
+    assert resp.status_code == 200
+    assert measure_version.review_token is not None
+
+
+def test_dept_users_can_only_generate_new_review_tokens_for_shared_measures(test_app_client, logged_in_dept_user):
+
+    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", review_token=None, measure__shared_with=[])
+    # Measure is not shared with the user
+    resp = test_app_client.get(url_for("review.get_new_review_url", id=measure_version.id))
+    assert resp.status_code == 403
+    assert measure_version.review_token is None
+
+    # Once measure is shared the user can create a review token
+    measure_version.measure.shared_with = [logged_in_dept_user]
+    resp = test_app_client.get(url_for("review.get_new_review_url", id=measure_version.id))
+    assert resp.status_code == 200
+    assert measure_version.review_token is not None
 
 
 def test_page_main_download_available_without_login(
