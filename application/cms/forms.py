@@ -211,9 +211,10 @@ class MeasureVersionForm(FlaskForm):
     )
 
     description = RDUTextAreaField(
-        label="Short summary",
+        label="Description for search engines",
         validators=[RequiredForReviewValidator()],
-        hint="This may appear in search results. Aim for less than 160 characters and end with a full stop.",
+        hint="Choose an up to date statistic that shows a key disparity or change over time. The figure should work as a stand-alone statement and end with a full stop.",
+        extended_hint="_description.html",
         strip_whitespace=True,
     )
 
