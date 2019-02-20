@@ -163,7 +163,7 @@ class UploadFactory(factory.alchemy.SQLAlchemyModelFactory):
     page_version = factory.Maybe("page", factory.SelfAttribute("page.version"))
 
     # scalar relationships
-    page = None  # Don't generate relationships 'towards' MeasureVersionFactory; see tests/README.md
+    measure_version = None  # Don't generate relationships 'towards' MeasureVersionFactory; see tests/README.md
 
 
 class TopicFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -309,7 +309,7 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
 
         else:
             factory_method = _get_factory_generator_for_strategy(UploadFactory, create)
-            factory_method(page=self, **kwargs)
+            factory_method(measure_version=self, **kwargs)
 
     @factory.post_generation
     def data_sources(self, create, extracted, **kwargs):

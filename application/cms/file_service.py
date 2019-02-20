@@ -36,8 +36,8 @@ class FileService:
             self.system = LocalFileSystem(root=app.config["LOCAL_ROOT"])
             self.logger.info("initialised local file system in %s" % (app.config["LOCAL_ROOT"]))
 
-    def page_system(self, page):
-        full_path = "%s/%s" % (page.guid, page.version)
+    def page_system(self, measure_version):
+        full_path = "%s/%s" % (measure_version.measure.id, measure_version.version)
         return PageFileSystem(self.system, full_path)
 
 
