@@ -46,6 +46,7 @@ from application.static_site.filters import (
     join_enum_display_names,
     slugify_value,
     first_bullet,
+    format_iso8601_date,
 )
 
 
@@ -147,6 +148,7 @@ def create_app(config_object):
     app.add_template_filter(join_enum_display_names)
     app.add_template_filter(slugify_value)
     app.add_template_filter(first_bullet)
+    app.add_template_filter(format_iso8601_date)
     app.add_template_filter(index_of_last_initial_zero)
     app.add_template_filter(yesno)
 
