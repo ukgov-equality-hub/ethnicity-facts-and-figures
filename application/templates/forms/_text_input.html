@@ -16,6 +16,14 @@
 {% else %}
   <input id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if field.errors %} error{% endif %}" value="{{ value }}" {{ field_params }}>
 {% endif %}
+
+{% if field.character_count_hint %}
+  <span id="{{ id_ }}-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+    {{ field.character_count_hint }}
+  </span>
+{% endif %}
+
+
 {% if not field.errors and diffs %}
   <p>Your update to "{{ field.label.text }}" is highlighted green and possible deletions are highlighted red. If these changes are fine, save the page, otherwise edit the copy above and then save.</p>
   <div class="differences">
