@@ -297,7 +297,7 @@ class MeasureVersion(db.Model, CopyableModel):
     # relationships
     measure = db.relationship("Measure", back_populates="versions")
     lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="pages")
-    uploads = db.relationship("Upload", back_populates="page", lazy="dynamic", cascade="all,delete")
+    uploads = db.relationship("Upload", back_populates="measure_version", lazy="dynamic", cascade="all,delete")
     dimensions = db.relationship(
         "Dimension", back_populates="page", lazy="dynamic", order_by="Dimension.position", cascade="all,delete"
     )
@@ -341,7 +341,7 @@ class MeasureVersion(db.Model, CopyableModel):
 
     def get_upload(self, guid):
         try:
-            upload = Upload.query.filter_by(guid=guid, page=self).one()
+            upload = Upload.query.filter_by(guid=guid, measure_version=self).one()
             return upload
         except NoResultFound:
             raise UploadNotFoundException
@@ -734,6 +734,7 @@ class Upload(db.Model, CopyableModel):
     # metadata
     __tablename__ = "upload"
     __table_args__ = (
+        # TODO: Update to only check measure_version_id
         ForeignKeyConstraint(
             ["measure_version_id", "page_id", "page_version"],
             ["measure_version.id", "measure_version.guid", "measure_version.version"],
@@ -749,11 +750,11 @@ class Upload(db.Model, CopyableModel):
     size = db.Column(db.String(255))
 
     measure_version_id = db.Column(db.Integer, nullable=False)
-    page_id = db.Column(db.String(255), nullable=False)
-    page_version = db.Column(db.String(), nullable=False)
+    page_id = db.Column(db.String(255), nullable=False)  # TODO: Remove as part of final cleanup migration
+    page_version = db.Column(db.String(), nullable=False)  # TODO: Remove as part of final cleanup migration
 
     # relationships
-    page = db.relationship("MeasureVersion", back_populates="uploads")
+    measure_version = db.relationship("MeasureVersion", back_populates="uploads")
 
     def extension(self):
         return self.file_name.split(".")[-1]
