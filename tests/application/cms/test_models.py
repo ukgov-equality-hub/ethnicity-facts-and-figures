@@ -703,7 +703,7 @@ class TestMeasureVersion:
         assert minor_version_4.has_no_later_published_versions() is True
 
     def test_is_minor_or_minor_version(self):
-        page = MeasureVersionFactory(guid="test_page", version="1.0")
+        page = MeasureVersionFactory(version="1.0")
 
         assert page.version == "1.0"
         assert page.is_major_version() is True
@@ -738,21 +738,19 @@ class TestMeasureVersion:
 
     def test_measure_latest_version_returns_latest_measure_version(self):
         measure = MeasureFactory()
-        MeasureVersionFactory(version="1.0", guid=str(measure.id), latest=False, measure=measure)
-        MeasureVersionFactory(version="3.1", guid=str(measure.id), latest=True, measure=measure)
-        MeasureVersionFactory(version="2.0", guid=str(measure.id), latest=False, measure=measure)
-        MeasureVersionFactory(version="3.0", guid=str(measure.id), latest=False, measure=measure)
+        MeasureVersionFactory(version="1.0", latest=False, measure=measure)
+        MeasureVersionFactory(version="3.1", latest=True, measure=measure)
+        MeasureVersionFactory(version="2.0", latest=False, measure=measure)
+        MeasureVersionFactory(version="3.0", latest=False, measure=measure)
 
         assert measure.latest_version.version == "3.1"
 
     def test_measure_latest_published_version_returns_latest_published_version(self):
         measure = MeasureFactory()
-        MeasureVersionFactory(version="1.0", guid=str(measure.id), latest=False, status="APPROVED", measure=measure)
-        MeasureVersionFactory(version="2.0", guid=str(measure.id), latest=False, status="APPROVED", measure=measure)
-        MeasureVersionFactory(version="3.0", guid=str(measure.id), latest=False, status="APPROVED", measure=measure)
-        MeasureVersionFactory(
-            version="3.1", guid=str(measure.id), latest=True, status="DEPARTMENT_REVIEW", measure=measure
-        )
+        MeasureVersionFactory(version="1.0", latest=False, status="APPROVED", measure=measure)
+        MeasureVersionFactory(version="2.0", latest=False, status="APPROVED", measure=measure)
+        MeasureVersionFactory(version="3.0", latest=False, status="APPROVED", measure=measure)
+        MeasureVersionFactory(version="3.1", latest=True, status="DEPARTMENT_REVIEW", measure=measure)
 
         assert measure.latest_published_version.version == "3.0"
 
@@ -793,12 +791,12 @@ class TestMeasureVersion:
 
     def test_get_previous_version(self):
         measure = MeasureFactory()
-        mv1_0 = MeasureVersionFactory(guid="guid", version="1.0", measure=measure)
-        mv1_1 = MeasureVersionFactory(guid="guid", version="1.1", measure=measure)
-        mv1_2 = MeasureVersionFactory(guid="guid", version="1.2", measure=measure)
-        mv2_0 = MeasureVersionFactory(guid="guid", version="2.0", measure=measure)
-        mv2_1 = MeasureVersionFactory(guid="guid", version="2.1", measure=measure)
-        mv3_0 = MeasureVersionFactory(guid="guid", version="3.0", measure=measure)
+        mv1_0 = MeasureVersionFactory(version="1.0", measure=measure)
+        mv1_1 = MeasureVersionFactory(version="1.1", measure=measure)
+        mv1_2 = MeasureVersionFactory(version="1.2", measure=measure)
+        mv2_0 = MeasureVersionFactory(version="2.0", measure=measure)
+        mv2_1 = MeasureVersionFactory(version="2.1", measure=measure)
+        mv3_0 = MeasureVersionFactory(version="3.0", measure=measure)
 
         assert mv1_0.get_previous_version() is None
         assert mv1_1.get_previous_version() is mv1_0

@@ -220,7 +220,6 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(
         status="DRAFT",
         title="Test Measure Page",
-        guid="test-measure-page-guid",
         area_covered=[UKCountry.ENGLAND],
         lowest_level_of_geography__name="UK",
         time_covered="4 months",
@@ -455,7 +454,6 @@ def test_view_measure_page(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(
         status="DRAFT",
         title="Test Measure Page",
-        guid="test-measure-page-guid",
         area_covered=[UKCountry.ENGLAND],
         lowest_level_of_geography__name="UK",
         time_covered="4 months",
@@ -548,13 +546,7 @@ def test_homepage_topics_display_in_rows_with_three_columns(
         topic = TopicFactory(slug=f"topic-{i}", title=f"Test topic page #{i}")
         subtopic = SubtopicFactory(slug=f"subtopic-{i}", title=f"Test subtopic page #{i}", topic=topic)
         measure = MeasureFactory(slug=f"measure-{i}", subtopics=[subtopic])
-        MeasureVersionFactory(
-            guid=f"measure_version_{i}",
-            status="APPROVED",
-            title=f"Test measure page #{i}",
-            version="1.0",
-            measure=measure,
-        )
+        MeasureVersionFactory(status="APPROVED", title=f"Test measure page #{i}", version="1.0", measure=measure)
 
     resp = test_app_client.get(url_for("static_site.index"))
     assert resp.status_code == 200

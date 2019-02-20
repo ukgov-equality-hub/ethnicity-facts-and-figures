@@ -10,8 +10,8 @@ import itertools
 import random
 
 from faker import Faker
-import factory
 
+import factory
 from application.auth.models import CAPABILITIES, TypeOfUser, User
 from application.cms.models import (
     publish_status,
@@ -140,9 +140,9 @@ class DataSourceFactory(factory.alchemy.SQLAlchemyModelFactory):
     # array-based relationships
     @factory.post_generation
     def measure_versions(self, create, extracted, **kwargs):
-        # If some measure_versions were passed in to the create invocation: eg factory.create(measure_versions=[page1])
+        # If some measure_versions were passed in to the create invocation: eg factory.create(measure_versions=[mv1])
         if extracted is not None:
-            # Attach those pages to this newly-created instance.
+            # Attach those measure versions to this newly-created instance.
             for measure_version in extracted:
                 self.measure_versions.append(measure_version)
 
@@ -158,9 +158,7 @@ class UploadFactory(factory.alchemy.SQLAlchemyModelFactory):
     description = factory.Faker("paragraph", nb_sentences=3)
     size = factory.LazyFunction(lambda: random.randint(0, 100_000))
 
-    measure_version_id = factory.Maybe("page", factory.SelfAttribute("page.id"))
-    page_id = factory.Maybe("page", factory.SelfAttribute("page.guid"))
-    page_version = factory.Maybe("page", factory.SelfAttribute("page.version"))
+    measure_version_id = factory.Maybe("measure_version", factory.SelfAttribute("measure_version.id"))
 
     # scalar relationships
     measure_version = None  # Don't generate relationships 'towards' MeasureVersionFactory; see tests/README.md
@@ -253,9 +251,7 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     # columns
     id = factory.Sequence(lambda x: x)
     measure_id = factory.SelfAttribute("measure.id")
-    guid = factory.Faker("uuid4")
     version = factory.LazyFunction(lambda: "1.0")
-    internal_reference = factory.Faker("sentence", nb_words=2)
     latest = True  # TODO: Add smarter logic
     review_token = factory.LazyAttribute(
         lambda o: generate_review_token(o.id)
@@ -338,7 +334,6 @@ class MeasureVersionWithDimensionFactory(MeasureVersionFactory):
                 self.dimensions.append(dimension)
 
         else:
-            # self.dimensions.append(DimensionFactory(page=self, **kwargs))
             factory_method = _get_factory_generator_for_strategy(DimensionFactory, create)
             factory_method(measure_version=self, **kwargs)
 
@@ -465,8 +460,6 @@ class DimensionFactory(factory.alchemy.SQLAlchemyModelFactory):
     table_2_source_data = {}
 
     measure_version_id = factory.Maybe("measure_version", factory.SelfAttribute("measure_version.id"))
-    # page_id = factory.Maybe("page", factory.SelfAttribute("page.guid"))
-    # page_version = factory.Maybe("page", factory.SelfAttribute("page.version"))
 
     position = factory.Sequence(lambda x: x)
 

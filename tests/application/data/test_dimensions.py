@@ -41,7 +41,6 @@ def test_table_object_builder_does_build_with_page_level_data_from_simple_table(
     )
     measure_version = MeasureVersionWithDimensionFactory(
         title="Test Measure Page",
-        guid="test-measure-page-guid",
         area_covered=[UKCountry.ENGLAND],
         data_sources=[data_source],
         dimensions__table=simple_table(),
@@ -56,7 +55,6 @@ def test_table_object_builder_does_build_with_page_level_data_from_simple_table(
 
     # then the measure level info should be brought through
     assert dimension_object["context"]["measure"] == "Test Measure Page"
-    assert dimension_object["context"]["measure_guid"] == "test-measure-page-guid"
     assert dimension_object["context"]["measure_slug"] == "test-measure-page-slug"
     assert dimension_object["context"]["location"] == "England"
     assert dimension_object["context"]["title"] == "DWP Stats"
@@ -70,7 +68,6 @@ def test_dimension_object_builder_does_build_with_page_level_data_from_grouped_t
     )
     measure_version = MeasureVersionWithDimensionFactory(
         title="Test Measure Page",
-        guid="test-measure-page-guid",
         area_covered=[UKCountry.ENGLAND],
         data_sources=[data_source],
         dimensions__table=grouped_table(),
@@ -85,7 +82,6 @@ def test_dimension_object_builder_does_build_with_page_level_data_from_grouped_t
 
     # then the measure level info should be brought through
     assert dimension_object["context"]["measure"] == "Test Measure Page"
-    assert dimension_object["context"]["measure_guid"] == "test-measure-page-guid"
     assert dimension_object["context"]["measure_slug"] == "test-measure-page-slug"
     assert dimension_object["context"]["location"] == "England"
     assert dimension_object["context"]["title"] == "DWP Stats"
@@ -96,7 +92,6 @@ def test_dimension_object_builder_does_build_with_page_level_data_from_grouped_t
 def test_table_object_builder_does_build_with_dimension_level_data_from_simple_table():
     measure_version = MeasureVersionWithDimensionFactory(
         title="Test Measure Page",
-        guid="test-measure-page-guid",
         area_covered=[UKCountry.ENGLAND],
         dimensions__title="Dimension title",
         dimensions__guid="dimension-guid",

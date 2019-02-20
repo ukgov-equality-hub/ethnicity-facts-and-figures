@@ -357,27 +357,21 @@ class TestPageService:
 
     def test_create_new_version_of_page_duplicates_dimensions(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        # given an existing page with a dimension
         measure_version = MeasureVersionWithDimensionFactory(latest=True)
+
         assert measure_version.latest
         assert measure_version.dimensions.count() > 0
         old_dimension = measure_version.dimensions[0]
-        original_guid = old_dimension.guid
-        original_version = old_dimension.page_version
+        old_dimension_guid = old_dimension.guid
 
-        # when we copy the page
         new_version = page_service.create_measure_version(measure_version, NewVersionType.MINOR_UPDATE, user=user)
 
-        # then
         assert new_version.dimensions.count() > 0
         new_dimension = new_version.dimensions[0]
-        # new dimension should be a copy
-        assert new_dimension.title == old_dimension.title
 
-        # with guid and versions updated
-        assert new_dimension.guid != original_guid
-        assert new_dimension.page_version != original_version
-        assert new_dimension.page_version == new_version.version
+        assert old_dimension.title == new_dimension.title
+        assert old_dimension_guid != new_dimension.guid
+        assert measure_version is not new_dimension.measure_version
 
     def test_create_new_version_of_page_duplicates_dimension_categorisations(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
@@ -411,7 +405,7 @@ class TestPageService:
         assert measure_version.latest
 
         first_copy = page_service.create_measure_version(measure_version, NewVersionType.NEW_MEASURE, user=user)
-        first_copy_guid = first_copy.guid
+        first_copy_measure_id = first_copy.measure_id
         first_copy_title = first_copy.title
         first_copy_slug = first_copy.measure.slug
 
@@ -435,7 +429,7 @@ class TestPageService:
         assert user.email == first_copy.created_by
         assert second_copy.latest
 
-        assert first_copy_guid != second_copy.guid
+        assert first_copy_measure_id != second_copy.measure_id
         assert second_copy.title == f"COPY OF {first_copy_title}"
         assert second_copy.measure.slug == f"{first_copy_slug}-copy"
 

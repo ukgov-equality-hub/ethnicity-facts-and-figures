@@ -46,7 +46,6 @@ class DimensionObjectBuilder:
             if dimension.measure_version.measure.slug
             else "",
             "guid": dimension.guid,
-            "measure_guid": dimension.measure_version.guid if dimension.measure_version.guid else "",
             "measure_slug": dimension.measure_version.measure.slug if dimension.measure_version.measure.slug else "",
             "time_period": dimension.time_period if dimension.time_period else "",
             "location": dimension.measure_version.format_area_covered(),
