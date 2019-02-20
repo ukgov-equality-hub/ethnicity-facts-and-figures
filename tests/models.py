@@ -139,12 +139,12 @@ class DataSourceFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     # array-based relationships
     @factory.post_generation
-    def pages(self, create, extracted, **kwargs):
-        # If some pages were passed into the create invocation: eg factory.create(pages=[page1, page2])
+    def measure_versions(self, create, extracted, **kwargs):
+        # If some measure_versions were passed in to the create invocation: eg factory.create(measure_versions=[page1])
         if extracted is not None:
             # Attach those pages to this newly-created instance.
-            for page in extracted:
-                self.pages.append(page)
+            for measure_version in extracted:
+                self.measure_versions.append(measure_version)
 
 
 class UploadFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -321,7 +321,7 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
 
         else:
             factory_method = _get_factory_generator_for_strategy(DataSourceFactory, create)
-            factory_method(pages=[self], **kwargs)
+            factory_method(measure_versions=[self], **kwargs)
 
     # By default, do not create any dimensions. See alternative factory, `MeasureVersionWithDimensionFactory`
     dimensions = factory.LazyFunction(lambda: [])

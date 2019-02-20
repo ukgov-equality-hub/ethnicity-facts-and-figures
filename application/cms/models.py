@@ -177,7 +177,9 @@ class DataSource(db.Model, CopyableModel):
     frequency_of_release = db.relationship(
         "FrequencyOfRelease", foreign_keys=[frequency_of_release_id], back_populates="data_sources"
     )
-    pages = db.relationship("MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources")
+    measure_versions = db.relationship(
+        "MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources"
+    )
 
 
 class DataSourceInMeasureVersion(db.Model):
@@ -244,7 +246,7 @@ class MeasureVersion(db.Model, CopyableModel):
     review_token = db.Column(db.String())  # used for review page URLs
     description = db.Column(db.Text)  # Short description aimed at search result listings and social media sharing
 
-    # status for measure pages is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
+    # status for measure versions is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
     # but it's free text in the DB and for other page types we have NULL or "draft" ¯\_(ツ)_/¯
     status = db.Column(db.String(255))
 
@@ -253,10 +255,9 @@ class MeasureVersion(db.Model, CopyableModel):
     updated_at = db.Column(db.DateTime)  # timestamp when page updated
     last_updated_by = db.Column(db.String(255))  # email address of user who made the most recent update
 
-    # Only MEASURE PAGES are published. All other pages have published=False (or sometimes NULL)
-    published = db.Column(db.BOOLEAN, default=False)  # set to True when a page version is published
-    published_at = db.Column(db.Date, nullable=True)  # date set automatically by CMS when a page version is published
-    published_by = db.Column(db.String(255))  # email address of user who published the page
+    published = db.Column(db.BOOLEAN, default=False)  # set to True when a measure version is published
+    published_at = db.Column(db.Date, nullable=True)  # date - set automatically when a measure version is published
+    published_by = db.Column(db.String(255))  # email address of user who published the measure version
 
     unpublished_at = db.Column(db.Date, nullable=True)
     unpublished_by = db.Column(db.String(255))  # email address of user who unpublished the page
@@ -296,7 +297,7 @@ class MeasureVersion(db.Model, CopyableModel):
 
     # relationships
     measure = db.relationship("Measure", back_populates="versions")
-    lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="pages")
+    lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="measure_versions")
     uploads = db.relationship("Upload", back_populates="measure_version", lazy="dynamic", cascade="all,delete")
     dimensions = db.relationship(
         "Dimension",
@@ -306,7 +307,10 @@ class MeasureVersion(db.Model, CopyableModel):
         cascade="all,delete",
     )
     data_sources = db.relationship(
-        "DataSource", secondary="data_source_in_measure_version", back_populates="pages", order_by=asc(DataSource.id)
+        "DataSource",
+        secondary="data_source_in_measure_version",
+        back_populates="measure_versions",
+        order_by=asc(DataSource.id),
     )
 
     @property
@@ -949,7 +953,7 @@ class LowestLevelOfGeography(db.Model):
     position = db.Column(db.Integer, nullable=False)
 
     # relationships
-    pages = db.relationship("MeasureVersion", back_populates="lowest_level_of_geography")
+    measure_versions = db.relationship("MeasureVersion", back_populates="lowest_level_of_geography")
 
 
 class Topic(db.Model):
