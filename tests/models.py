@@ -58,7 +58,9 @@ class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = "commit"
         exclude = ("_password_to_hash",)
 
-    _password_to_hash = factory.Faker("word")
+    _password_to_hash = factory.Faker(
+        "password", length=random.randint(8, 12), special_chars=True, digits=True, upper_case=True, lower_case=True
+    )
 
     id = factory.Sequence(lambda x: x)
     email = factory.Faker("email")
