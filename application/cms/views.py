@@ -144,9 +144,11 @@ def edit_upload(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
     if request.method == "POST":
         form = UploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
-            f = form.upload.data if form.upload.data else None
+            file_data = form.upload.data if form.upload.data else None
             try:
-                upload_service.edit_upload(measure=measure_version, upload=upload_object, file=f, data=form.data)
+                upload_service.edit_upload(
+                    measure_version=measure_version, upload=upload_object, file=file_data, data=form.data
+                )
                 message = "Updated upload {}".format(upload_object.title)
                 flash(message, "info")
                 return redirect(
@@ -373,10 +375,13 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
     if request.method == "POST":
         form = UploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
-            f = form.upload.data
+            file_data = form.upload.data
             try:
                 upload = upload_service.create_upload(
-                    page=measure_version, upload=f, title=form.data["title"], description=form.data["description"]
+                    measure_version=measure_version,
+                    upload=file_data,
+                    title=form.data["title"],
+                    description=form.data["description"],
                 )
 
                 message = 'Uploaded file "{}" to measure "{}"'.format(upload.title, measure_slug)
@@ -387,7 +392,13 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
                 message = "Error uploading file. {}".format(str(e))
                 current_app.logger.exception(e)
                 flash(message, "error")
-                context = {"form": form, "topic": topic, "subtopic": subtopic, "measure": measure_version}
+                context = {
+                    "form": form,
+                    "topic": topic,
+                    "subtopic": subtopic,
+                    "measure": measure_version.measure,
+                    "measure_version": measure_version,
+                }
                 return render_template("cms/create_upload.html", **context)
 
             return redirect(
@@ -400,7 +411,13 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
                 )
             )
 
-    context = {"form": form, "topic": topic, "subtopic": subtopic, "measure": measure_version}
+    context = {
+        "form": form,
+        "topic": topic,
+        "subtopic": subtopic,
+        "measure": measure_version.measure,
+        "measure_version": measure_version,
+    }
     return render_template("cms/create_upload.html", **context)
 
 
@@ -902,7 +919,7 @@ def save_chart_to_page(topic_slug, subtopic_slug, measure_slug, version, dimensi
     )
 
     if measure_version.not_editable():
-        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_version.guid)
+        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_version.title)
         current_app.logger.exception(message)
         raise PageUnEditable(message)
 
@@ -958,7 +975,7 @@ def save_table_to_page(topic_slug, subtopic_slug, measure_slug, version, dimensi
     )
 
     if measure_version.not_editable():
-        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_version.guid)
+        message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure_version.title)
         current_app.logger.exception(message)
         raise PageUnEditable(message)
 

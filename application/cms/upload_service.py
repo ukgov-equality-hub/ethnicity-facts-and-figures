@@ -25,14 +25,14 @@ class UploadService(Service):
     def __init__(self):
         super().__init__()
 
-    def get_url_for_file(self, page, file_name, directory="data"):
-        page_file_system = self.app.file_service.page_system(page)
+    def get_url_for_file(self, measure_version, file_name, directory="data"):
+        page_file_system = self.app.file_service.page_system(measure_version)
         return page_file_system.url_for_file("%s/%s" % (directory, file_name))
 
     def copy_uploads_between_measure_versions(self, from_measure_version, to_measure_version):
         page_file_system = self.app.file_service.page_system(to_measure_version)
-        from_key = "%s/%s/source" % (from_measure_version.guid, from_measure_version.version)
-        to_key = "%s/%s/source" % (to_measure_version.guid, to_measure_version.version)
+        from_key = "%s/%s/source" % (from_measure_version.measure.id, from_measure_version.version)
+        to_key = "%s/%s/source" % (to_measure_version.measure.id, to_measure_version.version)
 
         for upload in to_measure_version.uploads:
             from_path = "%s/%s" % (from_key, upload.file_name)
@@ -66,26 +66,26 @@ class UploadService(Service):
 
         return encoding.upper()
 
-    def delete_upload_files(self, page, file_name):
+    def delete_upload_files(self, measure_version, file_name):
         try:
-            page_file_system = self.app.file_service.page_system(page)
+            page_file_system = self.app.file_service.page_system(measure_version)
             page_file_system.delete("source/%s" % file_name)
         except FileNotFoundError:
             self.logger.exception("Could not find source/%s" % file_name)
 
-    def get_page_uploads(self, page):
-        page_file_system = self.app.file_service.page_system(page)
+    def get_page_uploads(self, measure_version):
+        page_file_system = self.app.file_service.page_system(measure_version)
         return page_file_system.list_files("data")
 
     def get_measure_download(self, upload, file_name, directory):
-        page_file_system = self.app.file_service.page_system(upload.page)
+        page_file_system = self.app.file_service.page_system(upload.measure_version)
         output_file = tempfile.NamedTemporaryFile(delete=False)
         key = "%s/%s" % (directory, file_name)
         page_file_system.read(key, output_file.name)
         return output_file.name
 
-    def upload_data(self, page, file, filename=None):
-        page_file_system = self.app.file_service.page_system(page)
+    def upload_data(self, measure_version, file, filename=None):
+        page_file_system = self.app.file_service.page_system(measure_version)
         if not filename:
             filename = file.name
 
@@ -107,65 +107,76 @@ class UploadService(Service):
 
         return page_file_system
 
-    def delete_upload_obj(self, page, upload):
-        if page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+    def delete_upload_obj(self, measure_version, upload):
+        if measure_version.not_editable():
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(
+                measure_version.title
+            )
             self.logger.error(message)
             raise PageUnEditable(message)
         try:
-            self.delete_upload_files(page=page, file_name=upload.file_name)
+            self.delete_upload_files(measure_version=measure_version, file_name=upload.file_name)
         except FileNotFoundError:
             pass
 
         db.session.delete(upload)
         db.session.commit()
 
-    def get_upload(self, page, file_name):
+    def get_upload(self, measure_version, file_name):
         try:
-            upload = Upload.query.filter_by(page=page, file_name=file_name).one()
+            upload = Upload.query.filter_by(measure_version=measure_version, file_name=file_name).one()
             return upload
         except NoResultFound as e:
             self.logger.exception(e)
             raise UploadNotFoundException()
 
-    def create_upload(self, page, upload, title, description):
+    def create_upload(self, measure_version, upload, title, description):
         extension = upload.filename.split(".")[-1]
         if title and extension:
             file_name = "%s.%s" % (slugify(title), extension)
         else:
             file_name = upload.filename
 
-        if page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.guid)
+        if measure_version.not_editable():
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(
+                measure_version.title
+            )
             self.logger.error(message)
             raise PageUnEditable(message)
 
         guid = create_guid(file_name)
 
-        if not self.check_upload_title_unique(page, title):
+        if not self.check_upload_title_unique(measure_version, title):
             raise UploadAlreadyExists("An upload with that title already exists for this measure")
         else:
             self.logger.info("Upload with guid %s does not exist ok to proceed", guid)
             upload.seek(0, os.SEEK_END)
             size = upload.tell()
             upload.seek(0)
-            self.upload_data(page, upload, filename=file_name)
+            self.upload_data(measure_version, upload, filename=file_name)
             db_upload = Upload(
-                guid=guid, title=title, file_name=file_name, description=description, page=page, size=size
+                guid=guid,
+                title=title,
+                file_name=file_name,
+                description=description,
+                measure_version=measure_version,
+                size=size,
             )
 
-            page.uploads.append(db_upload)
+            measure_version.uploads.append(db_upload)
             db.session.commit()
 
         return db_upload
 
-    def edit_upload(self, measure, upload, data, file=None):
-        if measure.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(measure.guid)
+    def edit_upload(self, measure_version, upload, data, file=None):
+        if measure_version.not_editable():
+            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(
+                measure_version.title
+            )
             self.logger.error(message)
             raise PageUnEditable(message)
 
-        page_file_system = self.app.file_service.page_system(measure)
+        page_file_system = self.app.file_service.page_system(measure_version)
 
         new_title = data.get("title", upload.title)
         existing_title = upload.title
@@ -178,32 +189,32 @@ class UploadService(Service):
                 size = file.tell()
                 file.seek(0)
                 file.size = size
-                upload_service.upload_data(measure, file, filename=file_name)
+                upload_service.upload_data(measure_version, file, filename=file_name)
                 if upload.file_name != file_name:
-                    upload_service.delete_upload_files(page=measure, file_name=upload.file_name)
+                    upload_service.delete_upload_files(measure_version=measure_version, file_name=upload.file_name)
                 upload.file_name = file_name
             else:
                 file.seek(0, os.SEEK_END)
                 size = file.tell()
                 file.seek(0)
                 file.size = size
-                upload_service.upload_data(measure, file, filename=file.filename)
+                upload_service.upload_data(measure_version, file, filename=file.filename)
                 if upload.file_name != file.filename:
-                    upload_service.delete_upload_files(page=measure, file_name=upload.file_name)
+                    upload_service.delete_upload_files(measure_version=measure_version, file_name=upload.file_name)
                 upload.file_name = file.filename
         else:
             if new_title != existing_title:  # current file needs renaming
                 extension = upload.file_name.split(".")[-1]
                 file_name = "%s.%s" % (slugify(data["title"]), extension)
                 if self.app.config.get("FILE_SERVICE", "local").lower() == "local":
-                    path = self.get_url_for_file(measure, upload.file_name)
+                    path = self.get_url_for_file(measure_version, upload.file_name)
                     dir_path = os.path.dirname(path)
                     page_file_system.rename_file(upload.file_name, file_name, dir_path)
                 else:
                     if data["title"] != upload.title:
-                        path = "%s/%s/source" % (measure.guid, measure.version)
+                        path = "%s/%s/source" % (measure_version.measure.id, measure_version.version)
                         page_file_system.rename_file(upload.file_name, file_name, path)
-                upload_service.delete_upload_files(page=measure, file_name=upload.file_name)
+                upload_service.delete_upload_files(measure_version=measure_version, file_name=upload.file_name)
                 upload.file_name = file_name
 
         upload.description = data["description"] if "description" in data else upload.title
@@ -212,9 +223,9 @@ class UploadService(Service):
         db.session.commit()
 
     @staticmethod
-    def check_upload_title_unique(page, title):
+    def check_upload_title_unique(measure_version, title):
         try:
-            Upload.query.filter_by(page=page, title=title).one()
+            Upload.query.filter_by(measure_version=measure_version, title=title).one()
             return False
         except NoResultFound:
             return True

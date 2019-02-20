@@ -1,3 +1,11 @@
+/* Set compatibility mode for govuk-frontend */
+$govuk-compatibility-govukfrontendtoolkit: true;
+$govuk-compatibility-govuktemplate: true;
+$govuk-compatibility-govukelements: true;
+
+/* GOV.UK Frontend, for the Design System. Installed via npm */
+@import "node_modules/govuk-frontend/all";
+
 @import '_govuk/govuk-template';
 @import '_govuk/fonts';
 @import '_govuk/_base/govuk-elements';
@@ -19,7 +27,6 @@
 @import '_phase_banner_reversed';
 @import '_new_tag';
 @import '_item_date';
-@import '_newsletter-sign-up';
 @import '_search';
 @import '_search_results';
 @import '_tables';

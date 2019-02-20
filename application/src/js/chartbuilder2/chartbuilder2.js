@@ -35,11 +35,10 @@ var current_settings = null;
 $(document).ready(function () {
 
     // add events to buttons
-    $('#preview').click(preview);
-    $('#confirm-data').click(setChartData);
-    $('#edit-data').click(editChartData);
-    $('#cancel-edit-data').click(cancelEditData);
-    $('#save').click(saveChart);
+    document.getElementById('confirm-data').addEventListener('click', setChartData)
+    document.getElementById('edit-data').addEventListener('click', editChartData)
+    document.getElementById('cancel-edit-data').addEventListener('click', cancelEditData)
+    document.getElementById('save').addEventListener('click', saveChart)
 
     /*
     Events from the DATA ENTRY PANEL
@@ -51,24 +50,24 @@ $(document).ready(function () {
             }
             preview()
         });
-        $('#data-panel').hide();
-        $('#edit-panel').show();
-        $('#builder-title').html('Format and view chart');
+        document.getElementById('data-panel').classList.add('hidden')
+        document.getElementById('edit-panel').classList.remove('hidden')
+        document.getElementById('builder-title').textContent = 'Format and view chart'
     }
 
     function editChartData(evt) {
         current_data = $('#data_text_area').val();
         current_settings = getChartPageSettings();
-        $('#data-panel').show();
-        $('#edit-panel').hide();
-        $('#builder-title').html('Create a chart');
+        document.getElementById('data-panel').classList.remove('hidden')
+        document.getElementById('edit-panel').classList.add('hidden')
+        document.getElementById('builder-title').textContent = 'Create a chart'
     }
 
     function cancelEditData(evt) {
         $('#data_text_area').val(current_data);
-        $('#data-panel').hide();
-        $('#edit-panel').show();
-        document.getElementById('builder-title').innerHTML = 'Format and view chart';
+        document.getElementById('data-panel').classList.add('hidden')
+        document.getElementById('edit-panel').classList.remove('hidden')
+        document.getElementById('builder-title').textContent = 'Format and view chart'
     }
 
 
@@ -86,7 +85,8 @@ $(document).ready(function () {
         if (chart_data.length > 0) {
             message = chart_data.length - 1 + ' rows by ' + chart_data[0].length + ' columns'
         }
-        $('#data-description').html(message);
+
+        document.getElementById('data-description').innerHTML = message;
 
         // update options in drop-downs
         var headers = chart_data[0];
@@ -108,8 +108,8 @@ $(document).ready(function () {
                 populateEthnicityPresets(presets);
 
                 // show the presets (step 2) and chart type (step 3) section
-                $('#ethnicity_settings_section').show();
-                $('#select_chart_type').show();
+                document.getElementById('ethnicity_settings_section').classList.remove('hidden')
+                document.getElementById('select_chart_type').classList.remove('hidden')
 
                 // any further processing
                 if (on_success) {
@@ -154,24 +154,22 @@ $(document).ready(function () {
         var listWithNone = dropdownHtmlWithDefault(headers, '[None]');
         var listWithRequired = dropdownHtmlWithDefault(headers, 'Please select');
 
-        $('#line__x-axis_column').html(listWithRequired);
+        document.getElementById('line__x-axis_column').innerHTML = listWithRequired
 
-        $('#grouped-bar__bar_column').html(listWithRequired);
-        $('#grouped-bar__bar_order').html(listWithNone);
-        $('#grouped-bar__groups_column').html(listWithRequired);
-        $('#grouped-bar__groups_order').html(listWithNone);
+        document.getElementById('grouped-bar__bar_column').innerHTML = listWithRequired
+        document.getElementById('grouped-bar__groups_column').innerHTML = listWithRequired
 
-        $('#component__bar_column').html(listWithRequired);
-        $('#component__bar_order').html(listWithNone);
-        $('#component__section_column').html(listWithRequired);
-        $('#component__section_order').html(listWithNone);
+        document.getElementById('component__bar_column').innerHTML = listWithRequired
+        document.getElementById('component__bar_order').innerHTML = listWithNone
+        document.getElementById('component__section_column').innerHTML = listWithRequired
+        document.getElementById('component__section_order').innerHTML = listWithNone
 
-        $('#panel-bar__panel_column').html(listWithRequired);
-        $('#panel-bar__panel_order').html(listWithNone);
-        $('#panel-bar__bar_column').html(listWithRequired);
-        $('#panel-bar__bar_order').html(listWithNone);
+        document.getElementById('panel-bar__panel_column').innerHTML = listWithRequired
+        document.getElementById('panel-bar__panel_order').innerHTML = listWithNone
+        document.getElementById('panel-bar__bar_column').innerHTML = listWithRequired
+        document.getElementById('panel-bar__bar_order').innerHTML = listWithNone
 
-        $('#panel-line__x-axis_column').html(listWithRequired);
+        document.getElementById('panel-line__x-axis_column').innerHTML = listWithRequired
     }
 
     function selectDropdown(dropdown_id, value) {
@@ -184,9 +182,9 @@ $(document).ready(function () {
 
     function showHideCustomEthnicityPanel() {
         if($('#ethnicity_settings').val() === 'custom') {
-            $('#custom_classification__panel').show()
+            document.getElementById('custom_classification__panel').classList.remove('hidden')
         } else {
-            $('#custom_classification__panel').hide()
+            document.getElementById('custom_classification__panel').classList.remove('hidden')
         }
     }
 
@@ -201,7 +199,7 @@ $(document).ready(function () {
                 html = html + '<option value="' + preset_id + '" >' + preset_name + '</option>';
             }
         }
-        $('#ethnicity_settings').html(html);
+        document.getElementById('ethnicity_settings').innerHTML = html
     }
 
     function strippedHeaders(headers) {
@@ -241,40 +239,43 @@ $(document).ready(function () {
     }
 
     function displayTips(tips) {
-        $('#tips_container').show();
-        $('#preview_container').hide();
+        document.getElementById('tips_container').classList.remove('hidden')
+        document.getElementById('preview_container').classList.add('hidden')
 
-        $("#notes_container").hide();
-        $("#errors_container").hide();
+        document.getElementById('notes_container').classList.add('hidden')
+        document.getElementById('errors_container').classList.add('hidden')
 
-        $("#tip-list").children().hide();
+        var tip_list = document.getElementById('tip-list')
+        for (var i = 0; i < tip_list.children.length; i++) {
+            tip_list.children[i].classList.add('hidden')
+        }
 
         if (tipsOfType(tips, MISSING_FIELD_ERROR).length > 0) {
-            $("#notes_container").show();
+            document.getElementById('notes_container').classList.remove('hidden')
         }
         if (tipsOfType(tips, ETHNICITY_ERROR).length > 0) {
-            $("#errors_container").show();
-            $('#tip__ethnicity-column').show();
+            document.getElementById('errors_container').classList.remove('hidden')
+            document.getElementById('tip__ethnicity-column').classList.remove('hidden')
         }
         if (tipsOfType(tips, VALUE_ERROR).length > 0) {
-            $("#errors_container").show();
-            $('#tip__value-column').show();
+            document.getElementById('errors_container').classList.remove('hidden')
+            document.getElementById('tip__value-column').classList.remove('hidden')
         }
         if (tipsOfType(tips, RECTANGLE_ERROR).length > 0) {
-            $("#errors_container").show();
-            $('#tip__rectangular-data').show();
+            document.getElementById('errors_container').classList.remove('hidden')
+            document.getElementById('tip__rectangular-data').classList.remove('hidden')
         }
         if (tipsOfType(tips, DATA_ERROR_COMPLEX_DATA).length > 0) {
-            $("#errors_container").show();
-            $('#tip__complex-data').show();
+            document.getElementById('errors_container').classList.remove('hidden')
+            document.getElementById('tip__complex-data').classList.remove('hidden')
         }
         if (tipsOfType(tips, DATA_ERROR_DUPLICATION).length > 0) {
-            $("#errors_container").show();
-            $('#tip__duplicate-data').show();
+            document.getElementById('errors_container').classList.remove('hidden')
+            document.getElementById('tip__duplicate-data').classList.remove('hidden')
         }
         if (tipsOfType(tips, DATA_ERROR_MISSING_DATA).length > 0) {
-            $("#errors_container").show();
-            $('#tip__missing-data').show();
+            document.getElementById('errors_container').classList.remove('hidden')
+            document.getElementById('tip__missing-data').classList.remove('hidden')
         }
 
     }
@@ -286,18 +287,15 @@ $(document).ready(function () {
     }
 
     function displayChart() {
-        $('#tips_container').hide();
-        $('#preview_container').show();
+        document.getElementById('tips_container').classList.add('hidden')
+        document.getElementById('preview_container').classList.remove('hidden')
 
         var chartObject = buildChartObject();
         if (chartObject) {
-            if (chartObject.title && chartObject.title.text) {
-                $('#title-container').html('<h3 class="heading-small">' + chartObject.title.text + '</h3>');
-            }
             chartObject.title = '';
             drawChart('container', chartObject);
 
-            $('#save_section').show();
+            document.getElementById('save_section').classList.remove('hidden')
         }
 
         document.getElementById('chart_title').dispatchEvent(new Event("input"));
@@ -643,12 +641,17 @@ $(document).ready(function () {
 
     function selectChartType(chart_type) {
         $('#chart_type_selector').val(chart_type);
-        $('.chart-option-group').hide();
-        if (chart_type !== 'none') {
-            $('#' + chart_type + "_options").show();
-            $('#chart_format_options').show();
+
+        var chartOptionGroupDivs = document.getElementsByClassName('chart-option-group')
+
+        for (var i = 0; i < chartOptionGroupDivs.length; i++) {
+            chartOptionGroupDivs[i].classList.add('hidden')
         }
-        $('#preview_section').show();
+
+        if (chart_type !== 'none') {
+            document.getElementById(chart_type + '_options').classList.remove('hidden')
+            document.getElementById('chart_format_options').classList.remove('hidden')
+        }
     }
 
     function selectPreset(preset) {
@@ -688,11 +691,11 @@ $(document).ready(function () {
     // GROUPED-BAR events
     $('#grouped-bar__data_style').change(function () {
         if ($(this).val() === "ethnicity_as_group") {
-            $('#grouped-bar__ethnicity_is_group').show();
-            $('#grouped-bar__ethnicity_is_bar').hide();
+            document.getElementById('grouped-bar__ethnicity_is_group').classList.remove('hidden')
+            document.getElementById('grouped-bar__ethnicity_is_bar').classList.add('hidden')
         } else {
-            $('#grouped-bar__ethnicity_is_group').hide();
-            $('#grouped-bar__ethnicity_is_bar').show();
+            document.getElementById('grouped-bar__ethnicity_is_group').classList.add('hidden')
+            document.getElementById('grouped-bar__ethnicity_is_bar').classList.remove('hidden')
         }
         preview();
     });
@@ -705,11 +708,11 @@ $(document).ready(function () {
     // COMPONENT events
     $('#component__data_style').change(function () {
         if ($(this).val() === "ethnicity_as_bar") {
-            $('#component__ethnicity_is_bar').show();
-            $('#component__ethnicity_is_sections').hide();
+            document.getElementById('component__ethnicity_is_bar').classList.remove('hidden')
+            document.getElementById('component__ethnicity_is_sections').classList.add('hidden')
         } else {
-            $('#component__ethnicity_is_bar').hide();
-            $('#component__ethnicity_is_sections').show();
+            document.getElementById('component__ethnicity_is_bar').classList.add('hidden')
+            document.getElementById('component__ethnicity_is_sections').classList.remove('hidden')
         }
         preview();
     });
@@ -721,11 +724,11 @@ $(document).ready(function () {
     // PANEL-BAR events
     $('#panel-bar__data_style').change(function () {
         if ($(this).val() === "ethnicity_as_panel_bars") {
-            $('#panel-bar__ethnicity_as_bar').show();
-            $('#panel-bar__ethnicity_as_panels').hide();
+            document.getElementById('panel-bar__ethnicity_as_bar').classList.remove('hidden')
+            document.getElementById('panel-bar__ethnicity_as_panels').classList.add('hidden')
         } else {
-            $('#panel-bar__ethnicity_as_bar').hide();
-            $('#panel-bar__ethnicity_as_panels').show();
+            document.getElementById('panel-bar__ethnicity_as_bar').classList.add('hidden')
+            document.getElementById('panel-bar__ethnicity_as_panels').classList.remove('hidden')
         }
         preview();
     });
@@ -741,9 +744,9 @@ $(document).ready(function () {
     // Show-hide NUMBER-FORMAT__OTHER panel
     $('#number_format').change(function () {
         if ($(this).val() === 'other') {
-            $('#other_number_format').show()
+            document.getElementById('other_number_format').classList.remove('hidden')
         } else {
-            $('#other_number_format').hide()
+            document.getElementById('other_number_format').classList.add('hidden')
         }
         preview();
     });
@@ -757,8 +760,8 @@ $(document).ready(function () {
             $('#data_text_area').val(data_text);
 
             handleNewData(function () {
-                $('#data-panel').hide();
-                $('#edit-panel').show();
+                document.getElementById('data-panel').classList.add('hidden')
+                document.getElementById('edit-panel').classList.remove('hidden')
                 setupChartbuilderWithSettings(settings);
                 preview()
             })
@@ -789,12 +792,12 @@ $(document).ready(function () {
                 $('#grouped-bar__data_style').val(dataStyle);
                 if (dataStyle === 'ethnicity_as_group') {
                     $('#grouped-bar__bar_column').val(settings.chartOptions.bar_column);
-                    $('#grouped-bar__ethnicity_is_group').show();
-                    $('#grouped-bar__ethnicity_is_bar').hide();
+                    document.getElementById('grouped-bar__ethnicity_is_group').classList.remove('hidden')
+                    document.getElementById('grouped-bar__ethnicity_is_bar').classList.add('hidden')
                 } else {
                     $('#grouped-bar__groups_column').val(settings.chartOptions.group_column);
-                    $('#grouped-bar__ethnicity_is_group').hide();
-                    $('#grouped-bar__ethnicity_is_bar').show();
+                    document.getElementById('grouped-bar__ethnicity_is_group').classList.add('hidden')
+                    document.getElementById('grouped-bar__ethnicity_is_bar').classList.remove('hidden')
                 }
                 break;
             case 'component_chart':
@@ -803,13 +806,13 @@ $(document).ready(function () {
                 if (dataStyle === 'ethnicity_as_sections') {
                     $('#component__bar_column').val(settings.chartOptions.bar_column);
                     $('#component__bar_order').val(settings.chartOptions.bar_order);
-                    $('#component__ethnicity_is_sections').show();
-                    $('#component__ethnicity_is_bar').hide();
+                    document.getElementById('component__ethnicity_is_sections').classList.remove('hidden')
+                    document.getElementById('component__ethnicity_is_bar').classList.add('hidden')
                 } else {
                     $('#component__section_column').val(settings.chartOptions.section_column);
                     $('#component__section_order').val(settings.chartOptions.section_order);
-                    $('#component__ethnicity_is_sections').hide();
-                    $('#component__ethnicity_is_bar').show();
+                    document.getElementById('component__ethnicity_is_sections').classList.add('hidden')
+                    document.getElementById('component__ethnicity_is_bar').classList.remove('hidden')
                 }
                 break;
             case 'panel_bar_chart':
@@ -818,13 +821,13 @@ $(document).ready(function () {
                 if (dataStyle === 'ethnicity_as_panels') {
                     $('#panel-bar__bar_column').val(settings.chartOptions.bar_column);
                     $('#panel-bar__bar_order').val(settings.chartOptions.bar_order);
-                    $('#panel-bar__ethnicity_as_bar').hide();
-                    $('#panel-bar__ethnicity_as_panels').show();
+                    document.getElementById('panel-bar__ethnicity_as_bar').classList.add('hidden')
+                    document.getElementById('panel-bar__ethnicity_as_panels').classList.remove('hidden')
                 } else {
                     $('#panel-bar__panel_column').val(settings.chartOptions.panel_column);
                     $('#panel-bar__panel_order').val(settings.chartOptions.panel_order);
-                    $('#panel-bar__ethnicity_as_bar').show();
-                    $('#panel-bar__ethnicity_as_panels').hide();
+                    document.getElementById('panel-bar__ethnicity_as_bar').classList.remove('hidden')
+                    document.getElementById('panel-bar__ethnicity_as_panels').classList.add('hidden')
                 }
                 break;
             case 'panel_line_chart':
@@ -840,7 +843,7 @@ $(document).ready(function () {
         $('#number_format_min').val(settings.chartFormat.number_format_min);
         $('#number_format_max').val(settings.chartFormat.number_format_max);
         if (settings.chartFormat.number_format === 'other') {
-            $('#other_number_format').show();
+            document.getElementById('other_number_format').classList.remove('hidden')
         }
     }
 
