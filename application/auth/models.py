@@ -82,6 +82,13 @@ class User(db.Model, RoleFreeUserMixin):
     def can(self, capability):
         return capability in self.capabilities
 
+    def can_access_measure(self, measure):
+        if self.user_type != TypeOfUser.DEPT_USER:
+            return True
+        else:
+            return self in measure.shared_with
+
+    # DEPRECATED: use `can_access_measure` method instead.
     def can_access(self, measure_slug):
         if self.user_type != TypeOfUser.DEPT_USER:
             return True
