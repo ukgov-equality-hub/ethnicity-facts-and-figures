@@ -20,7 +20,7 @@
     "mocha": "^5.2.0"
   },
   "dependencies": {
-    "govuk-frontend": "^2.4.1",
+    "govuk-frontend": "^2.7.0",
     "gulp": "^4.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-if": "^2.0.2",
