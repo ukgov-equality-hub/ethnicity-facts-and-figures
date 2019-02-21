@@ -407,8 +407,7 @@ def test_view_sandbox_topic(test_app_client, logged_in_rdu_user):
 
 def test_measure_page_social_sharing(app, test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(
-        title="Test Measure Page", summary="Unemployment Summary\n * This is a summary bullet",
-        description=None
+        title="Test Measure Page", summary="Unemployment Summary\n * This is a summary bullet", description=None
     )
     resp = test_app_client.get(
         url_for(

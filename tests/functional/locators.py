@@ -91,6 +91,9 @@ class EditMeasureLocators:
     PUBLISHED_AT_DATE_PICKER = (By.NAME, "published_at")
     PUBLISHED_LABEL = (By.NAME, "published")
     TITLE_INPUT = (By.NAME, "title")
+
+    DESCRIPTION_TEXTAREA = (By.NAME, "description")
+
     MEASURE_SUMMARY_TEXTAREA = (By.NAME, "measure_summary")
     SUMMARY_TEXTAREA = (By.NAME, "summary")
     GEOGRAPHIC_COVERAGE_TEXTAREA = (By.NAME, "geographic_coverage")
