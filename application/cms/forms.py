@@ -313,8 +313,15 @@ class UploadForm(FlaskForm):
     upload = FileField(
         label="File in CSV format", validators=[DataRequired(message="Please choose a file for users to download")]
     )
-    title = StringField(label="Title", validators=[DataRequired()])
-    description = TextAreaField()
+    title = RDUStringField(label="Title", hint="For example, ‘Household income data’", validators=[DataRequired()])
+    description = RDUTextAreaField(
+        hint=(
+            Markup(
+                "Please specify what the download file contains, for example:<br><br>This file contains the following: "
+                "measure, ethnicity, year, gender, age group, value, confidence intervals (upper bound, lower bound)."
+            )
+        )
+    )
 
 
 class DimensionRequiredForm(DimensionForm):
