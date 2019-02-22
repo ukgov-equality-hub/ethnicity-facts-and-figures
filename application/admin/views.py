@@ -34,7 +34,7 @@ def users():
 def user_by_id(user_id):
     user = User.query.filter_by(id=user_id).one()
     if user.user_type == TypeOfUser.DEPT_USER:
-        latest_measure_versions = page_service.get_latest_version_of_all_measures(include_drafts=True)
+        latest_measure_versions = page_service.get_latest_version_of_all_measures(include_not_published=True)
         shared = user.measures
     else:
         latest_measure_versions = []
