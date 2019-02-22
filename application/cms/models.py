@@ -242,7 +242,7 @@ class MeasureVersion(db.Model, CopyableModel):
     #                                               (latest created, not latest published, so could be a new draft)
 
     review_token = db.Column(db.String())  # used for review page URLs
-    description = db.Column(db.Text)  # Short description aimed at search result listings and social media sharing
+    description = db.Column(db.Text)  # A short summary used by search engines and social sharing.
 
     # status for measure pages is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
     # but it's free text in the DB and for other page types we have NULL or "draft" ¯\_(ツ)_/¯
@@ -312,6 +312,26 @@ class MeasureVersion(db.Model, CopyableModel):
     @property
     def secondary_data_source(self):
         return self.data_sources[1] if len(self.data_sources) >= 2 else None
+
+    @property
+    def social_description(self):
+        """A short summary of the page exposed as metadata for use by search
+        engines and social media platforms.
+
+        For backwards-compatibility reasons, measure_versions without custom
+        written descriptions expose the first bullet point from the "Main points"
+        section instead."""
+
+        def first_bullet(value):
+            if not value:
+                return None
+            bullets = re.search(r"\*.+", value, re.MULTILINE)
+            return bullets.group() if bullets else None
+
+        if self.description:
+            return self.description
+        else:
+            return first_bullet(self.summary)
 
     # Returns an array of measures which have been published, and which
     # were either first version (1.0) or the first version of an update

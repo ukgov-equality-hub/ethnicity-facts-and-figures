@@ -1,5 +1,9 @@
 {# Required parameters: field, id_, name, class_, textarea, diffs, field_params #}
 
+{% if field.character_count_limit %}
+<div class="govuk-character-count" data-module="character-count" data-maxlength="{{ field.character_count_limit }}">
+{% endif %}
+
 {{ field.label }}
 
 {% if field.hint or hint %}
@@ -12,13 +16,19 @@
 {{ field.extended_hint if field.extended_hint }}
 
 {% if textarea %}
-  <textarea id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if field.errors %} error{% endif %}" {{ field_params }}>{{ value or "" }}</textarea>
+  <textarea id="{{ id_ }}" name="{{ name }}" class="govuk-textarea {{ class_ }}{% if field.errors %} error{% endif %}{% if field.character_count_limit %} js-character-count{% endif %}" {{ field_params }}>{{ value or "" }}</textarea>
 {% else %}
   <input id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if field.errors %} error{% endif %}" value="{{ value }}" {{ field_params }}>
 {% endif %}
+
 {% if not field.errors and diffs %}
   <p>Your update to "{{ field.label.text }}" is highlighted green and possible deletions are highlighted red. If these changes are fine, save the page, otherwise edit the copy above and then save.</p>
   <div class="differences">
       {{ diffs[name] | render_markdown }}
   </div>
+{% endif %}
+
+{% if field.character_count_limit %}
+  <span id="{{ id_ }}-info" class="govuk-hint govuk-character-count__message" aria-live="polite">Please try to keep within {{ field.character_count_limit }} characters.</span>
+</div>
 {% endif %}

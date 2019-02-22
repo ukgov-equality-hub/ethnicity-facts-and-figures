@@ -57,6 +57,7 @@ class TestMeasurePageForm:
             "ethnicity_definition_summary",
             "methodology",
             "external_edit_summary",
+            "description",
         }
 
     @pytest.mark.parametrize("is_minor_update, form_should_error", ((False, False), (True, True)))

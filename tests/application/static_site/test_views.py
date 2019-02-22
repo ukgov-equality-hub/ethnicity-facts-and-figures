@@ -405,10 +405,21 @@ def test_view_sandbox_topic(test_app_client, logged_in_rdu_user):
     assert page.h1.text.strip() == "Test sandbox topic"
 
 
-def test_measure_page_social_sharing(app, test_app_client, logged_in_rdu_user):
-    measure_version = MeasureVersionFactory(
-        title="Test Measure Page", summary="Unemployment Summary\n * This is a summary bullet"
-    )
+@pytest.mark.parametrize(
+    "summary, description, expected_social_description",
+    (
+        ("Unemployment Summary\n * This is a summary bullet", None, "This is a summary bullet"),
+        (
+            "Unemployment Summary\n * This is a summary bullet",
+            "This is the short description",
+            "This is the short description",
+        ),
+    ),
+)
+def test_measure_page_social_sharing(
+    app, test_app_client, logged_in_rdu_user, summary, description, expected_social_description
+):
+    measure_version = MeasureVersionFactory(title="Test Measure Page", summary=summary, description=description)
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
@@ -426,7 +437,7 @@ def test_measure_page_social_sharing(app, test_app_client, logged_in_rdu_user):
         "og:type": "article",
         "og:title": "Test Measure Page",
         "og:image": app.config["RDU_SITE"] + "/static/images/opengraph-image.png",
-        "og:description": "This is a summary bullet",
+        "og:description": expected_social_description,
     }
     for attribute, value in expected_social_attributes_and_values.items():
         social_sharing_meta = page.findAll("meta", property=attribute)

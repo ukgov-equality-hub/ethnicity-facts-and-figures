@@ -113,6 +113,7 @@ class DataSourceForm(FlaskForm):
     note_on_corrections_or_updates = RDUTextAreaField(
         label="Corrections or updates (optional)",
         hint="For example, explain if you’ve used a revised version of the data",
+        character_count_limit=200,
     )
 
     frequency_of_release_other = RDUStringField(label="Other publication frequency", validators=[Length(max=255)])
@@ -207,6 +208,18 @@ class MeasureVersionForm(FlaskForm):
             "Explain what the data is analysing, what’s included in categories labelled as ‘Other’ and define any "
             "terms users might not understand"
         ),
+        strip_whitespace=True,
+    )
+
+    description = RDUTextAreaField(
+        label="Description for search engines",
+        validators=[RequiredForReviewValidator()],
+        hint=(
+            "Choose an up‐to‐date statistic that shows a key disparity or change over time. The figure should work as "
+            "a stand-alone statement and end with a full stop."
+        ),
+        extended_hint="_description.html",
+        character_count_limit=160,
         strip_whitespace=True,
     )
 
