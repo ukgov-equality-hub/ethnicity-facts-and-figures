@@ -822,9 +822,9 @@ class TestMeasureVersion:
     def test_social_description_returns_nil_if_no_description_or_bullets_present(self):
         measure_version = MeasureVersionFactory(description=None, summary=None)
 
-        assert measure_version.social_description == None
+        assert measure_version.social_description is None
 
     def test_social_description_returns_nil_if_no_description_or_summary_doesnt_have_bullets(self):
         measure_version = MeasureVersionFactory(description=None, summary="This is an intro.")
 
-        assert measure_version.social_description == None
+        assert measure_version.social_description is None
