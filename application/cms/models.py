@@ -313,14 +313,15 @@ class MeasureVersion(db.Model, CopyableModel):
     def secondary_data_source(self):
         return self.data_sources[1] if len(self.data_sources) >= 2 else None
 
-    # A short summary of the page exposed as metadata for use by search
-    # engines and social media platforms.
-    #
-    # For backwards-compatibility reasons, measure_versions without custom
-    # written descriptions expose the first bullet point from the "Main points"
-    # section instead.
     @property
     def social_description(self):
+        """A short summary of the page exposed as metadata for use by search
+        engines and social media platforms.
+
+        For backwards-compatibility reasons, measure_versions without custom
+        written descriptions expose the first bullet point from the "Main points"
+        section instead."""
+
         def first_bullet(value):
             if not value:
                 return None
