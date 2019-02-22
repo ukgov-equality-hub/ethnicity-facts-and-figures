@@ -239,13 +239,14 @@ class TestRDUStringField:
     def test_character_count_information_is_shown(self):
         doc = html.fromstring(self.form.string_field())
 
-        character_count_element = doc.xpath("//span[@id=\"string_field-info\"]")
+        character_count_element = doc.xpath('//span[@id="string_field-info"]')
 
         assert len(character_count_element) == 1
         assert character_count_element[0].text == "Please try to keep within 130 characters."
-        assert character_count_element[0].get('id') == "string_field-info"
-        assert character_count_element[0].get('class') == "govuk-hint govuk-character-count__message"
-        assert character_count_element[0].get('aria-live') == "polite"
+        assert character_count_element[0].get("id") == "string_field-info"
+        assert character_count_element[0].get("class") == "govuk-hint govuk-character-count__message"
+        assert character_count_element[0].get("aria-live") == "polite"
+
 
 class TestRDUURLField:
     class FormForTest(FlaskForm):
