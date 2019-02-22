@@ -8,6 +8,7 @@
     {"url": url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version), "text": measure.latest_version.title},
   ]
 %}
+{% set form_disabled = not (measure_version.status == "DRAFT" or new) %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
 {% block pageTitle %}{{ page_title("Edit source data", error=(form.errors|length > 0) ) }}{% endblock %}
@@ -51,27 +52,27 @@
                         {{ form.upload.label }}
                         {% if form.upload.errors %}
                             - {{ form.upload.errors[0] }}
-                            {{ form.upload(class="error") }}
+                            {{ form.upload(class="error", disabled=form_disabled) }}
                         {% else %}
-                            {{ form.upload }}
+                            {{ form.upload(disabled=form_disabled) }}
                         {% endif %}
 
                         {{ form.title.label }}
                         <span class="form-hint">For example, ‘Household income data’</span>
                         {% if form.title.errors %}
                             - {{ form.title.errors[0] }}
-                            {{ form.title(class="error") }}
+                            {{ form.title(class="error", disabled=form_disabled) }}
                         {% else %}
-                            {{ form.title }}
+                            {{ form.title(disabled=form_disabled) }}
                         {% endif %}
 
                         {{ form.description.label }}
                         <span class="form-hint">Please specify what the download file contains, for example:<br><br>This file contains the following: measure, ethnicity, year, gender, age group, value, confidence intervals (upper bound, lower bound).</span>
                         {% if form.description.errors %}
                             - {{ form.description.errors[0] }}
-                            {{ form.description(class="error", rows='7',cols='100') }}
+                            {{ form.description(class="error", disabled=form_disabled, rows='7',cols='100') }}
                         {% else %}
-                            {{ form.description(rows='7',cols='100') }}
+                            {{ form.description(disabled=form_disabled, rows='7',cols='100') }}
                         {% endif %}
 
                     {% endblock fields %}
