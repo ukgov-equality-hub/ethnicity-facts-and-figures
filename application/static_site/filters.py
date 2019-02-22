@@ -2,7 +2,6 @@ import bleach
 import json
 import markdown
 import jinja2
-import re
 
 from flask import Markup
 from hurry.filesize import size, alternative
