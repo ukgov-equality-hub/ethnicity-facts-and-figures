@@ -215,7 +215,7 @@ class MeasureVersionForm(FlaskForm):
         label="Description for search engines",
         validators=[RequiredForReviewValidator()],
         hint=(
-            "Choose an up to date statistic that shows a key disparity or change over time. The figure should work as "
+            "Choose an up‐to‐date statistic that shows a key disparity or change over time. The figure should work as "
             "a stand-alone statement and end with a full stop."
         ),
         extended_hint="_description.html",
