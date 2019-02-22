@@ -169,7 +169,7 @@ class TestRDURadioField:
 
 class TestRDUStringField:
     class FormForTest(FlaskForm):
-        string_field = RDUStringField(label="string_field", hint="string_field hint")
+        string_field = RDUStringField(label="string_field", hint="string_field hint", character_count_limit=130)
         string_field_invalid = RDUStringField(
             label="string_field", hint="string_field hint", validators=[DataRequired(message="failed validation")]
         )
@@ -236,6 +236,16 @@ class TestRDUStringField:
         assert self.form.string_field.data == "   blah   "
         assert self.form.string_field_strip.data == "blah"
 
+    def test_character_count_information_is_shown(self):
+        doc = html.fromstring(self.form.string_field())
+
+        character_count_element = doc.xpath("//span[@id=\"string_field-info\"]")
+
+        assert len(character_count_element) == 1
+        assert character_count_element[0].text == "Please try to keep within 130 characters."
+        assert character_count_element[0].get('id') == "string_field-info"
+        assert character_count_element[0].get('class') == "govuk-hint govuk-character-count__message"
+        assert character_count_element[0].get('aria-live') == "polite"
 
 class TestRDUURLField:
     class FormForTest(FlaskForm):
