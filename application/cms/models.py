@@ -313,7 +313,6 @@ class MeasureVersion(db.Model, CopyableModel):
     def secondary_data_source(self):
         return self.data_sources[1] if len(self.data_sources) >= 2 else None
 
-
     # A short summary of the page exposed as metadata for use by search
     # engines and social media platforms.
     #
@@ -322,20 +321,16 @@ class MeasureVersion(db.Model, CopyableModel):
     # section instead.
     @property
     def social_description(self):
-
         def first_bullet(value):
             if not value:
                 return None
             bullets = re.search(r"\*.+", value, re.MULTILINE)
             return bullets.group() if bullets else None
 
-
         if self.description:
             return self.description
         else:
             return first_bullet(self.summary)
-
-
 
     # Returns an array of measures which have been published, and which
     # were either first version (1.0) or the first version of an update
