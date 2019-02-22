@@ -76,7 +76,6 @@ $(document).ready(function () {
     */
 
     function handleNewData(on_success) {
-
         // get the data
         var tabbedData = $("#data_text_area").val();
 
@@ -106,10 +105,12 @@ $(document).ready(function () {
                 // populate the ethnicity presets from the response
                 presets = response['presets'];
                 populateEthnicityPresets(presets);
+                showHideCustomEthnicityPanel()
 
                 // show the presets (step 2) and chart type (step 3) section
                 document.getElementById('ethnicity_settings_section').classList.remove('hidden')
                 document.getElementById('select_chart_type').classList.remove('hidden')
+
 
                 // any further processing
                 if (on_success) {
@@ -184,7 +185,7 @@ $(document).ready(function () {
         if($('#ethnicity_settings').val() === 'custom') {
             document.getElementById('custom_classification__panel').classList.remove('hidden')
         } else {
-            document.getElementById('custom_classification__panel').classList.remove('hidden')
+            document.getElementById('custom_classification__panel').classList.add('hidden')
         }
     }
 

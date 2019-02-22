@@ -150,6 +150,7 @@ class ChartBuilderPageLocators:
     PANEL_BAR_CHART_PRIMARY = (By.ID, "panel_primary_column")
     PANEL_BAR_CHART_SECONDARY = (By.ID, "panel_grouping_column")
     CHART_ETHNICITY_SETTINGS = (By.ID, "ethnicity_settings")
+    CUSTOM_CLASSIFICATION_PANEL = (By.ID, "custom_classification__panel")
 
     CHART_LINE_X_AXIS = (By.ID, "line__x-axis_column")
 
@@ -191,6 +192,7 @@ class TableBuilderPageLocators:
     TABLE_DATA_EDIT = (By.ID, "edit-data")
 
     TABLE_ETHNICITY_SETTINGS = (By.ID, "ethnicity_settings")
+    CUSTOM_CLASSIFICATION_PANEL = (By.ID, "custom_classification__panel")
     COMPLEX_TABLE_DATA_STYLE = (By.ID, "complex-table__data-style")
     COMPLEX_TABLE_COLUMNS = (By.ID, "ethnicity-as-row__columns")
     COMPLEX_TABLE_ROWS = (By.ID, "ethnicity-as-column__rows")
