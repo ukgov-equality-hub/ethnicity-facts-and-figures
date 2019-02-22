@@ -138,19 +138,15 @@ class PageService(Service):
         return (item for item in return_items)
 
     @staticmethod
-    def get_latest_version_of_all_measures(include_drafts=False):
-        measure_query = MeasureVersion.query
-
-        cte = (
-            MeasureVersion.query.with_entities(
-                MeasureVersion.measure_id, func.max(MeasureVersion.version).label("max_version")
-            )
-            .filter(MeasureVersion.published == (not include_drafts))
-            .group_by(MeasureVersion.measure_id)
-            .cte("max_measure_version")
+    def get_latest_version_of_all_measures(include_not_published=True):
+        cte = MeasureVersion.query.with_entities(
+            MeasureVersion.measure_id, func.max(MeasureVersion.version).label("max_version")
         )
+        if not include_not_published:
+            cte = cte.filter(MeasureVersion.status == "APPROVED")
+        cte = cte.group_by(MeasureVersion.measure_id).cte("max_measure_version")
 
-        measure_query = measure_query.filter(
+        measure_query = MeasureVersion.query.filter(
             MeasureVersion.measure_id == cte.c.measure_id, MeasureVersion.version == cte.c.max_version
         )
 

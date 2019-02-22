@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 from flask import url_for
 
 from application.auth.models import User, TypeOfUser
+from application.cms.models import publish_status
+
 from application.utils import generate_token
 
 from tests.models import UserFactory, MeasureVersionFactory
@@ -174,6 +176,22 @@ def test_reset_password_accepts_good_password(app, test_app_client):
 
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.find("h1").text.strip() == "Password updated"
+
+
+def test_measure_versions_in_all_states_are_available_to_share(test_app_client, logged_in_admin_user):
+    dept_user = UserFactory(user_type=TypeOfUser.DEPT_USER)
+    num_measures = len(publish_status.keys())
+    for status in publish_status.keys():
+        MeasureVersionFactory(status=status)
+
+    resp = test_app_client.get(url_for("admin.user_by_id", user_id=dept_user.id), follow_redirects=True)
+    assert resp.status_code == 200
+
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html." "parser")
+    select = page.find("select", {"id": "measure-picker"})
+
+    # There should be an option for "select a measure", plus one for each actual measure.
+    assert len(select.findAll("option")) == num_measures + 1
 
 
 def test_admin_user_can_share_page_with_dept_user(test_app_client):
