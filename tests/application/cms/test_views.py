@@ -1,6 +1,7 @@
 import datetime
 import json
 from unittest import mock
+import re
 
 import pytest
 from bs4 import BeautifulSoup
@@ -799,3 +800,34 @@ def test_copy_measure_page(test_app_client, logged_in_dev_user):
 
     assert page.find("h1").text == "Edit page"
     assert page.find("input", attrs={"name": "title"})["value"] == "COPY OF Test Measure Page"
+
+
+def test_measure_version_history_page(test_app_client, logged_in_dev_user):
+    measure_version_1_0 = MeasureVersionFactory(status="APPROVED", latest=False, version="1.0")
+    measure_version_1_1 = MeasureVersionFactory(
+        status="APPROVED", latest=True, version="1.1", measure=measure_version_1_0.measure
+    )
+
+    topic_slug = measure_version_1_0.measure.subtopic.topic.slug
+    subtopic_slug = measure_version_1_0.measure.subtopic.slug
+    measure_slug = measure_version_1_0.measure.slug
+
+    response = test_app_client.get(
+        url_for(
+            "cms.list_measure_versions", topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug
+        )
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+
+    assert "Version history" in page.find("h1").text.strip()
+    assert measure_version_1_1.title in page.find("h1").text.strip()
+
+    view_form_links = page.findAll("a", text=re.compile(r"View\s+form"))
+    view_form_hrefs = [element.attrs["href"] for element in view_form_links]
+
+    assert view_form_hrefs == [
+        f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/1.1/edit",
+        f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/1.0/edit",
+    ]

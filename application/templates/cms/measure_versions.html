@@ -61,7 +61,7 @@
                         <td>{{ measure_version.status | format_status | safe }}</td>
                         <td>{{ measure_version.published_at | format_friendly_date }}</td>
                         <td class="actions">
-                            {{ render_actions(topic, subtopic, measure_version, current_user.can(DELETE_MEASURE)) }}
+                            {{ render_actions(topic, subtopic, measure, measure_version, current_user.can(DELETE_MEASURE)) }}
                         </td>
                     </tr>
                 {% endfor %}
