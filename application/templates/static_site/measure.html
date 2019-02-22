@@ -36,6 +36,26 @@
                           version=version) }}"/>
 
 
+  <style>
+    .eff-toc {}
+    .eff-toc li {display: table-row;}
+    .eff-toc li a {text-decoration: none;}
+    .eff-toc__number {display: table-cell; width: 24px;}
+    .eff-toc__content {display: table-cell; padding-bottom: 5px;}
+
+
+    .eff-summary-list--small { font-size: 16px; }
+
+    .eff-summary-list--small .govuk-summary-list__key,
+    .eff-summary-list--small .govuk-summary-list__value { padding-bottom: 0; padding-top: 0;}
+
+    .eff-summary-list--small .govuk-summary-list__key {
+      width: 150px;
+    }
+
+  </style>
+
+
   {% if not static_mode and not preview %}
     {% call status_banner(sticky=False) %}
       <div class="version-info left">
@@ -102,10 +122,43 @@
 
 
   <div class="grid-row">
+    <div class="column-full">
+      <div style="background-color: #005ea5;" class="govuk-!-margin-top-7 govuk-!-padding-left-5 govuk-!-padding-top-5 govuk-!-padding-bottom-5">
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-1  govuk-!-margin-top-7" itemprop="headline" style="color: white;">
+          {{ measure_version.title }}
+        </h1>
+
+        {%  if first_published_date %}
+          <p class="govuk-body" style="color: white;">Published <time itemprop="datePublished" datetime="{{ first_published_date | format_iso8601_date }}">{{ first_published_date | format_friendly_date }}</time>
+          </p>
+        {%  endif %}
+
+      </div>
+    </div>
+  </div>
+  <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 class="heading-large" itemprop="headline">
-        {{ measure_version.title }}
-      </h1>
+
+      <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+      <ol class="govuk-list eff-toc govuk-!-margin-bottom-9">
+        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#intro"><span class="eff-toc__number">1. </span><span class="eff-toc__content">Introduction</span></a></li>
+
+
+        {% if measure_version.dimensions %}
+          {% for dimension in dimensions %}
+
+            <li class="govuk-!-font-size-16"><a class="govuk-link" href="#{{ dimension.title|slugify_value }}"><span class="eff-toc__number">{{ loop.index + 1 }}. </span><span class="eff-toc__content">{{ dimension.title }}</span></a></li>
+
+
+          {% endfor %}
+        {% endif %}
+
+
+        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#methodology"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 2 }}. </span><span class="eff-toc__content">Methodology</span></a></li>
+        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#data-sources"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 3 }}. </span><span class="eff-toc__content">Data sources</span></a></li>
+        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#download-the-data"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 4 }}. </span><span class="eff-toc__content">Download the data</span></a></li>
+
+      </ol>
     </div>
   </div>
 
@@ -120,7 +173,7 @@
     </div>
   {% endif %}
 
-  <div class="grid-row">
+  <!-- <div class="grid-row">
     <div class="column-two-thirds">
       <div class="metadata">
         <dl>
@@ -169,10 +222,12 @@
         </dl>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <div class="grid-row">
     <div class="column-two-thirds">
+
+      <h2 class="govuk-heading-l">1. Introduction</h2>
       <p>
         The main facts and figures show that:
       </p>
@@ -247,7 +302,7 @@
             {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
 
               <div class="column-two-thirds">
-                  <h2 class="heading-medium" id="{{ dimension.title|slugify_value }}">{{ dimension.title }}</h2>
+                  <h2 class="govuk-heading-l govuk-!-margin-top-9" id="{{ dimension.title|slugify_value }}">{{ loop.index + 1}}. {{ dimension.title }}</h2>
                   <div class="metadata">
                       <dl>
                           {% if measure_version.area_covered %}
