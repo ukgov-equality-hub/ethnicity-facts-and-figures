@@ -324,15 +324,10 @@ class MeasureVersion(db.Model, CopyableModel):
     def social_description(self):
 
         def first_bullet(value):
-            if value:
-                regex = re.compile(r"\*\s[^\n]*")
-                result = regex.search(value)
-                if result:
-                    return result.group()
-                else:
-                    return None
-            else:
+            if not value:
                 return None
+            bullets = re.search(r"\*.+", value, re.MULTILINE)
+            return bullets.group() if bullets else None
 
 
         if self.description:
