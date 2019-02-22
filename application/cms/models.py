@@ -330,9 +330,9 @@ class MeasureVersion(db.Model, CopyableModel):
                 if result:
                     return result.group()
                 else:
-                    return ""
+                    return None
             else:
-                return ""
+                return None
 
 
         if self.description:
