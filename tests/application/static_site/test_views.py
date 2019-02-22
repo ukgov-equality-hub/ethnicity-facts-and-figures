@@ -405,7 +405,7 @@ def test_view_sandbox_topic(test_app_client, logged_in_rdu_user):
     assert page.h1.text.strip() == "Test sandbox topic"
 
 
-def test_measure_page_social_sharing(app, test_app_client, logged_in_rdu_user):
+def test_measure_page_social_sharing_using_first_bullet(app, test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(
         title="Test Measure Page", summary="Unemployment Summary\n * This is a summary bullet", description=None
     )
@@ -427,6 +427,43 @@ def test_measure_page_social_sharing(app, test_app_client, logged_in_rdu_user):
         "og:title": "Test Measure Page",
         "og:image": app.config["RDU_SITE"] + "/static/images/opengraph-image.png",
         "og:description": "This is a summary bullet",
+    }
+    for attribute, value in expected_social_attributes_and_values.items():
+        social_sharing_meta = page.findAll("meta", property=attribute)
+        assert len(social_sharing_meta) == 1, f"Missing social sharing metadata for {attribute}"
+        assert social_sharing_meta[0].get("content") == value
+
+    expected_twitter_attributes_and_values = {"twitter:card": "summary"}
+    for twitter_sharing_attribute, value in expected_twitter_attributes_and_values.items():
+        twitter_sharing_meta = page.findAll("meta", {"name": twitter_sharing_attribute})
+        assert len(twitter_sharing_meta) == 1, f"Missing twitter sharing metadata for {twitter_sharing_attribute}"
+        assert twitter_sharing_meta[0].get("content") == value
+
+
+def test_measure_page_social_sharing_using_description(app, test_app_client, logged_in_rdu_user):
+    measure_version = MeasureVersionFactory(
+        title="Test Measure Page",
+        summary="Unemployment Summary\n * This is a summary bullet",
+        description="This is the short description",
+    )
+    resp = test_app_client.get(
+        url_for(
+            "static_site.measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+    )
+
+    assert resp.status_code == 200
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    expected_social_attributes_and_values = {
+        "og:type": "article",
+        "og:title": "Test Measure Page",
+        "og:image": app.config["RDU_SITE"] + "/static/images/opengraph-image.png",
+        "og:description": "This is the short description",
     }
     for attribute, value in expected_social_attributes_and_values.items():
         social_sharing_meta = page.findAll("meta", property=attribute)
