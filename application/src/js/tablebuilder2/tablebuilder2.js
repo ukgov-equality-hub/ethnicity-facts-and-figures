@@ -138,6 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // populate the ethnicity presets from the response
                 presets = response['presets'];
                 populateEthnicityPresets(presets);
+                showHideCustomEthnicityPanel()
 
                 // show the presets (step 2) and table type (step 3) section
                 document.getElementById('ethnicity_settings_section').classList.remove('hidden')

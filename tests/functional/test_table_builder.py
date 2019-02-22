@@ -88,6 +88,7 @@ def run_save_and_load_scenario(table_builder_page, driver):
     """
     assert table_builder_page.get_ethnicity_settings_code() == "5B"
     assert table_builder_page.get_ethnicity_settings_value() == "ONS 2011 - 5+1"
+    assert table_builder_page.get_custom_classification_panel().is_displayed() is False
 
     """
     WHEN we choose a column to display
@@ -131,6 +132,7 @@ def run_simple_table_scenarios(table_builder_page, driver):
     assert table_builder_page.source_contains("5 rows by 2 columns")
     assert len(table_builder_page.get_ethnicity_settings_list()) == 3
     assert table_builder_page.get_ethnicity_settings_value() == "ONS 2011 - 5+1"
+    assert table_builder_page.get_custom_classification_panel().is_displayed() is False
     assert table_builder_page.input_index_column_name() == "Ethnicity"
 
     """

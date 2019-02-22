@@ -727,6 +727,10 @@ class ChartBuilderPage(BasePage):
         all_labels = self.driver.find_elements_by_class_name("highcharts-xaxis-labels")
         return all_labels[0].text.split("\n")
 
+    def get_custom_classification_panel(self):
+        element = self.wait_for_invisible_element(ChartBuilderPageLocators.CUSTOM_CLASSIFICATION_PANEL)
+        return element
+
     def get_ethnicity_settings_value(self):
         element = self.wait_for_element(ChartBuilderPageLocators.CHART_ETHNICITY_SETTINGS)
         dropdown = Select(element)
@@ -840,6 +844,10 @@ class TableBuilderPage(BasePage):
         element = self.wait_for_element(TableBuilderPageLocators.TABLE_DATA_CANCEL)
         self.scroll_to(element)
         element.click()
+
+    def get_custom_classification_panel(self):
+        element = self.wait_for_invisible_element(TableBuilderPageLocators.CUSTOM_CLASSIFICATION_PANEL)
+        return element
 
     def get_ethnicity_settings_value(self):
         element = self.wait_for_element(TableBuilderPageLocators.TABLE_ETHNICITY_SETTINGS)

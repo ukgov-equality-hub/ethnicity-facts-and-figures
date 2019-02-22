@@ -101,6 +101,7 @@ def run_save_and_load_scenario(chart_builder_page, driver):
     """
     assert chart_builder_page.get_ethnicity_settings_code() == "5B"
     assert chart_builder_page.get_ethnicity_settings_value() == "ONS 2011 - 5+1"
+    assert chart_builder_page.get_custom_classification_panel().is_displayed() is False
 
     """
     WHEN we select an alternate classification and save
@@ -138,6 +139,7 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     assert chart_builder_page.source_contains("5 rows by 2 columns")
     assert len(chart_builder_page.get_ethnicity_settings_list()) == 3
     assert chart_builder_page.get_ethnicity_settings_value() == "ONS 2011 - 5+1"
+    assert chart_builder_page.get_custom_classification_panel().is_displayed() is False
 
     """
     WHEN we select bar chart
