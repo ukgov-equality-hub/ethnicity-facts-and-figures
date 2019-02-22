@@ -316,6 +316,35 @@ class MeasureVersion(db.Model, CopyableModel):
     def secondary_data_source(self):
         return self.data_sources[1] if len(self.data_sources) >= 2 else None
 
+
+    # A short summary of the page exposed as metadata for use by search
+    # engines and social media platforms.
+    #
+    # For backwards-compatibility reasons, measure_versions without custom
+    # written descriptions expose the first bullet point from the "Main points"
+    # section instead.
+    @property
+    def social_description(self):
+
+        def first_bullet(value):
+            if value:
+                regex = re.compile(r"\*\s[^\n]*")
+                result = regex.search(value)
+                if result:
+                    return result.group()
+                else:
+                    return ""
+            else:
+                return ""
+
+
+        if self.description:
+            return self.description
+        else:
+            return first_bullet(self.summary)
+
+
+
     # Returns an array of measures which have been published, and which
     # were either first version (1.0) or the first version of an update
     # eg (2.0, 3.0, 4.0) but not a minor update (1.1 or 2.1).

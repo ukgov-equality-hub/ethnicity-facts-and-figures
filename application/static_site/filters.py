@@ -127,13 +127,3 @@ def format_iso8601_date(date):
     return date.strftime("%Y-%m-%d")
 
 
-def first_bullet(value):
-    if value:
-        regex = re.compile(r"\*\s[^\n]*")
-        result = regex.search(value)
-        if result:
-            return result.group()
-        else:
-            return ""
-    else:
-        return ""
