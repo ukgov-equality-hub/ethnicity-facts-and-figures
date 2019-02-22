@@ -807,14 +807,15 @@ class TestMeasureVersion:
         assert mv2_1.get_previous_version() is mv2_0
         assert mv3_0.get_previous_version() is mv2_1
 
-
     def test_social_description_uses_description_when_present(self):
         measure_version = MeasureVersionFactory(description="Test description")
 
         assert measure_version.social_description == "Test description"
 
     def test_social_description_uses_first_bullet_when_no_description_present(self):
-        measure_version = MeasureVersionFactory(description=None, summary="* This is the first main point\n\n* This is the second main point")
+        measure_version = MeasureVersionFactory(
+            description=None, summary="* This is the first main point\n\n* This is the second main point"
+        )
 
         assert measure_version.social_description == "* This is the first main point"
 

@@ -125,5 +125,3 @@ def format_iso8601_date(date):
     if date is None:
         return ""
     return date.strftime("%Y-%m-%d")
-
-
