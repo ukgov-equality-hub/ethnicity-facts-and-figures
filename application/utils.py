@@ -42,10 +42,16 @@ def get_bool(param):
 
 # This should be placed after login_required decorator as it needs authenticated user
 def user_has_access(f):
+    from application.cms.page_service import page_service
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        topic_slug = kwargs.get("topic_slug")
+        subtopic_slug = kwargs.get("subtopic_slug")
         measure_slug = kwargs.get("measure_slug")
-        if current_user.is_authenticated and measure_slug is not None and current_user.can_access(measure_slug):
+        measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
+
+        if current_user.is_authenticated and measure_slug is not None and current_user.can_access_measure(measure):
             return f(*args, **kwargs)
         else:
             return abort(403)
