@@ -247,6 +247,13 @@ class TestRDUStringField:
         assert character_count_element[0].get("class") == "govuk-hint govuk-character-count__message"
         assert character_count_element[0].get("aria-live") == "polite"
 
+    def test_character_count_javascript_is_enabled(self):
+        doc = html.fromstring(self.form.string_field())
+
+        assert doc.get("class") == "govuk-character-count"
+        assert doc.get("data-module") == "character-count"
+        assert doc.get("data-maxlength") == "130"
+
 
 class TestRDUURLField:
     class FormForTest(FlaskForm):
