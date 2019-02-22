@@ -530,7 +530,7 @@
               <meta itemprop="name" content="Open Government Licence">
             </div>
             <meta itemprop="name" content="{{ measure_version.title | striptags }}">
-            <meta itemprop="description" content="{{ measure_version.summary | first_bullet | render_markdown | striptags }}">
+            <meta itemprop="description" content="{{ measure_version.social_description | render_markdown | striptags }}">
 
             {% for file in measure_version.uploads  %}
               {% if file.file_name %}
