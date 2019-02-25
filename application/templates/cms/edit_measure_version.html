@@ -228,7 +228,7 @@
                             <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
                                 <td>{{ dimension.title }}</td>
                                 <td>
-                                    {% if dimension.page.version != '1.0' and dimension.updated_at != dimension.page.updated_at %}
+                                    {% if dimension.measure_version.version != '1.0' and dimension.updated_at != dimension.measure_version.updated_at %}
                                         <span class="updated-badge">Updated</span>
                                     {% endif %}
                                 </td>

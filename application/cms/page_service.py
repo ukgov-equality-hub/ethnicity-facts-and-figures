@@ -1,6 +1,3 @@
-import uuid
-
-
 from datetime import datetime, date
 from typing import Iterable, Tuple, List
 
@@ -174,9 +171,9 @@ class PageService(Service):
                         return True
         return False
 
-    def _set_data_sources(self, page, data_source_forms):
-        current_data_sources = page.data_sources
-        page.data_sources = []
+    def _set_data_sources(self, measure_version, data_source_forms):
+        current_data_sources = measure_version.data_sources
+        measure_version.data_sources = []
 
         for i, data_source_form in enumerate(data_source_forms):
             existing_source = len(current_data_sources) > i
@@ -198,11 +195,10 @@ class PageService(Service):
                 )
 
                 if existing_source or source_has_truthy_values:
-                    page.data_sources.append(data_source)
+                    measure_version.data_sources.append(data_source)
 
     def create_measure(self, subtopic, measure_version_form, data_source_forms, created_by_email):
         title = measure_version_form.data.pop("title", "").strip()
-        guid = str(uuid.uuid4())
         slug = slugify(title)
 
         if Measure.query.filter(Measure.slug == slug, Measure.subtopics.contains(subtopic)).all():
@@ -220,17 +216,12 @@ class PageService(Service):
         db.session.flush()
 
         measure_version = MeasureVersion(
-            guid=guid,
-            version="1.0",
-            title=title,
-            measure_id=measure.id,
-            status=publish_status.inv[1],
-            created_by=created_by_email,
+            version="1.0", title=title, measure_id=measure.id, status=publish_status.inv[1], created_by=created_by_email
         )
 
         measure_version_form.populate_obj(measure_version)
 
-        self._set_data_sources(page=measure_version, data_source_forms=data_source_forms)
+        self._set_data_sources(measure_version=measure_version, data_source_forms=data_source_forms)
 
         db.session.add(measure_version)
         db.session.commit()
@@ -251,10 +242,8 @@ class PageService(Service):
             raise UpdateAlreadyExists()
 
         new_version = measure_version.copy(exclude_fields=["update_corrects_data_mistake"])
-        new_version.guid = measure_version.guid
 
         if update_type == NewVersionType.NEW_MEASURE:
-            new_version.guid = str(uuid.uuid4())
             new_version.title = f"COPY OF {measure_version.title}"
 
             new_slug = f"{measure_version.measure.slug}-copy"
@@ -267,14 +256,13 @@ class PageService(Service):
             except PageNotFoundException:
                 pass
 
-            new_version.measure = Measure(
-                slug=new_slug,
-                position=len(measure_version.measure.subtopic.measures),
-                reference=measure_version.internal_reference,
-            )
+            new_version.measure = Measure(slug=new_slug, position=len(measure_version.measure.subtopic.measures))
             new_version.measure.subtopics = measure_version.measure.subtopics
         else:
-            new_version.measure = measure_version.measure
+            # We insert to the front of the `measure.versions` relationship so that we maintain ordering of
+            # desc(measure_version.version) as defined by the relationship on the model, as otherwise the list is not
+            # updated by sqlalchemy until a commit.
+            measure_version.measure.versions.insert(0, new_version)
 
         new_version.version = next_version_number
         new_version.status = "DRAFT"
@@ -346,7 +334,6 @@ class PageService(Service):
         if status is not None:
             measure_version.status = status
 
-        measure_version_form.data.pop("guid", None)  # TODO: Remove this?
         title = measure_version_form.data.pop("title").strip()
         measure_version.title = title
         if measure_version.version == "1.0":
@@ -361,7 +348,7 @@ class PageService(Service):
 
         # Update main fields of MeasureVersion
         measure_version_form.populate_obj(measure_version)
-        self._set_data_sources(page=measure_version, data_source_forms=data_source_forms)
+        self._set_data_sources(measure_version=measure_version, data_source_forms=data_source_forms)
 
         # Update fields in the parent Measure
         if "internal_reference" in measure_version_form.data:

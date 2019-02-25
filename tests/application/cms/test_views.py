@@ -308,12 +308,7 @@ def test_order_measures_in_subtopic(test_app_client, logged_in_rdu_user):
     ids = [0, 1, 2, 3, 4]
     for id_ in ids:
         MeasureVersionFactory(
-            id=id_,
-            guid=str(id_),
-            measure__position=id_,
-            measure__id=id_,
-            measure__subtopics=[subtopic],
-            measure__slug=str(id_),
+            id=id_, measure__position=id_, measure__id=id_, measure__subtopics=[subtopic], measure__slug=str(id_)
         )
 
     assert subtopic.measures[0].slug == "0"
@@ -348,12 +343,7 @@ def test_reorder_measures_triggers_build(test_app_client, logged_in_rdu_user):
     reversed_ids = ids[::-1]
     for id_ in ids:
         MeasureVersionFactory(
-            id=id_,
-            guid=str(id_),
-            measure__position=id_,
-            measure__id=id_,
-            measure__subtopics=[subtopic],
-            measure__slug=str(id_),
+            id=id_, measure__position=id_, measure__id=id_, measure__subtopics=[subtopic], measure__slug=str(id_)
         )
 
     builds = Build.query.all()

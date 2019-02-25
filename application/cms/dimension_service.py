@@ -18,11 +18,11 @@ class DimensionService(Service):
     def __init__(self):
         super().__init__()
 
-    def create_dimension(self, page, title, time_period, summary):
+    def create_dimension(self, measure_version, title, time_period, summary):
 
         guid = create_guid(title)
 
-        if not self.check_dimension_title_unique(page, title):
+        if not self.check_dimension_title_unique(measure_version, title):
             raise DimensionAlreadyExists()
         else:
             self.logger.info("Dimension with guid %s does not exist ok to proceed", guid)
@@ -32,14 +32,14 @@ class DimensionService(Service):
                 title=title,
                 time_period=time_period,
                 summary=summary,
-                page=page,
-                position=page.dimensions.count(),
+                measure_version=measure_version,
+                position=measure_version.dimensions.count(),
             )
 
-            page.dimensions.append(db_dimension)
+            measure_version.dimensions.append(db_dimension)
             db.session.commit()
 
-            return page.get_dimension(db_dimension.guid)
+            return measure_version.get_dimension(db_dimension.guid)
 
     # This does some pre-processing of form data submitted by chart and table builders
     # It also sets the flag update_clasification=True when update_dimension is called, to
@@ -112,9 +112,9 @@ class DimensionService(Service):
             raise DimensionNotFoundException()
 
     @staticmethod
-    def check_dimension_title_unique(page, title):
+    def check_dimension_title_unique(measure_version, title):
         try:
-            Dimension.query.filter_by(page=page, title=title).one()
+            Dimension.query.filter_by(measure_version=measure_version, title=title).one()
             return False
         except NoResultFound:
             return True
