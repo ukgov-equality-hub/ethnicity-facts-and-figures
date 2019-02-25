@@ -223,6 +223,7 @@ def upgrade():
     op.drop_column("measure_version", "slug")
     op.drop_column("measure_version", "additional_description")
     op.drop_column("measure_version", "page_type")
+    op.drop_column("measure_version", "internal_reference")
 
     # create primary key constraint
     op.create_primary_key("measure_version_id_pkey", "measure_version", ["id"])
@@ -264,6 +265,7 @@ def downgrade():
     op.drop_constraint(op.f("measure_version_id_pkey"), "measure_version", type_="primary")
 
     # create columns
+    op.add_column("measure_version", sa.Column("internal_reference", sa.String(), nullable=True))
     op.add_column("measure_version", sa.Column("page_type", sa.VARCHAR(length=255), autoincrement=False, nullable=True))
     op.add_column("measure_version", sa.Column("additional_description", sa.TEXT(), autoincrement=False, nullable=True))
     op.add_column("measure_version", sa.Column("slug", sa.VARCHAR(length=255), autoincrement=False, nullable=True))
