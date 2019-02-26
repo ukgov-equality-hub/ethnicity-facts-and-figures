@@ -19,7 +19,6 @@ from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundExcepti
 from application.cms.file_service import FileService
 from application.cms.filters import (
     format_approve_button,
-    format_date_time,
     format_friendly_date,
     format_friendly_short_date,
     format_friendly_short_date_with_year,
@@ -130,7 +129,6 @@ def create_app(config_object):
     app.jinja_env.add_extension(jinja_do)
 
     app.add_template_filter(format_approve_button)
-    app.add_template_filter(format_date_time)
     app.add_template_filter(render_markdown)
     app.add_template_filter(filesize)
     app.add_template_filter(format_friendly_date)

@@ -7,10 +7,6 @@ def format_approve_button(s):
     return messages.get(s, "")
 
 
-def format_date_time(date):
-    return date.strftime("%Y-%m-%d %H:%M:%S")
-
-
 def format_friendly_date(date):
     if date is None:
         return ""
