@@ -18,7 +18,6 @@ from application.data.standardisers.ethnicity_dictionary_lookup import Ethnicity
 from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundException
 from application.cms.file_service import FileService
 from application.cms.filters import (
-    format_page_guid,
     format_approve_button,
     format_date_time,
     format_friendly_date,
@@ -130,7 +129,6 @@ def create_app(config_object):
     app.jinja_env.lstrip_blocks = True
     app.jinja_env.add_extension(jinja_do)
 
-    app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
     app.add_template_filter(format_date_time)
     app.add_template_filter(render_markdown)
