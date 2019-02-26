@@ -113,7 +113,6 @@ class DataSourceForm(FlaskForm):
     note_on_corrections_or_updates = RDUTextAreaField(
         label="Corrections or updates (optional)",
         hint="For example, explain if you’ve used a revised version of the data",
-        character_count_limit=200,
     )
 
     frequency_of_release_other = RDUStringField(label="Other publication frequency", validators=[Length(max=255)])
