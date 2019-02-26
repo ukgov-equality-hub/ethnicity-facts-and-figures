@@ -665,23 +665,23 @@ class TestMeasureVersion:
     def test_page_sort_by_version(self):
 
         measure = MeasureFactory()
-        first_page = MeasureVersionFactory(measure=measure, version="1.0")
-        second_page = MeasureVersionFactory(measure=measure, version="1.1")
-        third_page = MeasureVersionFactory(measure=measure, version="2.0")
-        fourth_page = MeasureVersionFactory(measure=measure, version="2.2")
-        fifth_page = MeasureVersionFactory(measure=measure, version="2.10")
-        sixth_page = MeasureVersionFactory(measure=measure, version="2.20")
+        first_version = MeasureVersionFactory(measure=measure, version="1.0")
+        second_version = MeasureVersionFactory(measure=measure, version="1.1")
+        third_version = MeasureVersionFactory(measure=measure, version="2.0")
+        fourth_version = MeasureVersionFactory(measure=measure, version="2.2")
+        fifth_version = MeasureVersionFactory(measure=measure, version="2.10")
+        sixth_version = MeasureVersionFactory(measure=measure, version="2.20")
 
-        pages = [fourth_page, sixth_page, fifth_page, second_page, first_page, third_page]
+        versions = [fourth_version, sixth_version, fifth_version, second_version, first_version, third_version]
 
-        pages.sort()
+        versions.sort()
 
-        assert pages[0] == first_page
-        assert pages[1] == second_page
-        assert pages[2] == third_page
-        assert pages[3] == fourth_page
-        assert pages[4] == fifth_page
-        assert pages[5] == sixth_page
+        assert versions[0] == first_version
+        assert versions[1] == second_version
+        assert versions[2] == third_version
+        assert versions[3] == fourth_version
+        assert versions[4] == fifth_version
+        assert versions[5] == sixth_version
 
     def test_page_has_minor_update(self):
         measure = MeasureFactory()
@@ -703,23 +703,23 @@ class TestMeasureVersion:
         assert minor_version_4.has_no_later_published_versions() is True
 
     def test_is_minor_or_minor_version(self):
-        page = MeasureVersionFactory(version="1.0")
+        measure_version = MeasureVersionFactory(version="1.0")
 
-        assert page.version == "1.0"
-        assert page.is_major_version() is True
-        assert page.is_minor_version() is False
+        assert measure_version.version == "1.0"
+        assert measure_version.is_major_version() is True
+        assert measure_version.is_minor_version() is False
 
-        page.version = page.next_minor_version()
+        measure_version.version = measure_version.next_minor_version()
 
-        assert page.version == "1.1"
-        assert page.is_major_version() is False
-        assert page.is_minor_version() is True
+        assert measure_version.version == "1.1"
+        assert measure_version.is_major_version() is False
+        assert measure_version.is_minor_version() is True
 
-        page.version = page.next_major_version()
+        measure_version.version = measure_version.next_major_version()
 
-        assert page.version == "2.0"
-        assert page.is_major_version() is True
-        assert page.is_minor_version() is False
+        assert measure_version.version == "2.0"
+        assert measure_version.is_major_version() is True
+        assert measure_version.is_minor_version() is False
 
     @pytest.mark.parametrize(
         "page_versions, expected_order",

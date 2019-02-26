@@ -198,7 +198,7 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client):
     dept_user = UserFactory(user_type=TypeOfUser.DEPT_USER)
     admin_user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
 
-    measure_page = MeasureVersionFactory(status="DRAFT")
+    measure_version = MeasureVersionFactory(status="DRAFT")
     with test_app_client.session_transaction() as session:
         session["user_id"] = dept_user.id
 
@@ -206,10 +206,10 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client):
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
-            topic_slug=measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=measure_page.measure.subtopic.slug,
-            measure_slug=measure_page.measure.slug,
-            version=measure_page.version,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
@@ -218,10 +218,10 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client):
     resp = test_app_client.get(
         url_for(
             "cms.edit_measure_version",
-            topic_slug=measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=measure_page.measure.subtopic.slug,
-            measure_slug=measure_page.measure.slug,
-            version=measure_page.version,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
@@ -231,12 +231,12 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client):
     with test_app_client.session_transaction() as session:
         session["user_id"] = admin_user.id
 
-    data = {"measure-picker": measure_page.id}
+    data = {"measure-picker": measure_version.id}
 
     resp = test_app_client.post(
         url_for("admin.share_page_with_user", user_id=dept_user.id), data=data, follow_redirects=True
     )
-    assert measure_page.measure.shared_with == [dept_user]
+    assert measure_version.measure.shared_with == [dept_user]
     assert resp.status_code == 200
 
     # dept user can view or edit page
@@ -246,10 +246,10 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client):
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
-            topic_slug=measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=measure_page.measure.subtopic.slug,
-            measure_slug=measure_page.measure.slug,
-            version=measure_page.version,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
@@ -258,10 +258,10 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client):
     resp = test_app_client.get(
         url_for(
             "cms.edit_measure_version",
-            topic_slug=measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=measure_page.measure.subtopic.slug,
-            measure_slug=measure_page.measure.slug,
-            version=measure_page.version,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
@@ -272,7 +272,7 @@ def test_admin_user_can_remove_share_of_page_with_dept_user(test_app_client):
     dept_user = UserFactory(user_type=TypeOfUser.DEPT_USER)
     admin_user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
 
-    measure_page = MeasureVersionFactory(status="DRAFT", measure__shared_with=[dept_user])
+    measure_version = MeasureVersionFactory(status="DRAFT", measure__shared_with=[dept_user])
 
     with test_app_client.session_transaction() as session:
         session["user_id"] = dept_user.id
@@ -280,10 +280,10 @@ def test_admin_user_can_remove_share_of_page_with_dept_user(test_app_client):
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
-            topic_slug=measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=measure_page.measure.subtopic.slug,
-            measure_slug=measure_page.measure.slug,
-            version=measure_page.version,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
@@ -294,7 +294,7 @@ def test_admin_user_can_remove_share_of_page_with_dept_user(test_app_client):
         session["user_id"] = admin_user.id
 
     resp = test_app_client.get(
-        url_for("admin.remove_shared_page_from_user", measure_id=measure_page.measure_id, user_id=dept_user.id),
+        url_for("admin.remove_shared_page_from_user", measure_id=measure_version.measure_id, user_id=dept_user.id),
         follow_redirects=True,
     )
 
@@ -307,10 +307,10 @@ def test_admin_user_can_remove_share_of_page_with_dept_user(test_app_client):
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
-            topic_slug=measure_page.measure.subtopic.topic.slug,
-            subtopic_slug=measure_page.measure.subtopic.slug,
-            measure_slug=measure_page.measure.slug,
-            version=measure_page.version,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
         )
     )
 
