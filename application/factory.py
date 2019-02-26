@@ -30,6 +30,7 @@ from application.cms.filters import (
     yesno,
 )
 from application.cms.dimension_service import dimension_service
+from application.cms.models import TESTING_SPACE_SLUG
 from application.cms.page_service import page_service
 from application.cms.scanner_service import scanner_service
 from application.cms.upload_service import upload_service
@@ -196,6 +197,7 @@ def create_app(config_object):
             READ=READ,
             UPDATE_MEASURE=UPDATE_MEASURE,
             VIEW_DASHBOARDS=VIEW_DASHBOARDS,
+            TESTING_SPACE_SLUG=TESTING_SPACE_SLUG,
             get_content_security_policy=get_content_security_policy,
         )
 

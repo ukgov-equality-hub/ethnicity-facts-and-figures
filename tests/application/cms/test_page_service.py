@@ -575,3 +575,20 @@ class TestPageService:
         assert measures[0] == measure
         assert measure.versions_to_publish == [latest_publishable_version]
         assert measure_2.versions_to_publish == []
+
+    @pytest.mark.parametrize(
+        "topic_slugs, include_testing_space, expected_topic_count",
+        (
+            (["british-population", "health"], False, 2),
+            (["british-population", "health"], True, 2),
+            (["british-population", "health", "testing-space"], False, 2),
+            (["british-population", "health", "testing-space"], True, 3),
+        ),
+    )
+    def test_get_topics(self, topic_slugs, include_testing_space, expected_topic_count):
+        for topic_slug in topic_slugs:
+            TopicFactory(slug=topic_slug)
+
+        topics = page_service.get_topics(include_testing_space=include_testing_space)
+
+        assert len(topics) == expected_topic_count
