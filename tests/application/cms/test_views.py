@@ -365,6 +365,34 @@ def test_reorder_measures_triggers_build(test_app_client, logged_in_rdu_user):
     assert len(builds) == 1
 
 
+def test_view_edit_measure_page_subtopic_dropdown_includes_testing_space_topic(test_app_client, logged_in_rdu_user):
+    measure_version = MeasureVersionFactory(
+        status="DRAFT",
+        measure__subtopics__topic__slug="testing-space",
+        measure__subtopics__topic__title="Testing space",
+    )
+
+    response = test_app_client.get(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+
+    import ipdb
+
+    ipdb.set_trace()
+
+    subtopic = page.find("select", attrs={"id": "subtopic"})
+    assert subtopic.find("optgroup", label="Testing space")
+
+
 def test_view_edit_measure_page(test_app_client, logged_in_rdu_user, stub_measure_data):
     data_source = DataSourceFactory.build(
         title="DWP Stats",

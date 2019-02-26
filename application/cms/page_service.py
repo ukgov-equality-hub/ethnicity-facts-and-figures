@@ -52,8 +52,13 @@ class PageService(Service):
             raise PageNotFoundException()
 
     @staticmethod
-    def get_all_topics():
-        return sorted(Topic.query.filter(Topic.slug != "testing-space").all(), key=lambda topic: topic.title)
+    def get_topics(include_testing_space):
+        topic_query = Topic.query
+
+        if not include_testing_space:
+            topic_query = topic_query.filter(Topic.slug != "testing-space")
+
+        return sorted(topic_query.all(), key=lambda topic: topic.title)
 
     @staticmethod
     def get_subtopic(topic_slug, subtopic_slug):

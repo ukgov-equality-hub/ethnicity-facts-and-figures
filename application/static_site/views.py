@@ -27,7 +27,7 @@ from application.utils import (
 def index():
     return render_template(
         "static_site/index.html",
-        topics=page_service.get_all_topics(),
+        topics=page_service.get_topics(include_testing_space=False),
         static_mode=get_bool(request.args.get("static_mode", False)),
     )
 

@@ -46,7 +46,7 @@ def published():
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def measures_list():
-    topics = page_service.get_all_topics()
+    topics = page_service.get_topics(include_testing_space=False)
     return render_template("dashboards/measures.html", topics=topics)
 
 
