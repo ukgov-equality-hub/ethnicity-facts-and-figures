@@ -18,7 +18,16 @@ from application.cms.exceptions import (
     StaleUpdateException,
     CannotChangeSubtopicOncePublished,
 )
-from application.cms.models import DataSource, Measure, MeasureVersion, Subtopic, Topic, publish_status, NewVersionType
+from application.cms.models import (
+    DataSource,
+    Measure,
+    MeasureVersion,
+    Subtopic,
+    Topic,
+    publish_status,
+    NewVersionType,
+    TESTING_SPACE_SLUG,
+)
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
 from application.sitebuilder.build_service import request_build
@@ -56,7 +65,7 @@ class PageService(Service):
         topic_query = Topic.query
 
         if not include_testing_space:
-            topic_query = topic_query.filter(Topic.slug != "testing-space")
+            topic_query = topic_query.filter(Topic.slug != TESTING_SPACE_SLUG)
 
         return sorted(topic_query.all(), key=lambda topic: topic.title)
 

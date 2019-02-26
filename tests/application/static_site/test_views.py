@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from flask import url_for
 
 from application.auth.models import TypeOfUser
-from application.cms.models import UKCountry, TypeOfData
+from application.cms.models import UKCountry, TypeOfData, TESTING_SPACE_SLUG
 from application.config import Config
 from tests.models import (
     MeasureVersionFactory,
@@ -396,7 +396,7 @@ def test_view_index_page_only_contains_one_topic(test_app_client, logged_in_rdu_
 
 def test_view_sandbox_topic(test_app_client, logged_in_rdu_user):
 
-    sandbox_topic = TopicFactory(slug="testing-space", title="Test sandbox topic")
+    sandbox_topic = TopicFactory(slug=TESTING_SPACE_SLUG, title="Test sandbox topic")
     resp = test_app_client.get(url_for("static_site.topic", topic_slug=sandbox_topic.slug))
 
     assert resp.status_code == 200

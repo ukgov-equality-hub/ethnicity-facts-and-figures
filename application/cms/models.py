@@ -26,6 +26,8 @@ publish_status = bidict(
     REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4, UNPUBLISH=5, UNPUBLISHED=6
 )
 
+TESTING_SPACE_SLUG = "testing-space"
+
 
 class NewVersionType(enum.Enum):
     NEW_MEASURE = "new_measure"
@@ -374,7 +376,7 @@ class MeasureVersion(db.Model, CopyableModel):
             return current_status
 
     def available_actions(self):
-        if self.measure.subtopic.topic.slug == "testing-space":
+        if self.measure.subtopic.topic.slug == TESTING_SPACE_SLUG:
             return ["UPDATE"]
 
         if self.status == "DRAFT":

@@ -11,7 +11,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 
 from application.auth.models import TypeOfUser
 from application.cms.forms import MeasureVersionForm
-from application.cms.models import DataSource
+from application.cms.models import DataSource, TESTING_SPACE_SLUG
 from application.cms.utils import get_data_source_forms
 from application.sitebuilder.models import Build
 from tests.models import (
@@ -368,7 +368,7 @@ def test_reorder_measures_triggers_build(test_app_client, logged_in_rdu_user):
 def test_view_edit_measure_page_subtopic_dropdown_includes_testing_space_topic(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(
         status="DRAFT",
-        measure__subtopics__topic__slug="testing-space",
+        measure__subtopics__topic__slug=TESTING_SPACE_SLUG,
         measure__subtopics__topic__title="Testing space",
     )
 
@@ -384,10 +384,6 @@ def test_view_edit_measure_page_subtopic_dropdown_includes_testing_space_topic(t
 
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-
-    import ipdb
-
-    ipdb.set_trace()
 
     subtopic = page.find("select", attrs={"id": "subtopic"})
     assert subtopic.find("optgroup", label="Testing space")
