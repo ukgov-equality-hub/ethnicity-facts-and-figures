@@ -25,12 +25,6 @@ def format_friendly_short_date(date):
     return date.strftime("%d %b").lstrip("0")
 
 
-def format_versions(number):
-    if number == 1:
-        return "%s&nbsp;version" % number
-    return "%s&nbsp;versions" % number
-
-
 def index_of_last_initial_zero(list_):
     index_of_last_zero = None
     for index, value in enumerate(list_):
