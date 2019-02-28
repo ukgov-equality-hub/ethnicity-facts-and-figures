@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from flask import url_for
 
 from application.auth.models import TypeOfUser
-from application.cms.models import UKCountry, TypeOfData
+from application.cms.models import UKCountry, TypeOfData, TESTING_SPACE_SLUG
 from application.config import Config
 from tests.models import (
     MeasureVersionFactory,
@@ -220,7 +220,6 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(
         status="DRAFT",
         title="Test Measure Page",
-        guid="test-measure-page-guid",
         area_covered=[UKCountry.ENGLAND],
         lowest_level_of_geography__name="UK",
         time_covered="4 months",
@@ -397,7 +396,7 @@ def test_view_index_page_only_contains_one_topic(test_app_client, logged_in_rdu_
 
 def test_view_sandbox_topic(test_app_client, logged_in_rdu_user):
 
-    sandbox_topic = TopicFactory(slug="testing-space", title="Test sandbox topic")
+    sandbox_topic = TopicFactory(slug=TESTING_SPACE_SLUG, title="Test sandbox topic")
     resp = test_app_client.get(url_for("static_site.topic", topic_slug=sandbox_topic.slug))
 
     assert resp.status_code == 200
@@ -405,10 +404,21 @@ def test_view_sandbox_topic(test_app_client, logged_in_rdu_user):
     assert page.h1.text.strip() == "Test sandbox topic"
 
 
-def test_measure_page_social_sharing(app, test_app_client, logged_in_rdu_user):
-    measure_version = MeasureVersionFactory(
-        title="Test Measure Page", summary="Unemployment Summary\n * This is a summary bullet"
-    )
+@pytest.mark.parametrize(
+    "summary, description, expected_social_description",
+    (
+        ("Unemployment Summary\n * This is a summary bullet", None, "This is a summary bullet"),
+        (
+            "Unemployment Summary\n * This is a summary bullet",
+            "This is the short description",
+            "This is the short description",
+        ),
+    ),
+)
+def test_measure_page_social_sharing(
+    app, test_app_client, logged_in_rdu_user, summary, description, expected_social_description
+):
+    measure_version = MeasureVersionFactory(title="Test Measure Page", summary=summary, description=description)
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
@@ -426,7 +436,7 @@ def test_measure_page_social_sharing(app, test_app_client, logged_in_rdu_user):
         "og:type": "article",
         "og:title": "Test Measure Page",
         "og:image": app.config["RDU_SITE"] + "/static/images/opengraph-image.png",
-        "og:description": "This is a summary bullet",
+        "og:description": expected_social_description,
     }
     for attribute, value in expected_social_attributes_and_values.items():
         social_sharing_meta = page.findAll("meta", property=attribute)
@@ -455,7 +465,6 @@ def test_view_measure_page(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(
         status="DRAFT",
         title="Test Measure Page",
-        guid="test-measure-page-guid",
         area_covered=[UKCountry.ENGLAND],
         lowest_level_of_geography__name="UK",
         time_covered="4 months",
@@ -548,13 +557,7 @@ def test_homepage_topics_display_in_rows_with_three_columns(
         topic = TopicFactory(slug=f"topic-{i}", title=f"Test topic page #{i}")
         subtopic = SubtopicFactory(slug=f"subtopic-{i}", title=f"Test subtopic page #{i}", topic=topic)
         measure = MeasureFactory(slug=f"measure-{i}", subtopics=[subtopic])
-        MeasureVersionFactory(
-            guid=f"measure_version_{i}",
-            status="APPROVED",
-            title=f"Test measure page #{i}",
-            version="1.0",
-            measure=measure,
-        )
+        MeasureVersionFactory(status="APPROVED", title=f"Test measure page #{i}", version="1.0", measure=measure)
 
     resp = test_app_client.get(url_for("static_site.index"))
     assert resp.status_code == 200

@@ -18,18 +18,16 @@ from application.data.standardisers.ethnicity_dictionary_lookup import Ethnicity
 from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundException
 from application.cms.file_service import FileService
 from application.cms.filters import (
-    format_page_guid,
     format_approve_button,
-    format_date_time,
     format_friendly_date,
     format_friendly_short_date,
     format_friendly_short_date_with_year,
-    format_versions,
     format_status,
     index_of_last_initial_zero,
     yesno,
 )
 from application.cms.dimension_service import dimension_service
+from application.cms.models import TESTING_SPACE_SLUG
 from application.cms.page_service import page_service
 from application.cms.scanner_service import scanner_service
 from application.cms.upload_service import upload_service
@@ -45,7 +43,6 @@ from application.static_site.filters import (
     strip_trailing_slash,
     join_enum_display_names,
     slugify_value,
-    first_bullet,
     format_iso8601_date,
 )
 
@@ -130,15 +127,12 @@ def create_app(config_object):
     app.jinja_env.lstrip_blocks = True
     app.jinja_env.add_extension(jinja_do)
 
-    app.add_template_filter(format_page_guid)
     app.add_template_filter(format_approve_button)
-    app.add_template_filter(format_date_time)
     app.add_template_filter(render_markdown)
     app.add_template_filter(filesize)
     app.add_template_filter(format_friendly_date)
     app.add_template_filter(format_friendly_short_date)
     app.add_template_filter(format_friendly_short_date_with_year)
-    app.add_template_filter(format_versions)
     app.add_template_filter(format_status)
     app.add_template_filter(value_filter)
     app.add_template_filter(flatten)
@@ -147,7 +141,6 @@ def create_app(config_object):
     app.add_template_filter(strip_trailing_slash)
     app.add_template_filter(join_enum_display_names)
     app.add_template_filter(slugify_value)
-    app.add_template_filter(first_bullet)
     app.add_template_filter(format_iso8601_date)
     app.add_template_filter(index_of_last_initial_zero)
     app.add_template_filter(yesno)
@@ -198,6 +191,7 @@ def create_app(config_object):
             READ=READ,
             UPDATE_MEASURE=UPDATE_MEASURE,
             VIEW_DASHBOARDS=VIEW_DASHBOARDS,
+            TESTING_SPACE_SLUG=TESTING_SPACE_SLUG,
             get_content_security_policy=get_content_security_policy,
         )
 

@@ -52,7 +52,7 @@ Example usage:
     This will create a Dimension with the given summary, no associated Chart, and all other data randomly-generated. It **will not** generate a MeasureVersion by default. A dimension is not valid without an associated MeasureVersion, so one will need to be created and the dimension attached to it before a database commit will succeed.
 * Creating a dimension and attaching it to an existing MeasureVersion:
     ```
-    dimension = DimensionFactory(page=measure_version)
+    dimension = DimensionFactory(measue_version=measure_version)
     ```
     Creates a Dimension and sets up the `page` relationship to point to an existing MeasureVersion.
 * Creating a Classification:

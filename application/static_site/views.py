@@ -27,7 +27,7 @@ from application.utils import (
 def index():
     return render_template(
         "static_site/index.html",
-        topics=page_service.get_all_topics(),
+        topics=page_service.get_topics(include_testing_space=False),
         static_mode=get_bool(request.args.get("static_mode", False)),
     )
 
@@ -43,7 +43,6 @@ def ethnicity_in_the_uk():
 def ethnicity_in_the_uk_page(page_name):
     ETHNICITY_IN_THE_UK_PAGES = [
         "ethnic-groups-and-data-collected",
-        "ethnic-groups-by-place-of-birth",
         "ethnic-groups-by-sexual-identity",
         "ethnicity-and-type-of-family-or-household",
     ]

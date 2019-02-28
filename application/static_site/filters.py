@@ -2,7 +2,6 @@ import bleach
 import json
 import markdown
 import jinja2
-import re
 
 from flask import Markup
 from hurry.filesize import size, alternative
@@ -125,15 +124,3 @@ def format_iso8601_date(date):
     if date is None:
         return ""
     return date.strftime("%Y-%m-%d")
-
-
-def first_bullet(value):
-    if value:
-        regex = re.compile(r"\*\s[^\n]*")
-        result = regex.search(value)
-        if result:
-            return result.group()
-        else:
-            return ""
-    else:
-        return ""

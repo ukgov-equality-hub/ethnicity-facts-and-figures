@@ -117,7 +117,7 @@
         {% endcall %}
 
         <div class="grid-row">
-            <div class="column-full">
+            <div class="column-two-thirds">
                 <h1 class="heading-large">{% if new %}Create{% else %}Edit{% endif %} page</h1>
                     {% if not new %}{{ form.db_version_id }}{% endif %}
                     {% if measure_version.published_at %}
@@ -125,6 +125,11 @@
                     {% endif %}
 
                     {{ form.title(disabled=form_disabled, diffs=diffs) }}
+
+                    <div class="govuk-character-count" data-module="character-count" data-maxlength="160">
+                        {{ form.description(disabled=form_disabled, diffs=diffs,rows="3", class_="govuk-textarea js-character-count") }}
+                    </div>
+
 
                     <div class="form-group">
                         <label class="form-label" for="subtopic">Topic</label>
@@ -223,7 +228,7 @@
                             <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
                                 <td>{{ dimension.title }}</td>
                                 <td>
-                                    {% if dimension.page.version != '1.0' and dimension.updated_at != dimension.page.updated_at %}
+                                    {% if dimension.measure_version.version != '1.0' and dimension.updated_at != dimension.measure_version.updated_at %}
                                         <span class="updated-badge">Updated</span>
                                     {% endif %}
                                 </td>

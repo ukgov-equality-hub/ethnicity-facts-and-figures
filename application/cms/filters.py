@@ -1,8 +1,3 @@
-def format_page_guid(page_guid):
-    _, name = page_guid.split("_")
-    return "{}".format(name).capitalize()
-
-
 def format_approve_button(s):
     messages = {
         "INTERNAL_REVIEW": "Save &amp; Send to review",
@@ -10,10 +5,6 @@ def format_approve_button(s):
         "APPROVED": "Approve for publishing",
     }
     return messages.get(s, "")
-
-
-def format_date_time(date):
-    return date.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def format_friendly_date(date):
@@ -32,12 +23,6 @@ def format_friendly_short_date(date):
     if date is None:
         return ""
     return date.strftime("%d %b").lstrip("0")
-
-
-def format_versions(number):
-    if number == 1:
-        return "%s&nbsp;version" % number
-    return "%s&nbsp;versions" % number
 
 
 def index_of_last_initial_zero(list_):

@@ -26,6 +26,7 @@ gulp.task('compile-css', function () {
 
 gulp.task('compile-js-all', function () {
   return gulp.src([
+    './node_modules/govuk-frontend/all.js',
     './application/src/js/all/vendor/jquery.min.js',
     './application/src/js/all/vendor/polyfills/*.js',
     './application/src/js/all/vendor/govuk-template.js',
