@@ -10,6 +10,7 @@ from tests.functional.utils import (
     driver_login,
 )
 from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory
+from tests.functional.pages import MeasureCreateVersionPage
 
 """
 
@@ -96,6 +97,56 @@ def test_create_a_measure_as_editor(driver, live_server, government_departments,
     measure_edit_page.click_approved()
 
     # THEN the status should be published
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES["published"]
+
+    # WHEN we create a minor update
+    measure_edit_page.click_update()
+    measure_create_version_page = MeasureCreateVersionPage(driver)
+    measure_create_version_page.click_minor_update()
+    measure_create_version_page.click_create()
+
+    # THEN we are on the 1.1 measure version edit page
+    assert driver.current_url.endswith("/1.1/edit")
+
+    # WHEN we try to submit the minor update immediately
+    measure_edit_page.click_save_and_send_to_review()
+
+    # THEN we get validation errors (corrections radio+edit summary)
+    assert "Cannot submit for review, please see errors below" in driver.page_source
+
+    # WHEN we fill in the required data
+    measure_edit_page.fill_measure_page_minor_edit_fields(sample_measure_version)
+
+    # THEN we can publish the new version.
+    measure_edit_page.click_save_and_send_to_review()
+    measure_edit_page.click_department_review()
+    measure_edit_page.click_approved()
+
+    # THEN the status should be published
+    assert measure_edit_page.get_status() == EXPECTED_STATUSES["published"]
+
+    # WHEN we create a major update
+    measure_edit_page.click_update()
+    measure_create_version_page = MeasureCreateVersionPage(driver)
+    measure_create_version_page.click_major_update()
+    measure_create_version_page.click_create()
+
+    # THEN we are on the 2.0 measure version edit page
+    assert driver.current_url.endswith("/2.0/edit")
+
+    # WHEN we try to submit the major update immediately
+    measure_edit_page.click_save_and_send_to_review()
+
+    # THEN we get validation errors (edit summary)
+    assert "Cannot submit for review, please see errors below" in driver.page_source
+
+    # WHEN we provide an edit summary and approve the major edit
+    measure_edit_page.fill_measure_page_major_edit_fields(sample_measure_version)
+    measure_edit_page.click_save_and_send_to_review()
+    measure_edit_page.click_department_review()
+    measure_edit_page.click_approved()
+
+    # AND the status should be published
     assert measure_edit_page.get_status() == EXPECTED_STATUSES["published"]
 
     measure_edit_page.log_out()
