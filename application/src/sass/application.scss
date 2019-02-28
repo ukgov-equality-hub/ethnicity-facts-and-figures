@@ -3,6 +3,9 @@ $govuk-compatibility-govukfrontendtoolkit: true;
 $govuk-compatibility-govuktemplate: true;
 $govuk-compatibility-govukelements: true;
 
+/* Set the GOV.UK Frontend assets path */
+$govuk-assets-path: '/static/assets/';
+
 /* GOV.UK Frontend, for the Design System. Installed via npm */
 @import "node_modules/govuk-frontend/all";
 

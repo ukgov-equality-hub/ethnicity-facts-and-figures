@@ -16,6 +16,12 @@ gulp.task('copy-static', function () {
     .pipe(gulp.dest('./application/static'))
 })
 
+// Copy assets from GOV.UK Frontend
+gulp.task('copy-assets', function () {
+  return gulp.src(['./node_modules/govuk-frontend/assets/**'])
+    .pipe(gulp.dest('./application/static/assets'))
+})
+
 gulp.task('compile-css', function () {
   return gulp.src(['./application/src/sass/*.scss'])
     .pipe(sourcemaps.init())
@@ -134,7 +140,7 @@ gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-cha
 
 gulp.task('make-css', gulp.series(gulp.parallel('compile-css'), 'manifest-css'));
 
-gulp.task('make', gulp.parallel('copy-static', 'make-css', 'make-js'));
+gulp.task('make', gulp.parallel('copy-assets', 'copy-static', 'make-css', 'make-js'));
 
 gulp.task('default', gulp.series('make'));
 
