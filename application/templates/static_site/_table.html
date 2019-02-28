@@ -15,7 +15,7 @@
   <div class="table-container-middle">
     <div class="table-container-inner">
 
-      <div class="table-container">
+      <div class="table-container" style="max-height: 99999999px;">
     <table class="table measure-data {{ 'grouped' if dimension.table.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension.table.parent_child }}">
     <thead>
 
@@ -104,7 +104,7 @@
           {% set row_loop = loop %}
           {% for value in data['values'] %}
             {% set sort_value = value %}
-            
+
             {% if data.sort_values %}
               {% if data.sort_values[loop.index0] in missing_data_sort_order_values %}
                 {% set sort_value = missing_data_sort_order_values[data.sort_values[loop.index0]] %}

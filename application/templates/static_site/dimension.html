@@ -38,7 +38,7 @@
             {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
 
               <div class="column-two-thirds">
-                  <h2 class="govuk-heading-m" id="{{ dimension.title|slugify_value }}">{{ dimension.title }}</h2>
+                  <h2 class="govuk-heading-m" id="section">{{ dimension.title }}</h2>
                   <div class="metadata">
                       <dl>
                           {% if measure_version.area_covered %}
@@ -66,7 +66,7 @@
               </div>
 
               <div class="chart-and-footer">
-                <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
+                <div class="rd_chart" id="chart" style="clear: both; overflow: hidden"></div>
 
                 <div class="column-full chart-footer">
                   {% set chart_text_data = dimension.chart | flatten_chart %}
@@ -152,4 +152,67 @@
 
 {% block bodyEnd %}
   {{ super() }}
+
+<script type="text/javascript" src="/static/javascripts/{{ 'charts.js' | version_filter }}"></script>
+
+<script type="text/javascript">
+
+  var dimensions = {{ dimensions|tojson }};
+
+  $(document).ready(function () {
+    // for (d in dimensions) {
+      var chartObject = dimensions[{{dimension_number}}].chart;
+
+      if(chartObject) {
+          // code writes title as html and creates sub-container
+          var chartContainer = 'chart';
+          var chartHtml = '<div class="column-full">';
+          chartHtml = chartObject.title.text ? chartHtml + '<h3 class="heading-small">' + chartObject.title.text + '</h3>': chartHtml;
+          chartHtml = chartHtml + '<div id="' + chartContainer + '_image"></div>';
+          chartHtml = chartHtml + '</div>';
+          $('#chart').html(chartHtml);
+
+          // draws chart in sub-container
+          chartObject.title = '';
+          drawChart(chartContainer + '_image', chartObject);
+      // }
+    };
+
+
+    $('.download-png').click(function(evt){
+        var dimensionGuid = $(evt.currentTarget).attr('id').replace('download-', ''),
+            chartId = '#chart_' + dimensionGuid + '_image',
+            chart = $(chartId),
+            dimension = dimensions.find(function(d){return d.guid == dimensionGuid}),
+            chartTitle = $(evt.currentTarget).data('title');
+
+        var subtitle = 'Title:' +  chartTitle
+                                + '. Location: ' + '{{ measure_version.format_area_covered() }}'
+                                + '. Time period: '  + dimension.time_period
+                                + '. Source:  {{ measure_version.primary_data_source.publisher.name if measure_version.primary_data_source else "" }}'
+                                + '| Ethnicity Facts and Figures GOV.UK';
+
+        chart.highcharts().options.subtitle.text = subtitle;
+        chart.highcharts().exportChart({"filename" : chartTitle});
+        evt.preventDefault();
+    });
+
+
+    function getSourceText(source){
+        var regex = /\[(.*?)\]\(.*?\)/;
+        if(regex.test(source)){
+            var match = regex.exec(source);
+            if(match.length == 2) {
+               return match[1];
+            }
+            else {
+                return source;
+            }
+        } else {
+            return source;
+        }
+    };
+
+  });
+</script>
 {% endblock %}
