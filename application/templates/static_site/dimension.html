@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% from "_shared/_status_banner_macro.html" import status_banner %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_version.measure.subtopic.topic.title},
+  ]
+  if not preview else
+  none
+%}
+
+{% block pageTitle %}{{ measure_version.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block socialTitle %}{{ measure_version.title }}{% endblock %}
+{% block socialDescription %}{{ measure_version.summary | first_bullet | render_markdown | striptags }}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Measure');{% endblock %}
+
+{% set version = 'latest' if measure_version.has_no_later_published_versions() else measure_version.version %}
+
+{% block headEnd %}
+    {{ super() }}
+
+    {% if not measure_version.has_no_later_published_versions() %}
+        <meta name="robots" content="noindex">
+    {% endif %}
+{% endblock %}
+
+{% block mainElementDefinition %}<main id="content" itemscope itemtype="http://schema.org/NewsArticle">{% endblock %}
+
+{% block content %}
+
+  {% include "static_site/_measure_header.html" %}
+
+  <div class="grid-row">
+      {% if measure_version.dimensions %}
+          {% set dimension = dimensions[dimension_number - 0] %}
+
+            {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
+
+              <div class="column-two-thirds">
+                  <h2 class="govuk-heading-m" id="{{ dimension.title|slugify_value }}">{{ dimension.title }}</h2>
+                  <div class="metadata">
+                      <dl>
+                          {% if measure_version.area_covered %}
+                              <dt>Location:</dt>
+                              <dd>
+                                  {{ measure_version.format_area_covered()  }}
+                              </dd>
+                          {% endif %}
+                          {% if dimension.time_period %}
+                              <dt>Time period:</dt>
+                              <dd>
+                                  {{ dimension.time_period }}
+                              </dd>
+                          {% endif %}
+                          {% if measure_version.primary_data_source %}
+                              <dt>Source:</dt>
+                              <dd>
+                                  <a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_version.primary_data_source.title }}">
+                                      {{ measure_version.primary_data_source.title }}
+                                  </a>
+                              </dd>
+                          {% endif %}
+                      </dl>
+                  </div>
+              </div>
+
+              <div class="chart-and-footer">
+                <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
+
+                <div class="column-full chart-footer">
+                  {% set chart_text_data = dimension.chart | flatten_chart %}
+
+                  {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data %}
+                    <p class="missing-data-explanation">
+                        {% if "N/A" in chart_text_data %}
+                            <span class="explanation"><sup>*</sup> Not applicable</span>
+                        {% endif %}
+
+                        {% if "-" in chart_text_data %}
+                            <span class="explanation"><span class="missing-data not-collected"></span> Data not collected</span>
+                        {% endif %}
+
+                        {% if "!" in chart_text_data %}
+                            <span class="explanation"><span class="missing-data confidential"></span> Data withheld to protect confidentiality</span>
+                        {% endif %}
+
+                        {% if "?" in chart_text_data %}
+                            <span class="explanation"><span class="missing-data sample-too-small"></span> Data withheld because a small sample size makes it unreliable</span>
+                        {% endif %}
+
+                    </p>
+                  {% endif %}
+
+                    {% if chart_and_downloadable %}
+                        <p class="chart-download">
+                            <a href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension.chart.title.text }}" class="download-png"
+                               id="download-{{ dimension.guid }}" data-title="{{ dimension.chart.title.text }}">
+                                Download chart (PNG)
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
+              </div>
+
+              {% set tabular_download_viable = True if dimension.table else False %}
+              <div class="column-full"
+                   style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
+                  {% if dimension.table %}
+                      {% include "static_site/_table.html" %}
+
+                      {% if tabular_download_viable %}
+                      <p class="chart-download">
+                          {% if static_mode %}
+                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
+                                 download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
+                          {% else %}
+                              <a href="{{ url_for('static_site.dimension_file_table_download',
+                                   topic_slug=topic_slug,
+                                   subtopic_slug=subtopic_slug,
+                                   measure_slug=measure_version.measure.slug,
+                                   version=measure_version.version,
+                                   dimension_guid=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}">Download table data (CSV)</a>
+                          {% endif %}
+
+                          {% if static_mode %}
+                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
+                                 data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
+                          {% else %}
+                              <a href="{{ url_for('static_site.dimension_file_download',
+                                   topic_slug=topic_slug,
+                                   subtopic_slug=subtopic_slug,
+                                   measure_slug=measure_version.measure.slug,
+                                   version=measure_version.version,
+                                   dimension_guid=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
+                          {% endif %}
+                      </p>
+                    {% endif %}
+                  {% endif %}
+              </div>
+              <div class="column-two-thirds">
+                  <h3 class="heading-small">Summary</h3>
+                  <div class="bullets spaced-out">
+                    {{ dimension.summary | render_markdown }}
+                  </div>
+              </div>
+      {% endif %}
+  </div>
+
+</main>
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+{% endblock %}

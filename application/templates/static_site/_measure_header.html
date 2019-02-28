@@ -1,0 +1,117 @@
+{% if version != 'latest' %}
+  <div class="old-edition-notice">
+    <h2 class="heading-large">There is a new version of this page</h2>
+    <p>View the <a href="{{ url_for('static_site.measure_version',
+                          topic_slug=topic_slug,
+                          subtopic_slug=subtopic_slug,
+                          measure_slug=measure_version.measure.slug,
+                          version='latest') }}">latest version</a></p>
+  </div>
+{% endif %}
+
+<style>
+  .eff-toc li { margin-bottom: 0; }
+  .eff-toc li a {text-decoration: none;}
+  .eff-toc__number {display: table-cell; width: 24px;}
+  .eff-toc__content {display: table-cell; padding-bottom: 5px;}
+
+
+  .eff-summary-list--small { font-size: 16px; }
+
+  .eff-summary-list--small .govuk-summary-list__key,
+  .eff-summary-list--small .govuk-summary-list__value { padding-bottom: 0; padding-top: 0;}
+
+  .eff-summary-list--small .govuk-summary-list__key {
+    width: 150px;
+  }
+
+</style>
+
+<div class="grid-row">
+  <div class="column-two-thirds">
+    <div class="">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-1  govuk-!-margin-top-7" itemprop="headline"">
+        {{ measure_version.title }}
+      </h1>
+
+      {%  if first_published_date %}
+        <p class="govuk-body govuk-!-margin-top-4">Published <time itemprop="datePublished" datetime="{{ first_published_date | format_iso8601_date }}">{{ first_published_date | format_friendly_date }}</time>
+        </p>
+      {%  endif %}
+
+    </div>
+  </div>
+</div>
+
+
+<div class="grid-row">
+  <div class="column-two-thirds govuk-!-margin-bottom-6">
+    <div style="border-bottom: 1px solid #bfc1c3;">
+
+    <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+    <ol class="govuk-list eff-toc">
+      <li class="govuk-!-font-size-16">
+
+        {% if section == "overview" %}
+          <span class="eff-toc__number">1. </span><span class="eff-toc__content">Overview</span></a>
+        {% else %}
+          <a class="govuk-link" href="{{ url_for('static_site.measure_version',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest') }}"><span class="eff-toc__number">1. </span><span class="eff-toc__content">Overview</span></a></li>
+        {% endif %}
+
+
+      {% if measure_version.dimensions %}
+        {% for dimension in dimensions %}
+
+          <li class="govuk-!-font-size-16">
+
+            {% if section == "dimension" and dimension_number == loop.index -1 %}
+              <span class="eff-toc__number">{{ loop.index + 1 }}. </span><span class="eff-toc__content">{{ dimension.title|replace("Pupils achieving grade 5 or above in English and Maths GCSE b", "B")|replace("(FSM)", "")|replace("(SEN)", "") }}</span>
+            {% else %}
+              <a class="govuk-link" href="{{ url_for('static_site.measure_version_dimension',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest',dimension_number=loop.index) }}"><span class="eff-toc__number">{{ loop.index + 1 }}. </span><span class="eff-toc__content">{{ dimension.title|replace("Pupils achieving grade 5 or above in English and Maths GCSE b", "B")|replace("(FSM)", "")|replace("(SEN)", "") }}</span></a>
+            {% endif %}
+
+          </li>
+
+
+        {% endfor %}
+      {% endif %}
+
+
+      <li class="govuk-!-font-size-16">
+        {% if section == "methodology" %}
+          <span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 2 }}. </span>
+          <span class="eff-toc__content">Methodology</span>
+        {% else %}
+          <a class="govuk-link" href="{{ url_for('static_site.measure_version_methodology',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest') }}"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 2 }}. </span><span class="eff-toc__content">Methodology</span></a>
+        {% endif %}
+      </li>
+
+      <li class="govuk-!-font-size-16">
+        {% if section == "data_sources" %}
+          <span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 3 }}. </span><span class="eff-toc__content">Data sources</span>
+        {% else %}
+          <a class="govuk-link" href="{{ url_for('static_site.measure_version_data_sources',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest') }}"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 3 }}. </span><span class="eff-toc__content">Data sources</span></a>
+        {% endif %}
+
+      </li>
+
+      <li class="govuk-!-font-size-16">
+        {% if section == "download_the_data" %}
+          <span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 4 }}. </span><span class="eff-toc__content">Download the data</span>
+        {% else %}
+          <a class="govuk-link" href="{{ url_for('static_site.measure_version_download_the_data',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest') }}"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 4 }}. </span><span class="eff-toc__content">Download the data</span></a>
+        {% endif %}
+
+      </li>
+
+    </ol>
+  </div>
+</div>
+</div>
+
+

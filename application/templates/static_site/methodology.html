@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% from "_shared/_status_banner_macro.html" import status_banner %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_version.measure.subtopic.topic.title},
+  ]
+  if not preview else
+  none
+%}
+
+{% block pageTitle %}{{ measure_version.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block socialTitle %}{{ measure_version.title }}{% endblock %}
+{% block socialDescription %}{{ measure_version.summary | first_bullet | render_markdown | striptags }}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Measure');{% endblock %}
+
+{% set version = 'latest' if measure_version.has_no_later_published_versions() else measure_version.version %}
+
+{% block headEnd %}
+    {{ super() }}
+
+    {% if not measure_version.has_no_later_published_versions() %}
+        <meta name="robots" content="noindex">
+    {% endif %}
+{% endblock %}
+
+{% block mainElementDefinition %}<main id="content" itemscope itemtype="http://schema.org/NewsArticle">{% endblock %}
+
+{% block content %}
+  {% include "static_site/_measure_header.html" %}
+
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h2 id="methodology" class="govuk-heading-m">Methodology</h2>
+            {% if measure_version.methodology %}
+              {{ measure_version.methodology | render_markdown  }}
+            {% endif %}
+
+            {% if measure_version.suppression_and_disclosure %}
+                <h3 class="heading-small">Suppression rules and disclosure control</h3>
+              {{ measure_version.suppression_and_disclosure | render_markdown }}
+            {% endif %}
+
+            {% if measure_version.estimation %}
+                <h3 class="heading-small">Rounding</h3>
+                {{ measure_version.estimation  | render_markdown  }}
+            {% endif %}
+
+            {% if measure_version.related_publications %}
+              <h3 class="heading-small">Related publications</h3>
+              {{ measure_version.related_publications | render_markdown }}
+            {% endif %}
+
+            {% if measure_version.qmi_url %}
+              <a href="{{ measure_version.qmi_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Quality and methodology information" data-event-label="{{ measure_version.title }}">Quality and methodology information</a>
+            {% endif %}
+
+            {% if measure_version.further_technical_information %}
+            <h3 class="heading-small">
+              Further technical information
+            </h3>
+              {{ measure_version.further_technical_information  | render_markdown }}
+            {% endif %}
+
+
+      </div>
+
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+
+<script type="text/javascript" src="/static/javascripts/{{ 'charts.js' | version_filter }}"></script>
+
+<script type="text/javascript">
+
+  var dimensions = {{ dimensions|tojson }};
+
+  $(document).ready(function () {
+    for (d in dimensions) {
+      var chartObject = dimensions[d].chart;
+      if(chartObject) {
+          // code writes title as html and creates sub-container
+          var chartContainer = 'chart_' + dimensions[d].guid;
+          var chartHtml = '<div class="column-full">';
+          chartHtml = chartObject.title.text ? chartHtml + '<h3 class="heading-small">' + chartObject.title.text + '</h3>': chartHtml;
+          chartHtml = chartHtml + '<div id="' + chartContainer + '_image"></div>';
+          chartHtml = chartHtml + '</div>';
+          $('#' + chartContainer).html(chartHtml);
+
+          // draws chart in sub-container
+          chartObject.title = '';
+          drawChart(chartContainer + '_image', chartObject);
+      }
+    };
+
+
+    $('.download-png').click(function(evt){
+        var dimensionGuid = $(evt.currentTarget).attr('id').replace('download-', ''),
+            chartId = '#chart_' + dimensionGuid + '_image',
+            chart = $(chartId),
+            dimension = dimensions.find(function(d){return d.guid == dimensionGuid}),
+            chartTitle = $(evt.currentTarget).data('title');
+
+        var subtitle = 'Title:' +  chartTitle
+                                + '. Location: ' + '{{ measure_version.format_area_covered() }}'
+                                + '. Time period: '  + dimension.time_period
+                                + '. Source:  {{ measure_version.primary_data_source.publisher.name if measure_version.primary_data_source else "" }}'
+                                + '| Ethnicity Facts and Figures GOV.UK';
+
+        chart.highcharts().options.subtitle.text = subtitle;
+        chart.highcharts().exportChart({"filename" : chartTitle});
+        evt.preventDefault();
+    });
+
+
+    function getSourceText(source){
+        var regex = /\[(.*?)\]\(.*?\)/;
+        if(regex.test(source)){
+            var match = regex.exec(source);
+            if(match.length == 2) {
+               return match[1];
+            }
+            else {
+                return source;
+            }
+        } else {
+            return source;
+        }
+    };
+
+  });
+</script>
+{% endblock %}

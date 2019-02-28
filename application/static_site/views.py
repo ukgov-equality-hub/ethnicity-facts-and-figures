@@ -159,11 +159,167 @@ def measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "static_site/measure.html",
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
+        section="overview",
         measure_version=measure_version,
         dimensions=[dimension.to_dict() for dimension in measure_version.dimensions],
         versions=measure_version.previous_major_versions,
         first_published_date=measure_version.first_published_date,
         edit_history=measure_version.previous_minor_versions,
+        static_mode=get_bool(request.args.get("static_mode", False)),
+    )
+
+@static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/dimension-<dimension_number>")
+@login_required
+def measure_version_dimension(topic_slug, subtopic_slug, measure_slug, version, dimension_number):
+
+    measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
+
+    try:
+        if version == "latest":
+
+            if current_user.can_access_measure(measure):
+                measure_version = measure.latest_version
+            else:
+                measure_version = measure.latest_published_version
+
+        else:
+            *_, measure_version = page_service.get_measure_version_hierarchy(
+                topic_slug, subtopic_slug, measure_slug, version
+            )
+
+            if not (current_user.can_access_measure(measure) or measure_version.status == "APPROVED"):
+                abort(403)
+
+    except PageNotFoundException:
+        abort(404)
+
+    return render_template(
+        "static_site/dimension.html",
+        topic_slug=topic_slug,
+        subtopic_slug=subtopic_slug,
+        measure_version=measure_version,
+        dimensions=[dimension.to_dict() for dimension in measure_version.dimensions],
+        versions=measure_version.previous_major_versions,
+        first_published_date=measure_version.first_published_date,
+        edit_history=measure_version.previous_minor_versions,
+        section="dimension",
+        dimension_number=int(dimension_number) - 1,
+        static_mode=get_bool(request.args.get("static_mode", False)),
+    )
+
+
+@static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/data_sources")
+@login_required
+def measure_version_data_sources(topic_slug, subtopic_slug, measure_slug, version):
+
+    measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
+
+    try:
+        if version == "latest":
+
+            if current_user.can_access_measure(measure):
+                measure_version = measure.latest_version
+            else:
+                measure_version = measure.latest_published_version
+
+        else:
+            *_, measure_version = page_service.get_measure_version_hierarchy(
+                topic_slug, subtopic_slug, measure_slug, version
+            )
+
+            if not (current_user.can_access_measure(measure) or measure_version.status == "APPROVED"):
+                abort(403)
+
+    except PageNotFoundException:
+        abort(404)
+
+    return render_template(
+        "static_site/data_sources.html",
+        topic_slug=topic_slug,
+        subtopic_slug=subtopic_slug,
+        measure_version=measure_version,
+        dimensions=[dimension.to_dict() for dimension in measure_version.dimensions],
+        versions=measure_version.previous_major_versions,
+        first_published_date=measure_version.first_published_date,
+        edit_history=measure_version.previous_minor_versions,
+        section="data_sources",
+        static_mode=get_bool(request.args.get("static_mode", False)),
+    )
+
+@static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/methodology")
+@login_required
+def measure_version_methodology(topic_slug, subtopic_slug, measure_slug, version):
+
+    measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
+
+    try:
+        if version == "latest":
+
+            if current_user.can_access_measure(measure):
+                measure_version = measure.latest_version
+            else:
+                measure_version = measure.latest_published_version
+
+        else:
+            *_, measure_version = page_service.get_measure_version_hierarchy(
+                topic_slug, subtopic_slug, measure_slug, version
+            )
+
+            if not (current_user.can_access_measure(measure) or measure_version.status == "APPROVED"):
+                abort(403)
+
+    except PageNotFoundException:
+        abort(404)
+
+    return render_template(
+        "static_site/methodology.html",
+        topic_slug=topic_slug,
+        subtopic_slug=subtopic_slug,
+        measure_version=measure_version,
+        dimensions=[dimension.to_dict() for dimension in measure_version.dimensions],
+        versions=measure_version.previous_major_versions,
+        first_published_date=measure_version.first_published_date,
+        edit_history=measure_version.previous_minor_versions,
+        section="methodology",
+        static_mode=get_bool(request.args.get("static_mode", False)),
+    )
+
+
+@static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/download-the-data")
+@login_required
+def measure_version_download_the_data(topic_slug, subtopic_slug, measure_slug, version):
+
+    measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
+
+    try:
+        if version == "latest":
+
+            if current_user.can_access_measure(measure):
+                measure_version = measure.latest_version
+            else:
+                measure_version = measure.latest_published_version
+
+        else:
+            *_, measure_version = page_service.get_measure_version_hierarchy(
+                topic_slug, subtopic_slug, measure_slug, version
+            )
+
+            if not (current_user.can_access_measure(measure) or measure_version.status == "APPROVED"):
+                abort(403)
+
+    except PageNotFoundException:
+        abort(404)
+
+    return render_template(
+        "static_site/download_the_data.html",
+        topic_slug=topic_slug,
+        subtopic_slug=subtopic_slug,
+        measure_version=measure_version,
+        dimensions=[dimension.to_dict() for dimension in measure_version.dimensions],
+        versions=measure_version.previous_major_versions,
+        first_published_date=measure_version.first_published_date,
+        edit_history=measure_version.previous_minor_versions,
+        section="download_the_data",
         static_mode=get_bool(request.args.get("static_mode", False)),
     )
 
