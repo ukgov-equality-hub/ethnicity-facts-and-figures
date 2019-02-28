@@ -55,7 +55,7 @@
 
   </style>
 
-
+<!--
   {% if not static_mode and not preview %}
     {% call status_banner(sticky=False) %}
       <div class="version-info left">
@@ -118,12 +118,12 @@
       </div>
     {% endcall %}
   {% endif %}
-
+-->
 
 
   <div class="grid-row">
     <div class="column-full">
-      <div style="background-color: #005ea5;" class="govuk-!-margin-top-7 govuk-!-padding-left-5 govuk-!-padding-top-5 govuk-!-padding-bottom-5">
+      <div style="background-color: #005ea5;" class="govuk-!-margin-top-7 govuk-!-padding-left-5 govuk-!-padding-right-5 govuk-!-padding-top-5 govuk-!-padding-bottom-5">
         <h1 class="govuk-heading-xl govuk-!-margin-bottom-1  govuk-!-margin-top-7" itemprop="headline" style="color: white;">
           {{ measure_version.title }}
         </h1>
@@ -141,13 +141,13 @@
 
       <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
       <ol class="govuk-list eff-toc govuk-!-margin-bottom-9">
-        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#intro"><span class="eff-toc__number">1. </span><span class="eff-toc__content">Introduction</span></a></li>
+        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#intro"><span class="eff-toc__number">1. </span><span class="eff-toc__content">Overview</span></a></li>
 
 
         {% if measure_version.dimensions %}
           {% for dimension in dimensions %}
 
-            <li class="govuk-!-font-size-16"><a class="govuk-link" href="#{{ dimension.title|slugify_value }}"><span class="eff-toc__number">{{ loop.index + 1 }}. </span><span class="eff-toc__content">{{ dimension.title }}</span></a></li>
+            <li class="govuk-!-font-size-16"><a class="govuk-link" href="#{{ dimension.title|slugify_value }}"><span class="eff-toc__number">{{ loop.index + 1 }}. </span><span class="eff-toc__content">{{ dimension.title|replace("Pupils achieving grade 5 or above in English and Maths GCSE b", "B")|replace("(FSM)", "")|replace("(SEN)", "") }}</span></a></li>
 
 
           {% endfor %}
@@ -227,7 +227,7 @@
   <div class="grid-row">
     <div class="column-two-thirds">
 
-      <h2 class="govuk-heading-l">1. Introduction</h2>
+      <h2 class="govuk-heading-l">1. Overview</h2>
       <p>
         The main facts and figures show that:
       </p>

@@ -28,7 +28,7 @@
       <meta property="og:title" content="{% block socialTitle %}{% endblock %}" />
       <meta property="og:image" content="{% block socialImage %}{{ config.RDU_SITE | strip_trailing_slash }}/static/images/opengraph-image.png{% endblock %}" />
       <meta property="og:description" content="{% block socialDescription %}{% endblock %}" />
-    
+
       {% block twitterMetadata %}
         <meta name="twitter:card" content="summary" />
       {% endblock %}
@@ -61,7 +61,7 @@
       {% endif %}
     {% endblock %}
   </head>
-  
+
   <body class="{% block bodyClasses %}{% endblock %}">
     {% block bodyStart %}
       <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
@@ -76,18 +76,18 @@
     {% endblock %}
 
     {% block cookieMessage %}
-    <div id="global-cookie-message">
+    <!--<div id="global-cookie-message">
       <div class="cookie-message full-width">
         <p>GOV.UK uses cookies to make the site simpler. <a href="/cookies">Find out more about cookies</a></p>
       </div>
-    </div>
+    </div>-->
     {% endblock %}
 
     {% block header %}
       {% if not static_mode %}
-        {% include 'static_site/_preview.html' %}
+        <!--{% include 'static_site/_preview.html' %}-->
       {% endif %}
-      
+
       {% include '_shared/_header.html' %}
     {% endblock %}
 
@@ -97,19 +97,19 @@
 
     {% block main %}
       {% block mainElementDefinition %}<main id="content" class="main">{% endblock %}
-        
+
       {% block beforeContent %}
         {% block breadcrumbs %}
           {{ render_breadcrumbs(breadcrumbs) }}
         {% endblock breadcrumbs %}
-        
+
         {% block flashMessages %}
           {{ render_flash_messages(get_flashed_messages(with_categories=true)) }}
         {% endblock %}
       {% endblock %}
-      
+
       {% block content %}{% endblock %}
-      
+
       </main>
     {% endblock %}
 
