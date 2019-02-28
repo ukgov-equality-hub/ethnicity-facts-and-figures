@@ -449,6 +449,9 @@ class MeasureEditPage(BasePage):
     def set_primary_title(self, value):
         self.set_text_field(EditMeasureLocators.DATA_SOURCE_TITLE_TEXTAREA, value)
 
+    def set_description(self, value):
+        self.set_text_field(EditMeasureLocators.DESCRIPTION_TEXTAREA, value)
+
     def set_primary_publisher(self, value):
         self.set_auto_complete_field(EditMeasureLocators.DATA_SOURCE_PUBLISHER_ID_INPUT, value)
 
@@ -498,6 +501,8 @@ class MeasureEditPage(BasePage):
         self.set_primary_url(value=data_source.source_url)
         self.set_primary_frequency()
         self.set_primary_type_of_statistic()
+
+        self.set_description(value=measure_version.description)
 
         self.set_measure_summary(measure_version.measure_summary)
         self.set_summary(measure_version.summary)

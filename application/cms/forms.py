@@ -210,6 +210,18 @@ class MeasureVersionForm(FlaskForm):
         strip_whitespace=True,
     )
 
+    description = RDUTextAreaField(
+        label="Description for search engines",
+        validators=[RequiredForReviewValidator()],
+        hint=(
+            "Choose an up‐to‐date statistic that shows a key disparity or change over time. The figure should work as "
+            "a stand-alone statement and end with a full stop."
+        ),
+        extended_hint="_description.html",
+        character_count_limit=160,
+        strip_whitespace=True,
+    )
+
     need_to_know = RDUTextAreaField(
         label="Things you need to know",
         validators=[RequiredForReviewValidator()],
@@ -313,8 +325,15 @@ class UploadForm(FlaskForm):
     upload = FileField(
         label="File in CSV format", validators=[DataRequired(message="Please choose a file for users to download")]
     )
-    title = StringField(label="Title", validators=[DataRequired()])
-    description = TextAreaField()
+    title = RDUStringField(label="Title", hint="For example, ‘Household income data’", validators=[DataRequired()])
+    description = RDUTextAreaField(
+        hint=(
+            Markup(
+                "Please specify what the download file contains, for example:<br><br>This file contains the following: "
+                "measure, ethnicity, year, gender, age group, value, confidence intervals (upper bound, lower bound)."
+            )
+        )
+    )
 
 
 class DimensionRequiredForm(DimensionForm):

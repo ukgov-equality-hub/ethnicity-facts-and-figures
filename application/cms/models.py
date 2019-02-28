@@ -7,7 +7,7 @@ from typing import Optional, Iterable
 import sqlalchemy
 from bidict import bidict
 from dictalchemy import DictableModel
-from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, asc, text, desc
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, asc, text
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -25,6 +25,8 @@ from application.utils import get_token_age, create_guid
 publish_status = bidict(
     REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4, UNPUBLISH=5, UNPUBLISHED=6
 )
+
+TESTING_SPACE_SLUG = "testing-space"
 
 
 class NewVersionType(enum.Enum):
@@ -177,7 +179,9 @@ class DataSource(db.Model, CopyableModel):
     frequency_of_release = db.relationship(
         "FrequencyOfRelease", foreign_keys=[frequency_of_release_id], back_populates="data_sources"
     )
-    pages = db.relationship("MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources")
+    measure_versions = db.relationship(
+        "MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources"
+    )
 
 
 class DataSourceInMeasureVersion(db.Model):
@@ -185,16 +189,11 @@ class DataSourceInMeasureVersion(db.Model):
     __tablename__ = "data_source_in_measure_version"
     __table_args__ = (
         ForeignKeyConstraint(["data_source_id"], ["data_source.id"], name="data_source_in_page_data_source_id_fkey"),
-        ForeignKeyConstraint(
-            ["measure_version_id", "page_guid", "page_version"],
-            ["measure_version.id", "measure_version.guid", "measure_version.version"],
-        ),
+        ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"]),
     )
 
     data_source_id = db.Column(db.Integer, primary_key=True)
     measure_version_id = db.Column(db.Integer, primary_key=True)
-    page_guid = db.Column(db.String(255), nullable=False)
-    page_version = db.Column(db.String(255), nullable=False)
 
 
 user_measure = db.Table(
@@ -235,17 +234,14 @@ class MeasureVersion(db.Model, CopyableModel):
     # columns
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     measure_id = db.Column(db.Integer, nullable=True)  # FK to `measure` table
-    guid = db.Column(db.String(255), nullable=False)  # TODO: Remove, but needs dentangling first.
     version = db.Column(db.String(), nullable=False)  # The version number of this measure version in the format `X.y`.
-    internal_reference = db.Column(db.String())  # optional internal reference number for measures
     latest = db.Column(db.Boolean, default=True)  # True if the current row is the latest version of a measure
     #                                               (latest created, not latest published, so could be a new draft)
 
     review_token = db.Column(db.String())  # used for review page URLs
-    description = db.Column(db.Text)  # Short description aimed at search result listings and social media sharing
+    description = db.Column(db.Text)  # A short summary used by search engines and social sharing.
 
-    # status for measure pages is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
-    # but it's free text in the DB and for other page types we have NULL or "draft" ¯\_(ツ)_/¯
+    # status for measure versions is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
     status = db.Column(db.String(255))
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)  # timestamp when page created
@@ -253,10 +249,9 @@ class MeasureVersion(db.Model, CopyableModel):
     updated_at = db.Column(db.DateTime)  # timestamp when page updated
     last_updated_by = db.Column(db.String(255))  # email address of user who made the most recent update
 
-    # Only MEASURE PAGES are published. All other pages have published=False (or sometimes NULL)
-    published = db.Column(db.BOOLEAN, default=False)  # set to True when a page version is published
-    published_at = db.Column(db.Date, nullable=True)  # date set automatically by CMS when a page version is published
-    published_by = db.Column(db.String(255))  # email address of user who published the page
+    published = db.Column(db.BOOLEAN, default=False)  # set to True when a measure version is published
+    published_at = db.Column(db.Date, nullable=True)  # date - set automatically when a measure version is published
+    published_by = db.Column(db.String(255))  # email address of user who published the measure version
 
     unpublished_at = db.Column(db.Date, nullable=True)
     unpublished_by = db.Column(db.String(255))  # email address of user who unpublished the page
@@ -296,13 +291,20 @@ class MeasureVersion(db.Model, CopyableModel):
 
     # relationships
     measure = db.relationship("Measure", back_populates="versions")
-    lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="pages")
+    lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="measure_versions")
     uploads = db.relationship("Upload", back_populates="measure_version", lazy="dynamic", cascade="all,delete")
     dimensions = db.relationship(
-        "Dimension", back_populates="page", lazy="dynamic", order_by="Dimension.position", cascade="all,delete"
+        "Dimension",
+        back_populates="measure_version",
+        lazy="dynamic",
+        order_by="Dimension.position",
+        cascade="all,delete",
     )
     data_sources = db.relationship(
-        "DataSource", secondary="data_source_in_measure_version", back_populates="pages", order_by=asc(DataSource.id)
+        "DataSource",
+        secondary="data_source_in_measure_version",
+        back_populates="measure_versions",
+        order_by=asc(DataSource.id),
     )
 
     @property
@@ -312,6 +314,26 @@ class MeasureVersion(db.Model, CopyableModel):
     @property
     def secondary_data_source(self):
         return self.data_sources[1] if len(self.data_sources) >= 2 else None
+
+    @property
+    def social_description(self):
+        """A short summary of the page exposed as metadata for use by search
+        engines and social media platforms.
+
+        For backwards-compatibility reasons, measure_versions without custom
+        written descriptions expose the first bullet point from the "Main points"
+        section instead."""
+
+        def first_bullet(value):
+            if not value:
+                return None
+            bullets = re.search(r"\*.+", value, re.MULTILINE)
+            return bullets.group() if bullets else None
+
+        if self.description:
+            return self.description
+        else:
+            return first_bullet(self.summary)
 
     # Returns an array of measures which have been published, and which
     # were either first version (1.0) or the first version of an update
@@ -334,7 +356,7 @@ class MeasureVersion(db.Model, CopyableModel):
 
     def get_dimension(self, guid):
         try:
-            dimension = Dimension.query.filter_by(guid=guid, page=self).one()
+            dimension = Dimension.query.filter_by(guid=guid, measure_version=self).one()
             return dimension
         except NoResultFound:
             raise DimensionNotFoundException
@@ -354,7 +376,7 @@ class MeasureVersion(db.Model, CopyableModel):
             return current_status
 
     def available_actions(self):
-        if self.measure.subtopic.topic.slug == "testing-space":
+        if self.measure.subtopic.topic.slug == TESTING_SPACE_SLUG:
             return ["UPDATE"]
 
         if self.status == "DRAFT":
@@ -444,12 +466,10 @@ class MeasureVersion(db.Model, CopyableModel):
         return not self.is_minor_version()
 
     def get_previous_version(self):
-        # For some weird reason we can't reliably use self.measure.versions here as sometimes self isn't yet in there
-        # But querying MeasureVersion for matching guid works OK
-        all_versions = self.query.filter(MeasureVersion.guid == self.guid).order_by(desc(MeasureVersion.version)).all()
-        my_index = all_versions.index(self)
-        if len(all_versions) > my_index + 1:
-            return all_versions[my_index + 1]
+        # Relies on `measure.versions` being ordered
+        my_index = self.measure.versions.index(self)
+        if len(self.measure.versions) > my_index + 1:
+            return self.measure.versions[my_index + 1]
         else:
             return None
 
@@ -473,7 +493,9 @@ class MeasureVersion(db.Model, CopyableModel):
         return self.previous_minor_versions[-1].published_at if self.previous_minor_versions else self.published_at
 
     def minor_updates(self):
-        versions = MeasureVersion.query.filter(MeasureVersion.guid == self.guid, MeasureVersion.version != self.version)
+        versions = MeasureVersion.query.filter(
+            MeasureVersion.measure_id == self.measure.id, MeasureVersion.version != self.version
+        )
         return [page for page in versions if page.major() == self.major() and page.minor() > self.minor()]
 
     def format_area_covered(self):
@@ -495,7 +517,6 @@ class MeasureVersion(db.Model, CopyableModel):
 
     def to_dict(self, with_dimensions=False):
         page_dict = {
-            "guid": self.guid,
             "title": self.title,
             "measure_summary": self.measure_summary,
             "summary": self.summary,
@@ -533,13 +554,7 @@ class MeasureVersion(db.Model, CopyableModel):
 class Dimension(db.Model):
     # metadata
     __tablename__ = "dimension"
-    __table_args__ = (
-        ForeignKeyConstraint(
-            ["measure_version_id", "page_id", "page_version"],
-            ["measure_version.id", "measure_version.guid", "measure_version.version"],
-        ),
-        {},
-    )
+    __table_args__ = (ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"]), {})
 
     # This is a database expression to get the current timestamp in UTC.
     # Possibly specific to PostgreSQL:
@@ -566,8 +581,6 @@ class Dimension(db.Model):
     table_2_source_data = db.Column(JSON)
 
     measure_version_id = db.Column(db.Integer, nullable=False)
-    page_id = db.Column(db.String(255), nullable=False)
-    page_version = db.Column(db.String(), nullable=False)
 
     position = db.Column(db.Integer)
 
@@ -577,7 +590,7 @@ class Dimension(db.Model):
     # relationships
     dimension_chart = db.relationship("Chart")
     dimension_table = db.relationship("Table")
-    page = db.relationship("MeasureVersion", back_populates="dimensions")
+    measure_version = db.relationship("MeasureVersion", back_populates="dimensions")
     classification_links = db.relationship(
         "DimensionClassification", back_populates="dimension", lazy="dynamic", cascade="all,delete"
     )
@@ -682,7 +695,7 @@ class Dimension(db.Model):
         return {
             "guid": self.guid,
             "title": self.title,
-            "measure": self.page.guid,
+            "measure": self.measure_version.measure.id,
             "time_period": self.time_period,
             "summary": self.summary,
             "chart": self.chart,
@@ -733,14 +746,7 @@ class Dimension(db.Model):
 class Upload(db.Model, CopyableModel):
     # metadata
     __tablename__ = "upload"
-    __table_args__ = (
-        # TODO: Update to only check measure_version_id
-        ForeignKeyConstraint(
-            ["measure_version_id", "page_id", "page_version"],
-            ["measure_version.id", "measure_version.guid", "measure_version.version"],
-        ),
-        {},
-    )
+    __table_args__ = (ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"]), {})
 
     # columns
     guid = db.Column(db.String(255), primary_key=True)
@@ -750,8 +756,6 @@ class Upload(db.Model, CopyableModel):
     size = db.Column(db.String(255))
 
     measure_version_id = db.Column(db.Integer, nullable=False)
-    page_id = db.Column(db.String(255), nullable=False)  # TODO: Remove as part of final cleanup migration
-    page_version = db.Column(db.String(), nullable=False)  # TODO: Remove as part of final cleanup migration
 
     # relationships
     measure_version = db.relationship("MeasureVersion", back_populates="uploads")
@@ -945,7 +949,7 @@ class LowestLevelOfGeography(db.Model):
     position = db.Column(db.Integer, nullable=False)
 
     # relationships
-    pages = db.relationship("MeasureVersion", back_populates="lowest_level_of_geography")
+    measure_versions = db.relationship("MeasureVersion", back_populates="lowest_level_of_geography")
 
 
 class Topic(db.Model):

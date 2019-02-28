@@ -120,7 +120,7 @@ def build_homepage_and_topic_hierarchy(build_dir, config):
     os.makedirs(build_dir, exist_ok=True)
     from application.cms.page_service import page_service
 
-    topics = page_service.get_all_topics()
+    topics = page_service.get_topics(include_testing_space=False)
     content = render_template("static_site/index.html", topics=topics, static_mode=True)
 
     file_path = os.path.join(build_dir, "index.html")

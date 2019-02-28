@@ -10,7 +10,7 @@
             <span><a href="https://www.ethnicity-facts-figures.service.gov.uk">Live website</a></span>
 
             {% if not current_user.is_anonymous and not preview %}
-              <span><a href="{{ url_for('static_site.topic', topic_slug='testing-space') }}">Testing space</a></span>
+              <span><a href="{{ url_for('static_site.topic', topic_slug=TESTING_SPACE_SLUG) }}">Testing space</a></span>
 
               {% if current_user.is_authenticated and current_user.can(MANAGE_USERS) %}
                 <span><a href="{{ url_for('admin.index') }}">Admin</a></span>

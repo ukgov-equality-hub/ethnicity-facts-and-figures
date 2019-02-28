@@ -119,6 +119,7 @@
 
     {% block bodyEnd %}
         <script type="text/javascript" src="/static/javascripts/{{ 'all.js' | version_filter }}"></script>
+        <script>window.GOVUKFrontend.initAll()</script>
 
         {% if not static_mode %}
             <script>var user_csrf_token = "{{ csrf_token() }}"</script>

@@ -216,7 +216,7 @@ class TestPageService:
     def test_create_page_with_title_and_slug_already_exists_under_subtopic_raises_exception(self):
         subtopic = SubtopicFactory()
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        created_page = page_service.create_measure(
+        created_measure_version = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
                 is_minor_update=False, title="I care", published_at=datetime.now().date()
@@ -229,7 +229,9 @@ class TestPageService:
             page_service.create_measure(
                 subtopic=subtopic,
                 measure_version_form=MeasureVersionForm(
-                    is_minor_update=False, title=created_page.title, published_at=created_page.published_at
+                    is_minor_update=False,
+                    title=created_measure_version.title,
+                    published_at=created_measure_version.published_at,
                 ),
                 data_source_forms=[],
                 created_by_email=user.email,
@@ -238,7 +240,7 @@ class TestPageService:
     def test_create_page_trims_whitespace(self):
         subtopic = SubtopicFactory()
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        page = page_service.create_measure(
+        created_measure_version = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
                 is_minor_update=False,
@@ -250,13 +252,13 @@ class TestPageService:
             data_source_forms=[],
         )
 
-        assert page.title == "I care"
-        assert page.methodology is None
+        assert created_measure_version.title == "I care"
+        assert created_measure_version.methodology is None
 
     def test_first_version_of_page_title_and_url_match(self):
         subtopic = SubtopicFactory()
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        created_page = page_service.create_measure(
+        created_measure_version = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
                 is_minor_update=False, title="the title", published_at=datetime.now().date()
@@ -265,25 +267,25 @@ class TestPageService:
             data_source_forms=[],
         )
 
-        assert "the title" == created_page.title
-        assert "the-title" == created_page.measure.slug
+        assert "the title" == created_measure_version.title
+        assert "the-title" == created_measure_version.measure.slug
 
-        updated_page = page_service.update_measure_version(
-            created_page,
+        updated_measure_version = page_service.update_measure_version(
+            created_measure_version,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=True, title="an updated title", db_version_id=created_page.db_version_id
+                is_minor_update=True, title="an updated title", db_version_id=created_measure_version.db_version_id
             ),
             data_source_forms=[],
             last_updated_by_email=user.email,
         )
 
-        assert "an updated title" == updated_page.title
-        assert "an-updated-title" == updated_page.measure.slug
+        assert "an updated title" == updated_measure_version.title
+        assert "an-updated-title" == updated_measure_version.measure.slug
 
     def test_draft_versions_of_page_after_first_title_can_be_changed_without_url_changing(self):
         subtopic = SubtopicFactory()
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        created_page = page_service.create_measure(
+        created_measure_version = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
                 is_minor_update=False, title="the title", published_at=datetime.now().date()
@@ -292,34 +294,39 @@ class TestPageService:
             data_source_forms=[],
         )
 
-        assert "the title" == created_page.title
-        assert "the-title" == created_page.measure.slug
+        assert "the title" == created_measure_version.title
+        assert "the-title" == created_measure_version.measure.slug
 
         page_service.update_measure_version(
-            created_page,
+            created_measure_version,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=True, title="the title", status="APPROVED", db_version_id=created_page.db_version_id
+                is_minor_update=True,
+                title="the title",
+                status="APPROVED",
+                db_version_id=created_measure_version.db_version_id,
             ),
             data_source_forms=[],
             last_updated_by_email=user.email,
         )
 
-        copied_page = page_service.create_measure_version(created_page, NewVersionType.MINOR_UPDATE, user=user)
+        copied_measure_version = page_service.create_measure_version(
+            created_measure_version, NewVersionType.MINOR_UPDATE, user=user
+        )
 
-        assert "the title" == copied_page.title
-        assert "the-title" == copied_page.measure.slug
+        assert "the title" == copied_measure_version.title
+        assert "the-title" == copied_measure_version.measure.slug
 
         page_service.update_measure_version(
-            copied_page,
+            copied_measure_version,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=True, title="the updated title", db_version_id=copied_page.db_version_id
+                is_minor_update=True, title="the updated title", db_version_id=copied_measure_version.db_version_id
             ),
             data_source_forms=[],
             last_updated_by_email=user.email,
         )
 
-        assert "the updated title" == copied_page.title
-        assert "the-title" == copied_page.measure.slug
+        assert "the updated title" == copied_measure_version.title
+        assert "the-title" == copied_measure_version.measure.slug
 
     def test_create_new_version_of_page(self):
         measure_version = MeasureVersionFactory(latest=True)
@@ -354,27 +361,21 @@ class TestPageService:
 
     def test_create_new_version_of_page_duplicates_dimensions(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        # given an existing page with a dimension
         measure_version = MeasureVersionWithDimensionFactory(latest=True)
+
         assert measure_version.latest
         assert measure_version.dimensions.count() > 0
         old_dimension = measure_version.dimensions[0]
-        original_guid = old_dimension.guid
-        original_version = old_dimension.page_version
+        old_dimension_guid = old_dimension.guid
 
-        # when we copy the page
         new_version = page_service.create_measure_version(measure_version, NewVersionType.MINOR_UPDATE, user=user)
 
-        # then
         assert new_version.dimensions.count() > 0
         new_dimension = new_version.dimensions[0]
-        # new dimension should be a copy
-        assert new_dimension.title == old_dimension.title
 
-        # with guid and versions updated
-        assert new_dimension.guid != original_guid
-        assert new_dimension.page_version != original_version
-        assert new_dimension.page_version == new_version.version
+        assert old_dimension.title == new_dimension.title
+        assert old_dimension_guid != new_dimension.guid
+        assert measure_version is not new_dimension.measure_version
 
     def test_create_new_version_of_page_duplicates_dimension_categorisations(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
@@ -408,7 +409,7 @@ class TestPageService:
         assert measure_version.latest
 
         first_copy = page_service.create_measure_version(measure_version, NewVersionType.NEW_MEASURE, user=user)
-        first_copy_guid = first_copy.guid
+        first_copy_measure_id = first_copy.measure_id
         first_copy_title = first_copy.title
         first_copy_slug = first_copy.measure.slug
 
@@ -432,7 +433,7 @@ class TestPageService:
         assert user.email == first_copy.created_by
         assert second_copy.latest
 
-        assert first_copy_guid != second_copy.guid
+        assert first_copy_measure_id != second_copy.measure_id
         assert second_copy.title == f"COPY OF {first_copy_title}"
         assert second_copy.measure.slug == f"{first_copy_slug}-copy"
 
@@ -581,3 +582,20 @@ class TestPageService:
         assert measures[0] == measure
         assert measure.versions_to_publish == [latest_publishable_version]
         assert measure_2.versions_to_publish == []
+
+    @pytest.mark.parametrize(
+        "topic_slugs, include_testing_space, expected_topic_count",
+        (
+            (["british-population", "health"], False, 2),
+            (["british-population", "health"], True, 2),
+            (["british-population", "health", "testing-space"], False, 2),
+            (["british-population", "health", "testing-space"], True, 3),
+        ),
+    )
+    def test_get_topics(self, topic_slugs, include_testing_space, expected_topic_count):
+        for topic_slug in topic_slugs:
+            TopicFactory(slug=topic_slug)
+
+        topics = page_service.get_topics(include_testing_space=include_testing_space)
+
+        assert len(topics) == expected_topic_count

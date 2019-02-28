@@ -292,7 +292,7 @@ class TestRDUURLField:
 
 class TestRDUTextAreaField:
     class FormForTest(FlaskForm):
-        textarea_field = RDUTextAreaField(label="textarea_field", hint="textarea_field hint")
+        textarea_field = RDUTextAreaField(label="textarea_field", hint="textarea_field hint", character_count_limit=130)
         textarea_field_invalid = RDUTextAreaField(
             label="textarea_field", hint="textarea_field hint", validators=[DataRequired(message="failed validation")]
         )
@@ -341,3 +341,23 @@ class TestRDUTextAreaField:
         self.form.populate_obj(obj)
 
         assert obj.textarea_field == "some data"
+
+    def test_character_count_information_is_shown(self):
+        doc = html.fromstring(self.form.textarea_field())
+
+        character_count_element = doc.xpath('//span[@id="textarea_field-info"]')
+
+        assert len(character_count_element) == 1
+        assert character_count_element[0].text == "Please try to keep within 130 characters."
+        assert character_count_element[0].get("class") == "govuk-hint govuk-character-count__message"
+        assert character_count_element[0].get("aria-live") == "polite"
+
+    def test_character_count_javascript_is_enabled(self):
+        doc = html.fromstring(self.form.textarea_field())
+
+        textarea = doc.xpath("//textarea")[0]
+
+        assert doc.get("class") == "govuk-character-count"
+        assert doc.get("data-module") == "character-count"
+        assert doc.get("data-maxlength") == "130"
+        assert textarea.get("class") == "govuk-textarea  js-character-count"

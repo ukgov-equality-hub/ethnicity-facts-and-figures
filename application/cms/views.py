@@ -98,7 +98,7 @@ def create_measure(topic_slug, subtopic_slug):
         measure_version={},
         new=True,
         organisations_by_type=Organisation.select_options_by_type(),
-        topics=page_service.get_all_topics(),
+        topics=page_service.get_topics(include_testing_space=True),
     )
 
 
@@ -356,7 +356,7 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "next_approval_state": approval_state if "APPROVE" in available_actions else None,
         "diffs": diffs,
         "organisations_by_type": Organisation.select_options_by_type(),
-        "topics": page_service.get_all_topics(),
+        "topics": page_service.get_topics(include_testing_space=True),
     }
 
     return render_template("cms/edit_measure_version.html", **context)
@@ -517,7 +517,7 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 "available_actions": available_actions,
                 "next_approval_state": approval_state if "APPROVE" in available_actions else None,
                 "organisations_by_type": Organisation.select_options_by_type(),
-                "topics": page_service.get_all_topics(),
+                "topics": page_service.get_topics(include_testing_space=True),
             }
 
             return render_template("cms/edit_measure_version.html", **context)
@@ -612,7 +612,7 @@ def _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version):
     if form.validate():
         try:
             dimension = dimension_service.create_dimension(
-                page=measure_version,
+                measure_version=measure_version,
                 title=form.data["title"],
                 time_period=form.data["time_period"],
                 summary=form.data["summary"],
