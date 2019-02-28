@@ -417,7 +417,7 @@
       <div class="accordion">
         <div class="accordion-section">
           <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Methodology" class="accordion-section-header">
-            <h2 id="methodology" class="heading-medium">Methodology</h2>
+            <h2 id="methodology" class="heading-medium">{{ measure_version.dimensions.all()|length + 2 }}. Methodology</h2>
           </div>
 
           <div class="accordion-section-body">
@@ -472,7 +472,7 @@
         <div class="accordion-section">
 
           <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Data sources" class="accordion-section-header">
-            <h2 id="data-sources" class="heading-medium">Data sources</h2>
+            <h2 id="data-sources" class="heading-medium">{{ measure_version.dimensions.all()|length + 3 }}. Data sources</h2>
           </div>
 
           <div class="accordion-section-body">
@@ -576,7 +576,7 @@
 
         <div class="accordion-section">
           <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Download the data" class="accordion-section-header">
-            <h2 id="download-the-data" class="heading-medium">Download the data</h2>
+            <h2 id="download-the-data" class="heading-medium">{{ measure_version.dimensions.all()|length + 4 }}. Download the data</h2>
           </div>
 
           <div class="accordion-section-body downloads">
