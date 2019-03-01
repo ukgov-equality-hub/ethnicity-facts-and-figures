@@ -83,6 +83,7 @@ class EditMeasureLocators:
     REJECT_BUTTON = (By.ID, "reject-measure")
     SEND_TO_DRAFT_BUTTON = (By.ID, "send-back-to-draft")
     SEND_TO_APPROVED = (By.ID, "send-to-approved")
+    UPDATE_MEASURE = (By.LINK_TEXT, "Update")
     DEPARTMENT_REVIEW_LINK = (By.ID, "review-link-url")
 
     PREVIEW_LINK = (By.NAME, "preview")
@@ -117,6 +118,9 @@ class EditMeasureLocators:
     TYPE_OF_STATISTIC_INPUT = (By.NAME, "type_of_statistic")
     QMI_URL_INPUT = (By.NAME, "qmi_url")
     FURTHER_TECHNICAL_INFORMATION_INPUT = (By.NAME, "further_technical_information")
+
+    UPDATE_CORRECTS_DATA_MISTAKE = (By.NAME, "update_corrects_data_mistake")
+    EXTERNAL_EDIT_SUMMARY = (By.ID, "external_edit_summary")
 
 
 class DimensionPageLocators:
