@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_shared/_status_banner_macro.html" import status_banner %}
+{% from "_shared/_previous_and_next_navigation.html" import previousAndNextNavigation %}
 
 {% set breadcrumbs =
   [
@@ -145,6 +146,36 @@
               </div>
       {% endif %}
   </div>
+
+
+  {% if dimension_number == 0 and dimensions|length > 1 %}
+    {{ previousAndNextNavigation(previous_title="Overview", previous_link=url_for('static_site.measure_version',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest'), next_title=dimensions[1].title,next_link=url_for('static_site.measure_version_dimension',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest',dimension_number=2)) }}
+
+  {% elif dimension_number == 0 and dimensions|length == 1 %}
+
+  {% elif (dimension_number + 1) != dimensions|length %}
+
+    {{ previousAndNextNavigation(
+      previous_title=dimensions[dimension_number - 1].title,
+      previous_link=url_for('static_site.measure_version_dimension',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest',dimension_number=(dimension_number)),
+      next_title=dimensions[dimension_number + 1].title,
+      next_link=url_for('static_site.measure_version_dimension',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest',dimension_number=(dimension_number + 2))) }}
+
+  {% elif (dimension_number + 1) == dimensions|length %}
+
+    {{ previousAndNextNavigation(
+      previous_title=dimensions[dimension_number - 1].title,
+      previous_link=url_for('static_site.measure_version_dimension',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest',dimension_number=(dimension_number)),
+      next_title="Methodology",
+      next_link=url_for('static_site.measure_version_methodology',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest')) }}
+
+  {% endif %}
 
 </main>
 {% endblock %}

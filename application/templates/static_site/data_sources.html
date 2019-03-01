@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_shared/_status_banner_macro.html" import status_banner %}
+{% from "_shared/_previous_and_next_navigation.html" import previousAndNextNavigation %}
 
 {% set breadcrumbs =
   [
@@ -147,5 +148,14 @@
           </div>
 
         </div>
+
+    {{ previousAndNextNavigation(
+      previous_title="Methodology",
+      previous_link=url_for('static_site.measure_version_methodology',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest'),
+      next_title="Download the data",
+      next_link=url_for('static_site.measure_version_download_the_data',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest')) }}
+
 
 {% endblock %}

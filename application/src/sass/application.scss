@@ -6,6 +6,8 @@ $govuk-compatibility-govukelements: true;
 /* GOV.UK Frontend, for the Design System. Installed via npm */
 @import "node_modules/govuk-frontend/all";
 
+@import "components/_previous_and_next_nav";
+
 @import '_govuk/govuk-template';
 @import '_govuk/fonts';
 @import '_govuk/_base/govuk-elements';

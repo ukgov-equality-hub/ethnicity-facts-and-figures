@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_shared/_status_banner_macro.html" import status_banner %}
+{% from "_shared/_previous_and_next_navigation.html" import previousAndNextNavigation %}
 
 {% set breadcrumbs =
   [
@@ -73,16 +74,12 @@
               {% endif %}
             {% endfor %}
           </div>
-        </div>
 
-          <div itemprop="includedInDataCatalog" itemscope itemtype="http://schema.org/DataCatalog">
-            <meta itemprop="name" content="Ethnicity facts and figures">
-            <meta itemprop="url" content="{{ url_for('static_site.index') }}">
-          </div>
-        </div>
 
-        </div>
-      </div>
-    </div>
+    {{ previousAndNextNavigation(
+      previous_title="Data sources",
+      previous_link=url_for('static_site.measure_version_data_sources',
+          topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest'))
+    }}
   </main>
 {% endblock %}
