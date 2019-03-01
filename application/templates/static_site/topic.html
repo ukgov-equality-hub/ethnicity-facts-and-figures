@@ -47,8 +47,8 @@
                                             {% endif %}
                                         {% endif %}
                                         {% if measures_by_subtopic[subtopic.id] %}
-                                                <div class="reordering-save-status">&nbsp;</div>
-                                                <ul class="links js-reorderable">
+                                                {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}<div class="reordering-save-status">&nbsp;</div>{% endif %}
+                                                <ul class="links {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}js-reorderable{% endif %}">
                                                     {% for measure in measures_by_subtopic[subtopic.id] %}
                                                         {% with measure_version = measure.latest_version %}
                                                             <li data-measure-id="{{ measure.id }}" data-subtopic-id="{{ subtopic.id }}" itemprop="dataset" itemscope itemtype="http://schema.org/Dataset">
