@@ -39,6 +39,7 @@
                                         <h2 class="heading-medium">
                                             {{- subtopic.title -}}{% if subtopic.has_published_measures == false %} (not published){% endif %}
                                         </h2>
+                                        <span class="reordering-save-status"></span>
                                     </div>
                                     <div class="accordion-section-body {% if not static_mode %}eff-!-padding-bottom-40{% endif %}">
                                         {% if not static_mode %}
@@ -99,7 +100,8 @@
 
             var orderMeasures = function(list) {
 
-                var status = list.parentElement.previousElementSibling;
+                // childNodes[1] is the topic title, [2] is whitespace, [3] is the <span class="reordering-save-status">
+                var status = list.parentElement.previousElementSibling.childNodes[3];
                 var savingIntervalId;
 
                 var stillSaving = function () {
