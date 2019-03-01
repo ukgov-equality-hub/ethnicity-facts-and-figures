@@ -1,6 +1,6 @@
 {# Required parameters: id_, name, class_, fieldset_class, field_class, legend, fields, errors, label_class, disabled #}
 
-<div id="{{ id_ }}" name="{{ name }}" class="form-group {{ class_ }} {% if errors %}form-group-error{% endif %}">
+<div id="{{ id_ }}" class="form-group {{ class_ }} {% if errors %}form-group-error{% endif %}">
   {% if fields|length == 1 %}
     {{ fields[0](disabled=disabled) }}
   {% else %}
