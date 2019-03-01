@@ -39,7 +39,6 @@
                                         <h2 class="heading-medium">
                                             {{- subtopic.title -}}{% if subtopic.has_published_measures == false %} (not published){% endif %}
                                         </h2>
-                                        <span class="reordering-save-status"></span>
                                     </div>
                                     <div class="accordion-section-body {% if not static_mode %}eff-!-padding-bottom-40{% endif %}">
                                         {% if not static_mode %}
@@ -48,6 +47,7 @@
                                             {% endif %}
                                         {% endif %}
                                         {% if measures_by_subtopic[subtopic.id] %}
+                                                <div class="reordering-save-status">&nbsp;</div>
                                                 <ul class="links js-reorderable">
                                                     {% for measure in measures_by_subtopic[subtopic.id] %}
                                                         {% with measure_version = measure.latest_version %}
@@ -100,8 +100,7 @@
 
             var orderMeasures = function(list) {
 
-                // childNodes[1] is the topic title, [2] is whitespace, [3] is the <span class="reordering-save-status">
-                var status = list.parentElement.previousElementSibling.childNodes[3];
+                var status = list.parentElement.querySelector('.reordering-save-status')
                 var savingIntervalId;
 
                 var stillSaving = function () {
