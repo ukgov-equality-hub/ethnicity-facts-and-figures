@@ -104,26 +104,31 @@
                 var savingIntervalId;
 
                 var stillSaving = function () {
-                    switch (status.textContent) {
-                        case 'Saving new order':
-                            status.textContent = 'Saving new order.';
-                            break;
-                        case 'Saving new order.':
-                            status.textContent = 'Saving new order..';
-                            break;
-                        case 'Saving new order..':
-                            status.textContent = 'Saving new order...';
-                            break;
-                        case 'Saving new order...':
-                            status.textContent = 'Saving new order';
-                            break;
+                    if (status) {
+                        switch (status.textContent) {
+                            case 'Saving new order':
+                                status.textContent = 'Saving new order.';
+                                break;
+                            case 'Saving new order.':
+                                status.textContent = 'Saving new order..';
+                                break;
+                            case 'Saving new order..':
+                                status.textContent = 'Saving new order...';
+                                break;
+                            case 'Saving new order...':
+                                status.textContent = 'Saving new order';
+                                break;
+                        }
                     }
                 };
 
                 var saved = function (savingIntervalId) {
                     clearInterval(savingIntervalId);
-                    status.textContent = 'Saved';
-                    status.classList.add('status-invisible');
+
+                    if (status) {
+                        status.textContent = 'Saved';
+                        status.classList.add('status-invisible');
+                    }
                 };
 
                 var positions = [];
@@ -133,8 +138,10 @@
                                      "subtopic_id": list.children[i].dataset.subtopicId})
                 }
 
-                status.classList.remove('status-invisible');
-                status.textContent = 'Saving new order';
+                if (status) {
+                    status.classList.remove('status-invisible');
+                    status.textContent = 'Saving new order';
+                }
                 savingIntervalId = setInterval(stillSaving, 300);
                 list.classList.toggle('reorderable');
 
