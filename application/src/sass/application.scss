@@ -3,7 +3,9 @@ $govuk-compatibility-govukfrontendtoolkit: true;
 $govuk-compatibility-govuktemplate: true;
 $govuk-compatibility-govukelements: true;
 
-/* Set the GOV.UK Frontend assets path */
+/* Set the GOV.UK Frontend assets path. This is used as a prefix
+   for referencing the fonts and images in subfolders within
+   this path. */
 $govuk-assets-path: '/static/assets/';
 
 /* GOV.UK Frontend, for the Design System. Installed via npm */
