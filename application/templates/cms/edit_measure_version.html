@@ -200,7 +200,7 @@
                     {{ form.further_technical_information(disabled=form_disabled, diffs=diffs) }}
 
                     <h3 class="heading-medium">Updates and corrections</h3>
-                    <div class="{% if new or measure_version.version == '1.0' %} hidden{% endif %}">
+                    {% if new or measure_version.version == '1.0' %}<div class="hidden">{% endif %}
                         {% if form.is_minor_update %}
                             {{ form.update_corrects_data_mistake(disabled=form_disabled, diffs=diffs, fieldset_class="inline") }}
                         {% endif %}
@@ -208,7 +208,7 @@
                         {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
 
                         {{ form.internal_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
-                    </div>
+                    {% if new or measure_version.version == '1.0' %}</div>{% endif %}
 
                     {{ form.internal_reference(disabled=form_disabled, diffs=diffs, class_='short') }}
 
