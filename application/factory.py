@@ -1,3 +1,4 @@
+import datetime
 import os
 import re
 import sys
@@ -193,6 +194,7 @@ def create_app(config_object):
             VIEW_DASHBOARDS=VIEW_DASHBOARDS,
             TESTING_SPACE_SLUG=TESTING_SPACE_SLUG,
             get_content_security_policy=get_content_security_policy,
+            current_timestamp=datetime.datetime.now().isoformat(),
         )
 
     return app

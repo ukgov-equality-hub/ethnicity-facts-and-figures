@@ -4,6 +4,8 @@
 <!DOCTYPE html>
 <html lang="{{ html_lang|default('en') }}">
   <head>
+    <!-- Page built at {{ current_timestamp }} -->
+
     <meta charset="utf-8">
     <title>{% block pageTitle %}GOV.UK - The best place to find government services and information{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,7 +30,7 @@
       <meta property="og:title" content="{% block socialTitle %}{% endblock %}" />
       <meta property="og:image" content="{% block socialImage %}{{ config.RDU_SITE | strip_trailing_slash }}/static/images/opengraph-image.png{% endblock %}" />
       <meta property="og:description" content="{% block socialDescription %}{% endblock %}" />
-    
+
       {% block twitterMetadata %}
         <meta name="twitter:card" content="summary" />
       {% endblock %}
@@ -61,7 +63,7 @@
       {% endif %}
     {% endblock %}
   </head>
-  
+
   <body class="{% block bodyClasses %}{% endblock %}">
     {% block bodyStart %}
       <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
@@ -87,7 +89,7 @@
       {% if not static_mode %}
         {% include 'static_site/_preview.html' %}
       {% endif %}
-      
+
       {% include '_shared/_header.html' %}
     {% endblock %}
 
@@ -97,19 +99,19 @@
 
     {% block main %}
       {% block mainElementDefinition %}<main id="content" class="main">{% endblock %}
-        
+
       {% block beforeContent %}
         {% block breadcrumbs %}
           {{ render_breadcrumbs(breadcrumbs) }}
         {% endblock breadcrumbs %}
-        
+
         {% block flashMessages %}
           {{ render_flash_messages(get_flashed_messages(with_categories=true)) }}
         {% endblock %}
       {% endblock %}
-      
+
       {% block content %}{% endblock %}
-      
+
       </main>
     {% endblock %}
 
