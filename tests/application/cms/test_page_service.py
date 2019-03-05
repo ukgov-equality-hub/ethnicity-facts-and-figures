@@ -87,6 +87,15 @@ class TestPageService:
         with pytest.raises(PageNotFoundException):
             page_service.get_measure_from_measure_version_id(456)
 
+    def test_get_measure_version_by_id(self):
+        measure_version = MeasureVersionFactory(id=345)
+        assert page_service.get_measure_version_by_id(345) is measure_version
+
+    def test_get_measure_version_by_id_raises_if_not_found(self):
+        MeasureVersionFactory(id=345)
+        with pytest.raises(PageNotFoundException):
+            page_service.get_measure_version_by_id(456)
+
     def test_get_measure_page_hierarchy_gets_if_hierarchy_is_good(self):
         measure_version = MeasureVersionWithDimensionFactory()
 

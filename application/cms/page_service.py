@@ -120,6 +120,14 @@ class PageService(Service):
         else:
             raise PageNotFoundException()
 
+    @staticmethod
+    def get_measure_version_by_id(measure_version_id):
+        measure_version = MeasureVersion.query.get(measure_version_id)
+        if measure_version:
+            return measure_version
+        else:
+            raise PageNotFoundException()
+
     def get_measure_version_hierarchy(
         self, topic_slug, subtopic_slug, measure_slug, version, dimension_guid=None, upload_guid=None
     ):
