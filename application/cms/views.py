@@ -1065,12 +1065,9 @@ def get_valid_classifications():
     return json.dumps({"presets": return_data}), 200
 
 
-# TODO: Figure out if this endpoint really needs to take topic/subtopic/measure?
-# * If so, it should also take version and call page_service.get_measure_version_hierarchy
-# * If not, refactor to remove these parameters from the url and call signature
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/set-dimension-order", methods=["POST"])
+@cms_blueprint.route("/set-dimension-order", methods=["POST"])
 @login_required
-def set_dimension_order(topic, subtopic, measure):
+def set_dimension_order():
     dimensions = request.json.get("dimensions", [])
     try:
         dimension_service.set_dimension_positions(dimensions)
@@ -1221,3 +1218,18 @@ def _build_if_necessary(measure_version):
     elif measure_version.eligible_for_build():
         page_service.mark_measure_version_published(measure_version)
         build_service.request_build()
+
+
+@cms_blueprint.route("/measure-version/<measure_version_id>", methods=["GET"])
+@login_required
+def view_measure_version_by_measure_version_id(measure_version_id):
+    measure_version = page_service.get_measure_version_by_id(measure_version_id)
+    return redirect(
+        url_for(
+            "static_site.measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+    )
