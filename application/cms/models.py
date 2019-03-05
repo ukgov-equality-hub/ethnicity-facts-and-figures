@@ -570,15 +570,17 @@ class Dimension(db.Model):
     created_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
     updated_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
 
+    # TODO: Delete these once chart and table data has been copied over and code updated to look in Chart and Table
     chart = db.Column(JSON)
-    table = db.Column(JSON)
     chart_builder_version = db.Column(db.Integer)
     chart_source_data = db.Column(JSON)
     chart_2_source_data = db.Column(JSON)
 
+    table = db.Column(JSON)
     table_source_data = db.Column(JSON)
     table_builder_version = db.Column(db.Integer)
     table_2_source_data = db.Column(JSON)
+    # TODO: End delete
 
     measure_version_id = db.Column(db.Integer, nullable=False)
 
@@ -867,6 +869,9 @@ class ChartAndTableMixin(object):
     includes_parents = db.Column(db.Boolean, nullable=False)
     includes_all = db.Column(db.Boolean, nullable=False)
     includes_unknown = db.Column(db.Boolean, nullable=False)
+
+    built_object = db.Column(JSON)
+    builder_settings_and_source_data = db.Column(JSON)
 
     @classmethod
     def get_by_id(cls, id):
