@@ -450,7 +450,7 @@ class TestPageService:
             last_updated_by_email=user.email,
         )
 
-        measure_version_from_db = page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_measure_id_and_version(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.title == "I care too much!"
@@ -460,7 +460,7 @@ class TestPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         measure_version = MeasureVersionFactory(version="1.0", status="DRAFT")
 
-        measure_version_from_db = page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_measure_id_and_version(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.status == "DRAFT"
@@ -475,7 +475,7 @@ class TestPageService:
             **{"status": "APPROVED"},
         )
 
-        measure_version_from_db = page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_measure_id_and_version(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.status == "APPROVED"
@@ -521,7 +521,7 @@ class TestPageService:
             last_updated_by_email=user.email,
         )
 
-        measure_version_from_db = page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_measure_id_and_version(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.ethnicity_definition_summary == "How about some more whitespace?"
