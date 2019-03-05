@@ -1221,3 +1221,18 @@ def _build_if_necessary(measure_version):
     elif measure_version.eligible_for_build():
         page_service.mark_measure_version_published(measure_version)
         build_service.request_build()
+
+
+@cms_blueprint.route("/measure-version/<measure_version_id>", methods=["GET"])
+@login_required
+def view_measure_version_by_measure_version_id(measure_version_id):
+    measure_version = page_service.get_measure_version_by_id(measure_version_id)
+    return redirect(
+        url_for(
+            "static_site.measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+    )

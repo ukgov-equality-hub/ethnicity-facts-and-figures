@@ -845,3 +845,25 @@ def test_measure_version_history_page(test_app_client, logged_in_dev_user):
         f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/1.1/edit",
         f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/1.0/edit",
     ]
+
+
+def test_view_measure_version_by_measure_version_id_redirects(test_app_client, logged_in_rdu_user):
+    measure_version = MeasureVersionFactory(id=345)
+    response = test_app_client.get(url_for("cms.view_measure_version_by_measure_version_id", measure_version_id=345))
+
+    assert response.status_code == 302
+    assert response.location == url_for(
+        "static_site.measure_version",
+        topic_slug=measure_version.measure.subtopic.topic.slug,
+        subtopic_slug=measure_version.measure.subtopic.slug,
+        measure_slug=measure_version.measure.slug,
+        version=measure_version.version,
+        _external=True,
+    )
+
+
+def test_view_measure_version_by_measure_version_id_404_if_no_measure_version(test_app_client, logged_in_rdu_user):
+    MeasureVersionFactory(id=345)
+    response = test_app_client.get(url_for("cms.view_measure_version_by_measure_version_id", measure_version_id=456))
+
+    assert response.status_code == 404
