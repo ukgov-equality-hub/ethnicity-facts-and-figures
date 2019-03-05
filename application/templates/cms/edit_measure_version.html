@@ -385,9 +385,7 @@
             });
             $.ajax({
                 type: 'POST',
-                url: "{{ url_for('cms.set_dimension_order', topic=topic.slug,
-                                                                subtopic=subtopic.slug,
-                                                                measure=measure.slug) }}",
+                url: "{{ url_for('cms.set_dimension_order') }}",
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify({"dimensions": dimensions}),

@@ -1065,12 +1065,9 @@ def get_valid_classifications():
     return json.dumps({"presets": return_data}), 200
 
 
-# TODO: Figure out if this endpoint really needs to take topic/subtopic/measure?
-# * If so, it should also take version and call page_service.get_measure_version_hierarchy
-# * If not, refactor to remove these parameters from the url and call signature
-@cms_blueprint.route("/<topic>/<subtopic>/<measure>/set-dimension-order", methods=["POST"])
+@cms_blueprint.route("/set-dimension-order", methods=["POST"])
 @login_required
-def set_dimension_order(topic, subtopic, measure):
+def set_dimension_order():
     dimensions = request.json.get("dimensions", [])
     try:
         dimension_service.set_dimension_positions(dimensions)
