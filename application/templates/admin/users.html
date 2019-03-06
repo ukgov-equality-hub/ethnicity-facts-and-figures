@@ -12,13 +12,13 @@
 {% block bodyClasses %}rd_cms{% endblock %}
 
 {% block content %}
-        <div class="grid-row">
-            <div class="column-full">
-                <h1 class='heading-large no-breadcrumb'>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">
                     Users
                 </h1>
                 <h2>Manage users</h2>
-                <table class="smaller-text">
+                <table class="smaller-text govuk-!-margin-bottom-5">
                     <thead>
                         <th>User name</th>
                         <th>User type</th>
@@ -30,7 +30,7 @@
                         {% for user in users %}
                         <tr>
                             <td>
-                                <a href="{{ url_for('admin.user_by_id', user_id=user.id ) }}">{{ user.email }}</a>
+                                <a class="govuk-link" href="{{ url_for('admin.user_by_id', user_id=user.id ) }}">{{ user.email }}</a>
                             </td>
                             <td>
                                 {{ user.user_type.name }}
@@ -42,7 +42,7 @@
                             </td>
                             <td>
                                 {% if not user.is_active %}
-                                    <a href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}">
+                                    <a class="govuk-link" href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}">
                                     {% if not user.confirmed_at %}
                                         Not activated yet - send activation email
                                     {% else %}
@@ -55,14 +55,14 @@
                             </td>
                             <td>
                                 {% if not user.is_admin_user() and current_user.id != user.id %}
-                                    <a href="{{ url_for('admin.delete_user', user_id=user.id) }}">Delete</a>
+                                    <a class="govuk-link" href="{{ url_for('admin.delete_user', user_id=user.id) }}">Delete</a>
                                 {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
-                <p><a href="{{ url_for('admin.add_user') }}">Add new user</a></p>
+                <p class="govuk-body"><a class="govuk-link" href="{{ url_for('admin.add_user') }}">Add new user</a></p>
             </div>
         </div>
 {% endblock %}
