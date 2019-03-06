@@ -13,7 +13,7 @@
 {% block content %}
         <div class='govuk-grid-row'>
             <div class='govuk-grid-column-full'>
-                <h1 class="govuk-heading-l">Search results{% if not static_mode %} for ‘{{ request.args.get('q') }}’{% endif %}</h1>
+                <h1 class="govuk-heading-xl">Search results{% if not static_mode %} for ‘{{ request.args.get('q') }}’{% endif %}</h1>
                 <script>
                     (function () {
                         var cx = "{{ config.GOOGLE_CUSTOM_SEARCH_ID }}";
