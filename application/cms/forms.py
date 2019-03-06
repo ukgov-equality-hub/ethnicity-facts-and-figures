@@ -305,6 +305,9 @@ class MeasureVersionForm(FlaskForm):
 
         self.lowest_level_of_geography_id.choices = choices
 
+        if kwargs.get("obj", None):
+            self.internal_reference.data = kwargs["obj"].measure.reference
+
     def error_items(self):
         return self.errors.items()
 
