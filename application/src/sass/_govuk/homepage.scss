@@ -100,7 +100,6 @@
   padding-bottom: 20px;
   clear: both;
   overflow: hidden;
-  margin-top: -10px;
   margin-bottom: 45px;
   font-size: 19px;
 
@@ -111,7 +110,7 @@
   }
 
   .hero-inner {
-    padding: 0 15px;
+    padding: 15px 15px 0 15px;
   }
 
   #content {
@@ -127,18 +126,6 @@
 }
 
 
-.with-hero .phase-banner {
-  p, a {
-    color: white;
-    &:visited {
-     color: white;
-    }
-  }
-  .phase-tag {
-    background-color: white;
-    color: $govuk-blue;
-  }
-}
 
 .introduction {
   font-size: 24px;

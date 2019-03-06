@@ -1,12 +1,12 @@
-<div class="banner-container-outer">
-  <div class="banner-container">
-    <div class="phase-banner-reversed font-xsmall">
-      <p>
-        <strong class="phase-tag">BETA</strong>
+<div class="eff-phase-banner-container">
+  <div class="govuk-width-container">
+    <div class="govuk-phase-banner">
+      <p class="govuk-phase-banner__content">
+        <strong class="govuk-tag govuk-phase-banner__content__tag">BETA</strong>
         {% if config.SURVEY_ENABLED %}
-          <span>Help us improve this website – <a href="https://www.surveymonkey.co.uk/r/B2CBF6Z" data-on="click" data-event-category="Survey" data-event-action="Link clicked" data-event-label="Page header">answer 4 short questions</a>.</span>
+          <span>Help us improve this website – <a class="govuk-link" href="https://www.surveymonkey.co.uk/r/B2CBF6Z" data-on="click" data-event-category="Survey" data-event-action="Link clicked" data-event-label="Page header">answer 4 short questions</a>.</span>
         {% else %}
-          <span>This is a new service – please send your feedback to <a data-on="click" data-event-category="E-mail link clicked" data-event-action="Contact e-mail" data-event-label="Header" href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a></span>
+          <span>This is a new service – please send your feedback to <a class="govuk-link" data-on="click" data-event-category="E-mail link clicked" data-event-action="Contact e-mail" data-event-label="Header" href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a></span>
         {% endif %}
       </p>
     </div>
