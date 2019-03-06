@@ -208,7 +208,7 @@ class TableBuilderPageLocators:
 class TopicPageLocators:
     @staticmethod
     def get_accordion(data_event_text):
-        return By.CSS_SELECTOR, "div[data-event-label='%s']" % data_event_text
+        return By.XPATH, "//h2[contains(., '%s')]" % data_event_text
 
     @staticmethod
     def get_add_measure_link(link_text):
