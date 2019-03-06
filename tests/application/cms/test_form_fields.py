@@ -126,6 +126,13 @@ class TestRDURadioField:
         assert doc.xpath("//legend")
         assert "radio_field" in doc.xpath("//legend")[0].text
 
+    def test_legend_class_is_rendered(self):
+        # TODO: I really test FormGroups, not just radio fields. should be split out into separate test class for them.
+        doc = html.fromstring(self.form.radio_field(legend_class="govuk-!-font-weight-bold"))
+
+        assert doc.xpath("//legend")
+        assert doc.xpath("//legend/@class")[0] == "govuk-!-font-weight-bold"
+
     def test_radio_choices_are_rendered(self):
         doc = html.fromstring(self.form.radio_field())
 
