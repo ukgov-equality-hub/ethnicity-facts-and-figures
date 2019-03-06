@@ -13,16 +13,16 @@
 {% block bodyClasses %}rd_cms{% endblock %}
 
 {% block content %}
-    <div class="grid-row">
-        <div class="column-full">
-            <h1 class="heading-large">User</h1>
-            <p>Manage user</p>
-            <p>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-xl">User</h1>
+            <p class="govuk-body">Manage user</p>
+            <p class="govuk-body">
                 {{ user.email }} -
                 {% if user.is_active %}
-                    <a href="{{ url_for('admin.deactivate_user', user_id=user.id) }}">Deactivate account</a>
+                    <a href="{{ url_for('admin.deactivate_user', user_id=user.id) }}" class="govuk-link">Deactivate account</a>
                 {% else %}
-                    <a href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}">
+                    <a href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}" class="govuk-link">
                         {% if not user.confirmed_at %}
                             Not activated yet - send activation email
                         {% else %}
@@ -31,8 +31,8 @@
                     </a>
                 {% endif %}
             </p>
-            <p>User type: {{ user.user_type.name }}</p>
-            <p>This user can:</p>
+            <p class="govuk-body">User type: {{ user.user_type.name }}</p>
+            <p class="govuk-body">This user can:</p>
             <ul>
                 {% for capability in user.capabilities %}
                     <li>
@@ -42,22 +42,22 @@
             </ul>
 
             {% if user.is_rdu_user() %}
-                <p>
-                    <a href="{{ url_for('admin.make_admin_user', user_id=user.id) }}">Make user admin</a>
+                <p class="govuk-body">
+                    <a href="{{ url_for('admin.make_admin_user', user_id=user.id) }}" class="govuk-link">Make user admin</a>
                 </p>
             {% endif %}
 
             {% if user.is_admin_user() %}
-                <p>
-                    <a href="{{ url_for('admin.make_rdu_user', user_id=user.id) }}">Make standard RDU user</a>
+                <p class="govuk-body">
+                    <a href="{{ url_for('admin.make_rdu_user', user_id=user.id) }}" class="govuk-link">Make standard RDU user</a>
                 </p>
             {% endif %}
         </div>
     </div>
     {% if user.is_departmental_user() %}
-    <div class="grid-row" id="departmental-sharing">
-        <div class="column-half">
-            <h2 class="heading-medium">Share measures</h2>
+    <div class="govuk-grid-row" id="departmental-sharing">
+        <div class="govuk-grid-column-one-half">
+            <h2 class="govuk-heading-m">Share measures</h2>
             <form id="share-page" action="{{ url_for('admin.share_page_with_user', user_id=user.id) }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <label for="measures-picker">Measures</label>
@@ -73,8 +73,8 @@
                 <button id="save" class="button" type="submit" name="save">Save</button>
             </form>
         </div>
-        <div class="column-half">
-            <h2 class="heading-medium">Measures shared</h2>
+        <div class="govuk-grid-column-one-half">
+            <h2 class="govuk-heading-m">Measures shared</h2>
             {% include 'admin/share_page.html' %}
         </div>
     </div>
