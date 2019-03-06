@@ -2,14 +2,14 @@
     {% for measure in shared %}
     <tr>
         <td>
-            <a href="{{ url_for('static_site.measure_version',
+            <a class="govuk-link" href="{{ url_for('static_site.measure_version',
                        topic_slug=measure.subtopic.topic.slug,
                        subtopic_slug=measure.subtopic.slug,
                        measure_slug=measure.slug,
                        version='latest') }}">{{ measure.latest_version.title }}</a>
         </td>
         <td>
-            <a href="{{ url_for('admin.remove_shared_page_from_user', user_id=user.id, measure_id=measure.id) }}">Remove</a>
+            <a class="govuk-link" href="{{ url_for('admin.remove_shared_page_from_user', user_id=user.id, measure_id=measure.id) }}">Remove</a>
         </td>
     </tr>
     {% endfor %}
