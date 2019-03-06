@@ -11,14 +11,14 @@
 {% block pageTitle %}{{ classification_title }}{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-xlarge">{{ classification_title }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ classification_title }}</h1>
 
         {% if page_count > 1 %}
-            <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this classification.</p>
+            <p class="govuk-body-l">There are <strong>{{ page_count }}</strong> published pages using this classification.</p>
         {% else %}
-            <p class="lede">There is <strong>1</strong> published pages using this classification.</p>
+            <p class="govuk-body-l">There is <strong>1</strong> published pages using this classification.</p>
         {% endif %}
     </div>
   </div>
@@ -40,11 +40,11 @@
             <td>{{ topic_title }}</td>
             <td>{{ subtopic_title }}</td>
             <td>
-              <a href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
+              <a class="govuk-link" href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
 
               {% for dimension in measure_with_dimensions.dimensions %}
                 <ul class="dimensions">
-                   <li><a href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
+                   <li><a class="govuk-link" href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
                 </ul>
               {%  endfor %}
             </td>
@@ -58,10 +58,10 @@
         <td>{{ page.topic }}</td>
         <td>{{ page.subtopic }}</td>
         <td>
-          <a href="{{ page.measure_url }}">{{ page.measure }}</a>
+          <a class="govuk-link" href="{{ page.measure_url }}">{{ page.measure }}</a>
             {% for dimension in page.dimensions %}
                 <ul class="dimensions">
-                   <li><a href="{{ page.measure_url }}#{{ dimension.dimension|slugify_value }}">… {{ dimension.short_title }}</a></li>
+                   <li><a class="govuk-link" href="{{ page.measure_url }}#{{ dimension.dimension|slugify_value }}">… {{ dimension.short_title }}</a></li>
                 </ul>
             {%  endfor %}
         </td>

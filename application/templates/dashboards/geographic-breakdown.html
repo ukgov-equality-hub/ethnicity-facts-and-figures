@@ -10,17 +10,17 @@
 {% block pageTitle %}Geographic breakdown{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class='heading-xlarge'>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-headling-xl">
           Geographic areas
       </h1>
 
-        <p class="lede">There are <strong>{{ location_levels|length }}</strong> different levels of geography used on the pages:</p>
+        <p class="govuk-body-l">There are <strong>{{ location_levels|length }}</strong> different levels of geography used on the pages:</p>
     </div>
   </div>
 
-  <table class="column-two-thirds table-skinny ethnic-groups smaller-text dashboard" id="ethnic-group">
+  <table class="govuk-grid-column-two-thirds table-skinny ethnic-groups smaller-text dashboard" id="ethnic-group">
 
     <thead>
       <tr>
