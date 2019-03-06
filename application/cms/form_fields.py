@@ -123,7 +123,9 @@ class _FormGroup(_FormFieldTemplateRenderer):
         super().__init__(*args, **kwargs)
         self.other_field = None
 
-    def __call__(self, field, class_="", fieldset_class="", field_class="", diffs=None, disabled=False, **kwargs):
+    def __call__(
+        self, field, class_="", fieldset_class="", legend_class="", field_class="", diffs=None, disabled=False, **kwargs
+    ):
         subfields = [subfield for subfield in field]
 
         return super().__call__(
@@ -137,6 +139,7 @@ class _FormGroup(_FormFieldTemplateRenderer):
                 "fields": subfields,
                 "other_field": self.other_field,
                 "fieldset_class": fieldset_class,
+                "legend_class": legend_class,
                 "field_class": field_class,
             },
             field_params={**kwargs},

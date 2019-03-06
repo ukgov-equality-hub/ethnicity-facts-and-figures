@@ -5,7 +5,7 @@
     {{ fields[0](disabled=disabled) }}
   {% else %}
   <fieldset {% if fieldset_class %}class="{{ fieldset_class }}"{% endif %}>
-    <legend>
+    <legend {% if legend_class %}class="{{ legend_class }}"{% endif %}>
       {{- field.label.text }} {% if errors %}<span class="error-message">{{ errors[0] }}</span>{% endif -%}
     </legend>
     {% if field.hint or hint %}
