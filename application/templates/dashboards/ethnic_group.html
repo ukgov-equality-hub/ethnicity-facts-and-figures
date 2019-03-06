@@ -10,14 +10,14 @@
 {% block pageTitle %}{{ ethnic_group }}{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-xlarge">{{ ethnic_group }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ ethnic_group }}</h1>
 
         {% if measure_count > 1 %}
-            <p class="lede">There are <strong>{{ measure_count }}</strong> published pages using this ethnic group.</p>
+            <p class="govuk-body-l">There are <strong>{{ measure_count }}</strong> published pages using this ethnic group.</p>
         {% else %}
-            <p class="lede">There is <strong>1</strong> published page using this ethnic group.</p>
+            <p class="govuk-body-l">There is <strong>1</strong> published page using this ethnic group.</p>
         {% endif %}
     </div>
   </div>
