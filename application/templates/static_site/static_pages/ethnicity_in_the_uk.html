@@ -12,88 +12,94 @@
 {%  block headEnd %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.ethnicity_in_the_uk') }}">{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-xlarge">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
         Ethnicity in the UK
       </h1>
 
-      <p>The UK population is made up of different ethnicities. 87% of people are White, and 13% belong to a Black, Asian, Mixed or Other ethnic group.</p>
+      <p class="govuk-body">The UK population is made up of different ethnicities. 87% of people are White, and 13% belong to a Black, Asian, Mixed or Other ethnic group.</p>
 
-      <p>This overview explains how ethnicity is defined, how ethnicity data is gathered, and gives an overall picture of the population by ethnicity.</p>
+      <p class="govuk-body">This overview explains how ethnicity is defined, how ethnicity data is gathered, and gives an overall picture of the population by ethnicity.</p>
 
-      <p>You can also see <a href="{{ url_for('static_site.index') }}">facts and figures</a> on the different experiences of people from a variety of ethnic backgrounds.</p>
+      <p class="govuk-body">You can also see <a class="govuk-link" href="{{ url_for('static_site.index') }}">facts and figures</a> on the different experiences of people from a variety of ethnic backgrounds.</p>
 
-      <div class="accordion">
+      <div class="govuk-accordion" data-module="accordion" id="accordion-ethnicity-in-the-uk">
 
-        <div class="accordion-section">
-          <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Ethnicity and race">
-            <h2 class="heading-medium">Ethnicity and race</h2>
+        <div class="govuk-accordion__section">
+          <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="accordion-ethnicity-and-race">Ethnicity and race</span>
+            </h2>
           </div>
-          <div class="accordion-section-body">
+          <div id="accordion-ethnicity-and-race" class="govuk-accordion__section-content" aria-labelledby="accordion-ethnicity-and-race">
 
-            <p>There is no single agreed international definition of ethnicity and race or of the distinction between the two.</p>
+            <p class="govuk-body">There is no single agreed international definition of ethnicity and race or of the distinction between the two.</p>
 
-            <p>Race is <a href="https://unstats.un.org/unsd/demographic/sconcerns/popchar/morning.pdf" data-on="click" data-event-category="External link clicked" data-event-action="Ethnicity link" data-event-label="Ethnic classification in global perspective">often defined</a> as being related to notions of intrinsic physical differences between groups of people.</p>
+            <p class="govuk-body">Race is <a class="govuk-link" href="https://unstats.un.org/unsd/demographic/sconcerns/popchar/morning.pdf" data-on="click" data-event-category="External link clicked" data-event-action="Ethnicity link" data-event-label="Ethnic classification in global perspective">often defined</a> as being related to notions of intrinsic physical differences between groups of people.</p>
 
-            <p>The <a href="https://www.ons.gov.uk/methodology/classificationsandstandards/measuringequality/ethnicgroupnationalidentityandreligion" data-on="click" data-event-category="External link clicked" data-event-action="Ethnicity link" data-event-label="ONS: Measuring ethnicity">Office of National Statistics (ONS)</a> and the <a href="https://unstats.un.org/unsd/demographic/sconcerns/popchar/popcharmethods.htm" data-on="click" data-event-category="External link clicked" data-event-action="Ethnicity link" data-event-label="UN: Ethnocultural characteristics">United Nations Statistics Division</a> both describe ethnicity as a broader concept which includes or combines nationality, citizenship, race, colour, language, religion, and customs of dress or eating.</p>
+            <p class="govuk-body">The <a class="govuk-link" href="https://www.ons.gov.uk/methodology/classificationsandstandards/measuringequality/ethnicgroupnationalidentityandreligion" data-on="click" data-event-category="External link clicked" data-event-action="Ethnicity link" data-event-label="ONS: Measuring ethnicity">Office of National Statistics (ONS)</a> and the <a class="govuk-link" href="https://unstats.un.org/unsd/demographic/sconcerns/popchar/popcharmethods.htm" data-on="click" data-event-category="External link clicked" data-event-action="Ethnicity link" data-event-label="UN: Ethnocultural characteristics">United Nations Statistics Division</a> both describe ethnicity as a broader concept which includes or combines nationality, citizenship, race, colour, language, religion, and customs of dress or eating.</p>
 
-            <p>In the context of the UK’s <a href="http://www.legislation.gov.uk/ukpga/2010/15/section/9">Equality Act 2010</a>, race includes a person’s skin colour, nationality and ethnic or national origins. Race and ethnicity are seen more as interchangeable concepts than distinct categories.</p>
+            <p class="govuk-body">In the context of the UK’s <a class="govuk-link" href="http://www.legislation.gov.uk/ukpga/2010/15/section/9">Equality Act 2010</a>, race includes a person’s skin colour, nationality and ethnic or national origins. Race and ethnicity are seen more as interchangeable concepts than distinct categories.</p>
 
-            <p>We use the term ‘ethnicity’ for the following reasons:</p>
+            <p class="govuk-body">We use the term ‘ethnicity’ for the following reasons:</p>
 
-            <ul class="bullets spaced-out">
+            <ul class="govuk-list govuk-list--bullet">
               <li>Accuracy: the data collected refers to ‘ethnicity’. For example, survey questions asked people to give their ethnicity, not their race.</li>
               <li>Consistency: user research highlighted that people were confused by inconsistent use of terminology, which then made it harder for them to understand the content.</li>
               <li>Interpretation: people understand different things by ‘race’ and ‘ethnicity’. User research also showed that some people directly associated ‘race’ with racism, whereas they more readily identified with, and were happy to discuss, the subject of ‘ethnicity’.</li>
             </ul>
+          </div>
+        </div>
 
+        <div class="govuk-accordion__section">
+          <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="accordion-describing-ethnicity">Describing ethnicity</span>
+            </h2>
+          </div>
+          <div id="accordion-describing-ethnicity" class="govuk-accordion__section-content" aria-labelledby="accordion-describing-ethnicity">
+
+            <p class="govuk-body">A huge number of different names and descriptions are used when talking about ethnicity and ethnic groups. By deciding on a consistent set of terms to use across the website, we help readers understand the topics more easily and minimise misinterpretation.</p>
+
+            <p class="govuk-body">Because White British people are the largest ethnic group in the UK, other ethnicities are sometimes referred to as 'ethnic minorities'.</p>
+
+            <p class="govuk-body">As well as Black, Asian, Mixed/Multiple and other more specific categories of ethnicity, the ethnic minorities in the UK include members of White minorities, such as those from either an Irish or a Gypsy background.</p>
+
+            <p class="govuk-body">Terms such as ethnic minority, BME (Black and minority ethnic) and BAME (Black, Asian, and minority ethnic) are often used interchangeably. In line with the <a class="govuk-link" href="http://style.ons.gov.uk" data-on="click" data-event-category="External link clicked" data-event-action="Ethnicity link" data-event-label="ONS style guide">ONS style guide</a>, we use the term ethnic minorities rather than BME or BAME.</p>
+
+            <p class="govuk-body">The Ethnicity facts and figures style guide covers the way that we describe ethnicity and statistical concepts in more detail.</p>
 
           </div>
         </div>
 
-        <div class="accordion-section">
-          <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Describing ethnicity">
-            <h2 class="heading-medium">Describing ethnicity</h2>
+        <div class="govuk-accordion__section">
+          <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="accordion-collecting-ethnicity-data">Collecting ethnicity data</span>
+            </h2>
           </div>
-          <div class="accordion-section-body">
+          <div id="accordion-collecting-ethnicity-data" class="govuk-accordion__section-content" aria-labelledby="accordion-collecting-ethnicity-data">
+            <p class="govuk-body">Ethnicity data is usually provided to the government by a person selecting their own ethnicity from a list of ethnic groups. In some cases, where there is no list to choose from, they state the ethnicity they identify as. On rare occasions, somebody else may choose the ethnic group on behalf of the person in question – for example, in the case of a youth caution, ethnicity is identified and recorded by the police officer giving the caution.</p>
 
-            <p>A huge number of different names and descriptions are used when talking about ethnicity and ethnic groups. By deciding on a consistent set of terms to use across the website, we help readers understand the topics more easily and minimise misinterpretation.</p>
+            <p class="govuk-body">UK government organisations use a variety of different lists of ethnicities. These lists also change over time to reflect the nation’s changing population. ONS set out a <a class="govuk-link" href="{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnic-groups-and-data-collected') }}">standardised list of ethnicities</a> in the 2011 census. However, in practice, there is no single standard across the public sector, due to differing goals, policies, and data analysis methods.</p>
 
-            <p>Because White British people are the largest ethnic group in the UK, other ethnicities are sometimes referred to as 'ethnic minorities'.</p>
-
-            <p>As well as Black, Asian, Mixed/Multiple and other more specific categories of ethnicity, the ethnic minorities in the UK include members of White minorities, such as those from either an Irish or a Gypsy background.</p>
-
-            <p>Terms such as ethnic minority, BME (Black and minority ethnic) and BAME (Black, Asian, and minority ethnic) are often used interchangeably. In line with the <a href="http://style.ons.gov.uk" data-on="click" data-event-category="External link clicked" data-event-action="Ethnicity link" data-event-label="ONS style guide">ONS style guide</a>, we use the term ethnic minorities rather than BME or BAME.</p>
-
-            <p>The Ethnicity facts and figures style guide covers the way that we describe ethnicity and statistical concepts in more detail.</p>
+            <p class="govuk-body">The Ethnicity facts and figures data covers different regions and parts of the UK. The regional data available depends on which specific public services central government has responsibility for. For example, we have social housing data for England, policing data for England and Wales, and pay and income data for the United Kingdom.</p>
 
           </div>
         </div>
 
-        <div class="accordion-section">
-          <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Collecting ethnicity data">
-            <h2 class="heading-medium">Collecting ethnicity data</h2>
+        <div class="govuk-accordion__section">
+          <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="accordion-presenting-ethnicity-data">Presenting ethnicity data</span>
+            </h2>
           </div>
-          <div class="accordion-section-body">
-            <p>Ethnicity data is usually provided to the government by a person selecting their own ethnicity from a list of ethnic groups. In some cases, where there is no list to choose from, they state the ethnicity they identify as. On rare occasions, somebody else may choose the ethnic group on behalf of the person in question – for example, in the case of a youth caution, ethnicity is identified and recorded by the police officer giving the caution.</p>
+          <div id="accordion-presenting-ethnicity-data" class="govuk-accordion__section-content" aria-labelledby="accordion-presenting-ethnicity-data">
 
-            <p>UK government organisations use a variety of different lists of ethnicities. These lists also change over time to reflect the nation’s changing population. ONS set out a <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnic-groups-and-data-collected') }}">standardised list of ethnicities</a> in the 2011 census. However, in practice, there is no single standard across the public sector, due to differing goals, policies, and data analysis methods.</p>
+            <p class="govuk-body">When possible, we present a detailed breakdown of different ethnic groups. If the 2011 census categories are used, there are 18 ethnicities and ‘Asian / Asian British’, for example, is broken down further into:</p>
 
-            <p>The Ethnicity facts and figures data covers different regions and parts of the UK. The regional data available depends on which specific public services central government has responsibility for. For example, we have social housing data for England, policing data for England and Wales, and pay and income data for the United Kingdom.</p>
-
-          </div>
-        </div>
-
-        <div class="accordion-section">
-          <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Presenting ethnicity data">
-            <h2 class="heading-medium">Presenting ethnicity data</h2>
-          </div>
-          <div class="accordion-section-body">
-
-            <p>When possible, we present a detailed breakdown of different ethnic groups. If the 2011 census categories are used, there are 18 ethnicities and ‘Asian / Asian British’, for example, is broken down further into:</p>
-
-            <ul>
+            <ul class="govuk-list govuk-list--bullet">
               <li>Bangladeshi</li>
               <li>Chinese</li>
               <li>Indian</li>
@@ -102,11 +108,11 @@
             </ul>
 
 
-            <p>It isn’t always possible to present such detailed breakdowns in the charts, tables and commentary. This might be because the data was never originally collected at this detailed level. It could also be due to small numbers, where there is a risk that an individual could be identified or the data is unreliable as it isn’t representative of the group.</p>
+            <p class="govuk-body">It isn’t always possible to present such detailed breakdowns in the charts, tables and commentary. This might be because the data was never originally collected at this detailed level. It could also be due to small numbers, where there is a risk that an individual could be identified or the data is unreliable as it isn’t representative of the group.</p>
 
-            <p>In these cases, broader ethnic groups are used, such as Asian, Black, Mixed, White, and Other.</p>
+            <p class="govuk-body">In these cases, broader ethnic groups are used, such as Asian, Black, Mixed, White, and Other.</p>
 
-            <p>Some departments are only able to provide a 'binary' classification, which divides ethnicities in one of 2 ways:</p>
+            <p class="govuk-body">Some departments are only able to provide a 'binary' classification, which divides ethnicities in one of 2 ways:</p>
 
             <ul class="bullets spaced-out">
               <li>White British and Other:
@@ -115,9 +121,9 @@
                 <br>White ethnic groups (including White British and White ethnic minorities) compared with all other ethnic minorities</li>
             </ul>
 
-            <p>Where data is missing, we indicate it in charts and tables by using the following symbols:</p>
+            <p class="govuk-body">Where data is missing, we indicate it in charts and tables by using the following symbols:</p>
 
-            <ul class="no-bullets spaced-out">
+            <ul class="govuk-list">
               <li><span class="explanation"><span class="missing-data confidential"></span></span>&nbsp;&nbsp; data withheld for confidentiality</li>
               <li><span class="explanation"><span class="missing-data sample-too-small"></span></span>&nbsp;&nbsp;   data not shown because small sample size makes it unreliable</li>
               <li><span class="explanation"><span class="missing-data not-collected"></span></span>&nbsp;&nbsp;   data not collected</li>
@@ -127,52 +133,54 @@
           </div>
         </div>
 
-        <div class="accordion-section">
-          <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Ethnicity across the population">
-            <h2 class="heading-medium">Ethnicity across the population</h2>
+        <div class="govuk-accordion__section">
+          <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="accordion-ethnicity-across-the-population">Ethnicity across the population</span>
+            </h2>
           </div>
-          <div class="accordion-section-body">
+          <div id="accordion-ethnicity-across-the-population" class="govuk-accordion__section-content" aria-labelledby="accordion-ethnicity-across-the-population">
 
-            <p>The following overview gives an overall picture of the population by ethnicity. It also analyses the different ethnic groups by age and sex and answers questions about income, birthplace, home and family.</p>
+            <p class="govuk-body">The following overview gives an overall picture of the population by ethnicity. It also analyses the different ethnic groups by age and sex and answers questions about income, birthplace, home and family.</p>
 
-            <p>This overview is based on 2011 census data, so it only covers England and Wales. This means that numbers will differ from an overview of the UK, as Scotland and Northern Ireland are not included here. We do not currently have detailed breakdowns for ethnicity across the entire UK population.</p>
+            <p class="govuk-body">This overview is based on 2011 census data, so it only covers England and Wales. This means that numbers will differ from an overview of the UK, as Scotland and Northern Ireland are not included here. We do not currently have detailed breakdowns for ethnicity across the entire UK population.</p>
 
-            <ul class="bullets">
+            <ul class="govuk-list govuk-list--bullet">
               <li>
-                <a href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='national-and-regional-populations', measure_slug='population-of-england-and-wales', version='latest') }}">
+                <a class="govuk-link" href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='national-and-regional-populations', measure_slug='population-of-england-and-wales', version='latest') }}">
                   population of England and Wales
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='national-and-regional-populations', measure_slug='regional-ethnic-diversity', version='latest') }}">
+                <a class="govuk-link" href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='national-and-regional-populations', measure_slug='regional-ethnic-diversity', version='latest') }}">
                   region
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='demographics', measure_slug='socioeconomic-status', version='latest') }}">
+                <a class="govuk-link" href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='demographics', measure_slug='socioeconomic-status', version='latest') }}">
                   economic status
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='demographics', measure_slug='male-and-female-populations', version='latest') }}">
+                <a class="govuk-link" href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='demographics', measure_slug='male-and-female-populations', version='latest') }}">
                   gender
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='demographics', measure_slug='age-groups', version='latest') }}">
+                <a class="govuk-link" href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='demographics', measure_slug='age-groups', version='latest') }}">
                   age
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='demographics', measure_slug='people-born-outside-the-uk', version='latest') }}">place of birth</a>
+                <a class="govuk-link" href="{{ url_for('static_site.measure_version', topic_slug='british-population', subtopic_slug='demographics', measure_slug='people-born-outside-the-uk', version='latest') }}">place of birth</a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnicity-and-type-of-family-or-household') }}">
+                <a class="govuk-link" href="{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnicity-and-type-of-family-or-household') }}">
                   type of family or household
                 </a>
               </li>
               <li>
-                <a href="{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnic-groups-by-sexual-identity') }}">sexual identity</a>
+                <a class="govuk-link" href="{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnic-groups-by-sexual-identity') }}">sexual identity</a>
               </li>
             </ul>
 
