@@ -11,14 +11,14 @@
 {% block pageTitle %}{{ level_of_geography }}{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-xlarge">{{ level_of_geography }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ level_of_geography }}</h1>
 
         {% if page_count > 1 %}
-            <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this level of geography.</p>
+            <p class="govuk-body-l">There are <strong>{{ page_count }}</strong> published pages using this level of geography.</p>
         {% else %}
-            <p class="lede">There is <strong>1</strong> published pages using this level of geography.</p>
+            <p class="govuk-body-l">There is <strong>1</strong> published pages using this level of geography.</p>
         {% endif %}
     </div>
   </div>
