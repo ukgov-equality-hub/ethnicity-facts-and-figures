@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% set breadcrumbs = 
+{% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
   ]
@@ -10,17 +10,17 @@
 {% block bodyClasses %}rd_cms{% endblock %}
 
 {% block content %}
-        <div class="grid-row">
-            <div class="column-full">
-                <h1 class='heading-large no-breadcrumb'>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">
                     Admin
                 </h1>
                 {% if current_user.can(MANAGE_USERS) %}
-                    <p><a href="{{ url_for('admin.users') }}">Users</a></p>
+                    <p class="govuk-body"><a class="govuk-link" href="{{ url_for('admin.users') }}">Users</a></p>
                 {% endif %}
 
                 {% if current_user.can(MANAGE_SYSTEM) %}
-                    <p><a href="{{ url_for('admin.site_build') }}">Static site build</a></p>
+                    <p class="govuk-body"><a class="govuk-link" href="{{ url_for('admin.site_build') }}">Static site build</a></p>
                 {% endif %}
             </div>
         </div>
