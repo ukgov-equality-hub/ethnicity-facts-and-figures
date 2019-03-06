@@ -10,12 +10,10 @@
     <div class='grid-row'>
         <div class='column-full'>
             {% if login_user_form.errors %}
-                <div class="row">
-                    <div class="flash-message">
-                        <div data-alert
-                             class="alert-box alert">
-                            <span>Make sure you've entered the right email address and password. If you've forgotten your password you can reset it by clicking 'Forgotten password'</span>
-                        </div>
+                <div class="flash-message">
+                    <div data-alert
+                         class="alert-box alert">
+                        <span>Make sure you've entered the right email address and password. If you've forgotten your password you can reset it by clicking 'Forgotten password'</span>
                     </div>
                 </div>
             {% endif %}
