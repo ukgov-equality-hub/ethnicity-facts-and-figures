@@ -9,12 +9,12 @@
 {% block pageTitle %}Corrections to published data - GOV.UK{% endblock %}
 
 {% block content %}
-    <h1 class="heading-xlarge">Corrections to published data</h1>
+    <h1 class="govuk-heading-xl">Corrections to published data</h1>
 
     {% if measure_versions_corrected_and_published|length > 0 %}
       {% for corrected_measure_version, published_version_with_correction in measure_versions_corrected_and_published %}
         <div class="corrected-measure-version">
-        <h2 class="heading-small">
+        <h2 class="govuk-heading-s">
           <a href="{{ url_for('static_site.measure_version',
                                topic_slug=corrected_measure_version.measure.subtopic.topic.slug,
                                subtopic_slug=corrected_measure_version.measure.subtopic.slug,
