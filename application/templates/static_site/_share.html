@@ -1,7 +1,7 @@
-<div class="grid-row">
-  <div class="column-full">
-    <hr />
-    <h4>Share this page</h4>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <hr class="govuk-section-break--visible" />
+    <h4 class="govuk-heading-s">Share this page</h4>
     <div class="share">
 
       {% set encoded_url = (config.RDU_SITE.rstrip('/') + url_for('static_site.measure_version', topic_slug=measure_version.measure.subtopic.topic.slug, subtopic_slug=measure_version.measure.subtopic.slug, measure_slug=measure_version.measure.slug, version='latest')) | urlencode %}
@@ -15,7 +15,7 @@
         ]%}
 
       {% for platform, link in links %}
-        <a class="{{ platform | lower }}" href="{{ link }}" rel="noreferrer noopener nofollow" data-on="click" data-event-category="External link clicked" data-event-action="Share" data-event-label="{{ platform }}"><span class="visually-hidden">Share on </span>{{ platform }}</a>
+        <a class="govuk-link govuk-!-font-size-16 govuk-!-font-weight-bold govuk-!-margin-right-4 {{ platform | lower }}" href="{{ link }}" rel="noreferrer noopener nofollow" data-on="click" data-event-category="External link clicked" data-event-action="Share" data-event-label="{{ platform }}"><span class="visually-hidden">Share on </span>{{ platform }}</a>
       {% endfor %}
 
     </div>
