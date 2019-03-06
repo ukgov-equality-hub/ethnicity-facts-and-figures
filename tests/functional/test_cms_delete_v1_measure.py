@@ -32,7 +32,9 @@ def test_delete_a_draft_1_0_measure(driver, live_server):
     # WHEN we go to the topic page
     topic_page = TopicPage(driver, live_server, measure_version.measure.subtopic.topic)
     topic_page.get()
-    topic_page.expand_accordion_for_subtopic(measure_version.measure.subtopic)
+
+    # No longer required; accordion remembers the expanded state from earlier in the test.
+    # topic_page.expand_accordion_for_subtopic(measure_version.measure.subtopic)
 
     # THEN measure is listed
     assert topic_page.measure_is_listed(measure) is True
