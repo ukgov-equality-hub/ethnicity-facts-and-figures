@@ -1,8 +1,8 @@
 {% macro status_banner(sticky=True) -%}
 
-  <div class="grid-row">
+  <div class="grid-row status-banner {% if sticky %}sticky-js{% endif %}">
     <div class="column-full">
-      <div class="status {% if sticky %}sticky-js{% endif %}">
+      <div class="status">
         <div class="status-inner">
           {{ caller() }}
         </div>
