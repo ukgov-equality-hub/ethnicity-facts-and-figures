@@ -251,7 +251,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(test_app_clie
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("button", class_="button")[-1].text.strip().lower() == "approve for publishing"
+    assert page.find_all("button")[-1].text.strip().lower() == "approve for publishing"
 
     measure_version = MeasureVersionFactory(status="APPROVED")
 
@@ -267,7 +267,7 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(test_app_clie
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("button", class_="button")[-1].text.strip().lower() == "unpublish"
+    assert page.find_all("button")[-1].text.strip().lower() == "unpublish"
 
 
 def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(test_app_client, logged_in_rdu_user):
@@ -284,7 +284,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(test_a
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("button", class_="button")[-1].text.strip().lower() == "reject"
+    assert page.find_all("button")[-1].text.strip().lower() == "reject"
 
     measure_version = MeasureVersionFactory(status="APPROVED")
 
@@ -300,7 +300,7 @@ def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(test_a
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("a", class_="button")[-1].text.strip() == "Update"
+    assert page.find_all("a", class_="govuk-button")[-1].text.strip() == "Update"
 
 
 def test_order_measures_in_subtopic(test_app_client, logged_in_rdu_user):
@@ -791,7 +791,7 @@ def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(test_app_cl
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    page_button_texts = [button.text.strip().lower() for button in page.find_all("button", class_="button")]
+    page_button_texts = [button.text.strip().lower() for button in page.find_all("button")]
     assert ("create a copy of this measure" in page_button_texts) is can_see_copy_button
 
 
