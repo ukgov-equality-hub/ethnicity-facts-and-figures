@@ -18,10 +18,10 @@
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}{% else %}{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}{% endif %}">
         {{ form.csrf_token }}
         {% call status_banner() %}
-            <div class="version-info left">
+            <div class="left">
                 <span class="info">Version&nbsp;<b>{{ measure_version.version }}</b></span>
             </div>
-            <div class="centre">
+            <div>
                 <span class="info" id="status">Status:&nbsp;<b>
                     {% if measure_version.published == True and measure_version.status == "APPROVED" %}
                         Published
