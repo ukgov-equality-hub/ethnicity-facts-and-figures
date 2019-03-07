@@ -428,27 +428,27 @@
 
             {% if measure_version.primary_data_source %}
               {% if measure_version.primary_data_source.type_of_data %}
-              <h3 class="heading-small">Type of data</h3>
+              <h3 class="govuk-heading-s">Type of data</h3>
               <p>{{ measure_version.primary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
               {% endif %}
 
               {% if measure_version.primary_data_source.type_of_statistic %}
-                <h3 class="heading-small">Type of statistic</h3>
+                <h3 class="govuk-heading-s">Type of statistic</h3>
                 <p>{{ measure_version.primary_data_source.type_of_statistic.external }}</p>
               {% endif %}
 
               {% if measure_version.primary_data_source.publisher %}
-                <h3 class="heading-small">Publisher</h3>
+                <h3 class="govuk-heading-s">Publisher</h3>
                 <p itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><span itemprop="name">{{ measure_version.primary_data_source.publisher.name }}</span></p>
               {% endif %}
 
               {% if measure_version.primary_data_source.note_on_corrections_or_updates %}
-                <h3 class="heading-small">Note on corrections or updates</h3>
+                <h3 class="govuk-heading-s">Note on corrections or updates</h3>
                 <p>{{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
               {% endif %}
 
               {% if measure_version.primary_data_source.frequency_of_release %}
-                <h3 class="heading-small">Publication frequency</h3>
+                <h3 class="govuk-heading-s">Publication frequency</h3>
                 {% if measure_version.primary_data_source.frequency_of_release.description == 'Other' %}
                       {{ measure_version.primary_data_source.frequency_other }}
                 {% else %}
@@ -457,7 +457,7 @@
               {% endif %}
 
               {% if measure_version.primary_data_source.purpose %}
-                  <h3 class="heading-small">Purpose of data source</h3>
+                  <h3 class="govuk-heading-s">Purpose of data source</h3>
                   {{ measure_version.primary_data_source.purpose | render_markdown }}
               {% endif %}
             {% endif %}
@@ -465,40 +465,40 @@
             </div>
             {% if measure_version.secondary_data_source %}
               <div class="secondary-source" itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
-                <h3 class="heading-small">Secondary source</h3>
+                <h3 class="govuk-heading-s">Secondary source</h3>
                 <p itemprop="name"><a href="{{ measure_version.secondary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.secondary_data_source.title }}" itemprop="url">
                     {{ measure_version.secondary_data_source.title }}
                 </a></p>
 
                 {% if measure_version.secondary_data_source.type_of_data %}
-                 <h3 class="heading-small">Type of data</h3>
+                 <h3 class="govuk-heading-s">Type of data</h3>
                  <p>{{ measure_version.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
                 {% endif %}
 
                 {% if measure_version.secondary_data_source.type_of_statistic %}
-                 <h3 class="heading-small">Type of statistic</h3>
+                 <h3 class="govuk-heading-s">Type of statistic</h3>
                  <p>{{ measure_version.secondary_data_source.type_of_statistic.external }}</p>
                 {% endif %}
 
                 {% if measure_version.secondary_data_source.publisher %}
-                  <h3 class="heading-small">Publisher</h3>
+                  <h3 class="govuk-heading-s">Publisher</h3>
                   <p itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><span itemprop="name">{{ measure_version.secondary_data_source.publisher.name }}</span></p>
                 {% endif %}
 
               {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
                 {% if measure_version.secondary_data_source.publication_date %}
-                  <h3 class="heading-small">Publication release date</h3>
+                  <h3 class="govuk-heading-s">Publication release date</h3>
                   <p>{{ measure_version.secondary_data_source.publication_date }}</p>
                 {% endif %}
               #}
 
                 {% if measure_version.secondary_data_source.note_on_corrections_or_updates %}
-                  <h3 class="heading-small">Note on corrections or updates</h3>
+                  <h3 class="govuk-heading-s">Note on corrections or updates</h3>
                   <p>{{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
                 {% endif %}
 
                 {% if measure_version.secondary_data_source.frequency_of_release %}
-                  <h3 class="heading-small">Publication frequency</h3>
+                  <h3 class="govuk-heading-s">Publication frequency</h3>
                   {% if measure_version.secondary_data_source.frequency_of_release.description == 'Other' %}
                         {{ measure_version.secondary_data_source.frequency_of_release_other }}
                   {% else %}
@@ -507,7 +507,7 @@
                 {% endif %}
 
                 {% if measure_version.secondary_data_source.purpose %}
-                  <h3 class="heading-small">Purpose of data source</h3>
+                  <h3 class="govuk-heading-s">Purpose of data source</h3>
                   {{ measure_version.secondary_data_source.purpose | render_markdown }}
                 {% endif %}
               </div>
