@@ -1,0 +1,19 @@
+#global-header {
+  border-bottom: 0px;
+}
+
+.header-one-third {
+  display: block;
+  clear: both;
+  float: left;
+  width: 100%;
+
+  @media(min-width: 641px) {
+    clear: none;
+    display: inline-block;
+  }
+
+  @media(min-width: 769px) {
+    width: 33.33%;
+  }
+}
