@@ -1,0 +1,31 @@
+/* Destructive button
+
+   Use for buttons that can have negative consequences (like deleting a
+   page or suspending a user).
+
+   Borrowed from https://github.com/UKGovernmentBEIS/beis-mspsds/blob/master/mspsds-web/app/assets/application/stylesheets/buttons.scss
+*/
+$black: #000000;
+$eff-button-neutral-colour: $grey-3;
+$eff-button-neutral-hover-colour: mix($black, $eff-button-neutral-colour, 15%);
+$eff-button-neutral-shadow-colour: mix($black, $eff-button-neutral-colour, 50%);
+
+.eff-button--neutral {
+  background-color: $eff-button-neutral-colour;
+  box-shadow: 0 $govuk-border-width-form-element 0 $eff-button-neutral-shadow-colour;
+
+  &:hover,
+  &:focus {
+    background-color: $eff-button-neutral-hover-colour;
+  }
+
+  .govuk-button--disabled,
+  .govuk-button[disabled="disabled"],
+  .govuk-button[disabled],
+  &:disabled {
+    &,
+    &:hover {
+      background: $eff-button-neutral-colour;
+    }
+  }
+}

@@ -48,4 +48,5 @@ $govuk-assets-path: '/static/assets/';
 
 /* Components unique to our service */
 @import 'components/_destructive_button';
+@import 'components/_neutral_button';
 @import 'components/_quiet_button';
