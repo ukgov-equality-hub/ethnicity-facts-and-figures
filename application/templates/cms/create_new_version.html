@@ -12,16 +12,16 @@
 {% block bodyClasses %}rd_cms{% endblock %}
 
 {% block content %}
-    <div class="grid-row">
-        <div class="column-full">
-            <h1 class="heading-large">Create new version</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-xl">Create new version</h1>
         </div>
     </div>
 
-    <div class="grid-row">
-        <div class="column-two-thirds new-version">
-            <p>Current version: <b>{{ measure_version.version }}</b>
-                <a href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds new-version">
+            <p class="govuk-body">Current version: <b>{{ measure_version.version }}</b>
+                <a class="govuk-link" href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
                     View page
                 </a>
             </p>
@@ -29,13 +29,8 @@
                   action="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
                 {{ form.csrf_token }}
                 {{ form.version_type }}
-                <button class="button">Create new version in draft</button>
+                <button class="govuk-button">Create new version in draft</button>
             </form>
         </div>
-
-        <div class="column-one-third">
-            &nbsp;
-        </div>
-
     </div>
 {% endblock %}
