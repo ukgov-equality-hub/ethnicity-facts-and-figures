@@ -290,11 +290,14 @@ $border-colour: #BFC1C3;
   #copy-to-clipboard {
     display: none;
     margin-left: 5px;
-    color: #000000;
+    margin-bottom: 0px;
+    font-size: 14px;
   }
 
   #generate-review-url {
-    color: #000000;
+    margin-left: 5px;
+    margin-bottom: 0px;
+    font-size: 14px;
   }
   //end edit measure
 

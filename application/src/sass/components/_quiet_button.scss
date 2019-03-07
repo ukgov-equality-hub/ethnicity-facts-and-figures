@@ -1,0 +1,34 @@
+/* Quiet button
+
+   Use for buttons for sactions that can be achieved some other way on the page, eg "Copy to clipboard"
+
+   Adapted from styles at https://github.com/alphagov/govuk_publishing_components/blob/master/app/assets/stylesheets/govuk_publishing_components/components/_button.scss#L69-L99
+*/
+$black: #000000;
+$eff-quiet-button-colour: $grey-1;
+$eff-quiet-button-hover-colour: mix($black, $eff-quiet-button-colour, 15%);
+
+
+.eff-button--secondary-quiet {
+  background-color: $white;
+  border-color: $eff-quiet-button-colour;
+  color: $eff-quiet-button-colour;
+  box-shadow: none;
+
+  &:hover,
+  &:focus {
+    background-color: $white;
+    color: $eff-quiet-button-hover-colour;
+  }
+
+  .govuk-button--disabled,
+  .govuk-button[disabled="disabled"],
+  .govuk-button[disabled],
+  &:disabled {
+    &,
+    &:hover {
+      background: $white;
+      color: $eff-quiet-button-hover-colour;
+    }
+  }
+}

@@ -33,12 +33,12 @@
                     <div id="review-url">
                         {% if measure_version.review_token and measure_version.review_token_expires_in(config) > 0 %}
                             {% set expires_in_days = measure_version.review_token_expires_in(config) %}
-                                <a href="{{ url_for('review.review_page', review_token=measure_version.review_token, _external=True) }}"  id='review-link-url'>Review link</a>
+                                <a class="govuk-link" href="{{ url_for('review.review_page', review_token=measure_version.review_token, _external=True) }}"  id='review-link-url'>Review link</a>
                                 expires in {{ expires_in_days }} {% if expires_in_days == 1 %}
-                                day{% else %}days{% endif %}<button id="copy-to-clipboard" class="button neutral">Copy link</button>
+                                day{% else %}days{% endif %}<button id="copy-to-clipboard" class="govuk-button eff-button--secondary-quiet">Copy link</button>
                                 <input id="review-link" value="{{ url_for('review.review_page', review_token=measure_version.review_token, _external=True) }}">
                         {% else %}
-                            <span class="warning">Review link expired <button id="generate-review-url" class="button neutral">Renew</button></span>
+                            <span class="warning">Review link expired <button id="generate-review-url" class="govuk-button eff-button--secondary-quiet">Renew</button></span>
                         {% endif %}
                     </div>
                 {% endif %}
