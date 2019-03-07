@@ -17,16 +17,15 @@
 
 {% block pageTitle %}{{ page_title("Create dimension", error=(form.errors|length > 0) )}}{% endblock %}
 {% block content %}
-    <div class="grid-row">
-        <div class="column-full">
-          <h1 class="heading-medium">Create new dimension</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+          <h1 class="govuk-heading-xl">Create new dimension</h1>
         </div>
     </div>
 
-    <div class="grid-row">
-        <div class="column-two-thirds">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
           {% block measure_form %}
-          <div class="form-group">
             <form method="POST" action="{{ url_for('cms.create_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version )}}">
                 {{ form.csrf_token }}
                 {% block fields %}
@@ -39,14 +38,13 @@
 
                 {% endblock fields %}
 
-                <button type="submit" class="button" name="save">
+                <button type="submit" class="govuk-button" name="save">
                     Save
                 </button>
             </form>
-          </div>
           {% endblock %}
 
-        <a href="{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Cancel</a>
+        <a class="govuk-link" href="{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Cancel</a>
     </div>
   </div>
 {% endblock %}
