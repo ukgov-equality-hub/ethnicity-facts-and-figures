@@ -13,21 +13,21 @@
 {% block pageTitle %}Version history: {{ measure.latest_version.title }}{% endblock %}
 
 {% block content %}
-    <div class='grid-row'>
-        <div class="column-two-thirds">
-            <h1 class='heading-large'>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
               Version history
-              <span class="heading-secondary">
-                <span class="visually-hidden">of </span>
+              <span class="govuk-caption-l">
+                <span class="govuk-visually-hidden">of </span>
                 {{ measure.latest_version.title }}
               </span>
             </h1>
         </div>
     </div>
-    <div class='grid-row'>
-        <div class='column-full'>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
 
-            <table class='table-of-measures'>
+            <table class="table-of-measures">
                 <thead>
                 <tr>
                     <th>
