@@ -27,9 +27,9 @@
 {% endblock %}
 
 {% block content %}
-    <div class="grid-row">
-        <div class="column-full">
-            <h1 id="builder-title" class="heading-medium">{% if dimension.chart_2_source_data %}Format and view{% else %}Create a{% endif %} chart</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 id="builder-title" class="govuk-heading-xl">{% if dimension.chart_2_source_data %}Format and view{% else %}Create a{% endif %} chart</h1>
         </div>
 
         {#
@@ -37,10 +37,10 @@
         This panel appears on create or when editing data
 #}
         <div id="data-panel" class="data-panel {% if dimension.chart_2_source_data %}hidden{% endif %}">
-            <div class="column-full">
-                <h2 class="heading-medium no-top-border builder-section-number">Data</h2>
+            <div class="govuk-grid-column-full">
+                <h2 class="govuk-heading-m no-top-border builder-section-number">Data</h2>
 
-                <div class="form-hint">
+                <div class="govuk-hint">
                     <p>Copy and paste your data here. You should:</p>
                     <ul>
                         <li>only select the columns and rows you need for this chart or table</li>
@@ -50,30 +50,30 @@
                     </ul>
                 </div>
 
-                <div class="form-group">
+                <div class="govuk-form-group">
                   <form onsubmit="return false;">
-                          <textarea class="form-control" id="data_text_area" rows="10"
+                          <textarea class="govuk-textarea" id="data_text_area" rows="10"
                                     {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
-                      <button class="btn button btn-primary" id="confirm-data">Next</button>
+                      <button class="btn govuk-button btn-primary" id="confirm-data">Next</button>
                   </form>
                 </div>
-                <a id="cancel-edit-data" href="#">Cancel</a>
+                <a class="govuk-link" id="cancel-edit-data" href="#">Cancel</a>
             </div>
         </div>
 
         <div id="edit-panel" class="edit-panel {% if not dimension.chart_2_source_data %}hidden{% endif %}">
-            <div class='column-one-third'>
+            <div class="govuk-grid-column-one-third">
                 {#
                     DATA DISPLAY
                     Data is displayed on the main builder in a small section that just lists its rows
                     and columns with an option to return to the DATA ENTRY PANEL
                 #}
-                <div id="tab_seperated_content" class="chart-builder-section grid-row">
-                      <h2 class="heading-medium builder-section-number">Data</h2>
+                <div id="tab_seperated_content" class="chart-builder-section govuk-grid-row">
+                      <h2 class="govuk-heading-m builder-section-number">Data</h2>
 
                       <div>
-                          <p id="data-description">(no data)</p>
-                          <a class="link" id="edit-data">Edit</a>
+                          <p class="govuk-body" id="data-description">(no data)</p>
+                          <p><a class="govuk-link" id="edit-data" href="#">Edit</a></p>
                       </div>
                 </div>
 
@@ -82,20 +82,18 @@
                     Here you select which of the preset options you want to use for this chart
                     (presets are selected using a call to the /get-valid-presets-for-data python endpoint)
                 #}
-                <div id="ethnicity_settings_section" class="chart-builder-section grid-row">
+                <div id="ethnicity_settings_section" class="chart-builder-section govuk-grid-row">
                     <form>
-                        <div>
-                            <div class="form-group">
-                                <label for="ethnicity_settings">
-                                    <h2 class="heading-medium builder-section-number">Ethnicity classification</h2>
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="ethnicity_settings">
+                                    <h2 class="govuk-heading-m builder-section-number">Ethnicity classification</h2>
                                 </label>
-                                <select id="ethnicity_settings" class="form-control"
+                                <select id="ethnicity_settings" class="govuk-select"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
                                 </select>
                                 {% include "cms/_custom_classification.html" %}
                             </div>
-                        </div>
                     </form>
                 </div>
 
@@ -103,12 +101,12 @@
                     CHART TYPE
                     Option list to pick a chart type
                  #}
-                <div id="select_chart_type" class="chart-builder-section grid-row hidden">
-                    <label for="chart_type_selector">
-                        <h2 class="heading-medium builder-section-number">Select chart type</h2>
+                <div id="select_chart_type" class="chart-builder-section govuk-grid-row hidden">
+                    <label class="govuk-label" for="chart_type_selector">
+                        <h2 class="govuk-heading-m builder-section-number">Select chart type</h2>
                     </label>
-                    <p class="form-hint">Choose the chart type that will make it easiest for the user to see and understand the data. See guidance on <a href="https://guide.ethnicity-facts-figures.service.gov.uk/data-style-guide#types-of-chart" target="_blank" rel="noopener noreferrer">which chart type to use</a> (this will open a new page).</p>
-                    <select class="form-control" id="chart_type_selector"
+                    <p class="govuk-hint">Choose the chart type that will make it easiest for the user to see and understand the data. See guidance on <a class="govuk-link" href="https://guide.ethnicity-facts-figures.service.gov.uk/data-style-guide#types-of-chart" target="_blank" rel="noopener noreferrer">which chart type to use</a> (this will open a new page).</p>
+                    <select class="govuk-select" id="chart_type_selector"
                             {% if form_disabled %}disabled="disabled"{% endif %}>
                         <option value="none">Select a chart type</option>
                         <option value="bar_chart">Bar chart</option>
@@ -134,9 +132,9 @@
                     it knows about parent-child relationships
                     simple bar charts require no settings at all
                 #}
-                <div id="bar_chart_options" class="chart-builder-section chart-option-group grid-row hidden">
-                    <h2 class="heading-medium builder-section-number">Bar chart options</h2>
-                    <p>No settings needed</p>
+                <div id="bar_chart_options" class="chart-builder-section chart-option-group govuk-grid-row hidden">
+                    <h2 class="govuk-heading-m builder-section-number">Bar chart options</h2>
+                    <p class="govuk-body">No settings needed</p>
                 </div>
 
 
@@ -145,14 +143,14 @@
                     Here you require two columns to set up the charts
                     Ethnicity must be one of the two
                 #}
-                <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group grid-row hidden">
-                    <h2 class="heading-medium builder-section-number">Grouped bar chart options</h2>
-                    <p>Use ethnicity for sub-groups if your data only includes 2 ethnic groups (for example, White and Other).</p>
+                <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group govuk-grid-row hidden">
+                    <h2 class="govuk-heading-m builder-section-number">Grouped bar chart options</h2>
+                    <p class="govuk-body">Use ethnicity for sub-groups if your data only includes 2 ethnic groups (for example, White and Other).</p>
                     <form>
                         {#
                             Select style
                         #}
-                        <select class="form-control" id="grouped-bar__data_style"
+                        <select class="govuk-select" id="grouped-bar__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option value="ethnicity_as_group" selected>Use ethnicity for major groups</option>
                             <option value="ethnicity_as_bar">Use ethnicity for sub-groups</option>
@@ -161,10 +159,10 @@
                         {#
                             Style 1 - Ethnicity for groups
                         #}
-                        <div class="indented-option-block grid-row" id="grouped-bar__ethnicity_is_group">
-                            <div class="form-group">
-                                <label for="grouped-bar__bar_column">Sub-grouping</label>
-                                <select id="grouped-bar__bar_column" class="form-control"
+                        <div class="indented-option-block govuk-grid-row" id="grouped-bar__ethnicity_is_group">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="grouped-bar__bar_column">Sub-grouping</label>
+                                <select id="grouped-bar__bar_column" class="govuk-select"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
                                 </select>
@@ -174,10 +172,10 @@
                         {#
                             Style 2  - Ethnicity for sub-groups
                         #}
-                        <div class="indented-option-block grid-row hidden" id="grouped-bar__ethnicity_is_bar">
-                            <div class="form-group">
-                                <label for="grouped-bar__groups_column">Major grouping</label>
-                                <select id="grouped-bar__groups_column" class="form-control"
+                        <div class="indented-option-block govuk-grid-row hidden" id="grouped-bar__ethnicity_is_bar">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="grouped-bar__groups_column">Major grouping</label>
+                                <select id="grouped-bar__groups_column" class="govuk-select"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
                                 </select>
@@ -192,16 +190,16 @@
                     Here you require two columns to set up the charts
                     Ethnicity must be one of the two
                 #}
-                <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group grid-row hidden">
-                    <h2 class="heading-medium builder-section-number">Panel chart options</h2>
-                    <p>Most of the time you should use ethnicity for bars.</p>
-                    <p>Only use ethnicity for panels if you’re comparing outcomes within an ethnic group, rather than between groups.</p>
-                    <p>Don’t have more than 16 panels or 10 bars within a panel.</p>
+                <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group govuk-grid-row hidden">
+                    <h2 class="govuk-heading-m builder-section-number">Panel chart options</h2>
+                    <p class="govuk-body">Most of the time you should use ethnicity for bars.</p>
+                    <p class="govuk-body">Only use ethnicity for panels if you’re comparing outcomes within an ethnic group, rather than between groups.</p>
+                    <p class="govuk-body">Don’t have more than 16 panels or 10 bars within a panel.</p>
                     <form>
                         {#
                             Select style
                         #}
-                        <select class="form-control" id="panel-bar__data_style"
+                        <select class="govuk-select" id="panel-bar__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option value="ethnicity_as_panel_bars" selected>Use ethnicity for bars</option>
                             <option value="ethnicity_as_panels">Use ethnicity for panels</option>
@@ -211,17 +209,17 @@
                         {#
                             Style 1 - Ethnicity for the bars
                         #}
-                        <div class="indented-option-block grid-row" id="panel-bar__ethnicity_as_bar">
-                            <div class="form-group">
-                                <label for="panel-bar__panel_column">Panels</label>
-                                <select id="panel-bar__panel_column" class="form-control"
+                        <div class="indented-option-block govuk-grid-row" id="panel-bar__ethnicity_as_bar">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="panel-bar__panel_column">Panels</label>
+                                <select class="govuk-select" id="panel-bar__panel_column"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="panel-bar__panel_order">Order</label>
-                                <select id="panel-bar__panel_order" class="form-control"
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="panel-bar__panel_order">Order</label>
+                                <select class="govuk-select" id="panel-bar__panel_order"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>[None]</option>
                                 </select>
@@ -232,17 +230,17 @@
                         {#
                             Style 2 - Ethnicity for the panels
                         #}
-                        <div class="indented-option-block grid-row hidden" id="panel-bar__ethnicity_as_panels">
-                            <div class="form-group">
-                                <label for="panel-bar__bar_column">Bars</label>
-                                <select id="panel-bar__bar_column" class="form-control"
+                        <div class="indented-option-block govuk-grid-row hidden" id="panel-bar__ethnicity_as_panels">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="panel-bar__bar_column">Bars</label>
+                                <select id="panel-bar__bar_column" class="govuk-select"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>s
                                     <option>Please select</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="panel-bar__bar_order">Order</label>
-                                <select id="panel-bar__bar_order" class="form-control"
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="panel-bar__bar_order">Order</label>
+                                <select id="panel-bar__bar_order" class="govuk-select"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>[None]</option>
                                 </select>
@@ -255,12 +253,12 @@
                     LINE CHARTS _______________________________
                     Must have ETHNICITY as their series - we only need to set a column for the x-axis
                 #}
-                <div id="line_graph_options" class="chart-builder-section chart-option-group grid-row hidden">
-                    <h2 class="heading-medium builder-section-number">Line chart options</h2>
+                <div id="line_graph_options" class="chart-builder-section chart-option-group govuk-grid-row hidden">
+                    <h2 class="govuk-heading-m builder-section-number">Line chart options</h2>
                     <form>
-                        <div>
-                            <label for="line__x-axis_column" class="form-hint">Select a value for the horizontal (X) axis.<br>Choose 'Time' for time series data.</label>
-                            <select id="line__x-axis_column" class="form-control">
+                        <div class="govuk-form-group">
+                            <label for="line__x-axis_column" class="govuk-label">Select a value for the horizontal (X) axis.<br>Choose 'Time' for time series data.</label>
+                            <select id="line__x-axis_column" class="govuk-select">
                                 <option>Time</option>
                             </select>
                         </div>
@@ -272,13 +270,12 @@
                     Are not more complex than regular line charts
                     Must have ETHNICITY as their panels - we only need to set a column for the x-axis
                 #}
-                <div id="panel_line_chart_options" class="chart-builder-section chart-option-group grid-row hidden">
-                    <h2 class="heading-medium builder-section-number">Panel line chart options</h2>
+                <div id="panel_line_chart_options" class="chart-builder-section chart-option-group govuk-grid-row hidden">
+                    <h2 class="govuk-heading-m builder-section-number">Panel line chart options</h2>
                     <form>
-
-                        <div>
-                            <label for="panel-line__x-axis_column" class="form-hint">Select a value for the horizontal (X) axis.<br>Choose 'Time' for time series data.</label>
-                            <select id="panel-line__x-axis_column" class="form-control">
+                        <div class="govuk-form-group">
+                            <label for="panel-line__x-axis_column" class="govuk-label">Select a value for the horizontal (X) axis.<br>Choose 'Time' for time series data.</label>
+                            <select id="panel-line__x-axis_column" class="govuk-select">
                                 <option>Time</option>
                             </select>
                         </div>
@@ -290,13 +287,13 @@
                     Here you require two columns to set up the charts
                     Ethnicity must be one of the two
                 #}
-                <div id="component_chart_options" class="chart-builder-section chart-option-group grid-row hidden">
-                    <h2 class="heading-medium builder-section-number">Component chart options</h2>
+                <div id="component_chart_options" class="chart-builder-section chart-option-group govuk-grid-row hidden">
+                    <h2 class="govuk-heading-m builder-section-number">Component chart options</h2>
                     <form>
                         {#
                             Select style
                         #}
-                        <select class="form-control" id="component__data_style"
+                        <select class="govuk-select" id="component__data_style"
                                 {% if form_disabled %}disabled="disabled"{% endif %}>
                             <option value="ethnicity_as_bar" selected>Use ethnicity for bars</option>
                             <option value="ethnicity_as_sections">Use ethnicity for bar sections</option>
@@ -306,17 +303,17 @@
                         {#
                             Style 1 - Ethnicity for the bars
                         #}
-                        <div class="indented-option-block grid-row" id="component__ethnicity_is_bar">
-                            <div class="form-group">
-                                <label for="component__section_column">Sections</label>
-                                <select id="component__section_column" class="form-control"
+                        <div class="indented-option-block govuk-grid-row" id="component__ethnicity_is_bar">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="component__section_column">Sections</label>
+                                <select id="component__section_column" class="govuk-select"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="component__section_order">Order</label>
-                                <select id="component__section_order" class="form-control"
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="component__section_order">Order</label>
+                                <select id="component__section_order" class="govuk-select"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>[None]</option>
                                 </select>
@@ -327,17 +324,17 @@
                         {#
                             Style 2 - Ethnicity for the sections
                         #}
-                        <div class="indented-option-block grid-row hidden" id="component__ethnicity_is_sections">
-                            <div class="form-group">
-                                <label for="component__bar_column">Bars</label>
-                                <select id="component__bar_column" class="form-control"
+                        <div class="indented-option-block govuk-grid-row hidden" id="component__ethnicity_is_sections">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="component__bar_column">Bars</label>
+                                <select id="component__bar_column" class="govuk-select"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="component__bar_order">Order</label>
-                                <select id="component__bar_order" class="form-control"
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="component__bar_order">Order</label>
+                                <select id="component__bar_order" class="govuk-select"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>[None]</option>
                                 </select>
@@ -346,25 +343,25 @@
                     </form>
                 </div>
 
-                <div id="chart_format_options" class="chart-builder-section chart-option-group grid-row hidden">
-                    <h2 class="heading-medium builder-section-number">Chart format options</h2>
+                <div id="chart_format_options" class="chart-builder-section chart-option-group govuk-grid-row hidden">
+                    <h2 class="govuk-heading-m builder-section-number">Chart format options</h2>
                     <form>
-                        <div class="form-group">
-                            <label for="number_format">Number format</label>
-                            <select id="number_format" class="form-control"
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="number_format">Number format</label>
+                            <select id="number_format" class="govuk-select"
                                     {% if form_disabled %}disabled="disabled"{% endif %}>
                                 <option value="none" selected>None</option>
                                 <option value="percent">Percentage (%)</option>
                                 <option value="other">Other</option>
                             </select>
-                            <div id="other_number_format" class="form-group hidden">
-                                <label for="number_format_prefix">Prefix (for example, £)</label>
+                            <div id="other_number_format" class="govuk-form-group hidden">
+                                <label class="govuk-label" for="number_format_prefix">Prefix (for example, £)</label>
                                 <input id="number_format_prefix" {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <label for="number_format_suffix">Suffix (for example, %)</label>
+                                <label class="govuk-label" for="number_format_suffix">Suffix (for example, %)</label>
                                 <input id="number_format_suffix" {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <label for="number_format_min">Vertical axis: Minimum value</label>
+                                <label class="govuk-label" for="number_format_min">Vertical axis: Minimum value</label>
                                 <input id="number_format_min" {% if form_disabled %}disabled="disabled"{% endif %}>
-                                <label for="number_format_max">Vertical axis: Maximum value</label>
+                                <label class="govuk-label" for="number_format_max">Vertical axis: Maximum value</label>
                                 <input id="number_format_max" {% if form_disabled %}disabled="disabled"{% endif %}>
                             </div>
                         </div>
@@ -372,19 +369,17 @@
                 </div>
             </div>
 
-            <div class="column-two-thirds">
-
-
+            <div class="govuk-grid-column-two-thirds">
                 <div id="tips_container" class="hidden">
                     <div id="notes_container" class="hidden">
-                        <h2 class="heading-medium">Note</h2>
-                        <ul>
+                        <h2 class="govuk-heading-m">Note</h2>
+                        <ul class="govuk-list govuk-list--bullet">
                             <li class="tip" id="tip__required-settings">Please complete all required settings</li>
                         </ul>
                     </div>
                     <div id="errors_container" class="hidden">
-                        <h2 class="heading-medium">Error</h2>
-                        <ul id="tip-list">
+                        <h2 class="govuk-heading-m">Error</h2>
+                        <ul class="govuk-list govuk-list--bullet" id="tip-list">
                             <li class="tip hidden" id="tip__ethnicity-column">Your data is missing an ethnicity column</li>
                             <li class="tip hidden" id="tip__value-column">Your data is missing a value column</li>
                             <li class="tip hidden" id="tip__rectangular-data">Your data is not a table</li>
@@ -395,22 +390,22 @@
                     </div>
                 </div>
                 <div id="preview_container">
-                    <h2 class="heading-medium builder-section-number">Chart title</h2>
+                    <h2 class="govuk-heading-m builder-section-number">Chart title</h2>
                     <div class="chart-builder-section">
-                      <span class="form-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
+                      <span class="govuk-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
                       {% include 'forms/extended_hints/_chart_and_table_title.html' %}
-                        <textarea id="chart_title" class="full-width" rows="2" data-module="autoresize no-newlines"
+                        <textarea id="chart_title" class="govuk-textarea" rows="2" data-module="autoresize no-newlines"
                                {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.chart_2_source_data %}{{ dimension.chart_2_source_data.chartFormat.chart_title }}{% endif %}</textarea>
                     </div>
 
-                    <h2 class="heading-medium builder-section-number">Preview</h2>
+                    <h2 class="govuk-heading-m builder-section-number">Preview</h2>
                     <div id="container" class="chart-container"></div>
 
                     {% if 'UPDATE' in measure_version.available_actions() %}
                     <br>
                     <div id="save_section" class="chart-builder-section hidden">
                         <div>
-                            <button class="button" id="save">Save</button>
+                            <button class="govuk-button" id="save">Save</button>
                         </div>
                     </div>
                     {% endif %}
