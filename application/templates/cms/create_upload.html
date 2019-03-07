@@ -13,13 +13,13 @@
 {% block pageTitle %}{{ page_title("Add the source data", error=(form.errors|length > 0) ) }}{% endblock %}
 
 {% block content %}
-    <div class="grid-row">
-        <div class="column-full">
-            <h1 class="heading-medium">Add the source data</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">Add the source data</h1>
         </div>
     </div>
-    <div class="grid-row">
-        <div class="column-two-thirds">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
             {% block measure_form %}
                 <form method="POST" enctype="multipart/form-data"
                       action="{{ url_for('cms.create_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version ) }}">
@@ -33,23 +33,9 @@
                             {{ form.upload }}
                         {% endif %}
 
-                        {{ form.title.label }}
-                        <span class="form-hint">For example, ‘Household income data’</span>
-                        {% if form.title.errors %}
-                            - {{ form.title.errors[0] }}
-                            {{ form.title(class="error") }}
-                        {% else %}
-                            {{ form.title }}
-                        {% endif %}
+                        {{ form.title(disabled=form_disabled) }}
 
-                        {{ form.description.label }}
-                        <span class="form-hint">Please specify what the download file contains, for example:<br><br>This file contains the following: measure, ethnicity, year, gender, age group, value, confidence intervals (upper bound, lower bound).</span>
-                        {% if form.description.errors %}
-                            - {{ form.description.errors[0] }}
-                            {{ form.description(class="error", rows='7',cols='100') }}
-                        {% else %}
-                            {{ form.description(rows='7',cols='100') }}
-                        {% endif %}
+                        {{ form.description(disabled=form_disabled, rows='7',cols='100') }}
 
                     {% endblock fields %}
                      <button type="submit" class="button">Save</button>
