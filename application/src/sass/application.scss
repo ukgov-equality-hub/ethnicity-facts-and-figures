@@ -45,3 +45,6 @@ $govuk-assets-path: '/static/assets/';
 @import '_updated_badge';
 @import '_footer';
 @import '_header';
+
+/* Components unique to our service */
+@import 'components/_destructive_button';

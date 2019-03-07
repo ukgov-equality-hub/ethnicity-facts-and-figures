@@ -18,6 +18,10 @@ button.link.delete {
   color: $red;
 }
 
+/* Deprecated. Use the 'Destructive button' component instead.
+
+  TODO: delete me once this is no longer being used anywhere.
+*/
 .button.delete,
 .button.warning {
   background-color: $red;
