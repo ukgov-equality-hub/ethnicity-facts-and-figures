@@ -1,10 +1,3 @@
-{% macro render_textarea_field(field, rows='10', cols='100', diffs={}, disabled=False, hint=None) -%}
-  {% with field=field, id_=field.id, name=field.name, class_="", diffs=diffs, disabled=disabled, type="", disabled=disabled, textarea=true, hint=hint, value=field.data or "", field_params=((("cols=" + cols + " ") if cols else "") + (("rows=" + rows + " ") if rows else ""))|safe %}
-    {% include "forms/_text_input.html" %}
-  {% endwith %}
-{%- endmacro %}
-
-
 {% macro render_field(field, disabled=False, label_class=None, class="", hint=None, diffs={}) -%}
   {# Deprecated - use a custom RDU form field (e.g. RDUTextField) and render directly with `{{ form.field }}` in a jinja template #}
 
@@ -43,18 +36,18 @@
                                   hint=None) %}
 
         {# Not using a wtforms select field as they do not support optgroups out of the box #}
-        <div class="form-group">
-            <label class="form-label" for="{{ field_id }}">
+        <div class="govuk-form-group {% if form_field.errors %}govuk-form-group--error{% endif %}">
+            <label class="govuk-label" for="{{ field_id }}">
                 {{ label }}
                 {% if hint %}
-                    <span class="form-hint">{{ hint }}</span>
+                    <span class="govuk-hint">{{ hint }}</span>
                 {% endif %}
             </label>
 
             {% if form_field.errors %}
-                <span class="error-message">This field is required</span>
+                <span class="govuk-error-message">This field is required</span>
             {% endif %}
-            <select class="form-control publisher" id="{{ field_id }}" name="{{ field_name }}" {% if disabled %}disabled{% endif %}>
+            <select class="publisher govuk-select {% if form_field.errors %}govuk-select--error{% endif %}" id="{{ field_id }}" name="{{ field_name }}" {% if disabled %}disabled{% endif %}>
               <option selected disabled>Please select</option>
               {% for type_of_org in organisations_by_type %}
                   <optgroup label="{{ type_of_org[0].pluralise() }}">
