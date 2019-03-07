@@ -13,14 +13,14 @@
 {% block pageTitle %}{{ page_title("Edit dimension", error=(form.errors|length > 0) )}}{% endblock %}
 
 {% block content %}
-    <div class="grid-row">
-        <div class="column-full">
-            <h1 class="heading-medium">Edit dimension</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">Edit dimension</h1>
         </div>
     </div>
 
-    <div class="grid-row">
-        <div class="column-two-thirds">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
             {% block measure_form %}
                 <form id="dimension_form" method="POST"
                       action="{{ url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}">
@@ -30,24 +30,25 @@
                     {% endblock fields %}
 
                     {% if 'UPDATE' in  measure_version.available_actions() %}
-                    <button type="submit" class="button" name="update">
+                    <button type="submit" class="govuk-button" name="update">
                         Update
                     </button>
                     {% endif %}
                 </form>
 
                     <div id="charts">
-                        <h2 class="heading-medium">Charts & Tables</h2>
-                        <table>
+                        <h2 class="govuk-heading-m">Charts & Tables</h2>
+                        <table class="govuk-table">
+                          <tbody class="govuk-table__body">
                             {% if dimension.chart and dimension.chart != '""' %}
-                                <tr>
-                                    <td>Chart</td>
-                                    <td>{{ dimension.chart.title.text }}</td>
-                                    <td><a id="edit_chart"
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__header" scope="row">Chart</td>
+                                    <td class="govuk-table__cell">{{ dimension.chart.title.text }}</td>
+                                    <td class="govuk-table__cell"><a class="govuk-link" id="edit_chart"
                                            href="{{ url_for('cms.chartbuilder', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure_version.available_actions() %}edit{% else %}
                                             view{% endif %}</a></td>
-                                    <td>
+                                    <td class="govuk-table__cell">
                                     {% if 'UPDATE' in  measure_version.available_actions() %}
                                         <form action="{{ url_for('cms.delete_chart', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}" method="post">
                                             {{ form.csrf_token }}
@@ -58,14 +59,14 @@
                                 </tr>
                             {% endif %}
                             {% if dimension.table and dimension.table != '""' %}
-                                <tr>
-                                    <td>Table</td>
-                                    <td>{{ dimension.table.header }}</td>
-                                    <td><a id="edit_table"
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__header" scope="row">Table</td>
+                                    <td class="govuk-table__cell">{{ dimension.table.header }}</td>
+                                    <td class="govuk-table__cell"><a class="govuk-link" id="edit_table"
                                            href="{{ url_for('cms.tablebuilder', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure_version.available_actions() %}edit{% else %}
                                             view{% endif %}</a></td>
-                                    <td>
+                                    <td class="govuk-table__cell">
                                         {% if 'UPDATE' in  measure_version.available_actions() %}
                                         <form action="{{ url_for('cms.delete_table', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}" method="post">
                                             {{ form.csrf_token }}
@@ -75,20 +76,21 @@
                                     </td>
                                 </tr>
                             {% endif %}
+                          </tbody>
                         </table>
                         {% if 'UPDATE' in  measure_version.available_actions() %}
 
                                 {% if not dimension.chart or dimension.chart == '""' %}
-                                <p>
-                                    <a id="create_chart"
+                                <p class="govuk-body">
+                                    <a class="govuk-link" id="create_chart"
                                        href="{{ url_for('cms.chartbuilder', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
                                         Add chart
                                     </a>
                                 </p>
                                 {% endif %}
                                 {% if not dimension.table or dimension.table == '""' %}
-                                <p>
-                                    <a id="create_table"
+                                <p class="govuk-body">
+                                    <a class="govuk-link" id="create_table"
                                        href="{{ url_for('cms.create_table', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
                                         Add table
                                     </a>
@@ -100,28 +102,30 @@
 
                     {% if ethnicity_classification %}
                     <div id="data">
-                        <h2 class="heading-medium">Data classification</h2>
-                        <table>
-                            <tr>
-                                <td>Classification</td>
-                                <td>{{ ethnicity_classification }}</td>
+                        <h2 class="govuk-heading-m">Data classification</h2>
+                        <table class="govuk-table">
+                          <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__header" scope="row">Classification</td>
+                                <td class="govuk-table__cell">{{ ethnicity_classification }}</td>
                             </tr>
-                            <tr>
-                                <td>Includes 'All'</td>
-                                <td>{{ includes_all | yesno | title }}</td>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__header" scope="row">Includes 'All'</td>
+                                <td class="govuk-table__cell">{{ includes_all | yesno | title }}</td>
                             </tr>
-                            <tr>
-                                <td>Includes broad categories</td>
-                                <td>{{ includes_parents | yesno | title }}</td>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__header" scope="row">Includes broad categories</td>
+                                <td class="govuk-table__cell">{{ includes_parents | yesno | title }}</td>
                             </tr>
-                            <tr>
-                                <td>Include 'Unknown'</td>
-                                <td>{{ includes_unknown | yesno | title }}</td>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__header" scope="row">Include 'Unknown'</td>
+                                <td class="govuk-table__cell">{{ includes_unknown | yesno | title }}</td>
                             </tr>
-                            <tr>
-                                <td>Source of classification</td>
-                                <td>{{ classification_source }}</td>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__header" scope="row">Source of classification</td>
+                                <td class="govuk-table__cell">{{ classification_source }}</td>
                             </tr>
+                          </tbody>
                         </table>
                     </div>
                     {% endif %}
