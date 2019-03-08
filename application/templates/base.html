@@ -71,7 +71,7 @@
     {% endblock %}
   </head>
 
-  <body class="govuk-template__body ">
+  <body class="govuk-template__body {% block bodyClasses %}{% endblock %}">
     {% block bodyStart %}
       <script>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
@@ -81,11 +81,11 @@
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 
     {% block cookieMessage %}
-    <div id="global-cookie-message">
-      <div class="cookie-message full-width">
-        <p>GOV.UK uses cookies to make the site simpler. <a href="/cookies">Find out more about cookies</a></p>
+      <div id="global-cookie-message">
+        <div class="cookie-message full-width">
+          <p>GOV.UK uses cookies to make the site simpler. <a href="/cookies">Find out more about cookies</a></p>
+        </div>
       </div>
-    </div>
     {% endblock %}
 
     {% block header %}
@@ -96,12 +96,11 @@
       {% include '_shared/_header.html' %}
     {% endblock %}
 
-    <div class="govuk-width-container">
-      {% include '_shared/_phase_banner.html' %}
 
-      {% block main %}
-        {% block mainElementDefinition %}<main id="main-content" class="govuk-main-wrapper" role="main">{% endblock %}
+    {% include '_shared/_phase_banner.html' %}
 
+    {% block main %}
+      <div class="govuk-width-container">
         {% block beforeContent %}
           {% block breadcrumbs %}
             {{ render_breadcrumbs(breadcrumbs) }}
@@ -112,12 +111,11 @@
           {% endblock %}
         {% endblock %}
 
-        {% block content %}{% endblock %}
-
+        <main class="govuk-main-wrapper {% block mainClasses %}{% endblock %}" id="main-content" role="main">
+          {% block content %}{% endblock %}
         </main>
-      {% endblock %}
-
-    </div>
+      </div>
+    {% endblock %}
 
     {% block footer %}
       {% include '_shared/_footer.html' %}
