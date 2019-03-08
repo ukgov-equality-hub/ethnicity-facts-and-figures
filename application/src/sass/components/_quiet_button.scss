@@ -5,19 +5,19 @@
    Adapted from styles at https://github.com/alphagov/govuk_publishing_components/blob/master/app/assets/stylesheets/govuk_publishing_components/components/_button.scss#L69-L99
 */
 $black: #000000;
-$eff-quiet-button-colour: $grey-1;
+$eff-quiet-button-colour: govuk-colour("grey-1");
 $eff-quiet-button-hover-colour: mix($black, $eff-quiet-button-colour, 15%);
 
 
 .eff-button--secondary-quiet {
-  background-color: $white;
+  background-color: govuk-colour("white");
   border-color: $eff-quiet-button-colour;
   color: $eff-quiet-button-colour;
   box-shadow: none;
 
   &:hover,
   &:focus {
-    background-color: $white;
+    background-color: govuk-colour("white");
     color: $eff-quiet-button-hover-colour;
   }
 
@@ -27,7 +27,7 @@ $eff-quiet-button-hover-colour: mix($black, $eff-quiet-button-colour, 15%);
   &:disabled {
     &,
     &:hover {
-      background: $white;
+      background: govuk-colour("white");
       color: $eff-quiet-button-hover-colour;
     }
   }
