@@ -1,15 +1,17 @@
 import bleach
+
 import json
-import markdown
 import jinja2
 
 from flask import Markup
 from hurry.filesize import size, alternative
 from slugify import slugify
 
+from application.cms.markdown import markdown
+
 
 def render_markdown(string):
-    return Markup(markdown.markdown(bleach.clean(string) if string else ""))
+    return Markup(markdown(bleach.clean(string) if string else ""))
 
 
 def filesize(string):
