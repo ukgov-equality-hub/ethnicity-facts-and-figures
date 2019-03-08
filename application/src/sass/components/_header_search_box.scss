@@ -22,7 +22,6 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
   }
 
   .site-search {
-    @extend %contain-floats;
 
     @media screen and (max-width: 379px) {
       width: auto;
@@ -51,21 +50,21 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
       margin: -32px 15px;
       overflow: hidden;
       text-indent: -5000px;
-      background-color: $govuk-blue;
+      background-color: govuk-colour("blue");
       background-image: url('/static/images/icon-search-govuk.png');
       background-repeat: no-repeat;
       background-position: 0 50%;
 
       body.search & { display: none; }
 
-      @include device-pixel-ratio() {
+      @include govuk-device-pixel-ratio() {
         background-size: 52.5px 35px;
         background-position: 100% 50%;
       }
     }
 
     &:hover {
-      background-color: darken($mainstream-brand, 5%);
+      background-color: darken($govuk-brand-colour, 5%);
     }
 
     &.js-hidden { display: none; }
@@ -75,7 +74,6 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
     width: 100%;
 
     .content {
-      @extend %contain-floats;
       position: relative;
       background: #fff;
       overflow: hidden;
@@ -101,7 +99,7 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
       }
     }
     input {
-      @include box-sizing(border-box);
+      box-sizing: border-box;
       float: left;
       min-width: 0;
       display: block;
@@ -112,17 +110,11 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
       &::-moz-focus-inner {
         border: 0;
       }
-      @include ie-lte(8) {
-        min-height: 24px;
-      }
-      @include ie-lte(6) {
-        height: 24px;
-      }
-      @include appearance(none);
+      appearance: none;
     }
 
     input#site-search-text {
-      @include core-16($line-height: (23/16), $line-height-640: (23/13));
+      @include govuk-font(16);
       position: relative;
       padding: 6px;
       z-index: 3;
@@ -134,12 +126,8 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
         outline-offset: -3px;
       }
 
-      @include ie-lte(7){
-        padding-left: 0;
-      }
       .js-enabled & {
         width: 86%;
-        @include calc(width, "100% - 35.1px"); /* 35.1 is for Safari, which renders this input too narrow */
       }
     }
 
@@ -151,35 +139,27 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
       width: 36px;
       height: 36px;
 
-      border: 1px solid $mainstream-brand;
+      border: 1px solid $govuk-brand-colour;
       border-width: 0 0 0 1px;
-      @include ie-lte(7){
-        border-width: 1px;
-      }
       border-left-color: #222;
-      @include border-radius(0);
+      border-radius: 0;
 
       overflow: hidden;
       text-indent: -5000px;
 
-      color: $white;
-      background-color: $mainstream-brand;
+      color: govuk-color("white");
+      background-color: $govuk-brand-colour;
       background-image: url('/static/images/icon-search-govuk.png');
       background-repeat: no-repeat;
       background-position: 0 50%;
 
-      @include device-pixel-ratio() {
+      @include govuk-device-pixel-ratio() {
         background-size: 52.5px 35px;
         background-position: 100% 50%;
       }
 
-      @include ie-lte(7) {
-        background-image: none;
-        width: auto;
-      }
-
       &:hover {
-        background-color: darken($mainstream-brand, 5%);
+        background-color: darken($govuk-brand-colour, 5%);
       }
 
       &.focus,
