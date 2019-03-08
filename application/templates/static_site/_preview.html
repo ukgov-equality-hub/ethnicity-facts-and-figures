@@ -1,4 +1,4 @@
-<div class="cms-banner">
+<div class="cms-banner govuk-body-s">
   <div class="container-outer">
     <div class="container">
       <div class="nav">
@@ -22,7 +22,7 @@
           {% if current_user.is_authenticated %}
           <form action="{{ url_for('auth.logout') }}" method="post">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-              <button class="link" name="logout">Sign out</button>
+              <button class="eff-button--link govuk-link" name="logout">Sign out</button>
           </form>
           {% endif %}
         </div>

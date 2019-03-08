@@ -95,3 +95,20 @@ $eff-quiet-button-hover-colour: mix($black, $eff-quiet-button-colour, 15%);
     }
   }
 }
+
+/* Link button
+
+   Use on buttons that should look like they're links
+*/
+
+.eff-button--link {
+  color: govuk-colour("blue");
+  font-size: inherit;
+  border-width: 0;
+  padding: 0;
+  margin: 0;
+  display: inline;
+  background-color: transparent;
+  box-shadow: none;
+  cursor: pointer;
+}
