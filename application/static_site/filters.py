@@ -44,7 +44,7 @@ def __missing_data_icon(class_name):
 
 
 def __icon_explanation(explanation):
-    return '<span class="visually-hidden">' + explanation + "</span>"
+    return '<span class="govuk-visually-hidden">' + explanation + "</span>"
 
 
 def flatten(data):

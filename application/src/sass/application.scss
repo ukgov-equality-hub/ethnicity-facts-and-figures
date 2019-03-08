@@ -47,11 +47,12 @@ $govuk-assets-path: '/static/assets/';
 @import '_header';*/
 
 /* Components unique to our service */
-@import 'components/cookie_banner';
 @import 'components/buttons';
+@import 'components/cookie_banner';
 @import 'components/document_footer';
 @import 'components/header_search_box';
 @import 'components/metadata';
+@import 'components/missing_data_explanation';
 @import 'components/share';
 @import 'components/status_banner';
 @import 'components/table';

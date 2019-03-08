@@ -1,3 +1,23 @@
+/* Missing data explanation
+ *
+ * TODO: convert to BEM naming conventions.
+*/
+.missing-data-explanation,
+.missing-data-explanation {
+  @include govuk-font(16);
+  color: govuk-colour("grey-1");
+}
+
+.missing-data-explanation .explanation {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+/* Used for showing N/A in tables */
+.not-applicable {
+  color: gov-uk("grey-1");
+}
+
 /* Asterisk – positioned as inline-block with negative margin
    so as to avoid increasing the row height. */
 .not-applicable sup {
