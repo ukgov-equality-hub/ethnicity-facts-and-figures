@@ -1,3 +1,12 @@
+/* Social share buttons
+ *
+ * Use this for links to share pages on some common social media
+ * platforms.
+ *
+ * Supports Twitter, Facebook and LinkedIn.
+ *
+ * TODO: convert to govuk-frontend CSS conventions.
+ */
 .share a {
   text-decoration: none;
   line-height: 32px;
@@ -8,7 +17,7 @@
   width: 32px;
   height: 32px;
   margin-right: 6px;
-  background-color: $link-colour;
+  background-color: $govuk-link-colour;
   display: inline-block;
   vertical-align: middle;
   background-size: 28px 28px;
@@ -19,21 +28,21 @@
 
 /* Visited colour should apply to text and icon */
 .share a:visited {
-  color: $link-visited-colour;
+  color: $govuk-link-visited-colour;
 }
 
 .share a:visited:before {
-  background-color: $link-visited-colour;
+  background-color: $govuk-link-visited-colour;
 }
 
 /* Hover color should apply to text and icon, even when visited */
 .share a:visited:hover {
-  color: $link-hover-colour;
+  color: $govuk-link-hover-colour;
 }
 
 .share a:hover:before,
 .share a:visited:hover:before {
-  background-color: $link-hover-colour;
+  background-color: $govuk-link-hover-colour;
 }
 
 .share a.linkedin:before {
