@@ -332,11 +332,6 @@ $border-colour: #BFC1C3;
         text-transform: none;
 
       }
-
-      b {
-        font-weight: bold;
-        margin-right: 10px;
-      }
     }
 
     .input-radio {
@@ -641,4 +636,10 @@ table.ethnicity-categorisations th.numeric {
 
 .button-container {
   margin-top: 20px;
+}
+
+
+// KNOWN-REQUIRED CUSTOM STYLES AFTER DESIGN SYSTEM MIGRATION
+.new-version form .govuk-radios__label strong {
+    margin-right: 10px;
 }
