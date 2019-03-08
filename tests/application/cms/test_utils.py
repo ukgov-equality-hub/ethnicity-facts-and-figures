@@ -1,4 +1,4 @@
-from flask import session, request, current_app, flash, render_template
+from flask import request, current_app, flash, render_template
 from flask_wtf import FlaskForm
 from lxml import html
 import pytest
@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired
 
 from application.cms.forms import DataSourceForm
 from application.cms.form_fields import RDUStringField
-from application.cms.utils import copy_form_errors, flash_message_with_form_errors, get_data_source_forms
+from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data
 from tests.models import MeasureVersionFactory
 
 
@@ -37,18 +37,32 @@ class TestCopyFormErrors:
         assert clean_form.field.errors
 
 
-class TestFlashMessageWithFormErrors:
+class TestGetErrorSummaryDetails:
     class FormForTest(FlaskForm):
         field = RDUStringField(label="field", validators=[DataRequired("invalid field")])
 
-    def test_flash_message_inserted_into_session(self):
+    def test_get_error_summary_data_return_value(self):
         form = self.FormForTest()
         form.validate()
-        assert not session.get("_flashes")
 
-        flash_message_with_form_errors(forms=[form])
+        assert get_error_summary_data(title="Form validation failed", forms=[form]) == {
+            "title": "Form validation failed",
+            "errors": [{"href": "#field", "field": "field", "text": "invalid field"}],
+        }
 
-        assert session.get("_flashes") == [("error", "Please see below errors:\n\n* [field](#field): invalid field\n")]
+    def test_base_template_renders_error_summary(self):
+        form = self.FormForTest()
+        form.validate()
+
+        rendered_html = render_template("base.html")
+        doc = html.fromstring(rendered_html)
+        assert not doc.xpath("//*[contains(@class, 'govuk-error-summary')]")
+
+        rendered_html = render_template(
+            "base.html", error_summary=get_error_summary_data(title="Form validation failed", forms=[form])
+        )
+        doc = html.fromstring(rendered_html)
+        assert doc.xpath("//*[contains(@class, 'govuk-error-summary')]")
 
 
 class TestGetDataSourceForms:

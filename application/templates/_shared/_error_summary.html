@@ -3,7 +3,7 @@
   https://github.com/alphagov/govuk-frontend/blob/master/src/components/error-summary
 #}
 
-{% if error_summary.errors %}
+{% if error_summary and error_summary.errors %}
 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
   <h2 class="govuk-error-summary__title" id="error-summary-title">
     {{ error_summary.title }}
