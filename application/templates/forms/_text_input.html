@@ -4,13 +4,13 @@
 <div class="govuk-character-count" data-module="character-count" data-maxlength="{{ field.character_count_limit }}">
 {% endif %}
 
-{{ field.label }}
+{{ field.label(class_='govuk-label') }}
 
 {% if field.hint or hint %}
-  <span class="form-hint">{{ field.hint or hint }}</span>
+  <span class="govuk-hint">{{ field.hint or hint }}</span>
 {% endif %}
 {% if field.errors %}
-  <span class="error-message">{{ field.errors[0] }}</span>
+  <span class="govuk-error-message">{{ field.errors[0] }}</span>
 {% endif %}
 
 {{ field.extended_hint if field.extended_hint }}
@@ -18,12 +18,12 @@
 {% if textarea %}
   <textarea id="{{ id_ }}" name="{{ name }}" class="govuk-textarea {{ class_ }}{% if field.errors %} error{% endif %}{% if field.character_count_limit %} js-character-count{% endif %}" {{ field_params }}>{{ value or "" }}</textarea>
 {% else %}
-  <input id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}{% if field.errors %} error{% endif %}" value="{{ value }}" {{ field_params }}>
+  <input id="{{ id_ }}" name="{{ name }}" class="govuk-input {{ class_ }}{% if field.errors %} error{% endif %}" value="{{ value }}" {{ field_params }}>
 {% endif %}
 
 {% if not field.errors and diffs %}
-  <p>Your update to "{{ field.label.text }}" is highlighted green and possible deletions are highlighted red. If these changes are fine, save the page, otherwise edit the copy above and then save.</p>
-  <div class="differences">
+  <p class="govuk-body">Your update to "{{ field.label.text }}" is highlighted green and possible deletions are highlighted red. If these changes are fine, save the page, otherwise edit the copy above and then save.</p>
+  <div class="govuk-body differences">
       {{ diffs[name] | render_markdown }}
   </div>
 {% endif %}
