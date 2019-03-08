@@ -54,7 +54,7 @@
             <span class="info"><a href="{{ url_for('cms.list_measure_versions',
                                   topic_slug=topic_slug,
                                   subtopic_slug=subtopic_slug,
-                                  measure_slug=measure_version.measure.slug)}}">Version history</a></span>
+                                  measure_slug=measure_version.measure.slug)}}" class="govuk-link">Version history</a></span>
 
           {% endif %}
 
@@ -67,7 +67,7 @@
              topic_slug=topic_slug,
              subtopic_slug=subtopic_slug,
              measure_slug=measure_version.measure.slug,
-             version=measure_version.version) }}">Export</a>
+             version=measure_version.version) }}" class="govuk-link">Export</a>
         </span>
 
         <span class="info">
@@ -84,7 +84,7 @@
            topic_slug=topic_slug,
            subtopic_slug=subtopic_slug,
            measure_slug=measure_version.measure.slug,
-           version=measure_version.version) }}" class="button">Edit</a>
+           version=measure_version.version) }}" class="govuk-button">Edit</a>
             {% endif %}
           {% endif %}
         </span>
@@ -92,7 +92,7 @@
         {% if measure_version.status == 'DRAFT' %}
 
 
-          <a class="button delete" href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Delete</a>
+          <a class="govuk-button eff-button--destructive" href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Delete</a>
 
         {% endif %}
       </div>
