@@ -109,6 +109,10 @@
           {% block flashMessages %}
             {{ render_flash_messages(get_flashed_messages(with_categories=true)) }}
           {% endblock %}
+
+          {% block errorSummary %}
+            {% include '_shared/_error_summary.html' %}
+          {% endblock %}
         {% endblock %}
 
         <main class="govuk-main-wrapper {% block mainClasses %}{% endblock %}" id="main-content" role="main" {% block mainAttributes %}{% endblock %}>

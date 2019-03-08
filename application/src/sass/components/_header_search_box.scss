@@ -179,3 +179,19 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
     &.js-visible { display: block; }
   }
 }
+
+.header-one-third {
+  display: block;
+  clear: both;
+  float: left;
+  width: 100%;
+
+  @media(min-width: 641px) {
+    clear: none;
+    display: inline-block;
+  }
+
+  @media(min-width: 769px) {
+    width: 33.33%;
+  }
+}

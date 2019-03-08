@@ -1,6 +1,7 @@
 from functools import partial
 
-from flask import flash, current_app
+
+from flask import current_app
 
 from application.cms.forms import DataSourceForm
 
@@ -13,18 +14,22 @@ def copy_form_errors(from_form, to_form):
         setattr(to_form, key, field)
 
 
-def flash_message_with_form_errors(lede="Please see below errors:", forms=None):
+def get_error_summary_data(title="Please see below errors:", forms=None):
+    if not any(form.errors for form in forms):
+        return {}
+
     if not forms:
         forms = []
 
-    message = lede + "\n\n"
+    error_summary_data = {"title": title, "errors": []}
+    for form in forms:
+        for field_name, error_message in form.errors.items():
+            form_field = getattr(form, field_name)
+            error_summary_data["errors"].append(
+                {"href": f"#{form_field.id}", "field": form_field.label.text, "text": error_message[0]}
+            )
 
-    for form_with_errors in forms:
-        for field_name, error_message in form_with_errors.errors.items():
-            form_field = getattr(form_with_errors, field_name)
-            message += f"* [{form_field.label.text}](#{form_field.id}): {error_message[0]}\n"
-
-    flash(message, "error")
+    return error_summary_data
 
 
 def get_data_source_forms(request, measure_version, sending_to_review=False):

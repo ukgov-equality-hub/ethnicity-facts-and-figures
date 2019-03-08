@@ -79,6 +79,9 @@ celerybeat-schedule
 # dotenv
 .env
 
+# direnv
+.envrc
+
 # virtualenv
 venv*/
 ENV/

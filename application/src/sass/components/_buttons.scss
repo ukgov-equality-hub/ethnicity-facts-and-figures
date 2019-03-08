@@ -1,0 +1,97 @@
+/* Destructive button
+
+   Use for buttons that can have 'negative' consequences (like deleting a page or suspending a user).
+
+   Borrowed from https://github.com/UKGovernmentBEIS/beis-mspsds/blob/master/mspsds-web/app/assets/application/stylesheets/buttons.scss
+*/
+$black: #000000;
+$govuk-button-delete-hover-colour: mix($black, $govuk-error-colour, 15%);
+$govuk-button-delete-shadow-colour: mix($black, $govuk-error-colour, 50%);
+
+.eff-button--destructive {
+  background-color: $govuk-error-colour;
+  box-shadow: 0 $govuk-border-width-form-element 0 $govuk-button-delete-shadow-colour;
+
+  &:hover,
+  &:focus {
+    background-color: $govuk-button-delete-hover-colour;
+  }
+
+  .govuk-button--disabled,
+  .govuk-button[disabled="disabled"],
+  .govuk-button[disabled],
+  &:disabled {
+    &,
+    &:hover {
+      background: $govuk-error-colour;
+    }
+  }
+}
+
+/* Neutral button
+
+   Use for non-primary buttons that do not have negative consequences.
+
+   Borrowed from https://github.com/UKGovernmentBEIS/beis-mspsds/blob/master/mspsds-web/app/assets/application/stylesheets/buttons.scss
+*/
+$black: #000000;
+$eff-button-neutral-colour: govuk-colour("grey-3");
+$eff-button-neutral-hover-colour: mix($black, $eff-button-neutral-colour, 15%);
+$eff-button-neutral-shadow-colour: mix($black, $eff-button-neutral-colour, 50%);
+
+.eff-button--neutral {
+  background-color: $eff-button-neutral-colour;
+  box-shadow: 0 $govuk-border-width-form-element 0 $eff-button-neutral-shadow-colour;
+  color: govuk-colour("black");
+
+  &:hover,
+  &:focus {
+    background-color: $eff-button-neutral-hover-colour;
+    color: govuk-colour("black");
+  }
+
+  .govuk-button--disabled,
+  .govuk-button[disabled="disabled"],
+  .govuk-button[disabled],
+  &:disabled {
+    &,
+    &:hover {
+      background: $eff-button-neutral-colour;
+    }
+  }
+}
+
+/* Quiet button
+
+   Use on buttons that provide an alternative way of working, eg "Copy to clipboard" (Ctrl+C, right-click+copy)
+
+   Adapted from styles at https://github.com/alphagov/govuk_publishing_components/blob/master/app/assets/stylesheets/govuk_publishing_components/components/_button.scss#L69-L99
+*/
+$black: #000000;
+$eff-quiet-button-colour: govuk-colour("grey-1");
+$eff-quiet-button-hover-colour: mix($black, $eff-quiet-button-colour, 15%);
+
+
+.eff-button--secondary-quiet {
+  background-color: govuk-colour("white");
+  border-color: $eff-quiet-button-colour;
+  color: $eff-quiet-button-colour;
+  box-shadow: none;
+
+  &:hover,
+  &:focus {
+    background-color: govuk-colour("white");
+    color: $eff-quiet-button-hover-colour;
+  }
+
+  .govuk-button--disabled,
+  .govuk-button[disabled="disabled"],
+  .govuk-button[disabled],
+  &:disabled {
+    &,
+    &:hover {
+      background: govuk-colour("white");
+      color: $eff-quiet-button-hover-colour;
+    }
+  }
+}
