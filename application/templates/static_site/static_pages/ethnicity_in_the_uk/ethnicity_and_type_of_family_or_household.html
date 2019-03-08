@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% set breadcrumbs = 
+{% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
     {"url": url_for('static_site.ethnicity_in_the_uk'), "text": "Ethnicity in the UK"},
@@ -14,25 +14,25 @@
 {% block headEnd %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnicity-and-type-of-family-or-household') }}">{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-large">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">
         Ethnic groups by type of family or household
       </h1>
 
-      <p>This service measures how experiences and outcomes differ for people of various ethnicities across public sector services.</p>
+      <p class="govuk-body">This service measures how experiences and outcomes differ for people of various ethnicities across public sector services.</p>
 
-      <p>Looking at the number of people who live in each different type of household provides insight into differences between ethnic groups.</p>
+      <p class="govuk-body">Looking at the number of people who live in each different type of household provides insight into differences between ethnic groups.</p>
 
-      <h2 class="heading-medium">Types of household</h2>
+      <h2 class="govuk-heading-m">Types of household</h2>
 
-      <p>A household is one person or a group of people (not necessarily related) who have the accommodation as their only or main residence. If it is a group, they must share cooking facilities and also share a living room, sitting room or dining area.</p>
+      <p class="govuk-body">A household is one person or a group of people (not necessarily related) who have the accommodation as their only or main residence. If it is a group, they must share cooking facilities and also share a living room, sitting room or dining area.</p>
 
-      <p>Researchers group households according to the relationship between the household members, also known as the ‘household composition’.</p>
+      <p class="govuk-body">Researchers group households according to the relationship between the household members, also known as the ‘household composition’.</p>
 
-      <p>Households are classified according to whether they consist of:</p>
+      <p class="govuk-body">Households are classified according to whether they consist of:</p>
 
-      <ul>
+      <ul class="govuk-list govuk-list--bullet">
         <li>2 married adults </li>
         <li>a same-sex civil partnership</li>
         <li>a cohabiting couple family</li>
@@ -46,87 +46,87 @@
         <li>a single person household</li>
       </ul>
 
-      <p>In all of these households, the number of dependent children under 18, if any, is also taken into account. (Dependent children are those aged under 15, or aged 16 to 18 and in full-time education.)</p>
+      <p class="govuk-body">In all of these households, the number of dependent children under 18, if any, is also taken into account. (Dependent children are those aged under 15, or aged 16 to 18 and in full-time education.)</p>
 
-      <h2 class="heading-medium">Determining ethnicity for a household</h2>
+      <h2 class="govuk-heading-m">Determining ethnicity for a household</h2>
 
-      <p>The ethnicity of a household is classified according to the ethnicity of the ‘household reference person’ (HRP) (usually the oldest and most economically active member of the household). For this reason, the data presented here doesn’t reflect the true ethnic composition of all households (some, for example, may be made up of relationships between people of different ethnicities).</p>
+      <p class="govuk-body">The ethnicity of a household is classified according to the ethnicity of the ‘household reference person’ (HRP) (usually the oldest and most economically active member of the household). For this reason, the data presented here doesn’t reflect the true ethnic composition of all households (some, for example, may be made up of relationships between people of different ethnicities).</p>
 
-      <p>However, because only 9% of relationships involve people from different ethnic groups, the analysis presented here is broadly reliable.</p>
+      <p class="govuk-body">However, because only 9% of relationships involve people from different ethnic groups, the analysis presented here is broadly reliable.</p>
 
-      <h2 class="heading-medium">What the data shows</h2>
+      <h2 class="govuk-heading-m">What the data shows</h2>
 
-      <p>The 2011 Census shows us that White British people make up 80.5% of the population of England and Wales and for this reason they are also the majority ethnic group in each type of household.</p>
+      <p class="govuk-body">The 2011 Census shows us that White British people make up 80.5% of the population of England and Wales and for this reason they are also the majority ethnic group in each type of household.</p>
 
-      <p>However, a closer look at the data shows trends within and between ethnic minority groups.</p>
+      <p class="govuk-body">However, a closer look at the data shows trends within and between ethnic minority groups.</p>
 
-      <p>For example, 21% of households made up of a multi-generational family with dependent children were Asian, compared to 11% of households consisting of a married couple with dependent children.</p>
+      <p class="govuk-body">For example, 21% of households made up of a multi-generational family with dependent children were Asian, compared to 11% of households consisting of a married couple with dependent children.</p>
 
-      <p>21% of all-student households were also Asian.</p>
+      <p class="govuk-body">21% of all-student households were also Asian.</p>
 
-      <p>Similarly, 8% of lone parent with dependent children households were Black, compared to 3% of married or cohabiting couples with dependent children.</p>
+      <p class="govuk-body">Similarly, 8% of lone parent with dependent children households were Black, compared to 3% of married or cohabiting couples with dependent children.</p>
 
-      <p>These figures indicate that Asian households are more likely to be multi-generational or all student than households of other ethnicities, and Black households more likely than other households to be headed by lone parents than by a couple.</p>
+      <p class="govuk-body">These figures indicate that Asian households are more likely to be multi-generational or all student than households of other ethnicities, and Black households more likely than other households to be headed by lone parents than by a couple.</p>
 
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-full">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
 
       <figure>
-        <figcaption class="heading-small">Percentage of household type by ethnicity</figcaption>
-        <img src="/static/images/ethnicity-in-the-uk/percentage-of-household-type-by-ethnicity.png" style="max-width: 100%;">
+        <figcaption class="govuk-heading-s">Percentage of household type by ethnicity</figcaption>
+        <img src="/static/images/ethnicity-in-the-uk/percentage-of-household-type-by-ethnicity.png" class="govuk-!-margin-bottom-4" style="max-width: 100%;">
       </figure>
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
 
-      <p>The 2011 Census shows that within the broad ethnic groups, almost 1 in 3 Asian household reference people (HRPs) are part of married couples with dependent children.</p>
+      <p class="govuk-body">The 2011 Census shows that within the broad ethnic groups, almost 1 in 3 Asian household reference people (HRPs) are part of married couples with dependent children.</p>
 
-      <p>A similar proportion (31%) of Mixed race HRPs were in single person households under age 65.</p>
+      <p class="govuk-body">A similar proportion (31%) of Mixed race HRPs were in single person households under age 65.</p>
 
-      <p>Around 1 in 5 (19%) Black HRPs were lone parents with dependent children, as were 16% of Mixed ethnicity HRPs.</p>
+      <p class="govuk-body">Around 1 in 5 (19%) Black HRPs were lone parents with dependent children, as were 16% of Mixed ethnicity HRPs.</p>
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-full">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
 
       <figure>
-        <figcaption class="heading-small">Household composition by ethnicity</figcaption>
-        <img src="/static/images/ethnicity-in-the-ukethnicity-in-the-uk/household-composition-by-ethnicity.png" style="max-width: 100%;">
+        <figcaption class="govuk-heading-s">Household composition by ethnicity</figcaption>
+        <img src="/static/images/ethnicity-in-the-uk/household-composition-by-ethnicity.png" style="max-width: 100%;">
       </figure>
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-      <p>White British households with dependent children were underrepresented in England and Wales, accounting for less than 77% of such households when they made up 83% of all households.</p>
+      <p class="govuk-body">White British households with dependent children were underrepresented in England and Wales, accounting for less than 77% of such households when they made up 83% of all households.</p>
 
-      <p>Asian households with dependent children were overrepresented in England and Wales, accounting for 9% of such households when they made up 5% of all households. Black households with dependent children were also overrepresented.</p>
+      <p class="govuk-body">Asian households with dependent children were overrepresented in England and Wales, accounting for 9% of such households when they made up 5% of all households. Black households with dependent children were also overrepresented.</p>
 
 
-      <h2 class="heading-medium">Types of household among White ethnic groups</h2>
+      <h2 class="govuk-heading-m">Types of household among White ethnic groups</h2>
 
-      <p>Around a quarter (25%) of Other White HRPs were in single person households compared with 2 in 5 (40%) of those who identified as Irish.</p>
+      <p class="govuk-body">Around a quarter (25%) of Other White HRPs were in single person households compared with 2 in 5 (40%) of those who identified as Irish.</p>
 
-      <p>The Gypsy and Irish Traveller ethnic group were most likely to be living in lone parent with dependent children households – 20% did so, the highest percentage of any ethnic group.</p>
+      <p class="govuk-body">The Gypsy and Irish Traveller ethnic group were most likely to be living in lone parent with dependent children households – 20% did so, the highest percentage of any ethnic group.</p>
 
-      <p>The Other White ethnic group had the highest percentage of people living in a married or same-sex couple with dependent children – 19% did so.</p>
+      <p class="govuk-body">The Other White ethnic group had the highest percentage of people living in a married or same-sex couple with dependent children – 19% did so.</p>
 
-      <p>A further 13% of the Other White ethnic group lived in the Other household category (such as a multi-generational or student household).</p>
+      <p class="govuk-body">A further 13% of the Other White ethnic group lived in the Other household category (such as a multi-generational or student household).</p>
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-full">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
 
-      <table class="table measure-data grouped">
+      <table class="table measure-data grouped govuk-!-margin-bottom-8 govuk-!-margin-top-2">
         <thead>
           <tr>
             <th aria-sort="none" class="first line">Household type</th>
@@ -263,23 +263,23 @@
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-      <h2 class="heading-medium">Types of household among Mixed/Multiple ethnic groups</h2>
+      <h2 class="govuk-heading-m">Types of household among Mixed/Multiple ethnic groups</h2>
 
-      <p>The young age profile of the Mixed/Multiple ethnic groups is reflected in their type of household.</p>
+      <p class="govuk-body">The young age profile of the Mixed/Multiple ethnic groups is reflected in their type of household.</p>
 
-      <p>Overall, more than 1 in 3 Mixed ethnic HRPs (35%) were in single person households, and 16% were lone parents with dependent children.</p>
+      <p class="govuk-body">Overall, more than 1 in 3 Mixed ethnic HRPs (35%) were in single person households, and 16% were lone parents with dependent children.</p>
 
-      <p>A quarter of Mixed White and Black Caribbean HRPs (23%) were lone parents with dependent children. Another 37% of Mixed White and Black Caribbean HRPs were in single person households.</p>
+      <p class="govuk-body">A quarter of Mixed White and Black Caribbean HRPs (23%) were lone parents with dependent children. Another 37% of Mixed White and Black Caribbean HRPs were in single person households.</p>
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-full">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
 
-      <table class="table measure-data grouped">
+      <table class="table measure-data grouped govuk-!-margin-bottom-8 govuk-!-margin-top-2">
         <thead>
           <tr>
             <th aria-sort="none" class="first line">Household type</th>
@@ -417,28 +417,28 @@
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
 
-      <h2 class="heading-medium">Types of household among Asian ethnic groups</h2>
+      <h2 class="govuk-heading-m">Types of household among Asian ethnic groups</h2>
 
-      <p>Overall, Asian HRPs were the least likely of any of the broad ethnic groups to live in a single person households, with only 17% doing so.</p>
+      <p class="govuk-body">Overall, Asian HRPs were the least likely of any of the broad ethnic groups to live in a single person households, with only 17% doing so.</p>
 
-      <p>However, when the data is broken down into the detailed Asian ethnic categories, we see that a quarter (25%) of Chinese HRPs headed single person households under age 65.</p>
+      <p class="govuk-body">However, when the data is broken down into the detailed Asian ethnic categories, we see that a quarter (25%) of Chinese HRPs headed single person households under age 65.</p>
 
-      <p>Similarly, at the broad category level, Asians HRPs were the least likely ethnic group to cohabit, with 3% doing so. However, 7% of Chinese HRPs were found to be in cohabiting households.</p>
+      <p class="govuk-body">Similarly, at the broad category level, Asians HRPs were the least likely ethnic group to cohabit, with 3% doing so. However, 7% of Chinese HRPs were found to be in cohabiting households.</p>
 
-      <p>Chinese HRPs were also more likely than any other Asian group to be part of an all-student household, with 7% living in one.</p>
+      <p class="govuk-body">Chinese HRPs were also more likely than any other Asian group to be part of an all-student household, with 7% living in one.</p>
 
-      <p>Pakistanis and Bangladeshis were the Asian ethnic groups most likely to be in households with dependent children: 39% of Pakistani HRPs and 43% of Bangladeshi HRPs lived in a married couple household, and 15% of Pakistani HRPs and 16% of Bangladeshi HRPs lived in the Other household type (multi-generational or all student).</p>
+      <p class="govuk-body">Pakistanis and Bangladeshis were the Asian ethnic groups most likely to be in households with dependent children: 39% of Pakistani HRPs and 43% of Bangladeshi HRPs lived in a married couple household, and 15% of Pakistani HRPs and 16% of Bangladeshi HRPs lived in the Other household type (multi-generational or all student).</p>
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-full">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
 
-      <table class="table measure-data grouped">
+      <table class="table measure-data grouped govuk-!-margin-bottom-8 govuk-!-margin-top-2">
         <thead>
           <tr>
             <th aria-sort="none" class="first line">Household type</th>
@@ -591,25 +591,25 @@
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-      <h2 class="heading-medium">Types of household among Black/Black British ethnic groups</h2>
+      <h2 class="govuk-heading-m">Types of household among Black/Black British ethnic groups</h2>
 
-      <p>Of the broad ethnic groups, the Black ethnic group has the highest proportion of lone parent households, at 13%.</p>
+      <p class="govuk-body">Of the broad ethnic groups, the Black ethnic group has the highest proportion of lone parent households, at 13%.</p>
 
-      <p>However, when the data is broken down into the more specific ethnic categories, we see that a higher percentage (26%) of Other Black HRPs headed lone parent households, with 21% having dependent children, and 5% non-dependent children. This is in contrast to the data for lone parent households in the population as a whole, where two-thirds were found to have dependent children.</p>
+      <p class="govuk-body">However, when the data is broken down into the more specific ethnic categories, we see that a higher percentage (26%) of Other Black HRPs headed lone parent households, with 21% having dependent children, and 5% non-dependent children. This is in contrast to the data for lone parent households in the population as a whole, where two-thirds were found to have dependent children.</p>
 
-      <p>Almost 2 in 5 (38%) Black Caribbean HRPs were in single person households, the largest proportion within the broad Black ethnic group.</p>
+      <p class="govuk-body">Almost 2 in 5 (38%) Black Caribbean HRPs were in single person households, the largest proportion within the broad Black ethnic group.</p>
 
-      <p>Black African HRPs were twice as likely to be in married or same sex couples with dependent children as Black Caribbean HRPs (20% compared with 10%). Black African HRPs were also more likely than the Other Black ethnic group to be in Other household types (eg, multi-generational), with 18% in this household type.</p>
+      <p class="govuk-body">Black African HRPs were twice as likely to be in married or same sex couples with dependent children as Black Caribbean HRPs (20% compared with 10%). Black African HRPs were also more likely than the Other Black ethnic group to be in Other household types (eg, multi-generational), with 18% in this household type.</p>
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-full">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
 
-      <table class="table measure-data grouped">
+      <table class="table measure-data grouped govuk-!-margin-bottom-8 govuk-!-margin-top-2">
         <thead>
           <tr>
             <th aria-sort="none" class="first line">Household type</th>
@@ -730,25 +730,25 @@
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-      <h2 class="heading-medium">Other ethnic groups</h2>
+      <h2 class="govuk-heading-m">Other ethnic groups</h2>
 
-      <p>A similar proportion of Arab HRPs and those in the Other ethnic groups were in single person households (31% and 30% respectively).</p>
+      <p class="govuk-body">A similar proportion of Arab HRPs and those in the Other ethnic groups were in single person households (31% and 30% respectively).</p>
 
-      <p>Arabs were more likely than those in the Other ethnic groups to be in married or same sex couple households with dependent children (30% compared with 23%).</p>
+      <p class="govuk-body">Arabs were more likely than those in the Other ethnic groups to be in married or same sex couple households with dependent children (30% compared with 23%).</p>
 
-      <p>HRPs in the Other ethnic groups were more likely than Arabs to be cohabiting (6% compared with 4%).</p>
+      <p class="govuk-body">HRPs in the Other ethnic groups were more likely than Arabs to be cohabiting (6% compared with 4%).</p>
 
-      <p>Data shown is taken from the Office of National Statistics 2011 Census and categorises households using the definitions explained on this page.</p>
+      <p class="govuk-body">Data shown is taken from the Office of National Statistics 2011 Census and categorises households using the definitions explained on this page.</p>
 
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-full">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
 
-      <table class="table measure-data grouped">
+      <table class="table measure-data grouped govuk-!-margin-bottom-8 govuk-!-margin-top-2">
         <thead>
           <tr>
             <th aria-sort="none" class="first line">Household type</th>
