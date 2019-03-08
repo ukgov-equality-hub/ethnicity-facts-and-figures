@@ -111,7 +111,7 @@
           {% endblock %}
         {% endblock %}
 
-        <main class="govuk-main-wrapper {% block mainClasses %}{% endblock %}" id="main-content" role="main">
+        <main class="govuk-main-wrapper {% block mainClasses %}{% endblock %}" id="main-content" role="main" {% block mainAttributes %}{% endblock %}>
           {% block content %}{% endblock %}
         </main>
       </div>
