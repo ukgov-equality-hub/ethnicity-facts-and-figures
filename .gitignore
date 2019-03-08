@@ -104,3 +104,6 @@ application/static/*
 
 # Visual Studio Code
 .vscode/
+
+# SonarCloud
+.scannerwork/

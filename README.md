@@ -3,6 +3,7 @@
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 [![Coverage Status](https://coveralls.io/repos/github/racedisparityaudit/rd_cms/badge.svg?branch=master)](https://coveralls.io/github/racedisparityaudit/rd_cms?branch=master)
 [![Requirements Status](https://requires.io/github/racedisparityaudit/rd_cms/requirements.svg?branch=master)](https://requires.io/github/racedisparityaudit/rd_cms/requirements/?branch=master)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=racedisparityaudit_ethnicity-facts-and-figures-publisher&metric=alert_status)](https://sonarcloud.io/dashboard?id=racedisparityaudit_ethnicity-facts-and-figures-publisher)
 
 # Publisher for Ethnicity facts and figures
 

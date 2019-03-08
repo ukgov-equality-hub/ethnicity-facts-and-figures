@@ -1,0 +1,10 @@
+language: python
+
+addons:
+  sonarcloud:
+    organization: "racedisparityaudit"
+    token:
+      secure: "gSL+78SXo6dCJK+QeUlMjqqFHmrCmrKrjkxB0v+UBURxONhgX+ZvaQeip58v40IiuuYX6ZQq9moNvjRu05gnZsaeLVyuxiGbjaV2NJzZI7JafG1NPHC/QC+PpwuOjn3z6bO2hD1jjEYUZio76yptt2la8CZVyt31rv3/nAs3YgHt/0XcN0szaZ0B8pCHv00OXigjaoFfWnCnWwA4CFhkOeNOpVtAg5AIaDiYq23ibk4LK8G4WVg36WluR7DSs3igwS8/GY2lsL193KNsGsVNCj6oc7nR/TsftwbnPQDAWcJcnzT5hHMqYcR/eU+Q3YcqkNRjk0rkGhWcqqkB8CJyZU8Rw9PS2JoEq+uCvwZokRrFm3KoWiHSWIiqhXnReNUaoLtFZwWRhlSHSz8/6p/ZUWLUARNXmzu4kLN0WVi03Dn6ZOJfGyi3Hcq05CSku1s2bdfcydavYkRtFW3a+pAMVcxhtQvSVxrrpEOMiN8y8aSEMPw7wAep4dLS4p85EImccilBbhkj6tqP9EY3qc71e5fEZirktTRBAdhYDZS/0b6iFyJKRyJqrpxwf94I4VI+chxgeTh1ODfy/R/MkdYNl5VZ1AuQ7QUEJnvN/R+2VqFhzSdWylHR5q0PLMiZGeZ0DaNAvqplFyOsGSYCbEh6b++xoc/LkIuFH5ZPQsZVOH8="
+
+script:
+  - sonar-scanner
