@@ -367,15 +367,6 @@ li .preview-link {
   text-transform: capitalize;
 }
 
-h1, h2, h3, h4 {
-  font-weight: bold;
-}
-
-h1 {
-  line-height: 1.1;
-  margin-bottom: 40px;
-}
-
 .no-breadcrumb {
   margin-top: 72px;
 }
@@ -383,24 +374,6 @@ h1 {
 .lead {
   font-size: 24px;
   margin-bottom: 20px;
-}
-
-textarea, input {
-  border: 2px solid black;
-  font-size: inherit;
-  padding: 5px 4px 4px;
-  margin-bottom: 30px;
-  &:focus {
-    outline: 5px solid $focus-colour;
-  }
-}
-
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="date"],
-input[type="password"] {
-  max-width: 400px;
 }
 
 /* Autocomplete styling. */
