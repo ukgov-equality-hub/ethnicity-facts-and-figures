@@ -78,6 +78,10 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
         )
 
 
+class _RDUPasswordInput(_RDUTextInput):
+    input_type = "password"
+
+
 class _RDUTextAreaInput(_RDUTextInput):
     def __call__(self, field, class_="", diffs=None, disabled=False, rows=10, cols=100, **kwargs):
         if rows:
@@ -232,6 +236,10 @@ class RDUStringField(StringField):
 
 class RDUTextAreaField(RDUStringField):
     widget = _RDUTextAreaInput()
+
+
+class RDUPasswordField(RDUStringField):
+    widget = _RDUPasswordInput()
 
 
 class RDUURLField(RDUStringField):
