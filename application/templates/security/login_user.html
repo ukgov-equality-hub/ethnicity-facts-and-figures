@@ -29,15 +29,16 @@
                 <form action="{{ url_for('security.login') }}" method="post">
                     {{ login_user_form.csrf_token }}
 
-                    <label class="govuk-label" for="email">Email</label>
                     {{ login_user_form.email }}
 
-                    <label class="govuk-label" for="password">{{ login_user_form.password.label }}</label>
                     {{ login_user_form.password(autocomplete='off') }}
 
-                    <button type="submit" class="govuk-button" name="login">Login</button>
-
                     {{ login_user_form.next }}
+
+{#                    So that the button gets displayed on its own line #}
+                    <div class="govuk-body">
+                      <button type="submit" class="govuk-button" name="login">Login</button>
+                    </div>
                 </form>
 
                 <div class="govuk-body">
