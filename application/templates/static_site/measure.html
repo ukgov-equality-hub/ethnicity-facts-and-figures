@@ -582,7 +582,7 @@
       </div>
     </div>
 
-      <div class="govuk-document-footer">
+      <div class="eff-document-footer">
 
         <div class="history-information" id="history">
 
@@ -605,11 +605,15 @@
 
           <div class="change-notes">
 
-            <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Full page history" class="normalize" class="full-page-history">
-              <summary>full page history</summary>
+            <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Full page history" class="govuk-details" class="">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text eff-document-footer__full_history_summary_text">
+                  full page history
+                </span>
+              </summary>
 
-              <div class="" id="full-history" aria-live="polite" role="region"><span class="arrow"></span>
-                <ol>
+              <div class="eff-document-footer__full_history_body" id="full-history" aria-live="polite" role="region">
+                <ol class="govuk-list">
                 {% set current_edit_summary = measure_version.external_edit_summary %}
                 {% if measure_version.published_at %}
                     {% set publish_date = measure_version.published_at|format_friendly_date %}
@@ -659,7 +663,7 @@
             <div class="previous-editions">
               Previous {{ "editions" if version_count > 1 else "edition" }}:
 
-              <ol>
+              <ol class="govuk-list">
                 {% for page_version in versions %}
                     <li>
                         <a href="{{ url_for('static_site.measure_version',

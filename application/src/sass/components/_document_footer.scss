@@ -1,20 +1,27 @@
-
-
-.govuk-document-footer {
-  font-size: 16px;
+/* Document footer
+ *
+ * This can be used to add a common footer to documents, containing metadata
+ * such as the publication date, previous editions, and a version history.
+ *
+ * Adapted from GOV.UK pages.
+ *
+ * TODO: convert all classes to use the naming convention;
+*/
+.eff-document-footer {
+  @include govuk-font(16);
   line-height: 1.25;
   margin-top: 20px;
   margin-left: -15px;
   margin-right: -15px;
 }
 
-.govuk-document-footer:after {
+.eff-document-footer:after {
   content: "";
   display: block;
   clear: both
 }
 
-.govuk-document-footer .history-information {
+.eff-document-footer .history-information {
   float: left;
   width: 33.33333%;
   padding: 0 15px;
@@ -23,7 +30,7 @@
   box-sizing: border-box;
 }
 
-.govuk-document-footer .related-information {
+.eff-document-footer .related-information {
   float: left;
   width: 66.66667%;
   padding: 0 15px;
@@ -33,8 +40,8 @@
 }
 
 
-.govuk-document-footer .definition {
-  font-size: 24px;
+.eff-document-footer .definition {
+  @include govuk-font(24);
   line-height: 1.25;
   font-family: "nta", Arial, sans-serif;
   font-weight: 700;
@@ -53,7 +60,7 @@
 }
 
 .previous-editions li {
-  font-size: 24px;
+  @include govuk-font(24);
   line-height: 1.25;
   font-weight: bold;
   margin-bottom: 10px;
@@ -67,11 +74,19 @@
   color: #2b8cc4;
 }
 
-.govuk-document-footer .change-notes li {
+.eff-document-footer .change-notes li {
   margin-bottom: 10px
 }
 
-.govuk-document-footer .change-notes .timestamp {
+.eff-document-footer .change-notes .timestamp {
   display: block;
   font-weight: bold;
+}
+
+.eff-document-footer__full_history_summary_text {
+  @include govuk-font(16);
+}
+
+.eff-document-footer__full_history_body .govuk-list {
+  @include govuk-font(16);
 }
