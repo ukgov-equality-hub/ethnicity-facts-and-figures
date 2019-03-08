@@ -19,9 +19,9 @@
                     {{ topic.title }}
                 </h1>
                 {% if topic.additional_description  %}
-                    <p class="govuk-body">
+                    <div class="govuk-body">
                         {{ topic.additional_description | render_markdown  }}
-                    </p>
+                    </div>
                 {% endif %}
             </div>
         </div>
