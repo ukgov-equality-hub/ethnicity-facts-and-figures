@@ -40,7 +40,7 @@ gulp.task('compile-js-all', function () {
   ])
     .pipe(sourcemaps.init())
     .pipe(concat('all.js', { newLine: ';' }))
-    .pipe(uglify())
+    .pipe(gulpif(!process.env.DISABLE_UGLIFY, uglify()))
     .pipe(sourcemaps.write('.', { sourceRoot: '../src' }))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
@@ -57,7 +57,7 @@ gulp.task('compile-js-charts', function (cb) {
     ]),
     sourcemaps.init(),
     concat('charts.js'),
-    uglify(),
+    gulpif(!process.env.DISABLE_UGLIFY, uglify()),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ], cb);
@@ -71,7 +71,7 @@ gulp.task('compile-js-cms', function (cb) {
     ]),
     sourcemaps.init(),
     concat('cms.js'),
-    uglify(),
+    gulpif(!process.env.DISABLE_UGLIFY, uglify()),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
@@ -89,7 +89,7 @@ gulp.task('compile-js-tablebuilder2', function (cb) {
     ]),
     sourcemaps.init(),
     concat('tablebuilder2.js'),
-    uglify(),
+    gulpif(!process.env.DISABLE_UGLIFY, uglify()),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
@@ -104,7 +104,7 @@ gulp.task('compile-js-chartbuilder2', function (cb) {
     ]),
     sourcemaps.init(),
     concat('chartbuilder2.js'),
-    uglify(),
+    gulpif(!process.env.DISABLE_UGLIFY, uglify()),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
