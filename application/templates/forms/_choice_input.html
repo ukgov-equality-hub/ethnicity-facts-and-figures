@@ -1,6 +1,8 @@
 {# Required parameters: field, id_, name, class, value, field_params #}
 
-<div class="multiple-choice">
-  <input id="{{ id_ }}" name="{{ name }}" class="{{ class_ }}" value="{{ value }}" {% if field.checked %} checked{% endif%} {{ field_params }}>
-  {{ field.label }}
+{% set govukBaseClass = 'govuk-' + ('checkboxes' if field_type == 'checkbox' else 'radios') %}
+
+<div class="{{ govukBaseClass }}__item">
+  <input id="{{ id_ }}" name="{{ name }}" class="{{ govukBaseClass }}__input {{ class_ }}" value="{{ value }}" type="{{ field_type }}" {% if field.checked %} checked{% endif%} {{ field_params }}>
+  <label class="govuk-label {{ govukBaseClass }}__label" for="{{ field.id }}">{{ field.label.text }}</label>
 </div>

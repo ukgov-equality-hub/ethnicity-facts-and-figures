@@ -353,10 +353,14 @@ class NewVersionForm(FlaskForm):
         self.version_type.choices = [
             (
                 NewVersionType.MINOR_UPDATE.value,
-                Markup(f"<b>{next_minor_version}</b>Edit this edition (eg for clarifications or corrections)"),
+                Markup(
+                    f"<strong>{next_minor_version}</strong>Edit this edition (eg for clarifications or corrections)"
+                ),
             ),
             (
                 NewVersionType.MAJOR_UPDATE.value,
-                Markup(f"<b>{next_major_version}</b>Create new edition (eg after new data becomes available)"),
+                Markup(
+                    f"<strong>{next_major_version}</strong>Create new edition (eg after new data becomes available)"
+                ),
             ),
         ]
