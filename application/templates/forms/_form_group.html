@@ -13,29 +13,29 @@
     {% if field.hint or hint %}
     <span class="govuk-hint">{{ field.hint or hint }}</span>
     {% endif %}
-    <div class="{{ govukBaseClass }}">
-      {% for field in fields %}
-          {% set field_options = {"disabled": disabled, "class_": field_class} %}
-          {% if loop.last and other_field %}
-            {% do field_options.update({"aria-controls": other_field.id + "-wrapper", "aria-expanded": "false"}) %}
-          {% endif %}
-          {{ field(**field_options) }}
-      {% endfor %}
+      <div class="{{ govukBaseClass }}">
+        {% for field in fields %}
+            {% set field_options = {"disabled": disabled, "class_": field_class} %}
+            {% if loop.last and other_field %}
+              {% do field_options.update({"aria-controls": other_field.id + "-wrapper", "aria-expanded": "false"}) %}
+            {% endif %}
+            {{ field(**field_options) }}
+        {% endfor %}
+      </div>
 
       {% if fields and other_field %}
         <div class="panel panel-border-narrow govuk-form-group{% if other_field.errors %} govuk-form-group--error{% endif %}"
               id="{{ other_field.id }}-wrapper">
-          {% set field_options = {"disabled": disabled, "class_": field_class, "type": field_type} %}
+          {% set field_options = {"disabled": disabled, "class_": field_class} %}
           {{ other_field(**field_options) }}
         </div>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                showHideControl(document.getElementById("{{ fields[-1].id }}"))
-            })
-        </script>
       {% endif %}
-    </div>
+
+      <script>
+          document.addEventListener('DOMContentLoaded', function () {
+              showHideControl(document.getElementById("{{ fields[-1].id }}"))
+          })
+      </script>
   </fieldset>
   {% endif %}
 </div>
