@@ -1,11 +1,4 @@
 
-/* Tables should use 16px rather than 19px */
-table.smaller-text {
-
-  td, th {
-    font-size: 16px;
-  }
-}
 
 /* These tables don't need bold headers within the table body */
 table.dashboard tbody th {

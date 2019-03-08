@@ -1,0 +1,41 @@
+/* Table modifiers
+ *
+ * These all modify the standard GOV.UK Design System table component,
+ * and should be used in addition to those classes.
+ */
+
+
+/* Dense table
+ *
+ * Use this modifier on table elements which have a lot of data in them, and
+ * so need to be more condensed, with smaller text.
+ */
+.eff-table--dense {
+  .govuk-table__header,
+  .govuk-table__cell {
+    font-size: 16px;
+  }
+}
+
+
+/* Cells with borders on the right
+ *
+ * This adds borders to the right hand side of a cell, and reduces
+ * the padding. Useful for grouping several columns together.
+ */
+.eff-table__header--border-right,
+.eff-table__cell--border-right {
+  border-right: 1px solid #bfc1c3;
+  padding-right: 10px;
+}
+
+/* Cells with reduced padding on the left
+ *
+ * This reduces the padding on the left from 20px to 10px.
+ * Useful if there's a border on the left hand side.
+ */
+.eff-table__header--padding-left,
+.eff-table__cell--padding-left {
+  padding-left: 10px;
+}
+
