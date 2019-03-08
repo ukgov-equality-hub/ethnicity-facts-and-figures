@@ -1,0 +1,33 @@
+.js-enabled #global-cookie-message {
+  display: none;
+}
+
+#global-cookie-message {
+  width: 100%;
+  background-color: #d5e8f3;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  & p {
+    font-family: "nta", Arial, sans-serif;
+    font-weight: 400;
+    text-transform: none;
+    font-size: 14px;
+    line-height: 1.14286;
+    margin: 0 15px;
+    max-width: 960px;
+
+    @media (min-width: 641px) {
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    @media (min-width: 641px) {
+      margin: 0 30px;
+    }
+
+    @media (min-width: 1020px) {
+      margin: 0 auto;
+    }
+  }
+}
