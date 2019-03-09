@@ -107,8 +107,8 @@
         background-color: $grey-3;
 
         @include device-pixel-ratio() {
-          background-size: 32px 50px;
           background: file-url('option-select-toggle-sprite.png') no-repeat right 5px;
+          background-size: 32px 50px;
         }
 
         &:hover {
