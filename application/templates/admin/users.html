@@ -17,30 +17,26 @@
                 <h1 class="govuk-heading-xl">
                     Users
                 </h1>
-                <h2>Manage users</h2>
-                <table class="smaller-text govuk-!-margin-bottom-5">
-                    <thead>
-                        <th>User name</th>
-                        <th>User type</th>
-                        <th>Capabilities</th>
-                        <th>Account active</th>
-                        <th>Delete</th>
+                <table id="users" class="govuk-table">
+                    <caption class="govuk-table__caption govuk-heading-m">Manage users</caption>
+                    <thead class="govuk-table__head">
+                      <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col" aria-sort="none">User name</th>
+                        <th class="govuk-table__header" scope="col" aria-sort="none">User type</th>
+                        <th class="govuk-table__header" scope="col">Account active</th>
+                        <th class="govuk-table__header" scope="col">Delete</th>
+                      </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="govuk-table__body govuk-!-font-size-16">
                         {% for user in users %}
-                        <tr>
-                            <td>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
                                 <a class="govuk-link" href="{{ url_for('admin.user_by_id', user_id=user.id ) }}">{{ user.email }}</a>
                             </td>
-                            <td>
-                                {{ user.user_type.name }}
+                            <td class="govuk-table__cell">
+                                {{ user.user_type.value }}
                             </td>
-                            <td>
-                                {% for capability in user.capabilities %}
-                                    {{ capability }}{% if not loop.last %},{% endif %}
-                                {% endfor %}
-                            </td>
-                            <td>
+                            <td class="govuk-table__cell">
                                 {% if not user.is_active %}
                                     <a class="govuk-link" href="{{ url_for('admin.resend_account_activation_email', user_id=user.id) }}">
                                     {% if not user.confirmed_at %}
@@ -53,7 +49,7 @@
                                     {{ user.is_active }}
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="govuk-table__cell">
                                 {% if not user.is_admin_user() and current_user.id != user.id %}
                                     <a class="govuk-link" href="{{ url_for('admin.delete_user', user_id=user.id) }}">Delete</a>
                                 {% endif %}
@@ -62,7 +58,20 @@
                     {% endfor %}
                     </tbody>
                 </table>
-                <p class="govuk-body"><a class="govuk-link" href="{{ url_for('admin.add_user') }}">Add new user</a></p>
+                <a class="govuk-button" href="{{ url_for('admin.add_user') }}">Add new user</a>
             </div>
         </div>
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var table = document.getElementById('users');
+
+      if (table) {
+        new SortableTable(table)
+      }
+    })
+  </script>
 {% endblock %}

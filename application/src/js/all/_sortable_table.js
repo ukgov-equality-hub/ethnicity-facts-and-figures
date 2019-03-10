@@ -94,6 +94,7 @@ SortableTable.prototype.createStatusBox = function() {
     this.status.setAttribute('aria-atomic', 'true')
     this.status.setAttribute('class', 'sortableTable-status visuallyhidden')
 
+    // FIXME: This isn't associated with the table if the table isn't the only node in the parent (e.g. admin users view)
     this.table.parentElement.appendChild(this.status);
 };
 

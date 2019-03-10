@@ -59,3 +59,6 @@ $govuk-assets-path: '/static/assets/';
 @import 'components/status_banner';
 @import 'components/sort_buttons';
 @import 'components/table';
+
+/* Import other custom styles */
+@import 'visually_hidden';
