@@ -159,13 +159,13 @@
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-m">Data sources</h2>
-            <fieldset class="source">
+            <fieldset class="govuk-fieldset source">
               <legend><h3 class="govuk-heading-s">Primary source</h3></legend>
               {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
             </fieldset>
 
             <div class="js-secondary-sources">
-              <fieldset class="source">
+              <fieldset class="govuk-fieldset source">
                 <legend><h3 class="govuk-heading-s">Secondary source</h3></legend>
                 {{ render_data_source_form(data_source_form=data_source_2_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
               </fieldset>
@@ -220,26 +220,26 @@
         <div class="govuk-grid-column-full">
             <h3 class="govuk-heading-m">Dimensions</h3>
                 {% if measure_version.dimensions %}
-                    <table>
+                    <table class="govuk-table">
                         {% for dimension in measure_version.dimensions %}
-                            <tr class="movable" data-dimension-guid="{{ dimension.guid }}">
-                                <td>{{ dimension.title }}</td>
-                                <td>
+                            <tr class="govuk-table__row movable" data-dimension-guid="{{ dimension.guid }}">
+                                <td class="govuk-table__cell">{{ dimension.title }}</td>
+                                <td class="govuk-table__cell">
                                     {% if dimension.measure_version.version != '1.0' and dimension.updated_at != dimension.measure_version.updated_at %}
                                         <span class="updated-badge">Updated</span>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="govuk-table__cell">
                                     <a class="govuk-link" href="{{ url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}">
                                         {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a></td>
-                                <td>{% if 'UPDATE' in available_actions %}
+                                <td class="govuk-table__cell">{% if 'UPDATE' in available_actions %}
                                     <form action="{{ url_for('cms.delete_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}" method="post">
                                         {{ form.csrf_token }}
                                         <button class="eff-button--link">delete</button>
                                     </form>
                                     {% endif %}
                                 </td>
-                                <td class="move-controls">
+                                <td class="govuk-table__cell move-controls">
                                     {% if 'UPDATE' in available_actions %}
                                         <span title="move up" class="move-up">&#x25B2</span>
                                         <span title="move down" class="move-down">&#x25BC</span>
@@ -251,8 +251,8 @@
                 {% endif %}
 
                 {% if 'UPDATE' in available_actions %}
-                    <a class="govuk-link" href="{{ url_for('cms.create_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add
-                        dimension</a><br/>
+                    <p class="govuk-body"><a class="govuk-link" href="{{ url_for('cms.create_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add
+                        dimension</a></p>
                 {% endif %}
 
                 {% if new %}
@@ -266,18 +266,18 @@
 
                     <h3 class="govuk-heading-m">Data</h3>
                     {% if measure_version.uploads %}
-                        <table>
+                        <table class="govuk-table">
                             {% for upload in measure_version.uploads %}
-                                <tr>
-                                    <td>
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell">
                                         <a class="govuk-link" href="{{ url_for('static_site.measure_version_file_download', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
                                     </td>
-                                    <td>{{ upload.title }}</td>
-                                    <td>
+                                    <td class="govuk-table__cell">{{ upload.title }}</td>
+                                    <td class="govuk-table__cell">
                                         <a class="govuk-link" href="{{ url_for('cms.edit_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}">
                                             {% if 'UPDATE' in available_actions %}edit{% else %}view{% endif %}</a>
                                     </td>
-                                    <td>
+                                    <td class="govuk-table__cell">
                                         {% if 'UPDATE' in available_actions %}
                                             <form action="{{ url_for('cms.delete_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}" method="post">
                                                 {{ form.csrf_token }}
@@ -290,7 +290,7 @@
                         </table>
                     {% endif %}
                     {% if 'UPDATE' in available_actions %}
-                        <a class="govuk-link" href="{{ url_for('cms.create_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add the data</a><br/>
+                        <p class="govuk-body"><a class="govuk-link" href="{{ url_for('cms.create_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add the data</a></p>
                     {% endif %}
                     {% if new %}
                         <p class="govuk-body">Once this page is saved you will be able to add downloads</p>

@@ -61,5 +61,6 @@ $govuk-assets-path: '/static/assets/';
 @import 'components/table';
 
 /* Import other custom styles */
+@import 'accessible-autocomplete';
 @import 'hidden';
 @import 'overrides';

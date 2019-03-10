@@ -52,7 +52,7 @@ function SecondarySource(fieldset, secondary_sources) {
     };
 
     that.add_secondary_source_button = document.createElement('button')
-    that.add_secondary_source_button.classList.add('link')
+    that.add_secondary_source_button.classList.add('govuk-link')
     that.add_secondary_source_button.classList.add('hidden')
     that.add_secondary_source_button.textContent = 'Add secondary source'
     that.add_secondary_source_button.addEventListener('click', that.addSourceButtonClicked.bind(that))
@@ -62,7 +62,7 @@ function SecondarySource(fieldset, secondary_sources) {
 
     var remove_secondary_source_button = document.createElement('button')
     remove_secondary_source_button.classList.add('delete')
-    remove_secondary_source_button.classList.add('link')
+    remove_secondary_source_button.classList.add('govuk-link link')
     remove_secondary_source_button.textContent = 'Remove source'
     remove_secondary_source_button.addEventListener('click', that.removeSourceButtonClicked.bind(that))
 
