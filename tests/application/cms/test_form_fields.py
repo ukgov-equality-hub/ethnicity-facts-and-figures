@@ -410,7 +410,9 @@ class TestRDUTextAreaField:
 
         assert len(character_count_element) == 1
         assert character_count_element[0].text == "Please try to keep within 130 characters."
-        assert character_count_element[0].get("class") == "govuk-hint govuk-character-count__message"
+        assert {"govuk-hint", "govuk-character-count__message"} <= set(
+            character_count_element[0].get("class", "").split()
+        )
         assert character_count_element[0].get("aria-live") == "polite"
 
     def test_character_count_javascript_is_enabled(self):
