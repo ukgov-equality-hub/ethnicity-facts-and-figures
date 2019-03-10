@@ -1,8 +1,8 @@
 {% macro status_banner(sticky=True) -%}
 
-  <div class="govuk-grid-row">
+  <div class="govuk-grid-row status-banner {% if sticky %}sticky-js{% endif %}">
     <div class="govuk-grid-column-full">
-      <div class="status govuk-body {% if sticky %}sticky-js{% endif %}">
+      <div class="status govuk-body">
         <div class="status-inner">
           {{ caller() }}
         </div>

@@ -87,7 +87,7 @@ def test_admin_user_can_deactivate_user_account(test_app_client, logged_in_admin
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == f"User account for: {user.email} deactivated"
+    assert page.find("div", class_="alert-box").get_text(strip=True) == f"User account for: {user.email} deactivated"
     assert user.active is False
 
 
@@ -99,7 +99,7 @@ def test_admin_user_can_grant_or_remove_rdu_user_admin_rights(test_app_client, l
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "User %s is now an admin user" % rdu_user.email
+    assert page.find("div", class_="alert-box").get_text(strip=True) == "User %s is now an admin user" % rdu_user.email
 
     assert rdu_user.is_admin_user()
 
@@ -107,7 +107,10 @@ def test_admin_user_can_grant_or_remove_rdu_user_admin_rights(test_app_client, l
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "User %s is now a standard RDU user" % rdu_user.email
+    assert (
+        page.find("div", class_="alert-box").get_text(strip=True)
+        == "User %s is now a standard RDU user" % rdu_user.email
+    )
 
     assert rdu_user.is_rdu_user()
 
@@ -120,7 +123,7 @@ def test_admin_user_cannot_grant_departmental_user_admin_rights(test_app_client,
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "Only RDU users can be made admin"
+    assert page.find("div", class_="alert-box").get_text(strip=True) == "Only RDU users can be made admin"
 
     assert not dept_user.is_admin_user()
 
@@ -132,7 +135,7 @@ def test_admin_user_cannot_remove_their_own_admin_rights(test_app_client, logged
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "You can't remove your own admin rights"
+    assert page.find("div", class_="alert-box").get_text(strip=True) == "You can't remove your own admin rights"
 
     assert logged_in_admin_user.is_admin_user()
 
@@ -326,6 +329,9 @@ def test_admin_user_can_delete_non_admin_user_account(test_app_client, logged_in
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "User account for: someuser@somedept.gov.uk deleted"
+    assert (
+        page.find("div", class_="alert-box").get_text(strip=True)
+        == "User account for: someuser@somedept.gov.uk deleted"
+    )
 
     assert User.query.filter_by(email="someuser@somedept.gov.uk").first() is None

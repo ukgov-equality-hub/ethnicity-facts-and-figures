@@ -19,7 +19,7 @@
                                topic_slug=corrected_measure_version.measure.subtopic.topic.slug,
                                subtopic_slug=corrected_measure_version.measure.subtopic.slug,
                                measure_slug=corrected_measure_version.measure.slug,
-                               version=published_version_with_correction.version) }}">
+                               version='latest' if corrected_measure_version == published_version_with_correction.measure.latest_published_version else published_version_with_correction.version) }}">
             {{ corrected_measure_version.title }}
           </a>
         </h2>

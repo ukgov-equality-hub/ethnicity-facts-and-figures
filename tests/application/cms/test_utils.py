@@ -47,7 +47,7 @@ class TestGetErrorSummaryDetails:
 
         assert get_error_summary_data(title="Form validation failed", forms=[form]) == {
             "title": "Form validation failed",
-            "errors": [{"href": "#field", "field": "field", "text": "invalid field"}],
+            "errors": [{"href": "#field-label", "field": "field", "text": "invalid field"}],
         }
 
     def test_base_template_renders_error_summary(self):

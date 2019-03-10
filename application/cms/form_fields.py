@@ -68,6 +68,9 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
     def __call__(self, field, class_="", diffs=None, disabled=False, textarea=False, **kwargs):
         value = {"value": field.data}
 
+        field_params = {} if textarea else {"type": self.input_type}
+        field_params = {**field_params, **kwargs}
+
         return super().__call__(
             field=field,
             id_=field.id,
@@ -76,7 +79,7 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
             diffs=diffs,
             disabled=disabled,
             render_params={"textarea": textarea, **value},
-            field_params={"type": self.input_type, **kwargs},
+            field_params=field_params,
         )
 
 

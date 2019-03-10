@@ -5,6 +5,8 @@ from werkzeug.datastructures import ImmutableMultiDict
 from application.cms.models import DataSource
 from application.cms.forms import DataSourceForm, MeasureVersionForm
 
+from tests.models import MeasureVersionFactory
+
 
 class TestDataSourceForm:
     def test_can_be_populated_from_data_source_object(self):
@@ -40,7 +42,7 @@ class TestDataSourceForm:
         }
 
 
-class TestMeasurePageForm:
+class TestMeasureVersionForm:
     def test_runs_full_validation_when_sending_to_review(self):
         form = MeasureVersionForm(is_minor_update=False, sending_to_review=True)
 
@@ -67,3 +69,14 @@ class TestMeasurePageForm:
         form.validate()
 
         assert ("update_corrects_data_mistake" in form.errors.keys()) == form_should_error
+
+    @pytest.mark.parametrize("is_minor_update", ((True,), (False,)))
+    def test_all_fields_populate_with_data(self, is_minor_update):
+        measure_version = MeasureVersionFactory.create(version="1.0", status="APPROVED")
+
+        form = MeasureVersionForm(is_minor_update=False, sending_to_review=True, obj=measure_version)
+
+        for field in form:
+            assert (
+                field.data is not None and field.data is not ""
+            ), f"{field.name} should be populated from the measure version"

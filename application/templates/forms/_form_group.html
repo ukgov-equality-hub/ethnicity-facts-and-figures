@@ -7,7 +7,7 @@
     {{ fields[0](disabled=disabled) }}
   {% else %}
   <fieldset class="govuk-fieldset{% if fieldset_class %} {{ fieldset_class }}{% endif %}">
-    <legend class="govuk-fieldset__legend{% if legend_class %} {{ legend_class }}{% endif %}">
+    <legend id="{{ id_ + '-label'}}" class="govuk-fieldset__legend{% if legend_class %} {{ legend_class }}{% endif %}">
       {{- field.label.text }} {% if errors %}<span class="govuk-error-message">{{ errors[0] }}</span>{% endif -%}
     </legend>
     {% if field.hint or hint %}

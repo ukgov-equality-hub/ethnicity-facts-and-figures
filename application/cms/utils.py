@@ -26,7 +26,7 @@ def get_error_summary_data(title="Please see below errors:", forms=None):
         for field_name, error_message in form.errors.items():
             form_field = getattr(form, field_name)
             error_summary_data["errors"].append(
-                {"href": f"#{form_field.id}", "field": form_field.label.text, "text": error_message[0]}
+                {"href": f"#{form_field.id}-label", "field": form_field.label.text, "text": error_message[0]}
             )
 
     return error_summary_data
