@@ -416,10 +416,10 @@ class TestRDUTextAreaField:
     def test_character_count_javascript_is_enabled(self):
         doc = html.fromstring(self.form.textarea_field())
 
-        govuk_char_count_element = doc.xpath("//*[@class='govuk-character-count']")[0]
-        assert govuk_char_count_element
-        assert govuk_char_count_element.get("data-module") == "character-count"
-        assert govuk_char_count_element.get("data-maxlength") == "130"
+        govuk_char_count_element = doc.xpath("//*[@class='govuk-character-count']")
+        assert len(govuk_char_count_element) == 1
+        assert govuk_char_count_element[0].get("data-module") == "character-count"
+        assert govuk_char_count_element[0].get("data-maxlength") == "130"
 
         textarea = doc.xpath("//textarea")[0]
         assert {"govuk-textarea", "js-character-count"} <= set(textarea.get("class", "").split())
