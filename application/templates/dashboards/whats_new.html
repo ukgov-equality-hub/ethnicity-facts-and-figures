@@ -22,9 +22,9 @@
 
         <h3 class="govuk-heading-m">{{ month.strftime("%B") }}</h3>
 
-        <ol class="govuk-!-margin-bottom-5">
+        <ol class="govuk-!-margin-bottom-5 govuk-list">
           {% for page in pages %}
-            <li><a href="{{ url_for(
+            <li><a class="govuk-link" href="{{ url_for(
               'static_site.measure_version',
               topic_slug=page.measure.subtopic.topic.slug,
               subtopic_slug=page.measure.subtopic.slug,
@@ -34,11 +34,13 @@
 
               {{ page.title }}</a>
 
+              <span class="govuk-!-font-size-16">
               {% if page.version == '1.0' %}
-                <strong class="new-tag">new</strong>
+                <strong class="new-tag govuk-!-margin-left-2">New</strong>
               {% endif %}
 
-              <span class="item-date">{{ page.published_at | format_friendly_short_date }}</span>
+              <span class="item-date govuk-!-margin-left-2 eff-!-grey-1">{{ page.published_at | format_friendly_short_date }}</span>
+              </span>
             </li>
           {% endfor %}
           </ol>

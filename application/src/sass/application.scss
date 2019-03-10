@@ -38,7 +38,6 @@ $govuk-assets-path: '/static/assets/';
 @import '_stat';
 @import '_measures_by_week';
 @import '_breadcrumbs';
-@import '_overrides';
 @import '_auto_resize_textarea';
 @import '_planned_pages_dashboard';
 @import '_status_banner';
@@ -62,3 +61,4 @@ $govuk-assets-path: '/static/assets/';
 
 /* Import other custom styles */
 @import 'hidden';
+@import 'overrides';
