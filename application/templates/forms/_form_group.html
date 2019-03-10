@@ -29,13 +29,13 @@
           {% set field_options = {"disabled": disabled, "class_": field_class} %}
           {{ other_field(**field_options) }}
         </div>
-      {% endif %}
 
-      <script>
-          document.addEventListener('DOMContentLoaded', function () {
-              showHideControl(document.getElementById("{{ fields[-1].id }}"))
-          })
-      </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                showHideControl(document.getElementById("{{ fields[-1].id }}"))
+            })
+        </script>
+      {% endif %}
   </fieldset>
   {% endif %}
 </div>
