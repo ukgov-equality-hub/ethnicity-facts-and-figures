@@ -4,40 +4,6 @@ $dashboard-background-light: #F5F5F5;
 $dashboard-background-bold: #BFC1C3;
 
 
-/* Measure progress table */
-.measure-table td, .measure-table th {
-  text-align: left;
-
-  @media screen and (max-width: 379px) {
-    font-size: 14px;
-  }
-  @media screen and (max-width: 321px) {
-    font-size: 12px;
-  }
-}
-
-.progress__title {
-  margin-bottom: 40px;
-}
-
-.progress__explanatory-text {
-  margin-bottom: 30px;
-
-  &__link {
-    &,
-    &:link,
-    &:visited {
-      color: $black;
-      text-decoration: none;
-      cursor: pointer;
-      font-weight: 700;
-    }
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
 .progress-card {
   // FUNCTIONALITY
   height: 80px;

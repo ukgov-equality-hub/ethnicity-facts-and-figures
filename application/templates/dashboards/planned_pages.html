@@ -14,7 +14,7 @@
         <div class="progress__title govuk-heading-xl">
             Planned pages
         </div>
-        <div class="progress__explanatory-text">
+        <div class="govuk-body">
             The dashboard shows what we are planning to publish and which new pages or updated versions we are working on now. You can also find out what we have <a class="govuk-link" href="{{ url_for('dashboards.whats_new') }}">recently published</a>.
         </div>
         <div class="progress__cards">
@@ -53,24 +53,23 @@
         </div>
     </div>
 
-    <table id="measure-table" class="measure-table">
-
-        <thead>
-            <tr>
-                <th class="column-width-40" aria-sort="none">Page</th>
-                <th class="column-width-30" aria-sort="descending">Organisation</th>
-                <th class="column-width-15" aria-sort="none">Stage</th>
-                <th class="column-width-15" aria-sort="none">Type</th>
+    <table id="measure-table" class="govuk-table govuk-!-font-size-16">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header" aria-sort="none">Page</th>
+                <th class="govuk-table__header" aria-sort="none">Organisation</th>
+                <th class="govuk-table__header" aria-sort="none">Stage</th>
+                <th class="govuk-table__header govuk-wi" aria-sort="none">Type</th>
             </tr>
         </thead>
 
-        <tbody id='measure-table-body'>
+        <tbody id='govuk-table__body'>
         {% for measure in measures %}
-            <tr class='measure-row {{ measure.stage }}'>
-                <td>{{ measure.name }}</td>
-                <td>{{ measure.department }}</td>
-                <td>{{ measure.list }}</td>
-                <td>{{ measure.type }}</td>
+            <tr class='govuk-table__row {{ measure.stage }}'>
+                <td class="govuk-table__cell">{{ measure.name }}</td>
+                <td class="govuk-table__cell">{{ measure.department }}</td>
+                <td class="govuk-table__cell">{{ measure.list }}</td>
+                <td class="govuk-table__cell">{{ measure.type }}</td>
             </tr>
         {% endfor %}
         </tbody>

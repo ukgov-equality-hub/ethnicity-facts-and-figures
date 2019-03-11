@@ -38,11 +38,12 @@ $govuk-assets-path: '/static/assets/';
 @import '_measures_by_week';
 @import '_breadcrumbs';
 @import '_auto_resize_textarea';
-@import '_planned_pages_dashboard';
 @import '_status_banner';
 @import '_updated_badge';
 @import '_footer';
 @import '_header';*/
+
+@import '__reset';
 
 /* Components unique to our service */
 @import 'components/buttons';
@@ -59,8 +60,11 @@ $govuk-assets-path: '/static/assets/';
 @import 'components/sort_buttons';
 @import 'components/table';
 
-/* Import other custom styles */
+/* Import other custom styles that need converting with, care and consideration, to components in the future */
 @import 'accessible-autocomplete';
+@import 'chart';
 @import 'hidden';
 @import 'overrides';
 @import 'reorderable_list_items';
+@import 'planned_pages_dashboard';
+@import 'components/phase_banner_reversed';
