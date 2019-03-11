@@ -20,31 +20,31 @@
         <div class="progress__cards">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-one-third">
-                    <div id='planned' class="progress-card progress-card--selected">
-                        <div id='planned-measures' class="progress-card__value font-xlarge">
+                    <div id="planned" class="govuk-body progress-card progress-card--selected">
+                        <div id="planned-measures" class="govuk-!-font-size-48">
                             {{ planned_count }}
                         </div>
-                        <div class="progress-card__text bold-small">
+                        <div class="govuk-!-font-weight-bold">
                             Planned
                         </div>
                     </div>
                 </div>
                 <div class="govuk-grid-column-one-third">
-                    <div id='progress' class="progress-card progress-card--active">
-                        <div id='progress-measures' class="progress-card__value font-xlarge">
+                    <div id="progress" class="govuk-body progress-card progress-card--active">
+                        <div id="progress-measures" class="govuk-!-font-size-48">
                             {{ progress_count }}
                         </div>
-                        <div class="progress-card__text bold-small">
+                        <div class="govuk-!-font-weight-bold">
                             In progress
                         </div>
                     </div>
                 </div>
                 <div class="govuk-grid-column-one-third">
-                    <div id='review' class="progress-card progress-card--active">
-                        <div id='review-measures' class="progress-card__value progress-card__value--review font-xlarge">
+                    <div id="review" class="govuk-body progress-card progress-card--active">
+                        <div id="review-measures" class="govuk-!-font-size-48">
                             {{ review_count }}
                         </div>
-                        <div class="progress-card__text bold-small">
+                        <div class="govuk-!-font-weight-bold">
                             Under review
                         </div>
                     </div>
@@ -63,9 +63,9 @@
             </tr>
         </thead>
 
-        <tbody id='govuk-table__body'>
+        <tbody id="govuk-table__body">
         {% for measure in measures %}
-            <tr class='govuk-table__row {{ measure.stage }}'>
+            <tr class="govuk-table__row measure-row {{ measure.stage }}">
                 <td class="govuk-table__cell">{{ measure.name }}</td>
                 <td class="govuk-table__cell">{{ measure.department }}</td>
                 <td class="govuk-table__cell">{{ measure.list }}</td>
