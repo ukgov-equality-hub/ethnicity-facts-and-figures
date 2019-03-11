@@ -9,6 +9,8 @@
   ]
 %}
 
+{% block pageTitle %}Create new version - GOV.UK Ethnicity facts and figures{% endblock %}
+
 {% block bodyClasses %}rd_cms{% endblock %}
 
 {% block content %}
@@ -20,7 +22,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds new-version">
-            <p class="govuk-body">Current version: <b>{{ measure_version.version }}</b>
+            <p class="govuk-body">Current version: <strong>{{ measure_version.version }}</strong>
                 <a class="govuk-link" href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
                     View page
                 </a>
