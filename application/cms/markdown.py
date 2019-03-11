@@ -23,7 +23,7 @@ class DesignSystemMarkdownExtension(Extension):
         md.treeprocessors.register(
             item=DesignSystemMarkdownProcessor(md),
             name="design-system-markdown",
-            priority=175,  # Arbitrary priority copied from Python Markdown docs
+            priority=0,  # Arbitrary priority copied from Python Markdown docs
         )
 
 
