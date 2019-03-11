@@ -111,8 +111,8 @@
 
   {% if version != 'latest' %}
     <div class="old-edition-notice">
-      <h2 class="govuk-heading-xl">There is a new version of this page</h2>
-      <p>View the <a href="{{ url_for('static_site.measure_version',
+      <h2 class="govuk-heading-l">There is a new version of this page</h2>
+      <p class="govuk-body">View the <a class="govuk-link" href="{{ url_for('static_site.measure_version',
                             topic_slug=topic_slug,
                             subtopic_slug=subtopic_slug,
                             measure_slug=measure_version.measure.slug,
@@ -139,14 +139,14 @@
 
           {% if measure_version.version != '1.0' and measure_version.published_at %}
             <dt>Last updated:</dt>
-            <dd><time itemprop="dateModified" datetime="{{ measure_version.published_at | format_iso8601_date }}">{{ measure_version.published_at | format_friendly_date }}</time>, <a href="#history">see all updates</a>
+            <dd><time itemprop="dateModified" datetime="{{ measure_version.published_at | format_iso8601_date }}">{{ measure_version.published_at | format_friendly_date }}</time>, <a class="govuk-link" href="#history">see all updates</a>
             </dd>
           {% endif %}
 
           {% if measure_version.primary_data_source %}
           <dt>Source:</dt>
           <dd>
-            <a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_version.primary_data_source.title }}">
+            <a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_version.primary_data_source.title }}">
               {{ measure_version.primary_data_source.title }}
             </a>
           </dd>
@@ -250,7 +250,7 @@
                           {% if measure_version.primary_data_source %}
                               <dt>Source:</dt>
                               <dd>
-                                  <a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_version.primary_data_source.title }}">
+                                  <a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_version.primary_data_source.title }}">
                                       {{ measure_version.primary_data_source.title }}
                                   </a>
                               </dd>
@@ -465,7 +465,7 @@
             {% if measure_version.secondary_data_source %}
               <div class="secondary-source" itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Secondary source</h3>
-                <p class="govuk-body" itemprop="name"><a href="{{ measure_version.secondary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.secondary_data_source.title }}" itemprop="url">
+                <p class="govuk-body" itemprop="name"><a class="govuk-link" href="{{ measure_version.secondary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.secondary_data_source.title }}" itemprop="url">
                     {{ measure_version.secondary_data_source.title }}
                 </a></p>
 
@@ -665,7 +665,7 @@
               <ol class="govuk-list">
                 {% for page_version in versions %}
                     <li>
-                        <a href="{{ url_for('static_site.measure_version',
+                        <a class="govuk-link" href="{{ url_for('static_site.measure_version',
                             topic_slug=topic_slug,
                             subtopic_slug=subtopic_slug,
                             measure_slug=page_version.measure.slug,

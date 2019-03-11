@@ -54,10 +54,12 @@ $govuk-assets-path: '/static/assets/';
 @import 'components/hero';
 @import 'components/metadata';
 @import 'components/missing_data_explanation';
-@import 'components/share';
+@import 'components/old_edition_notice';
+@import 'components/phase_banner_reversed';
 @import 'components/publisher_banner';
-@import 'components/status_banner';
+@import 'components/share';
 @import 'components/sort_buttons';
+@import 'components/status_banner';
 @import 'components/table';
 
 /* Import other custom styles that need converting with, care and consideration, to components in the future */
@@ -68,4 +70,3 @@ $govuk-assets-path: '/static/assets/';
 @import 'reorderable_list_items';
 @import 'planned_pages_dashboard';
 @import 'printing';
-@import 'components/phase_banner_reversed';
