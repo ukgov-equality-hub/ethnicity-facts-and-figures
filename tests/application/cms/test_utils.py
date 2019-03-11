@@ -112,7 +112,7 @@ class TestFlashMessages:
 
         doc = html.fromstring(render_template("base.html"))
 
-        flash_message = doc.xpath("//div[@class='flash-message']")
+        flash_message = doc.xpath("//div[contains(@class, 'eff-flash-message')]")
         assert flash_message
         assert "text that should be markdown'd" in flash_message[0].text_content()
         assert flash_message[0].xpath("//li[contains(text(), 'a list item')]")

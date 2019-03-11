@@ -45,7 +45,8 @@ class TestGetCreateMeasurePage:
         assert response.status_code == 200
         page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
         assert (
-            page.find("div", class_="alert-box").get_text(strip=True) == "Created page %s" % stub_measure_data["title"]
+            page.find("div", class_="eff-flash-message__body").get_text(strip=True)
+            == "Created page %s" % stub_measure_data["title"]
         )
 
     def test_create_measure_page_creates_data_source_entries(
@@ -145,7 +146,10 @@ def test_admin_user_can_publish_page_in_dept_review(test_app_client, logged_in_a
 
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").get_text(strip=True) == 'Sent page "Test Measure Page" to APPROVED'
+    assert (
+        page.find("div", class_="eff-flash-message__body").get_text(strip=True)
+        == 'Sent page "Test Measure Page" to APPROVED'
+    )
 
     assert measure_version.status == "APPROVED"
     assert measure_version.last_updated_by == logged_in_admin_user.email
@@ -616,7 +620,7 @@ def test_dept_user_should_be_able_to_delete_upload_from_shared_page(test_app_cli
 
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").get_text(strip=True) == "Deleted upload ‘upload title’"
+    assert page.find("div", class_="eff-flash-message__body").get_text(strip=True) == "Deleted upload ‘upload title’"
     assert len(measure_version.uploads.all()) == 0
 
 
@@ -699,7 +703,9 @@ def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, logged_in
 
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").get_text(strip=True) == 'Updated page "this is the update"'
+    assert (
+        page.find("div", class_="eff-flash-message__body").get_text(strip=True) == 'Updated page "this is the update"'
+    )
     assert measure_version.title == "this is the update"
 
 
