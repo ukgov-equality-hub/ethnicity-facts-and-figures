@@ -421,7 +421,7 @@
           <div class="govuk-accordion__section-content" id="data-sources-content" aria-labelledby="data-sources-heading">
             <div itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
             <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Source</h3>
-            <p class="govuk-body" itemprop="name"><a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.title }}" itemprop="url">
+            <p class="govuk-body" itemprop="name"><a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.title }}" itemprop="url">
                 {{ measure_version.primary_data_source.title }}</a>
             </p>
 
@@ -551,7 +551,7 @@
                   <meta itemprop="encodingFormat" content="text/csv">
                   <meta itemprop="contentSize" content="{{ file.size|filesize }}">
                   <meta itemprop="name" content="{{ file.title | striptags }}">
-                  <a itemprop="contentUrl" href="{{ measure_version_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
+                  <a class="govuk-link govuk-!-font-size-19" itemprop="contentUrl" href="{{ measure_version_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
                         {{ file.title }}
                         {{ " - Spreadsheet " if file.extension() == "csv" }}
                         {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
@@ -560,14 +560,14 @@
                         {{ file.size|filesize }}
                   </a>
                   {% if file.description %}
-                    <p>{{ file.description }}</p>
+                    <p class="govuk-body">{{ file.description }}</p>
                   {% else %}
                     <br />
                   {% endif %}
                 </div>
               {% endif %}
             {% endfor %}
-            <button class="js--print print-btn" data-on="click" data-event-category="Page printed" data-event-action="Link clicked">Print this page</button>
+            <button class="js--print govuk-link print-btn" data-on="click" data-event-category="Page printed" data-event-action="Link clicked">Print this page</button>
           </div>
         </div>
 
