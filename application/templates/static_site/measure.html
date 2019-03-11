@@ -449,9 +449,9 @@
               {% if measure_version.primary_data_source.frequency_of_release %}
                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publication frequency</h3>
                 {% if measure_version.primary_data_source.frequency_of_release.description == 'Other' %}
-                      {{ measure_version.primary_data_source.frequency_other }}
+                  <p class="govuk-body">{{ measure_version.primary_data_source.frequency_other }}</p>
                 {% else %}
-                    {{ measure_version.primary_data_source.frequency_of_release.description }}
+                  <p class="govuk-body">{{ measure_version.primary_data_source.frequency_of_release.description }}</p>
                 {% endif %}
               {% endif %}
 
