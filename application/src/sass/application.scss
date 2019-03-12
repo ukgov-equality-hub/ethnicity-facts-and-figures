@@ -44,6 +44,7 @@ $govuk-assets-path: '/static/assets/';
 @import '_header';*/
 
 @import '__reset';
+@import 'base';
 
 /* Components unique to our service */
 @import 'components/badge';
@@ -72,6 +73,7 @@ $govuk-assets-path: '/static/assets/';
 @import 'hidden';
 @import 'new_version_form';
 @import 'overrides';
-@import 'reorderable_list_items';
 @import 'planned_pages_dashboard';
 @import 'printing';
+@import 'reorderable_list_items';
+@import 'table';
