@@ -142,25 +142,6 @@ $border-colour: #BFC1C3;
 
   }
 
-  /* Specific */
-
-  /* Move dimensions */
-  .move-controls {
-    text-align: right;
-  }
-
-  .movable span:hover {
-    cursor: pointer;
-  }
-
-  .move-up,
-  .move-down {
-    color: $link-colour;
-    display: block;
-  }
-
-  /* End move dimensions */
-
   .topic-list {
     list-style: none;
     margin-left: 0px;

@@ -223,7 +223,7 @@
                 {% if measure_version.dimensions %}
                     <table class="govuk-table govuk-!-font-size-16">
                         {% for dimension in measure_version.dimensions %}
-                            <tr class="govuk-table__row movable" data-dimension-guid="{{ dimension.guid }}">
+                            <tr class="govuk-table__row eff-movable" data-dimension-guid="{{ dimension.guid }}">
                                 <td class="govuk-table__cell">{{ dimension.title }}</td>
                                 <td class="govuk-table__cell">
                                     {% if dimension.measure_version.version != '1.0' and dimension.updated_at != dimension.measure_version.updated_at %}
@@ -240,10 +240,10 @@
                                     </form>
                                     {% endif %}
                                 </td>
-                                <td class="govuk-table__cell move-controls">
+                                <td class="govuk-table__cell eff-move-controls">
                                     {% if 'UPDATE' in available_actions %}
-                                        <span title="move up" class="move-up">&#x25B2</span>
-                                        <span title="move down" class="move-down">&#x25BC</span>
+                                        <span title="move up" class="eff-move-up">&#x25B2</span>
+                                        <span title="move down" class="eff-move-down">&#x25BC</span>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -376,7 +376,7 @@
         }
 
         function syncDimensionOrder() {
-            var rows = $('tr.movable'),
+            var rows = $('tr.eff-movable'),
                 dimensions = [],
                 guid;
 
@@ -432,8 +432,8 @@
             {%  if not new %}
                 refreshFileList();
             {%  endif %}
-            $('.move-up').click(moveDimensionUp);
-            $('.move-down').click(moveDimensionDown);
+            $('.eff-move-up').click(moveDimensionUp);
+            $('.eff-move-down').click(moveDimensionDown);
             $('#generate-review-url').click(getPreviewUrl);
             initialiseCopy();
         })
