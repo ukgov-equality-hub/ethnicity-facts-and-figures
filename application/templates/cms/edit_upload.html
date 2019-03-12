@@ -25,19 +25,21 @@
             {% block measure_form %}
                 <p class="govuk-body">
                     Current file:
-                    <a href="{{ url_for('static_site.measure_version_file_download', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
+                    <a class="govuk-link" href="{{ url_for('static_site.measure_version_file_download', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
                 </p>
                 <p class="govuk-body">To replace this file choose another file below</p>
                 <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.edit_upload',topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, upload_guid=upload.guid, version=measure_version.version)}}">
                     {{ form.csrf_token }}
                     {% block fields %}
-                        {{ form.upload.label }}
+                        <div class="govuk-form-group">
+                        {{ form.upload.label(class='govuk-label') }}
                         {% if form.upload.errors %}
                             - {{ form.upload.errors[0] }}
-                            {{ form.upload(class="error", disabled=form_disabled) }}
+                            {{ form.upload(class="govuk-file-upload error", disabled=form_disabled) }}
                         {% else %}
-                            {{ form.upload(disabled=form_disabled) }}
+                            {{ form.upload(class="govuk-file-upload", disabled=form_disabled) }}
                         {% endif %}
+                        </div>
 
                         {{ form.title(disabled=form_disabled) }}
 
