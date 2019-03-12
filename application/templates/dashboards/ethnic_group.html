@@ -22,37 +22,40 @@
     </div>
   </div>
 
-  <table class="measures" id="measures">
-      <thead>
-        <tr>
-          <th class="" aria-sort="none">Topic</th>
-          <th class="" aria-sort="none">Sub-topic</th>
-          <th class="" aria-sort="ascending">Title</th>
-        </tr>
-      </thead>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <table class="govuk-table eff-table--dense table-skinny measures" id="measures">
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" aria-sort="none">Topic</th>
+            <th class="govuk-table__header" aria-sort="none">Sub-topic</th>
+            <th class="govuk-table__header" aria-sort="ascending">Title</th>
+          </tr>
+        </thead>
 
-    <tbody>
-    {% for topic_title, measures_with_dimensions_by_subtopic in nested_measures_and_dimensions.items() %}
-        {% for subtopic_title, measures_with_dimensions in measures_with_dimensions_by_subtopic.items() %}
-            {% for measure_title, measure_with_dimensions in measures_with_dimensions.items() %}
-              <tr>
-                <td>{{ topic_title }}</td>
-                <td>{{ subtopic_title }}</td>
-                <td>
-                  <a href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
-                    {% for dimension in measure_with_dimensions.dimensions %}
-                        <ul class="dimensions">
-                           <li><a href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
-                        </ul>
-                    {%  endfor %}
-                </td>
-              </tr>
+        <tbody class="govuk-table__body">
+        {% for topic_title, measures_with_dimensions_by_subtopic in nested_measures_and_dimensions.items() %}
+            {% for subtopic_title, measures_with_dimensions in measures_with_dimensions_by_subtopic.items() %}
+                {% for measure_title, measure_with_dimensions in measures_with_dimensions.items() %}
+                  <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">{{ topic_title }}</td>
+                    <td class="govuk-table__cell">{{ subtopic_title }}</td>
+                    <td class="govuk-table__cell">
+                      <a class="govuk-link" href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
+                        {% for dimension in measure_with_dimensions.dimensions %}
+                            <ul class="dimensions">
+                               <li><a class="govuk-link" href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
+                            </ul>
+                        {%  endfor %}
+                    </td>
+                  </tr>
+                {%  endfor %}
             {%  endfor %}
-        {%  endfor %}
-    {% endfor %}
-    </tbody>
-  </table>
-
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
 
