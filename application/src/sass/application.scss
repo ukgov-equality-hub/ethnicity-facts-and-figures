@@ -46,6 +46,7 @@ $govuk-assets-path: '/static/assets/';
 @import '__reset';
 
 /* Components unique to our service */
+@import 'components/badge';
 @import 'components/buttons';
 @import 'components/cookie_banner';
 @import 'components/document_footer';
