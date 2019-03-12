@@ -180,11 +180,6 @@ $border-colour: #BFC1C3;
     }
   }
 
-  .builder-section-number:before {
-    counter-increment: chart-table-builder-counter;
-    content: counter(chart-table-builder-counter) ". ";
-  }
-
   .chart {
     font-family: "nta", Arial, sans-serif;
   }

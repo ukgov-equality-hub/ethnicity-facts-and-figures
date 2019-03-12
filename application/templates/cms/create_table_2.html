@@ -26,9 +26,9 @@
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
+    <div class="govuk-grid-row eff-numbered-sections">
         <div class="govuk-grid-column-full">
-            <h1 id="builder-title" class="govuk-heading-xl">{% if dimension.table_2_source_data %}Format and view{% else %}Create a{% endif %} table</h1>
+            <h1 id="builder-title" class="govuk-heading-l">{% if dimension.table_2_source_data %}Format and view{% else %}Create a{% endif %} table</h1>
         </div>
 
         {#
@@ -37,11 +37,11 @@
         #}
         <div id="data-panel" class="data-panel {% if dimension.table_2_source_data %}hidden{% endif %}">
             <div class="govuk-grid-column-full">
-                <h2 class="govuk-heading-m no-top-border builder-section-number">Data</h2>
+                <h2 class="govuk-heading-m no-top-border eff-numbered-sections__item">Data</h2>
 
                 <div class="govuk-hint">
-                    <p>Copy and paste your data here. You should:</p>
-                    <ul>
+                    <p class="govuk-hint">Copy and paste your data here. You should:</p>
+                    <ul class="govuk-list govuk-list--bullet eff-list--hint">
                         <li>only select the columns and rows you need for this chart or table</li>
                         <li>not paste any empty rows</li>
                         <li>include columns for ‘Ethnicity’ and ‘Value’</li>
@@ -56,7 +56,7 @@
                       <button type="button" class="govuk-button" id="confirm-data">Next</button>
                   </form>
                 </div>
-                <a class="govuk-link" id="cancel-edit-data" href="#">Cancel</a>
+                <p class="govuk-body"><a class="govuk-link" id="cancel-edit-data" href="#">Cancel</a></p>
             </div>
         </div>
 
@@ -68,7 +68,7 @@
                     and columns with an option to return to the DATA ENTRY PANEL
                 #}
                 <div id="tab_seperated_content" class="chart-builder-section">
-                      <h2 class="govuk-heading-m builder-section-number">Data</h2>
+                      <h2 class="govuk-heading-m eff-numbered-sections__item">Data</h2>
                       <div>
                           <p class="govuk-body" id="data-description">(no data)</p>
                           <p class="govuk-body"><a class="govuk-link" id="edit-data" href="#">Edit</a></p>
@@ -85,9 +85,9 @@
                         <div>
                             <div class="govuk-form-group">
                                 <label for="ethnicity_settings">
-                                    <h2 class="govuk-heading-m builder-section-number">Ethnicity classification</h2>
+                                    <h2 class="govuk-heading-m eff-numbered-sections__item">Ethnicity classification</h2>
                                 </label>
-                                <select id="ethnicity_settings" class="govuk-select" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                <select id="ethnicity_settings" class="govuk-select eff-!-fill-width" {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>None</option>
                                 </select>
                                 {% include "cms/_custom_classification.html" %}
@@ -109,31 +109,33 @@
                     Ethnicity must be one of the two
                 #}
                 <div id="complex_table_options" class="chart-builder-section chart-option-group hidden">
-                    <h2 class="govuk-heading-m builder-section-number">Table options</h2>
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Table options</h2>
                     <form>
                         {#
                             Select style
                         #}
-                        <select class="govuk-select" id="complex-table__data-style"
-                                {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_row" selected>Use ethnicity for rows</option>
-                            <option value="ethnicity_as_column">Use ethnicity for columns</option>
-                        </select>
+                        <div class="govuk-form-group">
+                            <select class="govuk-select eff-!-fill-width" id="complex-table__data-style"
+                                    {% if form_disabled %}disabled="disabled"{% endif %}>
+                                <option value="ethnicity_as_row" selected>Use ethnicity for rows</option>
+                                <option value="ethnicity_as_column">Use ethnicity for columns</option>
+                            </select>
+                        </div>
 
                         {#
                             Style 1 - Ethnicity for groups
                         #}
-                        <div class="indented-option-block govuk-grid-row" id="complex-table__ethnicity-is-row">
+                        <div class="indented-option-block" id="complex-table__ethnicity-is-row">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="ethnicity-as-row__columns">Column groups</label>
-                                <select id="ethnicity-as-row__columns" class="govuk-select"
+                                <select id="ethnicity-as-row__columns" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
                                 </select>
                             </div>
                             <div class="govuk-form-group">
                                 <label for="ethnicity-as-row__column-order" class="govuk-label">Column group order</label>
-                                <select id="ethnicity-as-row__column-order" class="govuk-select"
+                                <select id="ethnicity-as-row__column-order" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option value="[None]">[None]</option>
                                 </select>
@@ -143,17 +145,17 @@
                         {#
                             Style 2  - Ethnicity for sub-groups
                         #}
-                        <div class="indented-option-block govuk-grid-row hidden" id="complex-table__ethnicity-is-column">
+                        <div class="indented-option-block hidden" id="complex-table__ethnicity-is-column">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="ethnicity-as-column__rows">Rows</label>
-                                <select id="ethnicity-as-column__rows" class="govuk-select"
+                                <select id="ethnicity-as-column__rows" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
                                 </select>
                             </div>
                             <div class="govuk-form-group">
                                 <label for="ethnicity-as-column__row-order" class="govuk-label">Row order</label>
-                                <select id="ethnicity-as-column__row-order" class="govuk-select"
+                                <select id="ethnicity-as-column__row-order" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
                                 </select>
@@ -162,7 +164,7 @@
                     </form>
                 </div>
 
-                <h2 class="govuk-heading-m builder-section-number">Options</h2>
+                <h2 class="govuk-heading-m eff-numbered-sections__item">Options</h2>
                 <form onsubmit="return false;">
                     <div class="govuk-form-group">
                         <label for="index_column_name" class="govuk-label">Row title</label>
@@ -172,48 +174,68 @@
 
 
                 <div id="column_settings_section" class="chart-builder-section">
-                  <h2 class="govuk-heading-m builder-section-number">Columns</h2>
+                  <h2 class="govuk-heading-m eff-numbered-sections__item">Columns</h2>
                   <form>
                       <div class="govuk-form-group">
-                          <label for="table_column_1" class="govuk-label">First column</label>
-                          <select id="table_column_1" class="govuk-select column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                              <option value="none">[None]</option>
-                          </select>
+                          <div class="govuk-form-group govuk-!-margin-bottom-1">
+                              <label for="table_column_1" class="govuk-label">First column</label>
+                              <select id="table_column_1" class="govuk-select column_option_picker eff-!-fill-width" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                  <option value="none">[None]</option>
+                              </select>
+                          </div>
 
-                          <label for="table_column_1_name" class="govuk-label">Heading</label>
-                          <input id="table_column_1_name" class="govuk-input column_option_picker_name">
+                          <div class="govuk-form-group">
+                              <label for="table_column_1_name" class="govuk-label">Heading</label>
+                              <input id="table_column_1_name" class="govuk-input column_option_picker_name">
+                          </div>
 
-                          <label for="table_column_2" class="govuk-label">Second column</label>
-                          <select id="table_column_2" class="govuk-select column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                              <option value="none">[None]</option>
-                          </select>
+                          <div class="govuk-form-group govuk-!-margin-bottom-1">
+                              <label for="table_column_2" class="govuk-label">Second column</label>
+                              <select id="table_column_2" class="govuk-select column_option_picker eff-!-fill-width" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                  <option value="none">[None]</option>
+                              </select>
+                          </div>
 
-                          <label for="table_column_2_name" class="govuk-label">Heading</label>
-                          <input id="table_column_2_name" class="govuk-input column_option_picker_name">
+                          <div class="govuk-form-group">
+                              <label for="table_column_2_name" class="govuk-label">Heading</label>
+                              <input id="table_column_2_name" class="govuk-input column_option_picker_name">
+                          </div>
 
-                          <label for="table_column_3" class="govuk-label">Third column</label>
-                          <select id="table_column_3" class="govuk-select column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                              <option value="none">[None]</option>
-                          </select>
+                          <div class="govuk-form-group govuk-!-margin-bottom-1">
+                              <label for="table_column_3" class="govuk-label">Third column</label>
+                              <select id="table_column_3" class="govuk-select column_option_picker eff-!-fill-width" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                  <option value="none">[None]</option>
+                              </select>
+                          </div>
 
-                          <label for="table_column_3_name" class="govuk-label">Heading</label>
-                          <input id="table_column_3_name" class="govuk-input column_option_picker_name">
+                          <div class="govuk-form-group">
+                              <label for="table_column_3_name" class="govuk-label">Heading</label>
+                              <input id="table_column_3_name" class="govuk-input column_option_picker_name">
+                          </div>
 
-                          <label for="table_column_4" class="govuk-label">Fourth column</label>
-                          <select id="table_column_4" class="govuk-select column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                              <option value="none">[None]</option>
-                          </select>
+                          <div class="govuk-form-group govuk-!-margin-bottom-1">
+                              <label for="table_column_4" class="govuk-label">Fourth column</label>
+                              <select id="table_column_4" class="govuk-select column_option_picker eff-!-fill-width" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                  <option value="none">[None]</option>
+                              </select>
+                          </div>
 
-                          <label for="table_column_4_name" class="govuk-label">Heading</label>
-                          <input id="table_column_4_name" class="govuk-input column_option_picker_name">
+                          <div class="govuk-form-group">
+                              <label for="table_column_4_name" class="govuk-label">Heading</label>
+                              <input id="table_column_4_name" class="govuk-input column_option_picker_name">
+                          </div>
 
-                          <label for="table_column_5" class="govuk-label">Fifth column</label>
-                          <select id="table_column_5" class="govuk-select column_option_picker" {% if form_disabled %}disabled="disabled"{% endif %}>
-                              <option value="none">[None]</option>
-                          </select>
+                          <div class="govuk-form-group govuk-!-margin-bottom-1">
+                              <label for="table_column_5" class="govuk-label">Fifth column</label>
+                              <select id="table_column_5" class="govuk-select column_option_picker eff-!-fill-width" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                  <option value="none">[None]</option>
+                              </select>
+                          </div>
 
-                          <label for="table_column_5_name" class="govuk-label">Heading</label>
-                          <input id="table_column_5_name" class="govuk-input column_option_picker_name">
+                          <div class="govuk-form-group">
+                              <label for="table_column_5_name" class="govuk-label">Heading</label>
+                              <input id="table_column_5_name" class="govuk-input column_option_picker_name">
+                          </div>
                       </div>
                   </form>
                 </div>
@@ -242,7 +264,7 @@
                     </div>
                 </div>
                 <div id="preview_container">
-                    <h2 class="govuk-heading-m builder-section-number">Table title</h2>
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Table title</h2>
                     <div class="chart-builder-section">
                       <span class="govuk-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
                       {% include 'forms/extended_hints/_chart_and_table_title.html' %}
@@ -250,7 +272,7 @@
                                {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.table_2_source_data %}{{ dimension.table_2_source_data.tableValues.table_title }}{% endif %}</textarea>
                     </div>
 
-                    <h2 class="govuk-heading-m builder-section-number">Preview</h2>
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Preview</h2>
                     <div class="chart-builder-section">
                     </div>
                     <div id="container"></div>

@@ -57,7 +57,7 @@
                 </tr>
             </thead>
             {% for week in data.weeks %}
-                <tbody class="collapsed">
+                <tbody class="govuk-table__body collapsed">
                   <tr class="govuk-table__row week header week {% if not week['publications'] and not week['major_updates'] %}empty{% endif %}">
                     <th class="govuk-table__header">{{ week['week'] | format_friendly_date }}</th>
                     <td class="govuk-table__cell">{{ week['publications'] | count }}</td>

@@ -33,7 +33,7 @@
       </tr>
     </thead>
 
-    <tbody>
+    <tbody class="govuk-table__body">
       {% for ethnicity_classification in ethnicity_classifications %}
           {% set has_broad_group = ethnicity_classification.parent_values|length > 0 %}
             <tr class="govuk-table__row">

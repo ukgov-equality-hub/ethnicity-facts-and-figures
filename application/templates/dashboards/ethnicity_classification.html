@@ -32,7 +32,7 @@
         </tr>
       </thead>
 
-    <tbody>
+    <tbody class="govuk-table__body">
     {% for topic_title, measures_with_dimensions_by_subtopic in nested_measures_and_dimensions.items() %}
       {% for subtopic_title, measures_with_dimensions in measures_with_dimensions_by_subtopic.items() %}
         {% for measure_title, measure_with_dimensions in measures_with_dimensions.items() %}
