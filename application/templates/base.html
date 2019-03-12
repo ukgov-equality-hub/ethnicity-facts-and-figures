@@ -1,5 +1,6 @@
 {% from "_shared/_breadcrumb.html" import render_breadcrumbs %}
 {% from "_shared/_flash_messages.html" import render_flash_messages %}
+{% from "_shared/_phase_banner.html" import render_phase_banner %}
 
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">
@@ -96,8 +97,9 @@
       {% include '_shared/_header.html' %}
     {% endblock %}
 
-
-    {% include '_shared/_phase_banner.html' %}
+    {% block phaseBanner %}
+      {{ render_phase_banner(reversed=False) }}
+    {% endblock %}
 
     {% block main %}
       <div class="govuk-width-container">

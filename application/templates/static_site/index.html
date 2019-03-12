@@ -16,6 +16,10 @@
 {% block bodyStart %}{{ super( )}}<div itemscope itemtype="http://schema.org/DataCatalog">{% endblock %}
 {% block bodyEnd %}{{ super( )}}</div>{% endblock %}
 
+{% block phaseBanner %}
+  {{ render_phase_banner(reversed=True) }}
+{% endblock %}
+
 {% block main %}
 <div class="hero-container">
   <div class="hero">
