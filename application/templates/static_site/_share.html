@@ -15,7 +15,7 @@
         ]%}
 
       {% for platform, link in links %}
-        <a class="govuk-link govuk-!-font-size-16 govuk-!-font-weight-bold govuk-!-margin-right-4 {{ platform | lower }}" href="{{ link }}" rel="noreferrer noopener nofollow" data-on="click" data-event-category="External link clicked" data-event-action="Share" data-event-label="{{ platform }}"><span class="visually-hidden">Share on </span>{{ platform }}</a>
+        <a class="govuk-link govuk-!-font-size-16 govuk-!-font-weight-bold govuk-!-margin-right-4 {{ platform | lower }}" href="{{ link }}" rel="noreferrer noopener nofollow" data-on="click" data-event-category="External link clicked" data-event-action="Share" data-event-label="{{ platform }}"><span class="govuk-visually-hidden">Share on </span>{{ platform }}</a>
       {% endfor %}
 
     </div>
