@@ -8,12 +8,12 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
     width: 50%;
   }
 
-@media (max-width: 769px) {
-  li.search {
-    width: 100%;
-    margin-top: 10px;
+  @media (max-width: 769px) {
+    li.search {
+      width: 100%;
+      margin-top: 10px;
+    }
   }
-}
 
   .site-search-label {
     float: left;
@@ -22,16 +22,12 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
   }
 
   .site-search {
-
     @media screen and (max-width: 379px) {
       width: auto;
       float: none;
     }
-
-    .content {
-      margin: 0 15px;
-    }
   }
+
   &.with-proposition {
     #search-form {
       margin-top: 4px;
@@ -71,12 +67,12 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
   }
 
   #search-form {
-    width: 100%;
+    position: relative;
+    background: #fff;
+    overflow: hidden;
 
-    .content {
-      position: relative;
-      background: #fff;
-      overflow: hidden;
+    @media (max-width: 769px) {
+      @include govuk-responsive-margin(3, 'bottom')
     }
 
     label {
@@ -98,6 +94,7 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
         margin-right: 0;
       }
     }
+
     input {
       box-sizing: border-box;
       float: left;
@@ -110,7 +107,6 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
       &::-moz-focus-inner {
         border: 0;
       }
-      appearance: none;
     }
 
     input#site-search-text {
@@ -127,7 +123,7 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
       }
 
       .js-enabled & {
-        width: 86%;
+        width: calc(100% - 36px);  // Full width, minus width of `input.submit` button
       }
     }
 
@@ -140,7 +136,6 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
       height: 36px;
 
       border: 1px solid $govuk-brand-colour;
-      border-width: 0 0 0 1px;
       border-left-color: #222;
       border-radius: 0;
 
