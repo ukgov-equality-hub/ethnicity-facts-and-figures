@@ -25,13 +25,15 @@
                       action="{{ url_for('cms.create_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version ) }}">
                     {{ form.csrf_token }}
                     {% block fields %}
-                        {{ form.upload.label }}
+                        <div class="govuk-form-group">
+                        {{ form.upload.label(class='govuk-label') }}
                         {% if form.upload.errors %}
                             - {{ form.upload.errors[0] }}
-                            {{ form.upload(class="error") }}
+                            {{ form.upload(class="govuk-file-upload error") }}
                         {% else %}
-                            {{ form.upload }}
+                            {{ form.upload(class="govuk-file-upload") }}
                         {% endif %}
+                        </div>
 
                         {{ form.title(disabled=form_disabled) }}
 
