@@ -221,7 +221,7 @@
         <div class="govuk-grid-column-full">
             <h3 class="govuk-heading-m">Dimensions</h3>
                 {% if measure_version.dimensions %}
-                    <table class="govuk-table">
+                    <table class="govuk-table govuk-!-font-size-16">
                         {% for dimension in measure_version.dimensions %}
                             <tr class="govuk-table__row movable" data-dimension-guid="{{ dimension.guid }}">
                                 <td class="govuk-table__cell">{{ dimension.title }}</td>
@@ -267,7 +267,7 @@
 
                     <h3 class="govuk-heading-m">Data</h3>
                     {% if measure_version.uploads %}
-                        <table class="govuk-table">
+                        <table class="govuk-table govuk-!-font-size-16">
                             {% for upload in measure_version.uploads %}
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__cell">
