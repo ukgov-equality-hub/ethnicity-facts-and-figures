@@ -50,7 +50,7 @@
                 {% for measure_version in measure.versions %}
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">
-                          <a class="measure-link" href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
+                          <a class="measure-link govuk-link" href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
                             {{ measure_version.version }}
                           </a>
                         </td>
