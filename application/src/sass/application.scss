@@ -55,6 +55,7 @@ $govuk-assets-path: '/static/assets/';
 @import 'components/header_search_box';
 @import 'components/hero';
 @import 'components/line_chart';
+@import 'components/list';
 @import 'components/metadata';
 @import 'components/missing_data_explanation';
 @import 'components/move_controls';
@@ -66,6 +67,7 @@ $govuk-assets-path: '/static/assets/';
 @import 'components/stat';
 @import 'components/status_banner';
 @import 'components/table';
+@import 'components/numbered_sections';
 
 /* Import other custom styles that need converting, with care and consideration, to components in the future */
 @import 'accessible-autocomplete';

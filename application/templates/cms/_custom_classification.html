@@ -1,31 +1,37 @@
-<div class="indented-option-block govuk-grid-row" id="custom_classification__panel">
+<div class="indented-option-block govuk-!-margin-top-4" id="custom_classification__panel">
   <p class="govuk-hint">Tell us a bit more about your data. This is for reporting purposes only and won't affect your table.</p>
   <div class="govuk-form-group">
-    <label for="custom_classification__selector">Classification</label>
-    <select id="custom_classification__selector" class="govuk-select" {% if form_disabled %}disabled="disabled"{% endif %}>
-      <option>Please select</option>
-      {% for classification_option in classification_options %}
-      <option value="{{ classification_option['code'] }}">
-        {{ classification_option['name'] }}
-      </option>
-      {% endfor %}
-      <option value="NA">Not applicable</option>
-    </select>
+    <div class="govuk-form-group">
+      <label class="govuk-label" for="custom_classification__selector">Classification</label>
+      <select id="custom_classification__selector" class="govuk-select eff-!-fill-width" {% if form_disabled %}disabled="disabled"{% endif %}>
+        <option>Please select</option>
+        {% for classification_option in classification_options %}
+        <option value="{{ classification_option['code'] }}">
+          {{ classification_option['name'] }}
+        </option>
+        {% endfor %}
+        <option value="NA">Not applicable</option>
+      </select>
+    </div>
 
-    <fieldset>
-      <p>This table:</p>
-      <div class="multiple-choice">
-          <input type="checkbox" id="custom_classification__has_parents" value="y">
-          <label for="custom_classification__has_parents">Includes data for broad categories</label>
-      </div>
-      <div class="multiple-choice">
-          <input type="checkbox" id="custom_classification__has_all" value="y">
-          <label for="custom_classification__has_all">Includes data for all ethnicities</label>
-      </div>
-      <div class="multiple-choice">
-          <input type="checkbox" id="custom_classification__has_unknown" value="y">
-          <label for="custom_classification__has_unknown">Includes data for unknown ethnicities</label>
-      </div>
-    </fieldset>
+    <div class="govuk-form-group">
+      <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">This table:</legend>
+        <div class="govuk-checkboxes">
+          <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" type="checkbox" id="custom_classification__has_parents" value="y">
+              <label class="govuk-label govuk-checkboxes__label" for="custom_classification__has_parents">Includes data for broad categories</label>
+          </div>
+          <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" type="checkbox" id="custom_classification__has_all" value="y">
+              <label class="govuk-label govuk-checkboxes__label" for="custom_classification__has_all">Includes data for all ethnicities</label>
+          </div>
+          <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" type="checkbox" id="custom_classification__has_unknown" value="y">
+              <label class="govuk-label govuk-checkboxes__label" for="custom_classification__has_unknown">Includes data for unknown ethnicities</label>
+          </div>
+        </div>
+      </fieldset>
+    </div>
   </div>
 </div>
