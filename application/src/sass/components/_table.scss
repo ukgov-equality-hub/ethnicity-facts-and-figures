@@ -11,7 +11,9 @@
  * so need to be more condensed, with smaller text.
  */
 .eff-table--dense {
-  .govuk-table__header,
+  .govuk-table__header{
+    @include govuk-font(16, $weight: bold);
+  }
   .govuk-table__cell {
     @include govuk-font(16);
   }
