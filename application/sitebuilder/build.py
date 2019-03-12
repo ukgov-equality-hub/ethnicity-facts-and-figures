@@ -342,7 +342,7 @@ def build_dashboards(build_dir):
 
     # Ethnic groups top-level dashboard
     sorted_ethnicity_list = get_ethnic_groups_dashboard_data()
-    content = render_template("dashboards/ethnicity_values.html", ethnic_groups=sorted_ethnicity_list)
+    content = render_template("dashboards/ethnic_groups.html", ethnic_groups=sorted_ethnicity_list)
     file_path = os.path.join(dashboards_dir, "ethnic-groups/index.html")
     write_html(file_path, content)
 

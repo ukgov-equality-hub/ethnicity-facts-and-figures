@@ -69,7 +69,7 @@ def planned_pages():
 @user_can(VIEW_DASHBOARDS)
 def ethnic_groups():
     sorted_ethnicity_list = get_ethnic_groups_dashboard_data()
-    return render_template("dashboards/ethnicity_values.html", ethnic_groups=sorted_ethnicity_list)
+    return render_template("dashboards/ethnic_groups.html", ethnic_groups=sorted_ethnicity_list)
 
 
 @dashboard_blueprint.route("/ethnic-groups/<value_slug>")
