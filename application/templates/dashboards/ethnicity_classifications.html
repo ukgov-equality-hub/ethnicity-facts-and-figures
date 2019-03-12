@@ -20,37 +20,33 @@
     </div>
   </div>
 
-  <table class="with-double-header ethnicity-classifications" id="ethnicity-classification">
+  <table class="govuk-table eff-table--dense with-double-header ethnicity-classifications" id="ethnicity-classification">
 
-    <thead>
-      <tr>
-        <th colspan="3" class="">&nbsp;</th>
-        <th colspan="3" class="rowspan-header">Additional values shown within dimensions</th>
-      </tr>
-      <tr>
-        <th aria-sort="none">Classification</th>
-        <th class="numeric" aria-sort="descending">Pages</th>
-        <th class="numeric" aria-sort="none" style="border-right: 1px solid #bfc1c3; padding-right: 20px;">Dimensions</th>
-        <th class="numeric" aria-sort="none" style="width: 110px;">Broad group</th>
-        <th class="numeric" aria-sort="none">‘All’</th>
-        <th class="numeric" aria-sort="none">‘Unknown’</th>
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" aria-sort="none">Classification</th>
+        <th class="govuk-table__header eff-table__header--width-80" aria-sort="descending">Pages</th>
+        <th class="govuk-table__header eff-table__header--width-80" aria-sort="none">Dimensions</th>
+        <th class="govuk-table__header eff-table__header--width-80" aria-sort="none" style="width: 110px;">Broad group</th>
+        <th class="govuk-table__header eff-table__header--width-80" aria-sort="none">‘All’</th>
+        <th class="govuk-table__header eff-table__header--width-80" aria-sort="none">‘Unknown’</th>
       </tr>
     </thead>
 
     <tbody>
       {% for ethnicity_classification in ethnicity_classifications %}
           {% set has_broad_group = ethnicity_classification.parent_values|length > 0 %}
-            <tr>
-              <th><a href="/dashboards/ethnicity-classifications/{{ ethnicity_classification.id }}">{{ ethnicity_classification.title }}</a></th>
-              <td class="numeric">{{ ethnicity_classification.measure_count }}</td>
-              <td class="numeric">{{ ethnicity_classification.dimension_count }}</td>
+            <tr class="govuk-table__row">
+              <th class="govuk-table__cell"><a class="govuk-table__link" href="/dashboards/ethnicity-classifications/{{ ethnicity_classification.id }}">{{ ethnicity_classification.title }}</a></th>
+              <td class="govuk-table__cell govuk-table__cell--numeric">{{ ethnicity_classification.measure_count }}</td>
+              <td class="govuk-table__cell govuk-table__cell--numeric">{{ ethnicity_classification.dimension_count }}</td>
                 {% if not ethnicity_classification.has_parents %}
-                <td class="numeric not-applicable" >N/A</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric not-applicable" >N/A</td>
                 {% else %}
-              <td class="numeric" data-sort-value="{{ (100 * ethnicity_classification.includes_parents_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_parents_count / ethnicity_classification.dimension_count)|round|int }}%</td>
+              <td class="govuk-table__cell govuk-table__cell--numeric" data-sort-value="{{ (100 * ethnicity_classification.includes_parents_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_parents_count / ethnicity_classification.dimension_count)|round|int }}%</td>
                 {% endif %}
-              <td class="numeric" data-sort-value="{{ (100 * ethnicity_classification.includes_all_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_all_count / ethnicity_classification.dimension_count)|round|int }}%</td>
-              <td class="numeric" data-sort-value="{{ (100 * ethnicity_classification.includes_unknown_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_unknown_count / ethnicity_classification.dimension_count)|round|int }}%</td>
+              <td class="govuk-table__cell govuk-table__cell--numeric" data-sort-value="{{ (100 * ethnicity_classification.includes_all_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_all_count / ethnicity_classification.dimension_count)|round|int }}%</td>
+              <td class="govuk-table__cell govuk-table__cell--numeric" data-sort-value="{{ (100 * ethnicity_classification.includes_unknown_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_unknown_count / ethnicity_classification.dimension_count)|round|int }}%</td>
             </tr>
       {% endfor %}
     </tbody>
