@@ -14,8 +14,8 @@
     {% if measure_versions_corrected_and_published|length > 0 %}
       {% for corrected_measure_version, published_version_with_correction in measure_versions_corrected_and_published %}
         <div class="corrected-measure-version">
-        <h2 class="govuk-heading-s">
-          <a href="{{ url_for('static_site.measure_version',
+        <h2 class="govuk-heading-s govuk-!-margin-bottom-1">
+          <a class="govuk-link" href="{{ url_for('static_site.measure_version',
                                topic_slug=corrected_measure_version.measure.subtopic.topic.slug,
                                subtopic_slug=corrected_measure_version.measure.subtopic.slug,
                                measure_slug=corrected_measure_version.measure.slug,
@@ -23,11 +23,13 @@
             {{ corrected_measure_version.title }}
           </a>
         </h2>
-        Version: {{ corrected_measure_version.version }}
-        <br>
-        {{ corrected_measure_version.published_at | format_friendly_date }}
-        <br>
-        {{ corrected_measure_version.external_edit_summary }}
+        <p class="govuk-body">
+          Version: {{ corrected_measure_version.version }}
+          <br>
+          {{ corrected_measure_version.published_at | format_friendly_date }}
+          <br>
+          {{ corrected_measure_version.external_edit_summary }}
+        </p>
         </div>
         <br>
       {% endfor %}
