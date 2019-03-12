@@ -1,0 +1,11 @@
+/* These tables have less vertical padding in them. */
+table.table-skinny {
+  td, th {
+    padding: 4px 0px;
+  }
+}
+
+/* Numeric columns are fixed in width */
+table.numeric {
+  width: 100px;
+}
