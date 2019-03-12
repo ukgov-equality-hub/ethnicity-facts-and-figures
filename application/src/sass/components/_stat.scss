@@ -1,5 +1,5 @@
 /* Single stats with a description */
-.stat {
+.eff-stat {
   background-color: #BFC1C3;
   color: white;
   padding: 10px;
@@ -8,6 +8,14 @@
   min-height: 80px;
 }
 
-.stat span {
+.eff-stat span {
   display: block;
+}
+
+.eff-stat__figure {
+  @include govuk-font(48, $weight: bold);
+}
+
+.eff-stat__description {
+  @include govuk-font(19);
 }

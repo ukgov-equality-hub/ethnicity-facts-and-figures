@@ -24,14 +24,14 @@
 
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-third">
-        <div class="stat eff-!-background-light-blue">
-          <span class="govuk-!-font-weight-bold govuk-!-font-size-48">{{ data.number_of_publications }}</span>
-          <span>{% if data.number_of_publications == 1 %}Page{% else %}Pages{% endif %}</span>
+        <div class="eff-stat eff-!-background-light-blue">
+          <span class="eff-stat__figure">{{ data.number_of_publications }}</span>
+          <span class="eff-stat__description">{% if data.number_of_publications == 1 %}Page{% else %}Pages{% endif %}</span>
         </div>
 
-        <div class="stat eff-!-background-turquoise">
-          <span class="govuk-!-font-weight-bold govuk-!-font-size-48">{{ data.number_of_major_updates }}</span>
-          <span class="">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
+        <div class="eff-stat eff-!-background-turquoise">
+          <span class="eff-stat__figure">{{ data.number_of_major_updates }}</span>
+          <span class="eff-stat__description">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
         </div>
       </div>
       <div class="govuk-grid-column-two-thirds">
@@ -48,24 +48,24 @@
 
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-full">
-        <table class="measures-by-week smaller-text">
-            <thead>
-                <tr>
-                    <th>Week beginning</th>
-                    <th>Measures</th>
-                    <th>Updates</th>
+        <table class="govuk-table eff-table--dense measures-by-week">
+            <thead class="govuk-table__head govuk-table__head--reversed">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header">Week beginning</th>
+                    <th class="govuk-table__header">Measures</th>
+                    <th class="govuk-table__header">Updates</th>
                 </tr>
             </thead>
             {% for week in data.weeks %}
                 <tbody class="collapsed">
-                  <tr class="week header {% if not week['publications'] and not week['major_updates'] %}empty{% endif %}">
-                    <th>{{ week['week'] | format_friendly_date }}</th>
-                    <td>{{ week['publications'] | count }}</td>
-                    <td>{{ week['major_updates'] | count }}</td>
+                  <tr class="govuk-table__row week header week {% if not week['publications'] and not week['major_updates'] %}empty{% endif %}">
+                    <th class="govuk-table__header">{{ week['week'] | format_friendly_date }}</th>
+                    <td class="govuk-table__cell">{{ week['publications'] | count }}</td>
+                    <td class="govuk-table__cell">{{ week['major_updates'] | count }}</td>
                   </tr>
                   {% if week['publications'] or week['major_updates'] %}
-                      <tr class="measure-titles">
-                        <td colspan="3">
+                      <tr class="govuk-table__row measure-titles">
+                        <td class="govuk-table__cell" colspan="3">
                           {% if week['publications'] %}
                               <p class="govuk-body-s">New measures:</p>
                               <ul class="govuk-list">

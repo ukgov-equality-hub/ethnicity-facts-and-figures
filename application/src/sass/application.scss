@@ -53,14 +53,16 @@ $govuk-assets-path: '/static/assets/';
 @import 'components/flash_message';
 @import 'components/header_search_box';
 @import 'components/hero';
+@import 'components/line_chart';
 @import 'components/metadata';
-@import 'components/move_controls';
 @import 'components/missing_data_explanation';
+@import 'components/move_controls';
 @import 'components/old_edition_notice';
 @import 'components/phase_banner_reversed';
 @import 'components/publisher_banner';
 @import 'components/share';
 @import 'components/sort_buttons';
+@import 'components/stat';
 @import 'components/status_banner';
 @import 'components/table';
 
