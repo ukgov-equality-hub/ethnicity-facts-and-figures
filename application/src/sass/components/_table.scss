@@ -473,3 +473,18 @@ table.table-skinny {
 table.numeric {
   width: 100px;
 }
+
+
+/* Used on dashboards that list measures and dimensions */
+table.measures {
+  td {
+    vertical-align: top;
+  }
+
+  .dimensions {
+    margin-top: 5px;
+    margin-bottom: 0;
+    list-style-type: none;
+    margin-left: 0;
+  }
+}
