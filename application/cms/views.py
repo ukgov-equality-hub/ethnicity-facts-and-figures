@@ -393,7 +393,7 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
                     "form": form,
                     "topic": topic,
                     "subtopic": subtopic,
-                    "measure": measure_version.measure,
+                    "measure": measure,
                     "measure_version": measure_version,
                 }
                 return render_template("cms/create_upload.html", **context)
@@ -412,7 +412,7 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
         "form": form,
         "topic": topic,
         "subtopic": subtopic,
-        "measure": measure_version.measure,
+        "measure": measure,
         "measure_version": measure_version,
     }
     return render_template("cms/create_upload.html", **context)
