@@ -20,16 +20,16 @@
     </div>
   </div>
 
-  <table class="govuk-table eff-table--dense with-double-header ethnicity-classifications" id="ethnicity-classification">
+  <table class="govuk-table with-double-header ethnicity-classifications" id="ethnicity-classification">
 
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
-        <th class="govuk-table__header" aria-sort="none">Classification</th>
-        <th class="govuk-table__header govuk-table__header--numeric eff-table__header--width-80" aria-sort="descending">Pages</th>
-        <th class="govuk-table__header govuk-table__header--numeric eff-table__header--width-80" aria-sort="none">Dimensions</th>
-        <th class="govuk-table__header govuk-table__header--numeric eff-table__header--width-80" aria-sort="none" style="width: 110px;">Broad group</th>
-        <th class="govuk-table__header govuk-table__header--numeric eff-table__header--width-80" aria-sort="none">‘All’</th>
-        <th class="govuk-table__header govuk-table__header--numeric eff-table__header--width-80" aria-sort="none">‘Unknown’</th>
+        <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Classification</th>
+        <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--numeric--dense eff-table__header--width-80" aria-sort="descending">Pages</th>
+        <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--numeric--dense eff-table__header--width-80" aria-sort="none">Dimensions</th>
+        <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--numeric--dense eff-table__header--width-80" aria-sort="none" style="width: 110px;">Broad group</th>
+        <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--numeric--dense eff-table__header--width-80" aria-sort="none">‘All’</th>
+        <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--numeric--dense eff-table__header--width-80" aria-sort="none">‘Unknown’</th>
       </tr>
     </thead>
 
@@ -37,16 +37,16 @@
       {% for ethnicity_classification in ethnicity_classifications %}
           {% set has_broad_group = ethnicity_classification.parent_values|length > 0 %}
             <tr class="govuk-table__row">
-              <th class="govuk-table__cell"><a class="govuk-link" href="/dashboards/ethnicity-classifications/{{ ethnicity_classification.id }}">{{ ethnicity_classification.title }}</a></th>
-              <td class="govuk-table__cell govuk-table__cell--numeric">{{ ethnicity_classification.measure_count }}</td>
-              <td class="govuk-table__cell govuk-table__cell--numeric">{{ ethnicity_classification.dimension_count }}</td>
+              <th class="govuk-table__cell eff-table__cell--dense"><a class="govuk-link" href="/dashboards/ethnicity-classifications/{{ ethnicity_classification.id }}">{{ ethnicity_classification.title }}</a></th>
+              <td class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--dense eff-table__cell--numeric--dense">{{ ethnicity_classification.measure_count }}</td>
+              <td class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--dense eff-table__cell--numeric--dense">{{ ethnicity_classification.dimension_count }}</td>
                 {% if not ethnicity_classification.has_parents %}
                 <td class="govuk-table__cell govuk-table__cell--numeric not-applicable" >N/A</td>
                 {% else %}
-              <td class="govuk-table__cell govuk-table__cell--numeric" data-sort-value="{{ (100 * ethnicity_classification.includes_parents_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_parents_count / ethnicity_classification.dimension_count)|round|int }}%</td>
+              <td class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--dense eff-table__cell--numeric--dense" data-sort-value="{{ (100 * ethnicity_classification.includes_parents_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_parents_count / ethnicity_classification.dimension_count)|round|int }}%</td>
                 {% endif %}
-              <td class="govuk-table__cell govuk-table__cell--numeric" data-sort-value="{{ (100 * ethnicity_classification.includes_all_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_all_count / ethnicity_classification.dimension_count)|round|int }}%</td>
-              <td class="govuk-table__cell govuk-table__cell--numeric" data-sort-value="{{ (100 * ethnicity_classification.includes_unknown_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_unknown_count / ethnicity_classification.dimension_count)|round|int }}%</td>
+              <td class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--dense eff-table__cell--numeric--dense" data-sort-value="{{ (100 * ethnicity_classification.includes_all_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_all_count / ethnicity_classification.dimension_count)|round|int }}%</td>
+              <td class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--dense eff-table__cell--numeric--dense" data-sort-value="{{ (100 * ethnicity_classification.includes_unknown_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_unknown_count / ethnicity_classification.dimension_count)|round|int }}%</td>
             </tr>
       {% endfor %}
     </tbody>

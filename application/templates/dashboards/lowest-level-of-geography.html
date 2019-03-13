@@ -23,12 +23,12 @@
     </div>
   </div>
 
-  <table class="govuk-table eff-table--dense measures" id="measures">
+  <table class="govuk-table measures" id="measures">
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-          <th class="govuk-table__header" aria-sort="none">Topic</th>
-          <th class="govuk-table__header" aria-sort="none">Sub-topic</th>
-          <th class="govuk-table__header" aria-sort="ascending">Title</th>
+          <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Topic</th>
+          <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Sub-topic</th>
+          <th class="govuk-table__header eff-table__header--dense" aria-sort="ascending">Title</th>
         </tr>
       </thead>
 
@@ -36,10 +36,10 @@
     {% for topic_title, measure_titles_and_urls_by_subtopic in measure_titles_and_urls_by_topic_and_subtopic.items() %}
         {% for subtopic_title, measure_titles_and_urls in measure_titles_and_urls_by_subtopic.items() %}
         <tr class="govuk-table__row">
-            <td class="govuk-table__cell eff-table__cell--align-top">{{ topic_title }}</td>
-            <td class="govuk-table__cell eff-table__cell--align-top">{{ subtopic_title }}</td>
+            <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">{{ topic_title }}</td>
+            <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">{{ subtopic_title }}</td>
 
-            <td class="govuk-table__cell eff-table__cell--align-top">
+            <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">
               <ul class="govuk-list eff-table__list--dense">
               {% for measure_title_and_url in measure_titles_and_urls %}
                 <li><a class="govuk-link" href="{{ measure_title_and_url.url }}">{{ measure_title_and_url.title }}</a></li>

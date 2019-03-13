@@ -24,12 +24,12 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <table class="govuk-table eff-table--dense measures" id="measures">
+      <table class="govuk-table measures" id="measures">
         <thead class="govuk-table__head">
           <tr class="govuk-table__row">
-            <th class="govuk-table__header" aria-sort="none">Topic</th>
-            <th class="govuk-table__header" aria-sort="none">Sub-topic</th>
-            <th class="govuk-table__header" aria-sort="ascending">Title</th>
+            <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Topic</th>
+            <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Sub-topic</th>
+            <th class="govuk-table__header eff-table__header--dense" aria-sort="ascending">Title</th>
           </tr>
         </thead>
 
@@ -38,9 +38,9 @@
             {% for subtopic_title, measures_with_dimensions in measures_with_dimensions_by_subtopic.items() %}
                 {% for measure_title, measure_with_dimensions in measures_with_dimensions.items() %}
                   <tr class="govuk-table__row">
-                    <td class="govuk-table__cell eff-table__cell--align-top">{{ topic_title }}</td>
-                    <td class="govuk-table__cell eff-table__cell--align-top">{{ subtopic_title }}</td>
-                    <td class="govuk-table__cell eff-table__cell--align-top">
+                    <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">{{ topic_title }}</td>
+                    <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">{{ subtopic_title }}</td>
+                    <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">
                       <a class="govuk-link" href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
 
                       <ul class="govuk-list govuk-!-margin-top-1 eff-table__list--inset eff-table__list--dense">
