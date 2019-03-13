@@ -16,9 +16,9 @@
                       measure_slug=measure_version.measure.slug,
                       version=version) }}"/>
 
-    <div class="govuk-grid-row">
+
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-m">Title: {{ measure_version.title }}</h1>
+            <h1 class="govuk-heading-xl">Title: {{ measure_version.title }}</h1>
 
             <div class="metadata">
 
@@ -58,13 +58,14 @@
 
             </div>
 
-            <h1 id="data-sources" class="govuk-heading-l">Data sources</h1>
-            <h2 class="govuk-heading-m">Primary source</h2>
+            <div class="govuk-body">
+            <h2 id="data-sources" class="govuk-heading-l">Data sources</h2>
+            <h3 class="govuk-heading-m">Primary source</h3>
 
             <div style="padding-bottom: 10px">
                 <div id="source-url" class="govuk-heading-s">Link to data source</div>
                 {% if measure_version.primary_data_source and measure_version.primary_data_source.source_url %}
-                    <div id="source-url-value" >{{ measure_version.primary_data_source.source_url }}</div>
+                    <div id="source-url-value">{{ measure_version.primary_data_source.source_url }}</div>
                 {% else %}
                     <div>[...]</div>
                 {% endif %}
@@ -143,7 +144,7 @@
             </div>
 
 
-            <h2 class="govuk-heading-m">Secondary source</h2>
+            <h3 class="govuk-heading-m">Secondary source</h3>
 
             {% if measure_version.secondary_data_source %}
 
@@ -233,8 +234,10 @@
                <div>[...]</div>
             {% endif %}
 
+        </div>
+    <div class="govuk-body">
             <div style="padding-bottom: 10px">
-                <h2 class="govuk-heading-m">Main points</h2>
+                <h2 class="govuk-heading-l">Main points</h2>
                 {% if measure_version.summary %}
                     <div>{{ measure_version.summary | render_markdown }}</div>
                 {% else %}
@@ -243,7 +246,7 @@
             </div>
 
             <div style="padding-bottom: 10px">
-                <h2 class="govuk-heading-m">Things you need to know</h2>
+                <h2 class="govuk-heading-l">Things you need to know</h2>
                 {% if measure_version.need_to_know %}
                     <div id="things-you-need-to-know">{{ measure_version.need_to_know | render_markdown }}</div>
                 {% else %}
@@ -252,7 +255,7 @@
             </div>
 
             <div style="padding-bottom: 10px">
-                <div class="govuk-heading-s">What the data measures</div>
+                <h2 class="govuk-heading-l">What the data measures</h2>
                 {% if measure_version.measure_summary %}
                     <div id="what-the-data-measures">{{ measure_version.measure_summary | render_markdown }}</div>
                 {% else %}
@@ -261,7 +264,7 @@
             </div>
 
             <div style="padding-bottom: 10px">
-                <div class="govuk-heading-s">The ethnic categories used in this data</div>
+                <h2 class="govuk-heading-l">The ethnic categories used in this data</h2>
                 {% if measure_version.ethnicity_definition_summary %}
                     <div id="ethnic-categories-used-in-this-data">{{ measure_version.ethnicity_definition_summary | render_markdown }}</div>
                 {% else %}
@@ -269,10 +272,10 @@
                 {% endif %}
             </div>
 
-            <h1 class="govuk-heading-l">Methodology</h1>
+            <h2 class="govuk-heading-l">Methodology</h2>
 
             <div style="padding-bottom: 10px">
-                <div class="govuk-heading-s">Methodology</div>
+                <h3 class="govuk-heading-m">Methodology</h3>
                 {% if measure_version.methodology %}
                     <div id="methodology">{{ measure_version.methodology | render_markdown }}</div>
                 {% else %}
@@ -281,7 +284,7 @@
             </div>
 
             <div style="padding-bottom: 10px">
-                <div class="govuk-heading-s">Suppression rules and disclosure control</div>
+                <h3 class="govuk-heading-m">Suppression rules and disclosure control</h3>
                 {% if measure_version.suppression_and_disclosure %}
                     <div id="suppression-and-disclosure">{{ measure_version.suppression_and_disclosure | render_markdown }}</div>
                 {% else %}
@@ -290,7 +293,7 @@
             </div>
 
             <div style="padding-bottom: 10px">
-                <div class="govuk-heading-s">Rounding</div>
+                <h3 class="govuk-heading-m">Rounding</h3>
                 {% if measure_version.estimation %}
                     <div>{{ measure_version.estimation | render_markdown }}</div>
                 {% else %}
@@ -299,7 +302,7 @@
             </div>
 
             <div style="padding-bottom: 10px">
-                <div class="govuk-heading-s">Related publications</div>
+                <h3 class="govuk-heading-m">Related publications</h3>
                 {% if measure_version.related_publications %}
                     <div>{{ measure_version.related_publications }}</div>
                 {% else %}
@@ -308,7 +311,7 @@
             </div>
 
             <div style="padding-bottom: 10px">
-                <div class="govuk-heading-s">Link to quality and methodology information</div>
+                <h3 class="govuk-heading-m">Link to quality and methodology information</h3>
                 {% if measure_version.qmi_url %}
                     <div>{{ measure_version.qmi_url }}</div>
                 {% else %}
@@ -327,8 +330,8 @@
 
             {% if measure_version.dimensions %}
                 {% for dimension in dimensions %}
-                    <h1 class="govuk-heading-l">Dimension {{ loop.index }}</h1>
-                    <h2 class="govuk-heading-m">Title: {{ dimension.title }}</h2>
+                    <h2 class="govuk-heading-l">Dimension {{ loop.index }}</h2>
+                    <h3 class="govuk-heading-m">Title: {{ dimension.title }}</h3>
                     <div class="metadata">
                         <div style="padding-bottom: 10px">
                             <div class="govuk-!-font-size-16 govuk-!-font-weight-bold">Time period covered</div>
@@ -341,7 +344,7 @@
                     </div>
 
                     <div style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
-                        <h3 class="govuk-heading-s">Charts and tables</h3>
+                        <h4 class="govuk-heading-s">Charts and tables</h4>
                         <ul>
                             {% if dimension.chart and dimension.table %}
                                 <li>Chart - {{ dimension.chart.title.text }}</li>
@@ -356,7 +359,7 @@
                             {% endif %}
                         </ul>
                     </div>
-                    <h3 class="govuk-heading-s">Summary</h3>
+                    <h4 class="govuk-heading-s">Summary</h4>
                     <div class="bullets spaced-out">
                         {{ dimension.summary | render_markdown }}
                     </div>
