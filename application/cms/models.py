@@ -871,7 +871,7 @@ class ChartAndTableMixin(object):
     includes_unknown = db.Column(db.Boolean, nullable=True)
 
     built_object = db.Column(JSON)
-    builder_settings_and_source_data = db.Column(JSON)
+    settings_and_source_data = db.Column(JSON)
 
     @classmethod
     def get_by_id(cls, id):

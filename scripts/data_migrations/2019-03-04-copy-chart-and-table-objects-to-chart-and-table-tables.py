@@ -32,8 +32,8 @@ def copy_chart_and_table_data(app):  # noqa: C901
                     if dimension.chart_2_source_data is not None:
                         # If there is already a version 2 chart settings, copy settings straight across
                         # But don't overwrite if it already exists
-                        if dimension.dimension_chart.builder_settings_and_source_data is None:
-                            dimension.dimension_chart.builder_settings_and_source_data = dimension.chart_2_source_data
+                        if dimension.dimension_chart.settings_and_source_data is None:
+                            dimension.dimension_chart.settings_and_source_data = dimension.chart_2_source_data
                     else:
                         # Assume there are version 1 settings if no version 2; convert it and copy it across
                         try:
@@ -41,8 +41,8 @@ def copy_chart_and_table_data(app):  # noqa: C901
                                 dimension.chart, dimension.chart_source_data
                             )
                             # Don't overwrite if it already exists
-                            if dimension.dimension_chart.builder_settings_and_source_data is None:
-                                dimension.dimension_chart.builder_settings_and_source_data = version_2_settings
+                            if dimension.dimension_chart.settings_and_source_data is None:
+                                dimension.dimension_chart.settings_and_source_data = version_2_settings
                         except Exception as e:
                             chart_failures += 1
                             print(f"Error copying chart for {dimension.title} ({dimension.guid})")
@@ -61,8 +61,8 @@ def copy_chart_and_table_data(app):  # noqa: C901
                     if dimension.table_2_source_data is not None:
                         # If there is already a version 2 table settings, copy settings straight across
                         # But don't overwrite if it already exists
-                        if dimension.dimension_table.builder_settings_and_source_data is None:
-                            dimension.dimension_table.builder_settings_and_source_data = dimension.table_2_source_data
+                        if dimension.dimension_table.settings_and_source_data is None:
+                            dimension.dimension_table.settings_and_source_data = dimension.table_2_source_data
                     else:
                         # Assume there are version 1 settings if no version 2; convert it and copy it across
                         try:
@@ -70,8 +70,8 @@ def copy_chart_and_table_data(app):  # noqa: C901
                                 dimension.table, dimension.table_source_data, current_app.dictionary_lookup
                             )
                             # Don't overwrite if it already exists
-                            if dimension.dimension_table.builder_settings_and_source_data is None:
-                                dimension.dimension_table.builder_settings_and_source_data = version_2_settings
+                            if dimension.dimension_table.settings_and_source_data is None:
+                                dimension.dimension_table.settings_and_source_data = version_2_settings
                         except Exception as e:
                             table_failures += 1
                             print(f"Error copying table for {dimension.title} ({dimension.guid})")
