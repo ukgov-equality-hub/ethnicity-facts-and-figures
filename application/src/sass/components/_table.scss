@@ -456,19 +456,6 @@ table.measure-data {
 
 }
 
-
-/* Skinny tables
- *
- * These tables have less vertical padding in them.
- *
- * TODO: merge with eff-table--dense?
- */
-table.table-skinny {
-  td, th {
-    padding: 4px 0px;
-  }
-}
-
 /* Fixed with numeric columns
  *
  * TODO: replace with width override classes?
