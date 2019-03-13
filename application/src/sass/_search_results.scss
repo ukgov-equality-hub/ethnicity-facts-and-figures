@@ -23,7 +23,7 @@ main#main-content {
 
   /* Container for the bit above the results */
   .gsc-above-wrapper-area {
-      border-bottom-width: 0;
+      border-bottom-width: 1;
   }
 
   /* Spelling suggestion / autocorrection */
@@ -51,6 +51,11 @@ main#main-content {
   /* Results header */
   .gsc-resultsHeader {
       display: none;
+  }
+
+  /* Table containing each result snippet */
+  .gsc-table-result {
+    padding-left: 0;
   }
 
   /* Table cell containing each result snippet */
