@@ -10,6 +10,7 @@
  * Use this modifier on table elements which have a lot of data in them, and
  * so need to be more condensed, with smaller text.
  */
+// FIXME: Create `.eff-table__header--small` and `.eff-table__cell--small` rather than using tiered styling, as below.
 .eff-table--dense {
   .govuk-table__header{
     @include govuk-font(16, $weight: bold);
@@ -476,21 +477,6 @@ table.numeric {
   width: 100px;
 }
 
-
-/* Used on dashboards that list measures and dimensions */
-table.measures {
-  td {
-    vertical-align: top;
-  }
-
-  .dimensions {
-    margin-top: 5px;
-    margin-bottom: 0;
-    list-style-type: none;
-    margin-left: 0;
-  }
-}
-
 /* Use on <th> for fixing column widths */
 table .column-width-40 {
     width: 40%;
@@ -502,4 +488,17 @@ table .column-width-30 {
 
 table .column-width-15 {
     width: 15%;
+}
+
+.eff-table__list--inset {
+  padding-inline-start: 40px;
+}
+
+.eff-table__list--dense {
+  @include govuk-font(16);
+  @include govuk-responsive-margin(0, $direction: "bottom");
+}
+
+.eff-table__cell--align-top {
+  vertical-align: top;
 }

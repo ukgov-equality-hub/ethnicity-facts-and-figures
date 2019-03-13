@@ -38,15 +38,16 @@
             {% for subtopic_title, measures_with_dimensions in measures_with_dimensions_by_subtopic.items() %}
                 {% for measure_title, measure_with_dimensions in measures_with_dimensions.items() %}
                   <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">{{ topic_title }}</td>
-                    <td class="govuk-table__cell">{{ subtopic_title }}</td>
-                    <td class="govuk-table__cell">
+                    <td class="govuk-table__cell eff-table__cell--align-top">{{ topic_title }}</td>
+                    <td class="govuk-table__cell eff-table__cell--align-top">{{ subtopic_title }}</td>
+                    <td class="govuk-table__cell eff-table__cell--align-top">
                       <a class="govuk-link" href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
+
+                      <ul class="govuk-list govuk-!-margin-top-1 eff-table__list--inset eff-table__list--dense">
                         {% for dimension in measure_with_dimensions.dimensions %}
-                            <ul class="dimensions">
-                               <li><a class="govuk-link" href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
-                            </ul>
-                        {%  endfor %}
+                          <li><a class="govuk-link" href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
+                        {% endfor %}
+                      </ul>
                     </td>
                   </tr>
                 {%  endfor %}
