@@ -14,6 +14,4 @@ redirect_pairs = [
 ]
 
 for from_uri, to_uri in redirect_pairs:
-    subprocess.call(
-        ["./manage.py", "add_redirect_rule", "--from_uri", from_uri, "--to_uri", to_uri]
-    )
+    subprocess.call(["./manage.py", "add_redirect_rule", "--from_uri", from_uri, "--to_uri", to_uri])
