@@ -37,7 +37,7 @@
                                 expires in {{ expires_in_days }} {% if expires_in_days == 1 %}
                                 day{% else %}days{% endif %}
                                 <button id="copy-to-clipboard" class="govuk-button eff-button--secondary-quiet">Copy link</button>
-                                <input id="review-link" class="visually-hidden" value="{{ url_for('review.review_page', review_token=measure_version.review_token, _external=True) }}">
+                                <input id="review-link" class="govuk-visually-hidden" value="{{ url_for('review.review_page', review_token=measure_version.review_token, _external=True) }}">
                         {% else %}
                             <span class="warning">Review link expired <button id="generate-review-url" class="govuk-button eff-button--secondary-quiet">Renew</button></span>
                         {% endif %}

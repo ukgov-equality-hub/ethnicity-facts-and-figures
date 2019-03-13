@@ -92,7 +92,7 @@ SortableTable.prototype.createStatusBox = function() {
     this.status.setAttribute('aria-live', 'polite')
     this.status.setAttribute('role', 'status')
     this.status.setAttribute('aria-atomic', 'true')
-    this.status.setAttribute('class', 'sortableTable-status visuallyhidden')
+    this.status.setAttribute('class', 'sortableTable-status govuk-visually-hidden')
 
     // FIXME: This isn't associated with the table if the table isn't the only node in the parent (e.g. admin users view)
     this.table.parentElement.appendChild(this.status);

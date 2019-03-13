@@ -24,13 +24,13 @@
 
                 {% if measure_version.time_covered %}
                     <div style="padding-bottom: 10px">
-                        <div class="bold-xsmall" id="time-period">Time period covered</div>
+                        <div class="govuk-!-font-size-16 govuk-!-font-weight-bold" id="time-period">Time period covered</div>
                         <div id="time-period-value">{{ measure_version.time_covered }}</div>
                     </div>
                 {% endif %}
 
                 <div style="padding-bottom: 10px">
-                        <div class="bold-xsmall" id="area-covered">Areas covered</div>
+                        <div class="govuk-!-font-size-16 govuk-!-font-weight-bold" id="area-covered">Areas covered</div>
                         {% if measure_version.area_covered %}
                             <div id="area-covered-value">{{ measure_version.format_area_covered() }}</div>
                         {% else %}
@@ -39,7 +39,7 @@
                 </div>
 
                 <div style="padding-bottom: 10px">
-                        <div class="bold-xsmall" id="lowest-level-of-geography">Geographic breakdown</div>
+                        <div class="govuk-!-font-size-16 govuk-!-font-weight-bold" id="lowest-level-of-geography">Geographic breakdown</div>
                         {% if measure_version.lowest_level_of_geography %}
                             <div id="lowest-level-of-geography-value">{{ measure_version.lowest_level_of_geography.name }}</div>
                         {% else %}
@@ -48,7 +48,7 @@
                 </div>
 
                 <div style="padding-bottom: 10px">
-                        <div class="bold-xsmall" id="department">Department</div>
+                        <div class="govuk-!-font-size-16 govuk-!-font-weight-bold" id="department">Department</div>
                         {% if measure_version.primary_data_source.publisher %}
                             <div id="department-name">{{ measure_version.primary_data_source.publisher.name }}</div>
                         {% else %}
@@ -331,7 +331,7 @@
                     <h2 class="govuk-heading-m">Title: {{ dimension.title }}</h2>
                     <div class="metadata">
                         <div style="padding-bottom: 10px">
-                            <div class="bold-xsmall">Time period covered</div>
+                            <div class="govuk-!-font-size-16 govuk-!-font-weight-bold">Time period covered</div>
                             {% if dimension.time_period %}
                                 <div>{{ dimension.time_period }}</div>
                             {% else %}

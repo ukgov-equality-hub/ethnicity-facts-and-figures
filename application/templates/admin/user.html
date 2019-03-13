@@ -33,7 +33,7 @@
             </p>
             <p class="govuk-body">User type: {{ user.user_type.name }}</p>
             <p class="govuk-body">This user can:</p>
-            <ul>
+            <ul class="govuk-list govuk-list--bullet">
                 {% for capability in user.capabilities %}
                     <li>
                         {{ capability }}
@@ -60,10 +60,10 @@
             <h2 class="govuk-heading-m">Share measures</h2>
             <form id="share-page" action="{{ url_for('admin.share_page_with_user', user_id=user.id) }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <label for="measures-picker">Measures</label>
+                <label for="measures-picker" class="govuk-label">Measures</label>
                 <div id="measure-autocomplete-container"></div>
-                <div class="form-group">
-                    <select class="form-control" name="measure-picker" id="measure-picker">
+                <div class="govuk-form-group">
+                    <select name="measure-picker" id="measure-picker">
                         <option value="" selected>Select a measure</option>
                         {% for measure_version in latest_measure_versions %}
                             <option value="{{ measure_version.id }}">{{ measure_version.title }}</option>
