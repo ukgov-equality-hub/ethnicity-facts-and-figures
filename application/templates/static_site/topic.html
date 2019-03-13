@@ -47,7 +47,8 @@
                                             {% endif %}
                                         {% endif %}
                                         {% if measures_by_subtopic[subtopic.id] %}
-                                                <ul class="links js-reorderable">
+                                                {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}<div class="reordering-save-status">&nbsp;</div>{% endif %}
+                                                <ul class="links {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}js-reorderable{% endif %}">
                                                     {% for measure in measures_by_subtopic[subtopic.id] %}
                                                         {% with measure_version = measure.latest_version %}
                                                             <li data-measure-id="{{ measure.id }}" data-subtopic-id="{{ subtopic.id }}" itemprop="dataset" itemscope itemtype="http://schema.org/Dataset">
@@ -99,30 +100,35 @@
 
             var orderMeasures = function(list) {
 
-                var status = list.parentElement.previousElementSibling;
+                var status = list.parentElement.querySelector('.reordering-save-status')
                 var savingIntervalId;
 
                 var stillSaving = function () {
-                    switch (status.textContent) {
-                        case 'Saving new order':
-                            status.textContent = 'Saving new order.';
-                            break;
-                        case 'Saving new order.':
-                            status.textContent = 'Saving new order..';
-                            break;
-                        case 'Saving new order..':
-                            status.textContent = 'Saving new order...';
-                            break;
-                        case 'Saving new order...':
-                            status.textContent = 'Saving new order';
-                            break;
+                    if (status) {
+                        switch (status.textContent) {
+                            case 'Saving new order':
+                                status.textContent = 'Saving new order.';
+                                break;
+                            case 'Saving new order.':
+                                status.textContent = 'Saving new order..';
+                                break;
+                            case 'Saving new order..':
+                                status.textContent = 'Saving new order...';
+                                break;
+                            case 'Saving new order...':
+                                status.textContent = 'Saving new order';
+                                break;
+                        }
                     }
                 };
 
                 var saved = function (savingIntervalId) {
                     clearInterval(savingIntervalId);
-                    status.textContent = 'Saved';
-                    status.classList.add('status-invisible');
+
+                    if (status) {
+                        status.textContent = 'Saved';
+                        status.classList.add('status-invisible');
+                    }
                 };
 
                 var positions = [];
@@ -132,8 +138,10 @@
                                      "subtopic_id": list.children[i].dataset.subtopicId})
                 }
 
-                status.classList.remove('status-invisible');
-                status.textContent = 'Saving new order';
+                if (status) {
+                    status.classList.remove('status-invisible');
+                    status.textContent = 'Saving new order';
+                }
                 savingIntervalId = setInterval(stillSaving, 300);
                 list.classList.toggle('reorderable');
 

@@ -104,7 +104,7 @@
           {% set row_loop = loop %}
           {% for value in data['values'] %}
             {% set sort_value = value %}
-            
+
             {% if data.sort_values %}
               {% if data.sort_values[loop.index0] in missing_data_sort_order_values %}
                 {% set sort_value = missing_data_sort_order_values[data.sort_values[loop.index0]] %}
@@ -142,7 +142,7 @@
     <p class="missing-data-explanation">
         {% set table_data = dimension.table.data | flatten %}
 
-        {% if "N/A" in table_data %}
+        {% if "N/A" in table_data or "n/a" in table_data %}
             <span class="explanation"><sup>*</sup> Not applicable</span>
         {% endif %}
 

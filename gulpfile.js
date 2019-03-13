@@ -16,6 +16,12 @@ gulp.task('copy-static', function () {
     .pipe(gulp.dest('./application/static'))
 })
 
+// Copy assets from GOV.UK Frontend
+gulp.task('copy-govuk-frontend-assets', function () {
+  return gulp.src(['./node_modules/govuk-frontend/assets/**'])
+    .pipe(gulp.dest('./application/static/assets'))
+})
+
 gulp.task('compile-css', function () {
   return gulp.src(['./application/src/sass/*.scss'])
     .pipe(sourcemaps.init())
@@ -34,7 +40,7 @@ gulp.task('compile-js-all', function () {
   ])
     .pipe(sourcemaps.init())
     .pipe(concat('all.js', { newLine: ';' }))
-    .pipe(uglify())
+    .pipe(gulpif(!process.env.DISABLE_UGLIFY, uglify()))
     .pipe(sourcemaps.write('.', { sourceRoot: '../src' }))
     .pipe(gulp.dest('./application/static/javascripts'))
 });
@@ -51,7 +57,7 @@ gulp.task('compile-js-charts', function (cb) {
     ]),
     sourcemaps.init(),
     concat('charts.js'),
-    uglify(),
+    gulpif(!process.env.DISABLE_UGLIFY, uglify()),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ], cb);
@@ -65,7 +71,7 @@ gulp.task('compile-js-cms', function (cb) {
     ]),
     sourcemaps.init(),
     concat('cms.js'),
-    uglify(),
+    gulpif(!process.env.DISABLE_UGLIFY, uglify()),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
@@ -83,7 +89,7 @@ gulp.task('compile-js-tablebuilder2', function (cb) {
     ]),
     sourcemaps.init(),
     concat('tablebuilder2.js'),
-    uglify(),
+    gulpif(!process.env.DISABLE_UGLIFY, uglify()),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
@@ -98,7 +104,7 @@ gulp.task('compile-js-chartbuilder2', function (cb) {
     ]),
     sourcemaps.init(),
     concat('chartbuilder2.js'),
-    uglify(),
+    gulpif(!process.env.DISABLE_UGLIFY, uglify()),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
   ],
@@ -134,7 +140,7 @@ gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-cha
 
 gulp.task('make-css', gulp.series(gulp.parallel('compile-css'), 'manifest-css'));
 
-gulp.task('make', gulp.parallel('copy-static', 'make-css', 'make-js'));
+gulp.task('make', gulp.parallel('copy-govuk-frontend-assets', 'copy-static', 'make-css', 'make-js'));
 
 gulp.task('default', gulp.series('make'));
 

@@ -67,6 +67,26 @@ def test_admin_user_can_setup_account_for_rdu_user(
     assert page.find("title").string == "Users"
 
 
+def test_admin_user_can_setup_account_for_nhs_user(
+    app, test_app_client, logged_in_admin_user, mock_create_and_send_activation_email
+):
+    user_details = {"email": "invited_user@nhs.net", "user_type": TypeOfUser.DEPT_USER.name}
+
+    resp = test_app_client.post(url_for("admin.add_user"), data=user_details, follow_redirects=True)
+
+    mock_create_and_send_activation_email.assert_called_once_with("invited_user@nhs.net", app)
+
+    assert resp.status_code == 200
+
+    user = User.query.filter_by(email="invited_user@nhs.net").one()
+    assert user.active is False
+    assert user.password is None
+    assert user.confirmed_at is None
+
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    assert page.find("title").string == "Users"
+
+
 def test_admin_user_cannot_setup_account_for_user_with_non_gov_uk_email(test_app_client, logged_in_admin_user):
     user_details = {"email": "invited_user@notgovemail.com", "user_type": "INTERNAL_USER"}
     resp = test_app_client.post(url_for("admin.add_user"), data=user_details, follow_redirects=True)
@@ -87,7 +107,7 @@ def test_admin_user_can_deactivate_user_account(test_app_client, logged_in_admin
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == f"User account for: {user.email} deactivated"
+    assert page.find("div", class_="alert-box").string == f"User account for: {user.email} deactivated"
     assert user.active is False
 
 
@@ -99,7 +119,7 @@ def test_admin_user_can_grant_or_remove_rdu_user_admin_rights(test_app_client, l
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "User %s is now an admin user" % rdu_user.email
+    assert page.find("div", class_="alert-box").string == "User %s is now an admin user" % rdu_user.email
 
     assert rdu_user.is_admin_user()
 
@@ -107,7 +127,7 @@ def test_admin_user_can_grant_or_remove_rdu_user_admin_rights(test_app_client, l
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "User %s is now a standard RDU user" % rdu_user.email
+    assert page.find("div", class_="alert-box").string == "User %s is now a standard RDU user" % rdu_user.email
 
     assert rdu_user.is_rdu_user()
 
@@ -120,7 +140,7 @@ def test_admin_user_cannot_grant_departmental_user_admin_rights(test_app_client,
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "Only RDU users can be made admin"
+    assert page.find("div", class_="alert-box").string == "Only RDU users can be made admin"
 
     assert not dept_user.is_admin_user()
 
@@ -132,7 +152,7 @@ def test_admin_user_cannot_remove_their_own_admin_rights(test_app_client, logged
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "You can't remove your own admin rights"
+    assert page.find("div", class_="alert-box").string == "You can't remove your own admin rights"
 
     assert logged_in_admin_user.is_admin_user()
 
@@ -326,6 +346,6 @@ def test_admin_user_can_delete_non_admin_user_account(test_app_client, logged_in
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("div", class_="alert-box").span.string == "User account for: someuser@somedept.gov.uk deleted"
+    assert page.find("div", class_="alert-box").string == "User account for: someuser@somedept.gov.uk deleted"
 
     assert User.query.filter_by(email="someuser@somedept.gov.uk").first() is None

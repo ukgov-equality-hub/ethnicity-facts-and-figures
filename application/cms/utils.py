@@ -22,7 +22,7 @@ def flash_message_with_form_errors(lede="Please see below errors:", forms=None):
     for form_with_errors in forms:
         for field_name, error_message in form_with_errors.errors.items():
             form_field = getattr(form_with_errors, field_name)
-            message += f"* [{form_field.label.text}](#{form_field.id}): {error_message[0]}\n"
+            message += f"* [{form_field.label.text}](#{form_field.id}-label): {error_message[0]}\n"
 
     flash(message, "error")
 

@@ -48,7 +48,9 @@ class TestFlashMessageWithFormErrors:
 
         flash_message_with_form_errors(forms=[form])
 
-        assert session.get("_flashes") == [("error", "Please see below errors:\n\n* [field](#field): invalid field\n")]
+        assert session.get("_flashes") == [
+            ("error", "Please see below errors:\n\n* [field](#field-label): invalid field\n")
+        ]
 
 
 class TestGetDataSourceForms:

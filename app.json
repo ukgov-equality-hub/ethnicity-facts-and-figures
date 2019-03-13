@@ -51,7 +51,7 @@
     "HEROKU_API_KEY": {
       "required": true
     },
-    "HEROKU_POSTGRESQL_MAROON_URL": {
+    "DB_FOR_REVIEW_APPS": {
       "required": true
     },
     "HTML_CONTENT_REPO": {

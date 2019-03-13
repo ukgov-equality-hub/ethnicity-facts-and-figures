@@ -107,7 +107,7 @@ class PageService(Service):
             raise PageNotFoundException()
 
     @staticmethod
-    def get_measure_version_by_id(measure_id, version):
+    def get_measure_version_by_measure_id_and_version(measure_id, version):
         return MeasureVersion.query.filter(
             MeasureVersion.measure.has(Measure.id == measure_id), MeasureVersion.version == version
         ).one_or_none()
@@ -117,6 +117,14 @@ class PageService(Service):
         measure_version = MeasureVersion.query.get(measure_version_id)
         if measure_version:
             return measure_version.measure
+        else:
+            raise PageNotFoundException()
+
+    @staticmethod
+    def get_measure_version_by_id(measure_version_id):
+        measure_version = MeasureVersion.query.get(measure_version_id)
+        if measure_version:
+            return measure_version
         else:
             raise PageNotFoundException()
 
@@ -250,7 +258,7 @@ class PageService(Service):
     def create_measure_version(self, measure_version, update_type, user):
         next_version_number = measure_version.next_version_number_by_type(update_type)
 
-        if update_type != NewVersionType.NEW_MEASURE and self.get_measure_version_by_id(
+        if update_type != NewVersionType.NEW_MEASURE and self.get_measure_version_by_measure_id_and_version(
             measure_version.measure_id, next_version_number
         ):
             raise UpdateAlreadyExists()
