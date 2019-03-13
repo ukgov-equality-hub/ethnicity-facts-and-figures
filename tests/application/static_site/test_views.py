@@ -273,7 +273,7 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
     suppression_and_disclosure = page.find("div", attrs={"id": "suppression-and-disclosure"})
     assert suppression_and_disclosure.text.strip() == "Suppression rules and disclosure control"
 
-    data_source_details = page.find("h1", attrs={"id": "data-sources"})
+    data_source_details = page.find("h2", attrs={"id": "data-sources"})
     assert data_source_details.text.strip() == "Data sources"
 
     primary_source = page.find("div", attrs={"id": "primary-source-title"})
