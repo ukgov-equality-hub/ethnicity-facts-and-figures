@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% set breadcrumbs = 
+{% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
   ]
@@ -78,54 +78,55 @@
       <p class="govuk-body">This structure has been thoroughly tested to check that users can navigate it easily and find the content they are looking for.</p>
 
       <h2 class="govuk-heading-m" id="project-phases">Project phases</h2>
+      <div class="eff-numbered-sections">
+        <h3 class="govuk-heading-s eff-numbered-sections__item">Identification</h3>
 
-      <h3 class="govuk-heading-s">1. Identification</h3>
+        <p class="govuk-body">The initial review asked all government departments to identify what information on ethnicity they held on important aspects of life in the UK (for example, health, education, work and housing). Devolved administrations were asked to participate and share their data in order to provide a UK-wide picture, a discussion that is ongoing.</p>
 
-      <p class="govuk-body">The initial review asked all government departments to identify what information on ethnicity they held on important aspects of life in the UK (for example, health, education, work and housing). Devolved administrations were asked to participate and share their data in order to provide a UK-wide picture, a discussion that is ongoing.</p>
+        <p class="govuk-body">This means that:</p>
 
-      <p class="govuk-body">This means that:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>local authority data is not included unless it is also available from a central department (for example, the Department for Education provides school data in England at a local level)</li>
+          <li>Scotland, Wales and Northern Ireland data is included in areas that are not devolved (for example, the Home Office reports on victims of crime across the UK)</li>
+        </ul>
 
-      <ul class="govuk-list govuk-list--bullet">
-        <li>local authority data is not included unless it is also available from a central department (for example, the Department for Education provides school data in England at a local level)</li>
-        <li>Scotland, Wales and Northern Ireland data is included in areas that are not devolved (for example, the Home Office reports on victims of crime across the UK)</li>
-      </ul>
+        <h3 class="govuk-heading-s eff-numbered-sections__item">Prioritisation</h3>
 
-      <h3 class="govuk-heading-s">2. Prioritisation</h3>
+        <p class="govuk-body">During this initial review, government departments identified a vast amount of data which it was not possible to collect and publish in the time we had available.</p>
 
-      <p class="govuk-body">During this initial review, government departments identified a vast amount of data which it was not possible to collect and publish in the time we had available.</p>
+        <p class="govuk-body">So the team, in consultation with the departments and drawing on user research, agreed a set of criteria to shorten the list for the first release. The agreed prioritisation criteria were:</p>
 
-      <p class="govuk-body">So the team, in consultation with the departments and drawing on user research, agreed a set of criteria to shorten the list for the first release. The agreed prioritisation criteria were:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>does the dataset relate to a government priority?</li>
+          <li>has it been identified by future users of the website as a priority for them?</li>
+          <li>how much work is involved in preparing the data for publication?</li>
+        </ul>
 
-      <ul class="govuk-list govuk-list--bullet">
-        <li>does the dataset relate to a government priority?</li>
-        <li>has it been identified by future users of the website as a priority for them?</li>
-        <li>how much work is involved in preparing the data for publication?</li>
-      </ul>
+        <h3 class="govuk-heading-s eff-numbered-sections__item">Collection</h3>
 
-      <h3 class="heading-small">3. Collection</h3>
+        <p class="govuk-body">Based on Cabinet Office user research, data expertise and ONS’s existing good publishing practice, a format for collecting content from departments for each measure was established.</p>
 
-      <p class="govuk-body">Based on Cabinet Office user research, data expertise and ONS’s existing good publishing practice, a format for collecting content from departments for each measure was established.</p>
+        <p class="govuk-body">The data held by different departments varies greatly in size, consistency and quality. There is limited standardisation, and classification of the different ethnicities can differ widely depending on how data was collected, when and by whom. A common format was needed to ensure trust, quality and value across the content presented on the website. Each measure, which relates to an individual web page, is built of a combination of 2 file templates:</p>
 
-      <p class="govuk-body">The data held by different departments varies greatly in size, consistency and quality. There is limited standardisation, and classification of the different ethnicities can differ widely depending on how data was collected, when and by whom. A common format was needed to ensure trust, quality and value across the content presented on the website. Each measure, which relates to an individual web page, is built of a combination of 2 file templates:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>a data format file, used to populate charts and tables</li>
+          <li>commentary, which explains the facts and figures displayed, and provides caveats, technical details and information on how the data was collected</li>
+        </ul>
 
-      <ul class="govuk-list govuk-list--bullet">
-        <li>a data format file, used to populate charts and tables</li>
-        <li>commentary, which explains the facts and figures displayed, and provides caveats, technical details and information on how the data was collected</li>
-      </ul>
+        <p class="govuk-body">Government departments returned these files for each of the prioritised measures. The measures then went through additional checks to ensure their quality and consistency, before being uploaded to the site.</p>
 
-      <p class="govuk-body">Government departments returned these files for each of the prioritised measures. The measures then went through additional checks to ensure their quality and consistency, before being uploaded to the site.</p>
+        <h3 class="govuk-heading-s eff-numbered-sections__item govuk-!-margin-bottom-0">Publishing</h3>
 
-      <h3 class="govuk-heading-s govuk-!-margin-bottom-0">4. Publishing</h3>
+        <p class="govuk-body">The Ethnicity facts and figures website was developed based on extensive user research and the government’s <a class="govuk-link" href="https://www.gov.uk/service-manual/service-standard">Digital Service Standard</a>. This work has been undertaken in 3 stages:</p>
 
-      <p class="govuk-body">The Ethnicity facts and figures website was developed based on extensive user research and the government’s <a href="https://www.gov.uk/service-manual/service-standard">Digital Service Standard</a>. This work has been undertaken in 3 stages:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li><a class="govuk-link" href="https://www.gov.uk/service-manual/agile-delivery/how-the-discovery-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Discovery">discovery</a>: understand the project scope and identify users</li>
+          <li><a class="govuk-link" href="https://www.gov.uk/service-manual/agile-delivery/how-the-alpha-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Alpha">alpha</a>: prototype the website, refine user needs and identify the technology and skills needed</li>
+          <li><a class="govuk-link" href="https://www.gov.uk/service-manual/agile-delivery/how-the-beta-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Beta">beta</a>: build the platform and continue testing extensively with users</li>
+        </ul>
 
-      <ul class="govuk-list govuk-list--bullet">
-        <li><a class="govuk-link" href="https://www.gov.uk/service-manual/agile-delivery/how-the-discovery-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Discovery">discovery</a>: understand the project scope and identify users</li>
-        <li><a class="govuk-link" href="https://www.gov.uk/service-manual/agile-delivery/how-the-alpha-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Alpha">alpha</a>: prototype the website, refine user needs and identify the technology and skills needed</li>
-        <li><a class="govuk-link" href="https://www.gov.uk/service-manual/agile-delivery/how-the-beta-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Beta">beta</a>: build the platform and continue testing extensively with users</li>
-      </ul>
-
-      <p class="govuk-body">Ethnicity facts and figures has been reviewed by experts by means of <a class="govuk-link" href="https://www.gov.uk/service-manual/service-assessments/how-service-assessments-work" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service assessments">service assessments</a> to check it meets the required standards. This rigorous approach ensures a government service is good enough for public use and meets user needs.</p>
+        <p class="govuk-body">Ethnicity facts and figures has been reviewed by experts by means of <a class="govuk-link" href="https://www.gov.uk/service-manual/service-assessments/how-service-assessments-work" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service assessments">service assessments</a> to check it meets the required standards. This rigorous approach ensures a government service is good enough for public use and meets user needs.</p>
+      </div>
 
       <h2 class="govuk-heading-m" id="future-changes">Future changes</h2>
 
