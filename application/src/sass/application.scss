@@ -11,10 +11,6 @@ $govuk-assets-path: '/static/assets/';
 /* GOV.UK Frontend, for the Design System. Installed via npm */
 @import "node_modules/govuk-frontend/all";
 
-
-@import '__reset';
-@import 'base';
-
 /* Components unique to our service */
 @import 'components/badge';
 @import 'components/buttons';
