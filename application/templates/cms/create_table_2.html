@@ -266,5 +266,6 @@
 {% block bodyEnd %}
   {{ super() }}
 
+  <script src="{{ url_for('static', filename='javascripts/') }}{{ 'chartbuilder2.js' | version_filter }}"></script>
   <script src="{{ url_for('static', filename='javascripts/') }}{{ 'tablebuilder2.js' | version_filter }}"></script>
 {% endblock %}

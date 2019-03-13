@@ -147,6 +147,7 @@
 
 {% block bodyEnd %}
   {{ super() }}
+    <script src="{{ url_for('static', filename='javascripts/') }}{{ 'chartbuilder2.js' | version_filter }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {
