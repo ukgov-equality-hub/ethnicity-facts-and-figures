@@ -788,7 +788,7 @@ def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         )
 
     return render_template(
-        "cms/create_chart_2.html",
+        "cms/create_chart.html",
         topic=topic,
         subtopic=subtopic,
         measure=measure,
@@ -842,7 +842,7 @@ def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         )
 
     return render_template(
-        "cms/create_table_2.html",
+        "cms/create_table.html",
         topic=topic,
         subtopic=subtopic,
         measure=measure,
