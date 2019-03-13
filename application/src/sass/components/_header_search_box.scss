@@ -1,192 +1,147 @@
 /* Lifted (with minor modifications) from:
 https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158/app/assets/stylesheets/helpers/_header.scss */
 
-#global-header {
-  li.search {
-    float: right;
-    padding-right: 0;
-    width: 50%;
-  }
+.eff-search__label {
+  float: left;
+  color: black;
+  font-weight: 400;
+  min-height: 36px;
+  line-height: 35px;
+  text-indent: 15px;
+  overflow: hidden;
+  display: block;
+  margin-right: 10px;
 
-  @media (max-width: 769px) {
-    li.search {
-      width: 100%;
-      margin-top: 10px;
-    }
-  }
-
-  .site-search-label {
+  .js-enabled & {
     float: left;
-    color: black;
-    font-weight: 400;
-  }
-
-  .site-search {
-    @media screen and (max-width: 379px) {
-      width: auto;
-      float: none;
-    }
-  }
-
-  &.with-proposition {
-    #search-form {
-      margin-top: 4px;
-    }
-  }
-
-  .search-toggle {
-    display: none;
-
-    @media screen and (max-width: 379px) {
-      display: block;
-      float: right;
-      height: 30px;
-      width: 36px;
-      padding: 0;
-      margin: -32px 15px;
-      overflow: hidden;
-      text-indent: -5000px;
-      background-color: govuk-colour("blue");
-      background-image: url('/static/images/icon-search-govuk.png');
-      background-repeat: no-repeat;
-      background-position: 0 50%;
-
-      body.search & { display: none; }
-
-      @include govuk-device-pixel-ratio() {
-        background-size: 52.5px 35px;
-        background-position: 100% 50%;
-      }
-    }
-
-    &:hover {
-      background-color: darken($govuk-brand-colour, 5%);
-    }
-
-    &.js-hidden { display: none; }
-  }
-
-  #search-form {
-    position: relative;
-    background: #fff;
-    overflow: hidden;
-
-    @media (max-width: 769px) {
-      @include govuk-responsive-margin(3, 'bottom')
-    }
-
-    label {
-      float: left;
-      min-height: 36px;
-      line-height: 35px;
-      text-indent: 15px;
-      overflow: hidden;
-      display: block;
-      margin-right: 10px;
-
-      .js-enabled & {
-        float: left;
-        position: absolute;
-        left: 0;
-        top: 1px;
-        z-index: 1;
-        width: 100%;
-        margin-right: 0;
-      }
-    }
-
-    input {
-      box-sizing: border-box;
-      float: left;
-      min-width: 0;
-      display: block;
-      margin: 0;
-      border: 0;
-      min-height: 36px;
-      padding: 6px 0;
-      &::-moz-focus-inner {
-        border: 0;
-      }
-    }
-
-    input#site-search-text {
-      @include govuk-font(16);
-      position: relative;
-      padding: 6px;
-      z-index: 3;
-      background: transparent;
-
-      &.focus,
-      &:focus {
-        background: #fff;
-        outline-offset: -3px;
-      }
-
-      .js-enabled & {
-        width: calc(100% - 36px);  // Full width, minus width of `input.submit` button
-      }
-    }
-
-    input.submit {
-      position: absolute;
-      z-index: 4;
-      right: 0;
-      top: 0;
-      width: 36px;
-      height: 36px;
-
-      border: 1px solid $govuk-brand-colour;
-      border-left-color: #222;
-      border-radius: 0;
-
-      overflow: hidden;
-      text-indent: -5000px;
-
-      color: govuk-colour("white");
-      background-color: $govuk-brand-colour;
-      background-image: url('/static/images/icon-search-govuk.png');
-      background-repeat: no-repeat;
-      background-position: 0 50%;
-
-      @include govuk-device-pixel-ratio() {
-        background-size: 52.5px 35px;
-        background-position: 100% 50%;
-      }
-
-      &:hover {
-        background-color: darken($govuk-brand-colour, 5%);
-      }
-
-      &.focus,
-      &:focus {
-        outline-offset: -3px;
-      }
-    }
-
-    @media screen and (max-width: 379px) {
-      display: none;
-      width: 100%;
-
-      #site-search-text {
-        width: 80%;
-      }
-    }
-    &.js-visible { display: block; }
+    position: absolute;
+    left: 0;
+    top: 1px;
+    z-index: 1;
+    width: 100%;
+    margin-right: 0;
   }
 }
 
-.header-one-third {
-  display: block;
-  clear: both;
-  float: left;
-  width: 100%;
+.eff-search__form {
+  position: relative;
+  background: #fff;
+  overflow: hidden;
 
-  @media(min-width: 641px) {
-    clear: none;
-    display: inline-block;
+  @media (max-width: 769px) {
+    @include govuk-responsive-margin(3, 'bottom')
   }
 
-  @media(min-width: 769px) {
-    width: 33.33%;
+  @media screen and (max-width: 379px) {
+    display: none;
+    width: 100%;
+  }
+
+  &.js-visible { display: block; }
+}
+
+.eff-search__toggle {
+  display: none;
+
+  @media screen and (max-width: 379px) {
+    display: block;
+    float: right;
+    height: 36px;
+    width: 36px;
+    padding: 0;
+    margin: -38px 0px;
+    overflow: hidden;
+    text-indent: -5000px;
+    background-color: govuk-colour("blue");
+    background-image: url('/static/images/icon-search-govuk.png');
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+
+    body.search & { display: none; }
+
+    @include govuk-device-pixel-ratio() {
+      background-size: 52.5px 35px;
+      background-position: 100% 50%;
+    }
+  }
+
+  &:hover {
+    background-color: darken($govuk-brand-colour, 5%);
+  }
+
+  &.js-hidden { display: none; }
+}
+
+.eff-search__input {
+  box-sizing: border-box;
+  float: left;
+  min-width: 0;
+  display: block;
+  margin: 0;
+  border: 0;
+  min-height: 36px;
+  padding: 6px 0;
+  &::-moz-focus-inner {
+    border: 0;
+  }
+
+  -webkit-appearance: none;
+}
+
+.eff-search__input--text {
+  @include govuk-font(16);
+  position: relative;
+  padding: 6px;
+  z-index: 3;
+  background: transparent;
+
+  &.focus,
+  &:focus {
+    background: #fff;
+    outline-offset: -3px;
+  }
+
+  .js-enabled & {
+    width: calc(100% - 36px);  // Full width, minus width of `input.submit` button
+  }
+
+  //@media screen and (max-width: 379px) {
+  //  width: 80%;
+  //}
+}
+
+.eff-search__input--submit {
+  position: absolute;
+  z-index: 4;
+  right: 0;
+  top: 0;
+  width: 36px;
+  height: 36px;
+
+  border: 1px solid $govuk-brand-colour;
+  border-left-color: #222;
+  border-radius: 0;
+
+  overflow: hidden;
+  text-indent: -5000px;
+
+  color: govuk-colour("white");
+  background-color: $govuk-brand-colour;
+  background-image: url('/static/images/icon-search-govuk.png');
+  background-repeat: no-repeat;
+  background-position: 0 50%;
+
+  @include govuk-device-pixel-ratio() {
+    background-size: 52.5px 35px;
+    background-position: 100% 50%;
+  }
+
+  &:hover {
+    background-color: darken($govuk-brand-colour, 5%);
+  }
+
+  &.focus,
+  &:focus {
+    outline-offset: -3px;
   }
 }
