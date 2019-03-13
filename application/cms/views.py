@@ -803,25 +803,6 @@ def __get_classification_finder_classifications():
     return [{"code": classification.get_id(), "name": classification.get_name()} for classification in classifications]
 
 
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-chart/advanced")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def create_chart_original(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    return render_template(
-        "cms/create_chart.html",
-        topic=topic,
-        subtopic=subtopic,
-        measure=measure,
-        measure_version=measure_version,
-        dimension=dimension_object.to_dict(),
-    )
-
-
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/tablebuilder")
 @login_required
 @user_has_access
@@ -830,20 +811,6 @@ def tablebuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
     topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
-
-    dimension_dict = dimension_object.to_dict()
-
-    if "table_builder_version" in dimension_dict and dimension_dict["table_builder_version"] == 1:
-        return redirect(
-            url_for(
-                "cms.create_table_original",
-                topic_slug=topic.slug,
-                subtopic_slug=subtopic.slug,
-                measure_slug=measure.slug,
-                version=measure_version.version,
-                dimension_guid=dimension_object.guid,
-            )
-        )
 
     return redirect(
         url_for(
@@ -854,25 +821,6 @@ def tablebuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
             version=measure_version.version,
             dimension_guid=dimension_object.guid,
         )
-    )
-
-
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-table/advanced")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def create_table_original(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    return render_template(
-        "cms/create_table.html",
-        topic=topic,
-        subtopic=subtopic,
-        measure=measure,
-        measure_version=measure_version,
-        dimension=dimension_object.to_dict(),
     )
 
 
