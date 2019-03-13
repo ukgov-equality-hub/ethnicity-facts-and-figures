@@ -660,8 +660,8 @@ function adjustChartObjectForMissingData(chartObject) {
 }
 
 function htmlContentForMissingDataSymbol(symbol) {
-    switch (symbol.trim()) {
-        case 'N/A':
+    switch (symbol.trim().lower()) {
+        case 'n/a':
             return 'N/A<sup>*</sup>';
         default:
             return '';
@@ -669,15 +669,14 @@ function htmlContentForMissingDataSymbol(symbol) {
 }
 
 function classNameForMissingDataSymbol(symbol) {
-
-    switch (symbol.trim()) {
+    switch (symbol.trim().lower()) {
         case '!':
             return 'missing-data confidential';
         case '?':
             return 'missing-data sample-too-small';
         case '-':
             return 'missing-data not-collected';
-        case 'N/A':
+        case 'n/a':
             return 'not-applicable';
         default:
             return '';

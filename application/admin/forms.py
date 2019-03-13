@@ -36,7 +36,7 @@ def is_gov_email(email):
     email = email.lower()
     if email in whitelist:
         return True
-    valid_domains = [r"gov\.uk"]
+    valid_domains = [r"gov\.uk|nhs\.net"]
     email_regex = r"[\.|@]({})$".format("|".join(valid_domains))
     return bool(re.search(email_regex, email))
 

@@ -24,7 +24,7 @@ def filesize(string):
 def value_filter(value):
 
     icon_html = {
-        "N/A": '<span class="not-applicable">N/A<sup>*</sup></span>',
+        "n/a": '<span class="not-applicable">N/A<sup>*</sup></span>',
         "?": (
             __missing_data_icon("sample-too-small")
             + __icon_explanation("withheld because a small sample size makes it unreliable")
@@ -33,8 +33,8 @@ def value_filter(value):
         "-": __missing_data_icon("not-collected") + __icon_explanation("not collected"),
     }
 
-    if value is not None and value.strip() in icon_html:
-        return icon_html[value.strip()]
+    if value is not None and value.strip().lower() in icon_html:
+        return icon_html[value.strip().lower()]
     else:
         return jinja2.escape(value)
 

@@ -67,6 +67,26 @@ def test_admin_user_can_setup_account_for_rdu_user(
     assert page.find("title").string == "Users"
 
 
+def test_admin_user_can_setup_account_for_nhs_user(
+    app, test_app_client, logged_in_admin_user, mock_create_and_send_activation_email
+):
+    user_details = {"email": "invited_user@nhs.net", "user_type": TypeOfUser.DEPT_USER.name}
+
+    resp = test_app_client.post(url_for("admin.add_user"), data=user_details, follow_redirects=True)
+
+    mock_create_and_send_activation_email.assert_called_once_with("invited_user@nhs.net", app)
+
+    assert resp.status_code == 200
+
+    user = User.query.filter_by(email="invited_user@nhs.net").one()
+    assert user.active is False
+    assert user.password is None
+    assert user.confirmed_at is None
+
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    assert page.find("title").string == "Users"
+
+
 def test_admin_user_cannot_setup_account_for_user_with_non_gov_uk_email(test_app_client, logged_in_admin_user):
     user_details = {"email": "invited_user@notgovemail.com", "user_type": "INTERNAL_USER"}
     resp = test_app_client.post(url_for("admin.add_user"), data=user_details, follow_redirects=True)
