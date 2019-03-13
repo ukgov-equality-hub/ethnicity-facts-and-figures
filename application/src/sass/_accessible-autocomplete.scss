@@ -1,5 +1,7 @@
 .autocomplete__wrapper {
-  position: relative
+  position: relative;
+
+  @include govuk-typography-common();
 }
 
 .autocomplete__hint, .autocomplete__input {
@@ -16,8 +18,6 @@
 .autocomplete__input {
   background-color: transparent;
   position: relative;
-
-  @include govuk-typography-common();
 }
 
 .autocomplete__hint {
