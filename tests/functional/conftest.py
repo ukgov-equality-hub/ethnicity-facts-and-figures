@@ -18,7 +18,7 @@ def _driver():
         profile.set_preference("general.useragent.override", "Selenium")
         driver = webdriver.Firefox(profile, executable_path="/usr/local/bin/geckodriver")
         driver.set_window_position(0, 0)
-        driver.set_window_size(1280, 720)
+        driver.set_window_size(1920, 1080)
 
     elif driver_name == "chrome":
         d = DesiredCapabilities.CHROME
@@ -39,6 +39,7 @@ def _driver():
         options.add_argument("--headless")
         options.binary_location = GOOGLE_CHROME_SHIM
         driver = webdriver.Chrome(options=options, executable_path=CHROMEDRIVER_PATH)
+        driver.set_window_size(1920, 1080)
 
     elif driver_name == "phantomjs":
         driver = webdriver.PhantomJS()

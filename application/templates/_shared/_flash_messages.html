@@ -6,7 +6,7 @@
             <div class="flash-message">
               {% for category, message in messages %}
               <div data-alert class="alert-box {% if category in ['error', 'dimension-error'] %}error{% else %}{{ category }}{% endif %}">
-                <span>{{ message|render_markdown }}</span>
+                {{- message|render_markdown -}}
               </div>
               {% endfor %}
             </div>

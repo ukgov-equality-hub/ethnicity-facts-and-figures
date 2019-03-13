@@ -142,7 +142,7 @@
     <p class="missing-data-explanation">
         {% set table_data = dimension.table.data | flatten %}
 
-        {% if "N/A" in table_data %}
+        {% if "N/A" in table_data or "n/a" in table_data %}
             <span class="explanation"><sup>*</sup> Not applicable</span>
         {% endif %}
 

@@ -87,6 +87,15 @@ class TestPageService:
         with pytest.raises(PageNotFoundException):
             page_service.get_measure_from_measure_version_id(456)
 
+    def test_get_measure_version_by_id(self):
+        measure_version = MeasureVersionFactory(id=345)
+        assert page_service.get_measure_version_by_id(345) is measure_version
+
+    def test_get_measure_version_by_id_raises_if_not_found(self):
+        MeasureVersionFactory(id=345)
+        with pytest.raises(PageNotFoundException):
+            page_service.get_measure_version_by_id(456)
+
     def test_get_measure_page_hierarchy_gets_if_hierarchy_is_good(self):
         measure_version = MeasureVersionWithDimensionFactory()
 
@@ -450,7 +459,7 @@ class TestPageService:
             last_updated_by_email=user.email,
         )
 
-        measure_version_from_db = page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_measure_id_and_version(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.title == "I care too much!"
@@ -460,7 +469,7 @@ class TestPageService:
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         measure_version = MeasureVersionFactory(version="1.0", status="DRAFT")
 
-        measure_version_from_db = page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_measure_id_and_version(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.status == "DRAFT"
@@ -475,7 +484,7 @@ class TestPageService:
             **{"status": "APPROVED"},
         )
 
-        measure_version_from_db = page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_measure_id_and_version(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.status == "APPROVED"
@@ -521,7 +530,7 @@ class TestPageService:
             last_updated_by_email=user.email,
         )
 
-        measure_version_from_db = page_service.get_measure_version_by_id(
+        measure_version_from_db = page_service.get_measure_version_by_measure_id_and_version(
             measure_version.measure.id, measure_version.version
         )
         assert measure_version_from_db.ethnicity_definition_summary == "How about some more whitespace?"

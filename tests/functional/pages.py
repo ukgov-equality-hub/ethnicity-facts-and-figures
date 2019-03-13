@@ -325,6 +325,26 @@ class MeasureCreatePage(BasePage):
         self.scroll_and_click(element)
 
 
+class MeasureCreateVersionPage(BasePage):
+    def __init__(self, driver):
+        super().__init__(driver=driver, base_url=driver.current_url)
+
+    def get(self):
+        self.driver.get(self.base_url)
+
+    def click_minor_update(self):
+        element = self.driver.find_element_by_xpath("//input[@value='minor']")
+        element.click()
+
+    def click_major_update(self):
+        element = self.driver.find_element_by_xpath("//input[@value='major']")
+        element.click()
+
+    def click_create(self):
+        element = self.driver.find_element_by_xpath("//div[contains(@class, 'new-version')]//form//button")
+        element.click()
+
+
 class MeasureVersionsPage(BasePage):
     def __init__(self, driver, live_server, topic_page, subtopic_page, measure_page_slug):
         super().__init__(
@@ -407,6 +427,10 @@ class MeasureEditPage(BasePage):
     def click_approved(self):
         element = self.wait_for_element(EditMeasureLocators.SEND_TO_APPROVED)
         self.scroll_and_click(element)
+
+    def click_update(self):
+        element = self.wait_for_element(EditMeasureLocators.UPDATE_MEASURE)
+        element.click()
 
     def set_text_field(self, locator, value):
         element = self.wait_for_element(locator)
@@ -491,6 +515,11 @@ class MeasureEditPage(BasePage):
     def set_methodology(self, value):
         self.set_text_field(EditMeasureLocators.METHODOLOGY_TEXTAREA, value)
 
+    def set_update_corrects_data_mistake(self, value):
+        element = self.driver.find_element(*EditMeasureLocators.UPDATE_CORRECTS_DATA_MISTAKE)
+        radio = element.find_element_by_xpath(f"//input[@value='{value}']")
+        self.select_checkbox_or_radio(radio)
+
     def fill_measure_page(self, measure_version, data_source):
         self.set_time_period_covered(measure_version.time_covered)
         self.set_area_covered(area="England")
@@ -512,6 +541,14 @@ class MeasureEditPage(BasePage):
         self.set_purpose(data_source.purpose)
         self.set_primary_source_type_of_data(0)
         self.set_methodology(measure_version.methodology)
+
+    def fill_measure_page_minor_edit_fields(self, measure_version):
+        self.set_update_corrects_data_mistake(measure_version.update_corrects_data_mistake)
+
+        self.set_text_field(EditMeasureLocators.EXTERNAL_EDIT_SUMMARY, measure_version.external_edit_summary)
+
+    def fill_measure_page_major_edit_fields(self, measure_version):
+        self.set_text_field(EditMeasureLocators.EXTERNAL_EDIT_SUMMARY, measure_version.external_edit_summary)
 
 
 class DimensionAddPage(BasePage):

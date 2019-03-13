@@ -126,10 +126,7 @@
 
                     {{ form.title(disabled=form_disabled, diffs=diffs) }}
 
-                    <div class="govuk-character-count" data-module="character-count" data-maxlength="160">
-                        {{ form.description(disabled=form_disabled, diffs=diffs,rows="3", class_="govuk-textarea js-character-count") }}
-                    </div>
-
+                    {{ form.description(disabled=form_disabled, diffs=diffs,rows="3") }}
 
                     <div class="form-group">
                         <label class="form-label" for="subtopic">Topic</label>
@@ -203,7 +200,7 @@
                     {{ form.further_technical_information(disabled=form_disabled, diffs=diffs) }}
 
                     <h3 class="heading-medium">Updates and corrections</h3>
-                    <div class="{% if new or measure_version.version == '1.0' %} hidden{% endif %}">
+                    {% if new or measure_version.version == '1.0' %}<div class="hidden">{% endif %}
                         {% if form.is_minor_update %}
                             {{ form.update_corrects_data_mistake(disabled=form_disabled, diffs=diffs, fieldset_class="inline") }}
                         {% endif %}
@@ -211,7 +208,7 @@
                         {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
 
                         {{ form.internal_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
-                    </div>
+                    {% if new or measure_version.version == '1.0' %}</div>{% endif %}
 
                     {{ form.internal_reference(disabled=form_disabled, diffs=diffs, class_='short') }}
 
@@ -388,9 +385,7 @@
             });
             $.ajax({
                 type: 'POST',
-                url: "{{ url_for('cms.set_dimension_order', topic=topic.slug,
-                                                                subtopic=subtopic.slug,
-                                                                measure=measure.slug) }}",
+                url: "{{ url_for('cms.set_dimension_order') }}",
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify({"dimensions": dimensions}),
