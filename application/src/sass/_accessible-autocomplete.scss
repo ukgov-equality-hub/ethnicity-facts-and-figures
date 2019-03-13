@@ -16,6 +16,8 @@
 .autocomplete__input {
   background-color: transparent;
   position: relative;
+
+  @include govuk-typography-common();
 }
 
 .autocomplete__hint {
