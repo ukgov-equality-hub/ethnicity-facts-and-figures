@@ -870,7 +870,6 @@ class ChartAndTableMixin(object):
     includes_all = db.Column(db.Boolean, nullable=True)
     includes_unknown = db.Column(db.Boolean, nullable=True)
 
-    built_object = db.Column(JSON)
     settings_and_source_data = db.Column(JSON)
 
     @classmethod
@@ -909,10 +908,14 @@ class Chart(db.Model, ChartAndTableMixin):
     # metadata
     __tablename__ = "dimension_chart"
 
+    chart_object = db.Column(JSON)
+
 
 class Table(db.Model, ChartAndTableMixin):
     # metadata
     __tablename__ = "dimension_table"
+
+    table_object = db.Column(JSON)
 
 
 class Organisation(db.Model):

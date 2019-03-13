@@ -26,8 +26,8 @@ def copy_chart_and_table_data(app):  # noqa: C901
                         dimension.dimension_chart = Chart()
 
                     # Don't overwrite if it already exists
-                    if dimension.dimension_chart.built_object is None:
-                        dimension.dimension_chart.built_object = dimension.chart
+                    if dimension.dimension_chart.chart_object is None:
+                        dimension.dimension_chart.chart_object = dimension.chart
 
                     if dimension.chart_2_source_data is not None:
                         # If there is already a version 2 chart settings, copy settings straight across
@@ -55,8 +55,8 @@ def copy_chart_and_table_data(app):  # noqa: C901
                         dimension.dimension_table = Table()
 
                     # Don't overwrite if it already exists
-                    if dimension.dimension_table.built_object is None:
-                        dimension.dimension_table.built_object = dimension.table
+                    if dimension.dimension_table.table_object is None:
+                        dimension.dimension_table.table_object = dimension.table
 
                     if dimension.table_2_source_data is not None:
                         # If there is already a version 2 table settings, copy settings straight across

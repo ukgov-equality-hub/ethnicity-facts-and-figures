@@ -21,15 +21,15 @@ def upgrade():
     op.add_column(
         "dimension_chart", sa.Column("settings_and_source_data", postgresql.JSON(astext_type=sa.Text()), nullable=True)
     )
-    op.add_column("dimension_chart", sa.Column("built_object", postgresql.JSON(astext_type=sa.Text()), nullable=True))
+    op.add_column("dimension_chart", sa.Column("chart_object", postgresql.JSON(astext_type=sa.Text()), nullable=True))
     op.add_column(
         "dimension_table", sa.Column("settings_and_source_data", postgresql.JSON(astext_type=sa.Text()), nullable=True)
     )
-    op.add_column("dimension_table", sa.Column("built_object", postgresql.JSON(astext_type=sa.Text()), nullable=True))
+    op.add_column("dimension_table", sa.Column("table_object", postgresql.JSON(astext_type=sa.Text()), nullable=True))
 
 
 def downgrade():
-    op.drop_column("dimension_table", "built_object")
+    op.drop_column("dimension_table", "table_object")
     op.drop_column("dimension_table", "settings_and_source_data")
-    op.drop_column("dimension_chart", "built_object")
+    op.drop_column("dimension_chart", "chart_object")
     op.drop_column("dimension_chart", "settings_and_source_data")
