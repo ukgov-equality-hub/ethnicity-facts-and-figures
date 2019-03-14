@@ -290,7 +290,7 @@
                         </table>
                     {% endif %}
                     {% if 'UPDATE' in available_actions %}
-                        <a href="{{ url_for('cms.create_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add the data</a><br/>
+                        <a href="{{ url_for('cms.create_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add source data</a><br/>
                     {% endif %}
                     {% if new %}
                         <p>Once this page is saved you will be able to add downloads</p>
