@@ -745,20 +745,6 @@ def chartbuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    dimension_dict = dimension_object.to_dict()
-
-    if "chart_builder_version" in dimension_dict and dimension_dict["chart_builder_version"] == 1:
-        return redirect(
-            url_for(
-                "cms.create_chart_original",
-                topic_slug=topic.slug,
-                subtopic_slug=subtopic.slug,
-                measure_slug=measure.slug,
-                version=measure_version.version,
-                dimension_guid=dimension_object.guid,
-            )
-        )
-
     return redirect(
         url_for(
             "cms.create_chart",

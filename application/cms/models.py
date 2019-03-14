@@ -872,10 +872,6 @@ class ChartAndTableMixin(object):
 
     settings_and_source_data = db.Column(JSON)
 
-    @classmethod
-    def get_by_id(cls, id):
-        return cls.query.filter_by(id=id).first()
-
     @declared_attr
     def classification(cls):
         return db.relationship("Classification")

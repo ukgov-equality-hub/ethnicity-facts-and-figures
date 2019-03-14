@@ -27,7 +27,7 @@ class DimensionService(Service):
         else:
             self.logger.info("Dimension with guid %s does not exist ok to proceed", guid)
 
-            db_dimension = Dimension(
+            dimension = Dimension(
                 guid=guid,
                 title=title,
                 time_period=time_period,
@@ -36,10 +36,10 @@ class DimensionService(Service):
                 position=measure_version.dimensions.count(),
             )
 
-            measure_version.dimensions.append(db_dimension)
+            measure_version.dimensions.append(dimension)
             db.session.commit()
 
-            return measure_version.get_dimension(db_dimension.guid)
+            return measure_version.get_dimension(dimension.guid)
 
     # This does some pre-processing of form data submitted by chart and table builders
     # It also sets the flag update_clasification=True when update_dimension is called, to
@@ -48,23 +48,11 @@ class DimensionService(Service):
         data = {}
         if "chartObject" in post_data:
             data["chart"] = post_data["chartObject"]
-
-            if "chartBuilderVersion" in post_data and post_data["chartBuilderVersion"] > 1:
-                data["chart_2_source_data"] = post_data["source"]
-                data["chart_builder_version"] = 2
-            else:
-                data["chart_source_data"] = post_data["source"]
-                data["chart_builder_version"] = 1
+            data["chart_2_source_data"] = post_data["source"]
 
         if "tableObject" in post_data:
             data["table"] = post_data["tableObject"]
-
-            if "tableBuilderVersion" in post_data and post_data["tableBuilderVersion"] > 1:
-                data["table_2_source_data"] = post_data["source"]
-                data["table_builder_version"] = 2
-            else:
-                data["table_source_data"] = post_data["source"]
-                data["table_builder_version"] = 1
+            data["table_2_source_data"] = post_data["source"]
 
         if "classificationCode" in post_data:
             if post_data["classificationCode"] == "custom":
@@ -123,50 +111,30 @@ class DimensionService(Service):
         dimension.title = data["title"] if "title" in data else dimension.title
         dimension.time_period = data["time_period"] if "time_period" in data else dimension.time_period
         dimension.summary = data["summary"] if "summary" in data else dimension.summary
-        dimension.chart = data["chart"] if "chart" in data else dimension.chart
-        dimension.table = data["table"] if "table" in data else dimension.table
-        dimension.chart_builder_version = (
-            data["chart_builder_version"] if "chart_builder_version" in data else dimension.chart_builder_version
-        )
-        dimension.table_builder_version = (
-            data["table_builder_version"] if "table_builder_version" in data else dimension.table_builder_version
-        )
+        if "chart" in data:
+            dimension.dimension_chart.chart_object = data["chart"]
+        if "table" in data:
+            dimension.dimension_table.table_object = data["table"]
 
-        if dimension.chart and data.get("chart_source_data") is not None:
-            chart_options = data.get("chart_source_data").get("chartOptions")
-            for key, val in chart_options.items():
-                if val is None:
-                    chart_options[key] = "[None]"
-            data["chart_source_data"]["chartOptions"] = chart_options
-            dimension.chart_source_data = data.get("chart_source_data")
-
-        if dimension.chart and data.get("chart_2_source_data") is not None:
+        if dimension.dimension_chart.chart_object and data.get("chart_2_source_data") is not None:
             chart_options = data.get("chart_2_source_data").get("chartOptions")
             for key, val in chart_options.items():
                 if val is None:
                     chart_options[key] = "[None]"
             data["chart_2_source_data"]["chartOptions"] = chart_options
-            dimension.chart_2_source_data = data.get("chart_2_source_data")
+            dimension.dimension_chart.settings_and_source_data = data.get("chart_2_source_data")
             if data["use_custom"] is False:
                 self.__set_chart_dimension_classification_through_builder(dimension, data)
             else:
                 self.__set_chart_custom_dimension_classification(dimension, data)
 
-        if dimension.table and data.get("table_source_data") is not None:
-            table_options = data.get("table_source_data").get("tableOptions")
-            for key, val in table_options.items():
-                if val is None:
-                    table_options[key] = "[None]"
-            data["table_source_data"]["tableOptions"] = table_options
-            dimension.table_source_data = data.get("table_source_data")
-
-        if dimension.table and data.get("table_2_source_data") is not None:
+        if dimension.dimension_table.table_object and data.get("table_2_source_data") is not None:
             table_options = data.get("table_2_source_data").get("tableOptions")
             for key, val in table_options.items():
                 if val is None:
                     table_options[key] = "[None]"
             data["table_2_source_data"]["tableOptions"] = table_options
-            dimension.table_2_source_data = data.get("table_2_source_data")
+            dimension.dimension_table.settings_and_source_data = data.get("table_2_source_data")
             if data["use_custom"] is False:
                 self.__set_table_dimension_classification_through_builder(dimension, data)
             else:
@@ -204,7 +172,7 @@ class DimensionService(Service):
         self.__set_table_dimension_classification(dimension, classification)
 
     def __set_table_dimension_classification(self, dimension, classification):
-        table = Table.get_by_id(dimension.table_id) or Table()
+        table = dimension.dimension_table or Table()
 
         table.classification_id = classification.classification_id
         table.includes_parents = classification.includes_parents
@@ -214,7 +182,7 @@ class DimensionService(Service):
         db.session.add(table)
         db.session.flush()  # Flush to DB will generate PK if it's a newly-created instance
 
-        dimension.table_id = table.id
+        dimension.dimension_table = table
 
         db.session.commit()
 
@@ -263,7 +231,7 @@ class DimensionService(Service):
         self.__set_chart_dimension_classification(dimension, classification)
 
     def __set_chart_dimension_classification(self, dimension, classification):
-        chart = Chart.get_by_id(dimension.chart_id) or Chart()
+        chart = dimension.dimension_chart or Chart()
 
         chart.classification_id = classification.classification_id
         chart.includes_parents = classification.includes_parents
@@ -273,7 +241,7 @@ class DimensionService(Service):
         db.session.add(chart)
         db.session.flush()  # Flush to DB will generate PK if it's a newly-created instance
 
-        dimension.chart_id = chart.id
+        dimension.dimension_chart = chart
 
         db.session.commit()
 
