@@ -112,11 +112,19 @@ class DimensionService(Service):
         dimension.time_period = data["time_period"] if "time_period" in data else dimension.time_period
         dimension.summary = data["summary"] if "summary" in data else dimension.summary
         if "chart" in data:
+            if dimension.dimension_chart is None:
+                dimension.dimension_chart = Chart()
             dimension.dimension_chart.chart_object = data["chart"]
         if "table" in data:
+            if dimension.dimension_table is None:
+                dimension.dimension_table = Table()
             dimension.dimension_table.table_object = data["table"]
 
-        if dimension.dimension_chart.chart_object and data.get("chart_2_source_data") is not None:
+        if (
+            dimension.dimension_chart
+            and dimension.dimension_chart.chart_object
+            and data.get("chart_2_source_data") is not None
+        ):
             chart_options = data.get("chart_2_source_data").get("chartOptions")
             for key, val in chart_options.items():
                 if val is None:
@@ -128,7 +136,11 @@ class DimensionService(Service):
             else:
                 self.__set_chart_custom_dimension_classification(dimension, data)
 
-        if dimension.dimension_table.table_object and data.get("table_2_source_data") is not None:
+        if (
+            dimension.dimension_table
+            and dimension.dimension_table.table_object
+            and data.get("table_2_source_data") is not None
+        ):
             table_options = data.get("table_2_source_data").get("tableOptions")
             for key, val in table_options.items():
                 if val is None:
