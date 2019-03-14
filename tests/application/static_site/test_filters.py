@@ -8,7 +8,7 @@ class TestRenderMarkdown:
         "input_text, expected_output",
         (
             ("hello", '<p class="govuk-body">hello</p>'),
-            ("* blah", '<ul class="govuk-list govuk-list--bullet">\n<li>blah</li>\n</ul>'),
+            ("* blah", '<ul class="govuk-list govuk-list--bullet eff-list--sparse">\n<li>blah</li>\n</ul>'),
         ),
     )
     def test_markdown_is_expanded(self, input_text, expected_output):
