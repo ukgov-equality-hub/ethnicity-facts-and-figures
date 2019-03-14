@@ -12,10 +12,10 @@ class DesignSystemMarkdownProcessor(Treeprocessor):
             a.set("class", "govuk-link")
 
         for ul in root.iter("ul"):
-            ul.set("class", "govuk-list govuk-list--bullet")
+            ul.set("class", "govuk-list govuk-list--bullet eff-list--sparse")
 
         for ol in root.iter("ol"):
-            ol.set("class", "govuk-list govuk-list--number")
+            ol.set("class", "govuk-list govuk-list--number eff-list--sparse")
 
 
 class DesignSystemMarkdownExtension(Extension):

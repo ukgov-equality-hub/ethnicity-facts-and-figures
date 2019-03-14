@@ -4,3 +4,7 @@
 .eff-list--hint {
   color: govuk-colour("grey-1");
 }
+
+.eff-list--sparse > li {
+  @include govuk-responsive-margin(2, "bottom");
+}
