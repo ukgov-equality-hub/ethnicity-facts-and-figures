@@ -20,11 +20,7 @@ class DesignSystemMarkdownProcessor(Treeprocessor):
 
 class DesignSystemMarkdownExtension(Extension):
     def extendMarkdown(self, md):
-        md.treeprocessors.register(
-            item=DesignSystemMarkdownProcessor(md),
-            name="design-system-markdown",
-            priority=0,  # Arbitrary priority copied from Python Markdown docs
-        )
+        md.treeprocessors.register(item=DesignSystemMarkdownProcessor(md), name="design-system-markdown", priority=0)
 
 
 def markdown(text):
