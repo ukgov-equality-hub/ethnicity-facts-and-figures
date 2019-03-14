@@ -4,10 +4,8 @@
  * This component contains a short summary of some information,
  * often in the form of a lead-in line followed by a bulleted list.
  */
-.eff-summary--with-bullets-spaced-out li {
-  @include govuk-responsive-margin(3, "bottom");
-}
 
-.eff-summary--with-bullets-spaced-out li .govuk-body {
-  @include govuk-responsive-margin(0, "bottom");
+ /* List items should be spaced out, to improve legibility. */
+.eff-summary--with-bullets-spaced-out li {
+  @include govuk-responsive-margin(4, "bottom");
 }
