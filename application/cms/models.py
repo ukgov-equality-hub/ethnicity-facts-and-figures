@@ -872,6 +872,8 @@ class ChartAndTableMixin(object):
 
     settings_and_source_data = db.Column(JSON)
 
+    title = db.Column(db.String(255))
+
     @classmethod
     def get_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
