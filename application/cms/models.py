@@ -570,15 +570,17 @@ class Dimension(db.Model):
     created_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
     updated_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
 
+    # TODO: Delete these once chart and table data has been copied over and code updated to look in Chart and Table
     chart = db.Column(JSON)
-    table = db.Column(JSON)
     chart_builder_version = db.Column(db.Integer)
     chart_source_data = db.Column(JSON)
     chart_2_source_data = db.Column(JSON)
 
+    table = db.Column(JSON)
     table_source_data = db.Column(JSON)
     table_builder_version = db.Column(db.Integer)
     table_2_source_data = db.Column(JSON)
+    # TODO: End delete
 
     measure_version_id = db.Column(db.Integer, nullable=False)
 
@@ -775,13 +777,13 @@ class Upload(db.Model, CopyableModel):
 association_table = db.Table(
     "ethnicity_in_classification",
     db.metadata,
-    db.Column("classification_id", db.Integer, ForeignKey("classification.id"), nullable=False),
+    db.Column("classification_id", db.String(255), ForeignKey("classification.id"), nullable=False),
     db.Column("ethnicity_id", db.Integer, ForeignKey("ethnicity.id"), nullable=False),
 )
 parent_association_table = db.Table(
     "parent_ethnicity_in_classification",
     db.metadata,
-    db.Column("classification_id", db.Integer, ForeignKey("classification.id"), nullable=False),
+    db.Column("classification_id", db.String(255), ForeignKey("classification.id"), nullable=False),
     db.Column("ethnicity_id", db.Integer, ForeignKey("ethnicity.id"), nullable=False),
 )
 
@@ -849,7 +851,7 @@ class DimensionClassification(db.Model):
 
     # columns
     dimension_guid = db.Column(db.String(255), primary_key=True)
-    classification_id = db.Column("classification_id", db.Integer, primary_key=True)
+    classification_id = db.Column("classification_id", db.String(255), primary_key=True)
 
     includes_parents = db.Column(db.Boolean, nullable=False)
     includes_all = db.Column(db.Boolean, nullable=False)
@@ -863,10 +865,12 @@ class DimensionClassification(db.Model):
 # This encapsulates common fields and functionality for chart and table models
 class ChartAndTableMixin(object):
     id = db.Column(db.Integer, primary_key=True)
-    classification_id = db.Column("classification_id", db.Integer, nullable=False)
-    includes_parents = db.Column(db.Boolean, nullable=False)
-    includes_all = db.Column(db.Boolean, nullable=False)
-    includes_unknown = db.Column(db.Boolean, nullable=False)
+    classification_id = db.Column("classification_id", db.String(255), nullable=True)
+    includes_parents = db.Column(db.Boolean, nullable=True)
+    includes_all = db.Column(db.Boolean, nullable=True)
+    includes_unknown = db.Column(db.Boolean, nullable=True)
+
+    settings_and_source_data = db.Column(JSON)
 
     @classmethod
     def get_by_id(cls, id):
@@ -904,10 +908,14 @@ class Chart(db.Model, ChartAndTableMixin):
     # metadata
     __tablename__ = "dimension_chart"
 
+    chart_object = db.Column(JSON)
+
 
 class Table(db.Model, ChartAndTableMixin):
     # metadata
     __tablename__ = "dimension_table"
+
+    table_object = db.Column(JSON)
 
 
 class Organisation(db.Model):
