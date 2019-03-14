@@ -1,3 +1,4 @@
+// TODO: Make me a proper BEM-ish component. I shouldn't be in this folder yet.
 /* Publisher Banner
 
 This serves the dual purposes of reminding publishers that they're looking at a 'preview' rather than the live website,
@@ -17,7 +18,7 @@ and also of providing access to some publisher-only navigation features such as 
   padding: 5px 10px;
 }
 
-.cms-banner a, .cms-banner .eff-button--link {
+.cms-banner .govuk-link, .cms-banner .eff-button--link {
   color: inherit;
 }
 
