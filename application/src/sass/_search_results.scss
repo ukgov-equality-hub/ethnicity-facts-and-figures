@@ -10,47 +10,46 @@
 /* ID selector for increased specificity,
    to override Google's in-built styles */
 main#main-content {
-
   /* Main overall container */
   .gsc-control-cse {
-      padding: 0;
+    padding: 0;
   }
 
   /* All elements within the search results */
   .gsc-control-cse * {
-      font-family: "nta",Arial,sans-serif;
+    font-family: "nta", Arial, sans-serif;
   }
 
   /* Container for the bit above the results */
   .gsc-above-wrapper-area {
-      border-bottom-width: 1;
+    border-bottom-width: 1px;
   }
 
   /* Spelling suggestion / autocorrection */
   .gs-spelling {
-      padding-left: 0;
-      color: black;
+    padding-left: 0;
+    color: black;
   }
 
   /* Spelling links */
   .gs-spelling i {
-      font-style: normal;
+    font-style: normal;
   }
 
   /* Container for 'About 8 results' sentence */
   .gsc-result-info {
-      display: none;
+    display: none;
   }
 
   /* The 'Sort by:' label */
   .gsc-orderby-label {
-      color: black;
-      font-size: 16px;
+    color: black;
+    font-size: 16px;
   }
 
   /* Results header */
   .gsc-resultsHeader {
-      display: none;
+    display: none;
   }
 
   /* Table containing each result snippet */
@@ -60,54 +59,54 @@ main#main-content {
 
   /* Table cell containing each result snippet */
   .gsc-table-cell-snippet-close {
-      border-width: 0;
-      padding-top: 0;
+    border-width: 0;
+    padding-top: 0;
   }
 
   /* Container for result title */
   .gsc-thumbnail-inside {
-      padding-left: 0;
+    padding-left: 0;
   }
 
   /* Title of each search result */
   .gs-title {
-      height: auto;
-      max-width: 590px;
-      font-size: 24px;
-      line-height: 30px;
-      text-decoration: none;
-      font-weight: bold;
-      color: #005EA5;
+    @include govuk-font(24, $weight: "bold");
+    height: auto;
+    max-width: 590px;
+    line-height: 30px;
+    text-decoration: none;
+    //font-weight: bold;
+    color: govuk-colour("blue");
   }
 
   /* Words highlighted within title */
   .gs-title b {
-      font-size: inherit;
-      font-weight: inherit;
-      text-decoration: inherit;
-      color: inherit;
+    @include govuk-font(19);
   }
 
   /* URL at the top of each search result */
   .gsc-url-top {
-      display: none;
+    display: none;
   }
 
   /* 'Snippet' of matching content from the page */
   .gs-snippet {
-      font-size: 16px;
-      line-height: 1.25;
-      max-width: 590px;
+    @include govuk-font(16);
+    max-width: 590px;
+
+    & b {
+      @include govuk-font(16);
+    }
   }
 
   /* Pagination container */
   .gsc-cursor-box {
-      margin-left: 0;
+    margin-left: 0;
   }
 
   /* Pagination link */
   .gsc-cursor-page {
-      font-size: 16px;
+    font-size: 16px;
   }
 
 }
