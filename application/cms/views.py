@@ -798,6 +798,7 @@ def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         measure=measure,
         measure_version=measure_version,
         dimension=dimension_dict,
+        dimension_chart=dimension_object.dimension_chart,
     )
 
 
