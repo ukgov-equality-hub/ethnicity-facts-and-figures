@@ -9,57 +9,57 @@
 {% block pageTitle %}Dashboards{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-full">
-      <h1 class="heading-xlarge">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-xl">
         Dashboards
       </h1>
-      <p class="lede">Find information about the pages and data published on <a href="{{ config.RDU_SITE }}">Ethnicity facts and figures</a>.</p>
+      <p class="govuk-body-l">Find information about the pages and data published on <a href="{{ config.RDU_SITE }}" class="govuk-link">Ethnicity facts and figures</a>.</p>
     </div>
   </div>
 
-  <div class="grid-row dashboards">
+  <div class="govuk-grid-row govuk-!-margin-bottom-5">
 
-    <div class="column-full">
-      <h2 class="heading-medium">Published and planned pages</h2>
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-m">Published and planned pages</h2>
     </div>
 
-    <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.whats_new') }}" class="heading-small">New and updated pages</a></h2>
-      <p class="font-xsmall">Recent updates to the website</p>
+    <div class="govuk-grid-column-one-third">
+      <h2><a href="{{ url_for('dashboards.whats_new') }}" class="govuk-link govuk-heading-s govuk-!-margin-bottom-1">New and updated pages</a></h2>
+      <p class="govuk-body govuk-!-font-size-16">Recent updates to the website</p>
     </div>
 
-    <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.planned_pages') }}" class="heading-small">Planned pages</a></h2>
-      <p class="font-xsmall">What’s being worked on and coming up next</p>
+    <div class="govuk-grid-column-one-third">
+      <h2><a href="{{ url_for('dashboards.planned_pages') }}" class="govuk-link govuk-heading-s govuk-!-margin-bottom-1">Planned pages</a></h2>
+      <p class="govuk-body govuk-!-font-size-16">What’s being worked on and coming up next</p>
     </div>
 
-    <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.published') }}" class="heading-small">Pages published by week</a></h2>
-      <p class="font-xsmall">A week-by-week count of new and updated pages</p>
+    <div class="govuk-grid-column-one-third">
+      <h2><a href="{{ url_for('dashboards.published') }}" class="govuk-link govuk-heading-s govuk-!-margin-bottom-1">Pages published by week</a></h2>
+      <p class="govuk-body govuk-!-font-size-16">A week-by-week count of new and updated pages</p>
     </div>
 
   </div>
 
-  <div class="grid-row dashboards">
+  <div class="govuk-grid-row govuk-!-margin-bottom-5">
 
-    <div class="column-full">
-      <h2 class="heading-medium">How the data is grouped by ethnicity and geography</h2>
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-m">How the data is grouped by ethnicity and geography</h2>
     </div>
 
-    <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.ethnic_groups') }}" class="heading-small">Ethnic groups</a></h2>
-      <p class="font-xsmall">The individual ethnic groups referenced in the data and the pages they appear in</p>
+    <div class="govuk-grid-column-one-third">
+      <h2><a href="{{ url_for('dashboards.ethnic_groups') }}" class="govuk-link govuk-heading-s govuk-!-margin-bottom-1">Ethnic groups</a></h2>
+      <p class="govuk-body govuk-!-font-size-16">The individual ethnic groups referenced in the data and the pages they appear in</p>
     </div>
 
-    <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.ethnicity_classifications') }}" class="heading-small">Ethnicity classifications</a></h2>
-      <p class="font-xsmall">The ethnicity groupings used in the data and the pages they appear in</p>
+    <div class="govuk-grid-column-one-third">
+      <h2><a href="{{ url_for('dashboards.ethnicity_classifications') }}" class="govuk-link govuk-heading-s govuk-!-margin-bottom-1">Ethnicity classifications</a></h2>
+      <p class="govuk-body govuk-!-font-size-16">The ethnicity groupings used in the data and the pages they appear in</p>
     </div>
 
-    <div class="column-one-third">
-      <h2><a href="{{ url_for('dashboards.locations') }}" class="heading-small">Geographic areas</a></h2>
-      <p class="font-xsmall">The geographic areas covered by the data and the pages they appear in</p>
+    <div class="govuk-grid-column-one-third">
+      <h2><a href="{{ url_for('dashboards.locations') }}" class="govuk-link govuk-heading-s govuk-!-margin-bottom-1">Geographic areas</a></h2>
+      <p class="govuk-body govuk-!-font-size-16">The geographic areas covered by the data and the pages they appear in</p>
     </div>
 
   </div>

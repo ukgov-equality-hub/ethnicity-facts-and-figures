@@ -1,0 +1,18 @@
+/* Move controls
+
+   A component that allows the user to change the order of listed items, e.g. the order dimensions appear in a measure.
+ */
+
+.eff-move-controls {
+  text-align: right;
+}
+
+.eff-movable span:hover {
+  cursor: pointer;
+}
+
+.eff-move-up,
+.eff-move-down {
+  color: $govuk-link-colour;
+  display: block;
+}

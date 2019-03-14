@@ -16,18 +16,22 @@
 {% block bodyStart %}{{ super( )}}<div itemscope itemtype="http://schema.org/DataCatalog">{% endblock %}
 {% block bodyEnd %}{{ super( )}}</div>{% endblock %}
 
+{% block phaseBanner %}
+  {{ render_phase_banner(reversed=True) }}
+{% endblock %}
+
 {% block main %}
 <div class="hero-container">
   <div class="hero">
     <div class="hero-inner">
-      <div class="grid-row">
-        <div class="column-two-thirds">
-            <h1 class="heading-xlarge">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
                 Ethnicity facts and figures
             </h1>
-            <p>87% of people in the UK are White, and 13% belong to a Black, Asian, Mixed or Other ethnic group, according to the combined 2011 censuses for England and Wales, Scotland, and Northern Ireland.</p>
+            <p class="govuk-body">87% of people in the UK are White, and 13% belong to a Black, Asian, Mixed or Other ethnic group, according to the combined 2011 censuses for England and Wales, Scotland, and Northern Ireland.</p>
 
-            <p>Use this service to find information about the different experiences of people from a variety of ethnic backgrounds. It gathers data collected by government in one place, making it available to the public, specialists and charities.</p>
+            <p class="govuk-body">Use this service to find information about the different experiences of people from a variety of ethnic backgrounds. It gathers data collected by government in one place, making it available to the public, specialists and charities.</p>
 
         </div>
       </div>
@@ -35,46 +39,48 @@
   </div>
 </div>
 
+<div class="govuk-width-container">
 <main id="content">
-    <div class="grid-row" id="topic-section">
-        <div class="column-two-thirds">
-            <h2 class="heading-medium">
+    <div class="govuk-grid-row" id="topic-section">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">
                 View data on ethnicity by topic
             </h2>
         </div>
     </div>
 
     {% for topic_batch in (topics|selectattr('has_published_measures') if static_mode else topics)|batch(3) %}
-      <div class="grid-row topic-row">
+      <div class="govuk-grid-row topic-row">
           {% for topic in topic_batch %}
-          <div class="column-one-third topic">
-              <span class="heading-small">
-                  <a href="{{ url_for('static_site.topic', topic_slug=topic.slug) }}">{{ topic.title }}{% if topic.has_published_measures == false %} (not published){% endif %}</a>
+          <div class="govuk-grid-column-one-third topic">
+              <span class="govuk-heading-s govuk-!-margin-bottom-1">
+                  <a class="govuk-link" href="{{ url_for('static_site.topic', topic_slug=topic.slug) }}">{{ topic.title }}{% if topic.has_published_measures == false %} (not published){% endif %}</a>
               </span>
-              <p>{{ topic.description }}</p>
+              <p class="govuk-body">{{ topic.description }}</p>
           </div>
           {% endfor %}
       </div>
     {% endfor %}
 
-    <hr>
+    <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6" />
 
-    <h2 class="heading-medium">Updates</h2>
+    <h2 class="govuk-heading-m">Updates</h2>
 
-    <div class="grid-row">
-        <div class="column-one-third">
-            <h3 class="heading-small eff-!-margin-top-0"><a href="{{ url_for('dashboards.whats_new') }}">New and updated pages</a></h3>
-            <p>Recent updates to the website</p>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-third">
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a class="govuk-link" href="{{ url_for('dashboards.whats_new') }}">New and updated pages</a></h3>
+            <p class="govuk-body">Recent updates to the website</p>
         </div>
 
-        <div class="column-one-third">
-            <h3 class="heading-small eff-!-margin-top-0"><a href="{{ url_for('dashboards.planned_pages') }}">Planned pages</a></h3>
-            <p>What’s being worked on and coming up next</p>
+        <div class="govuk-grid-column-one-third">
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a class="govuk-link" href="{{ url_for('dashboards.planned_pages') }}">Planned pages</a></h3>
+            <p class="govuk-body">What’s being worked on and coming up next</p>
         </div>
     </div>
 
     {% include 'static_site/_newsletter-sign-up.html' %}
 
 </main>
+</div>
 
 {% endblock %}

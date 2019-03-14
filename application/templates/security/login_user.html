@@ -7,15 +7,12 @@
 {% block bodyClasses %}rd_cms{% endblock %}
 
 {% block flashMessages %}
-    <div class='grid-row'>
-        <div class='column-full'>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
             {% if login_user_form.errors %}
-                <div class="row">
-                    <div class="flash-message">
-                        <div data-alert
-                             class="alert-box alert">
-                            <span>Make sure you've entered the right email address and password. If you've forgotten your password you can reset it by clicking 'Forgotten password'</span>
-                        </div>
+                <div class="govuk-error-summary govuk-!-margin-bottom-0 govuk-!-padding-bottom-0">
+                    <div class="govuk-error-summary__body">
+                        <p>Make sure you've entered the right email address and password. If you've forgotten your password you can reset it by clicking 'Forgotten password'</p>
                     </div>
                 </div>
             {% endif %}
@@ -24,26 +21,27 @@
 {% endblock %}
 
 {% block content %}
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h1 class='heading-large'>Login</h1>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <h1 class="govuk-heading-xl">Login</h1>
 
                 <form action="{{ url_for('security.login') }}" method="post">
                     {{ login_user_form.csrf_token }}
 
-                    <label for="email">Email</label>
                     {{ login_user_form.email }}
 
-                    <label for="password">{{ login_user_form.password.label }}</label>
                     {{ login_user_form.password(autocomplete='off') }}
 
-                    <button type="submit" class="button" name="login">Login</button>
-
                     {{ login_user_form.next }}
+
+{#                    So that the button gets displayed on its own line #}
+                    <div class="govuk-body">
+                      <button type="submit" class="govuk-button" name="login">Login</button>
+                    </div>
                 </form>
 
-                <div class="forgotten-password">
-                    <a href="{{ url_for('auth.forgot_password') }}">Forgotten password</a>
+                <div class="govuk-body">
+                    <a class="govuk-link" href="{{ url_for('auth.forgot_password') }}">Forgotten password</a>
                 </div>
 
 

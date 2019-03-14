@@ -13,46 +13,45 @@
 {% block bodyStart %}{{ super( )}}<div itemscope itemtype="http://schema.org/DataCatalog">{% endblock %}
 
 {% block content %}
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h1 class="heading-xlarge">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">
                     {{ topic.title }}
                 </h1>
                 {% if topic.additional_description  %}
-                    <p>
+                    <div class="govuk-body">
                         {{ topic.additional_description | render_markdown  }}
-                    </p>
+                    </div>
                 {% endif %}
             </div>
         </div>
 
-        <div class="grid-row">
+        <div class="govuk-grid-row">
 
-            <div class="column-two-thirds">
+            <div class="govuk-grid-column-two-thirds">
 
-                <div class="accordion">
-                    <div class="container">
+                <div class="govuk-accordion" data-module="accordion" id="accordion-{{ topic.slug }}">
                         {% for subtopic in (subtopics|selectattr('has_published_measures') if static_mode else subtopics) %}
                             {% if measures_by_subtopic[subtopic.id]|length > 0 or (current_user.is_authenticated and current_user.can(CREATE_MEASURE)) %}
-                                <div class="accordion-section">
-                                    <div class="accordion-section-header" data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="{{ subtopic.title }}" >
-                                        <h2 class="heading-medium">
-                                            {{- subtopic.title -}}{% if subtopic.has_published_measures == false %} (not published){% endif %}
+                                <div class="govuk-accordion__section">
+                                    <div class="govuk-accordion__section-header">
+                                        <h2 class="govuk-accordion__section-heading">
+                                            <span class="govuk-accordion__section-button" id="accordion-{{ subtopic.slug }}">{{- subtopic.title -}}{% if subtopic.has_published_measures == false %} (not published){% endif %}</span>
                                         </h2>
                                     </div>
-                                    <div class="accordion-section-body {% if not static_mode %}eff-!-padding-bottom-40{% endif %}">
+                                    <div class="govuk-accordion__section-content {% if not static_mode %} govuk-!-padding-bottom-4{% endif %}">
                                         {% if not static_mode %}
                                             {% if current_user.is_authenticated and current_user.can(CREATE_MEASURE) %}
-                                                <p class="button-container"><a href="{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}" class="button">Create a new page</a></p>
+                                                <a href="{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}" class="govuk-button">Create a new page</a>
                                             {% endif %}
                                         {% endif %}
                                         {% if measures_by_subtopic[subtopic.id] %}
-                                                {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}<div class="reordering-save-status">&nbsp;</div>{% endif %}
-                                                <ul class="links {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}js-reorderable{% endif %}">
+                                                {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}<div class="govuk-body govuk-!-margin-bottom-0 reordering-save-status">&nbsp;</div>{% endif %}
+                                                <ul class="govuk-list {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}js-reorderable{% endif %}">
                                                     {% for measure in measures_by_subtopic[subtopic.id] %}
                                                         {% with measure_version = measure.latest_version %}
                                                             <li data-measure-id="{{ measure.id }}" data-subtopic-id="{{ subtopic.id }}" itemprop="dataset" itemscope itemtype="http://schema.org/Dataset">
-                                                                <span itemprop="name"><a href="{{ url_for('static_site.measure_version',
+                                                                <span itemprop="name"><a class="govuk-link" href="{{ url_for('static_site.measure_version',
                                                                                     topic_slug=topic.slug,
                                                                                     subtopic_slug=subtopic.slug,
                                                                                     measure_slug=measure.slug,
@@ -73,7 +72,6 @@
                                 </div>
                             {% endif %}
                         {% endfor %}
-                    </div>
                 </div>
             </div>
         </div>

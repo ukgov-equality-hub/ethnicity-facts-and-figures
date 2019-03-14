@@ -101,7 +101,7 @@ class DataSourceForm(FlaskForm):
             "Link to a web page where the data was originally published. "
             "Don’t link directly to a spreadsheet or a PDF. "
             '<a href="https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017" '
-            'target="_blank">View example</a> (this will open a new page).'
+            'target="_blank" class="govuk-link">View example</a> (this will open a new page).'
         ),
         validators=[RequiredForReviewValidator(), Length(max=255)],
     )
@@ -236,8 +236,8 @@ class MeasureVersionForm(FlaskForm):
         hint=Markup(
             "Say which ethnic groups are included in the data and why. "
             "For the most common ethnic categorisations, see the "
-            '<a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z#ethnic-categories" target="_blank">'
-            "Style guide A to Z</a> (this will open a new page)."
+            '<a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z#ethnic-categories" target="_blank"'
+            'class="govuk-link">Style guide A to Z</a> (this will open a new page).'
         ),
         strip_whitespace=True,
     )
@@ -356,10 +356,16 @@ class NewVersionForm(FlaskForm):
         self.version_type.choices = [
             (
                 NewVersionType.MINOR_UPDATE.value,
-                Markup(f"<b>{next_minor_version}</b>Edit this edition (eg for clarifications or corrections)"),
+                Markup(
+                    f"<strong class='govuk-!-margin-right-4'>"
+                    f"{next_minor_version}</strong>Edit this edition (eg for clarifications or corrections)"
+                ),
             ),
             (
                 NewVersionType.MAJOR_UPDATE.value,
-                Markup(f"<b>{next_major_version}</b>Create new edition (eg after new data becomes available)"),
+                Markup(
+                    f"<strong class='govuk-!-margin-right-4'>"
+                    f"{next_major_version}</strong>Create new edition (eg after new data becomes available)"
+                ),
             ),
         ]

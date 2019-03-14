@@ -1,0 +1,21 @@
+{#
+  Minimal implementation of GOV.UK Design System Error Summary component here:
+  https://github.com/alphagov/govuk-frontend/blob/master/src/components/error-summary
+#}
+
+{% if error_summary and error_summary.errors %}
+<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+  <h2 class="govuk-error-summary__title" id="error-summary-title">
+    {{ error_summary.title }}
+  </h2>
+  <div class="govuk-error-summary__body">
+    <ul class="govuk-list govuk-error-summary__list">
+      {% for error in error_summary.errors %}
+      <li>
+        <a href="{{ error.href }}">{{ error.field }}</a>{% if error.text %}<span> {{ error.text }}</span>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}

@@ -15,40 +15,19 @@
 {% block bodyClasses %}rd_cms{% endblock %}
 
 {% block content %}
-        <div class="grid-row">
-            <div class="column-full">
-                <h1 class='heading-large no-breadcrumb'>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl no-breadcrumb">
                     Add user
                 </h1>
-                <h2>Add user</h2>
+                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">Add user</h2>
                 <form action="{{ url_for('admin.add_user') }}" method="POST">
                     {{ form.csrf_token }}
                     {{ render_field(form.email) }}
-                    <div class="form-group">
-                        <fieldset class="inline">
 
-                            <legend>
-                                <h2 class="heading-small">
-                                    What type of user account?
-                                </h2>
-                            </legend>
+                    {{ form.user_type(legend_class="govuk-!-font-weight-bold", fieldset_class="inline") }}
 
-                            {% for field in form.user_type %}
-                                <div class="multiple-choice">
-                                {% if field.errors %}
-                                    {{ field.errors }}
-                                    {{ field(class="error " + class) }}
-                                {% else %}
-                                    {{ field }}
-                                    {{ field.label }}
-                                {% endif %}
-                                </div>
-                            {% endfor %}
-
-                        </fieldset>
-                    </div>
-
-                    <button type="submit" class="button" name="add">Add user</button>
+                    <button type="submit" class="govuk-button" name="add">Add user</button>
                 </form>
             </div>
         </div>

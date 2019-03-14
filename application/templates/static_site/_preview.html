@@ -1,4 +1,4 @@
-<div class="cms-banner">
+<div class="cms-banner govuk-body-s">
   <div class="container-outer">
     <div class="container">
       <div class="nav">
@@ -7,13 +7,13 @@
         </div>
         <div class="middle">
           <div>
-            <span><a href="https://www.ethnicity-facts-figures.service.gov.uk">Live website</a></span>
+            <span><a class="govuk-link" href="https://www.ethnicity-facts-figures.service.gov.uk">Live website</a></span>
 
             {% if not current_user.is_anonymous and not preview %}
-              <span><a href="{{ url_for('static_site.topic', topic_slug=TESTING_SPACE_SLUG) }}">Testing space</a></span>
+              <span><a class="govuk-link" href="{{ url_for('static_site.topic', topic_slug=TESTING_SPACE_SLUG) }}">Testing space</a></span>
 
               {% if current_user.is_authenticated and current_user.can(MANAGE_USERS) %}
-                <span><a href="{{ url_for('admin.index') }}">Admin</a></span>
+                <span><a class="govuk-link" href="{{ url_for('admin.index') }}">Admin</a></span>
               {% endif %}
             {% endif %}
           </div>
@@ -22,7 +22,7 @@
           {% if current_user.is_authenticated %}
           <form action="{{ url_for('auth.logout') }}" method="post">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-              <button class="link" name="logout">Sign out</button>
+              <button class="eff-button--link govuk-link" name="logout">Sign out</button>
           </form>
           {% endif %}
         </div>

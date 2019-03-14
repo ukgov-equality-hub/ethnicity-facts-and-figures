@@ -11,30 +11,30 @@
 {% block pageTitle %}Published pages{% endblock %}
 
 {% block content %}
-    <div class="grid-row">
-      <div class="column-two-thirds">
-        <h1 class='heading-xlarge'>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">
           Published pages
         </h1>
 
-        <p>The dashboard shows the new and updated pages we’ve published each week.
+        <p class="govuk-body">The dashboard shows the new and updated pages we’ve published each week.
           You can also find out what we have <a href="{{ url_for('dashboards.planned_pages') }}">planned and in progress</a>.</p>
       </div>
     </div>
 
-    <div class="grid-row">
-      <div class="column-one-third">
-        <div class="stat background-light-blue">
-          <span class="bold-xlarge">{{ data.number_of_publications }}</span>
-          <span class="">{% if data.number_of_publications == 1 %}Page{% else %}Pages{% endif %}</span>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-third">
+        <div class="eff-stat eff-!-background-light-blue">
+          <span class="eff-stat__figure">{{ data.number_of_publications }}</span>
+          <span class="eff-stat__description">{% if data.number_of_publications == 1 %}Page{% else %}Pages{% endif %}</span>
         </div>
 
-        <div class="stat background-turquoise">
-          <span class="bold-xlarge">{{ data.number_of_major_updates }}</span>
-          <span class="">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
+        <div class="eff-stat eff-!-background-turquoise">
+          <span class="eff-stat__figure">{{ data.number_of_major_updates }}</span>
+          <span class="eff-stat__description">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
         </div>
       </div>
-      <div class="column-two-thirds">
+      <div class="govuk-grid-column-two-thirds">
 
           {{ render_line_chart(data=data,
                                graph_height=220,
@@ -46,31 +46,31 @@
       </div>
     </div>
 
-    <div class="grid-row">
-      <div class="column-full">
-        <table class="measures-by-week smaller-text">
-            <thead>
-                <tr>
-                    <th>Week beginning</th>
-                    <th>Measures</th>
-                    <th>Updates</th>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <table class="govuk-table eff-table--dense measures-by-week">
+            <thead class="govuk-table__head eff-table__head--reversed">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header">Week beginning</th>
+                    <th class="govuk-table__header">Measures</th>
+                    <th class="govuk-table__header">Updates</th>
                 </tr>
             </thead>
             {% for week in data.weeks %}
-                <tbody class="collapsed">
-                  <tr class="week header {% if not week['publications'] and not week['major_updates'] %}empty{% endif %}">
-                    <th>{{ week['week'] | format_friendly_date }}</th>
-                    <td>{{ week['publications'] | count }}</td>
-                    <td>{{ week['major_updates'] | count }}</td>
+                <tbody class="govuk-table__body collapsed">
+                  <tr class="govuk-table__row week header week {% if not week['publications'] and not week['major_updates'] %}empty{% endif %}">
+                    <th class="govuk-table__header">{{ week['week'] | format_friendly_date }}</th>
+                    <td class="govuk-table__cell">{{ week['publications'] | count }}</td>
+                    <td class="govuk-table__cell">{{ week['major_updates'] | count }}</td>
                   </tr>
                   {% if week['publications'] or week['major_updates'] %}
-                      <tr class="measure-titles">
-                        <td colspan="3">
+                      <tr class="govuk-table__row measure-titles">
+                        <td class="govuk-table__cell" colspan="3">
                           {% if week['publications'] %}
-                              <p>New measures:</p>
-                              <ul>
-                                {% for page in  week['publications'] %}
-                                    <li><a href="{{ url_for('static_site.measure_version',
+                              <p class="govuk-body-s">New measures:</p>
+                              <ul class="govuk-list">
+                                {% for page in week['publications'] %}
+                                    <li class="govuk-!-font-size-16"><a class="govuk-link" href="{{ url_for('static_site.measure_version',
                                                             topic_slug=page.measure.subtopic.topic.slug,
                                                             subtopic_slug=page.measure.subtopic.slug,
                                                             measure_slug=page.measure.slug,
@@ -80,10 +80,10 @@
                               </ul>
                           {% endif %}
                           {% if week['major_updates'] %}
-                              <p>Updates:</p>
-                              <ul>
+                              <p class="govuk-body-s">Updates:</p>
+                              <ul class="govuk-list">
                                 {% for page in week['major_updates'] %}
-                                    <li><a href="{{ url_for('static_site.measure_version',
+                                    <li class="govuk-!-font-size-16"><a class="govuk-link" href="{{ url_for('static_site.measure_version',
                                                             topic_slug=page.measure.subtopic.topic.slug,
                                                             subtopic_slug=page.measure.subtopic.slug,
                                                             measure_slug=page.measure.slug,

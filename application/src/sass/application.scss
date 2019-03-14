@@ -1,8 +1,3 @@
-/* Set compatibility mode for govuk-frontend */
-$govuk-compatibility-govukfrontendtoolkit: true;
-$govuk-compatibility-govuktemplate: true;
-$govuk-compatibility-govukelements: true;
-
 /* Set the GOV.UK Frontend assets path. This is used as a prefix
    for referencing the fonts and images in subfolders within
    this path. */
@@ -11,36 +6,37 @@ $govuk-assets-path: '/static/assets/';
 /* GOV.UK Frontend, for the Design System. Installed via npm */
 @import "node_modules/govuk-frontend/all";
 
-@import '_govuk/govuk-template';
-@import '_govuk/fonts';
-@import '_govuk/_base/govuk-elements';
-@import '_govuk/measure';
-@import '_govuk/homepage';
-@import '_govuk/tables';
-@import '_govuk/chart';
-@import '_govuk/typography-prototype';
-@import '_govuk/_document_footer';
-@import "cms/_banner.scss";
-@import '_base';
-@import '_icons';
-@import '_accordion';
-@import '_user_auth';
-@import '_preview';
-@import '_button';
-@import '_reorderable_list_items';
-@import '_share';
-@import '_phase_banner_reversed';
-@import '_new_tag';
-@import '_item_date';
-@import '_search';
-@import '_search_results';
-@import '_tables';
-@import '_stat';
-@import '_measures_by_week';
-@import '_breadcrumbs';
-@import '_overrides';
-@import '_auto_resize_textarea';
-@import '_planned_pages_dashboard';
-@import '_status_banner';
-@import '_updated_badge';
-@import '_footer';
+/* Components unique to our service */
+@import 'components/badge';
+@import 'components/buttons';
+@import 'components/cookie_banner';
+@import 'components/document_footer';
+@import 'components/flash_message';
+@import 'components/header';
+@import 'components/header_search_box';
+@import 'components/hero';
+@import 'components/line_chart';
+@import 'components/list';
+@import 'components/metadata';
+@import 'components/missing_data_explanation';
+@import 'components/move_controls';
+@import 'components/old_edition_notice';
+@import 'components/phase_banner_reversed';
+@import 'components/publisher_banner';
+@import 'components/share';
+@import 'components/sort_buttons';
+@import 'components/stat';
+@import 'components/status_banner';
+@import 'components/table';
+@import 'components/numbered_sections';
+
+/* Import other custom styles that need converting, with care and consideration, to components in the future */
+@import 'accessible-autocomplete';
+@import 'auto_resize_textarea';
+@import 'chart';
+@import 'hidden';
+@import 'overrides';
+@import 'planned_pages_dashboard';
+@import 'printing';
+@import 'reorderable_list_items';
+@import 'search_results';
