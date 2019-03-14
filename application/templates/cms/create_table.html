@@ -147,6 +147,7 @@
 
 {% block bodyEnd %}
   {{ super() }}
+    <script type="text/javascript" src="/static/javascripts/{{ 'charts.js' | version_filter }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {

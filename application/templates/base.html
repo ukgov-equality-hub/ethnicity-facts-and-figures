@@ -124,9 +124,6 @@
 
         {% if not static_mode %}
             <script>var user_csrf_token = "{{ csrf_token() }}"</script>
-
-            <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'charts.js' | version_filter }}"></script>
-
             <script type="text/javascript" src="{{ url_for('static', filename='javascripts/') }}{{ 'cms.js' | version_filter }}"></script>
         {% endif %}
     {% endblock %}
