@@ -177,7 +177,7 @@
         The main facts and figures show that:
       </p>
         {% if measure_version.summary %}
-            <div>
+            <div class="eff-summary--with-bullets-spaced-out">
                 {{ measure_version.summary | render_markdown }}
             </div>
         {% endif %}
@@ -342,7 +342,7 @@
             <div class="govuk-grid-row">
               <div class="govuk-grid-column-two-thirds">
                   <h3 class="govuk-heading-s">Summary</h3>
-                  <div class="govuk-!-margin-bottom-8">
+                  <div class="govuk-!-margin-bottom-8 eff-summary--with-bullets-spaced-out">
                     {{ dimension.summary | render_markdown }}
                   </div>
               </div>
