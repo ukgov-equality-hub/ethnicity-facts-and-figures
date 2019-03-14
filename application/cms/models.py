@@ -842,6 +842,8 @@ class ChartAndTableMixin(object):
 
     settings_and_source_data = db.Column(JSON)
 
+    title = db.Column(db.String(255))
+
     @declared_attr
     def classification(cls):
         return db.relationship("Classification")
