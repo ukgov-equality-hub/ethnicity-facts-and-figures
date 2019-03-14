@@ -486,16 +486,14 @@ class TestDimensionModel:
 
     def test_delete_chart_from_dimension(self):
         measure_version = MeasureVersionWithDimensionFactory(
-            dimensions__chart={"chart": "foobar"},
-            dimensions__chart_source_data={"xAxis": "time"},
-            dimensions__chart_2_source_data={"yAxis": "space"},
+            dimensions__dimension_chart__chart_object={"chart": "foobar"},
+            dimensions__dimension_chart__settings_and_source_data={"xAxis": "time"},
             dimensions__dimension_table=None,
         )
         dimension = measure_version.dimensions[0]
-        assert dimension.chart is not None
-        assert dimension.chart_source_data is not None
-        assert dimension.chart_2_source_data is not None
         assert dimension.dimension_chart is not None
+        assert dimension.dimension_chart.chart_object is not None
+        assert dimension.dimension_chart.settings_and_source_data is not None
         assert dimension.dimension_classification is not None
 
         # When the chart is deleted
@@ -503,11 +501,6 @@ class TestDimensionModel:
 
         # refresh the dimension from the database
         dimension = Dimension.query.get(dimension.guid)
-
-        # Then the chart attributes should have been removed
-        assert dimension.chart is None
-        assert dimension.chart_source_data is None
-        assert dimension.chart_2_source_data is None
 
         # And the associated chart object should have been removed
         assert dimension.dimension_chart is None
@@ -534,16 +527,14 @@ class TestDimensionModel:
             dimensions__dimension_table__includes_parents=True,
             dimensions__dimension_table__includes_all=False,
             dimensions__dimension_table__includes_unknown=True,
-            dimensions__table={"col1": "ethnicity"},
-            dimensions__table_source_data={"foo": "bar"},
-            dimensions__table_2_source_data={"hey": "you"},
+            dimensions__dimension_table__table_object={"col1": "ethnicity"},
+            dimensions__dimension_table__settings_and_source_data={"foo": "bar"},
         )
         dimension = measure_version.dimensions[0]
 
-        assert dimension.table is not None
-        assert dimension.table_source_data is not None
-        assert dimension.table_2_source_data is not None
         assert dimension.dimension_table is not None
+        assert dimension.dimension_table.table_object is not None
+        assert dimension.dimension_table.settings_and_source_data is not None
         assert dimension.dimension_classification is not None
         # Classification 3A is set from the table
         dimension.update_dimension_classification_from_chart_or_table()
@@ -556,11 +547,6 @@ class TestDimensionModel:
         dimension = Dimension.query.get(dimension.guid)
 
         # Then it should have removed all the table data
-        assert dimension.table is None
-        assert dimension.table_source_data is None
-        assert dimension.table_2_source_data is None
-
-        # And the associated table metadata
         assert dimension.dimension_table is None
 
         # Classification is now 2A, set from the remaining chart

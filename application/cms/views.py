@@ -30,9 +30,7 @@ from application.cms.models import publish_status, Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data
-from application.data.charts import ChartObjectDataBuilder
 from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
-from application.data.tables import TableObjectDataBuilder
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
 
@@ -766,20 +764,13 @@ def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    dimension_dict = dimension_object.to_dict()
-
-    if dimension_dict["chart_source_data"] is not None and dimension_dict["chart_2_source_data"] is None:
-        dimension_dict["chart_2_source_data"] = ChartObjectDataBuilder.upgrade_v1_to_v2(
-            dimension_dict["chart"], dimension_dict["chart_source_data"]
-        )
-
     return render_template(
         "cms/create_chart.html",
         topic=topic,
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
-        dimension=dimension_dict,
+        dimension=dimension_object.to_dict(),
     )
 
 
@@ -820,12 +811,6 @@ def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
     )
 
     dimension_dict = dimension_object.to_dict()
-
-    # migration step
-    if dimension_dict["table_source_data"] is not None and dimension_dict["table_2_source_data"] is None:
-        dimension_dict["table_2_source_data"] = TableObjectDataBuilder.upgrade_v1_to_v2(
-            dimension_dict["table"], dimension_dict["table_source_data"], current_app.dictionary_lookup
-        )
 
     return render_template(
         "cms/create_table.html",

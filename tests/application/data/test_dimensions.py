@@ -133,13 +133,12 @@ def test_table_object_builder_does_build_with_dimension_level_data_from_grouped_
 
 
 def test_if_dimension_has_chart_download_chart_source_data(logged_in_rdu_user, test_app_client):
-    from tests.test_data.chart_and_table import chart, chart_source_data
+    from tests.test_data.chart_and_table import chart, chart_settings_and_source_data
 
     measure_version = MeasureVersionWithDimensionFactory(
         dimensions__title="Dimension title",
-        dimensions__chart=chart,
-        dimensions__chart_source_data=chart_source_data,
-        dimensions__chart_2_source_data=chart_source_data,
+        dimensions__dimension_chart__chart_object=chart,
+        dimensions__dimension_chart__settings_and_source_data=chart_settings_and_source_data,
         dimensions__dimension_chart__classification=ClassificationFactory(id="2A"),
         dimensions__dimension_chart__includes_parents=False,
         dimensions__dimension_chart__includes_all=True,
@@ -180,22 +179,25 @@ def test_if_dimension_has_chart_download_chart_source_data(logged_in_rdu_user, t
 
 
 def test_if_dimension_has_chart_and_table_download_table_source_data(logged_in_rdu_user, test_app_client):
-    from tests.test_data.chart_and_table import chart, chart_source_data, table, table_source_data
+    from tests.test_data.chart_and_table import (
+        chart,
+        chart_settings_and_source_data,
+        table,
+        table_settings_and_source_data,
+    )
 
     measure_version = MeasureVersionWithDimensionFactory(
         dimensions__title="Dimension title",
         # Chart
-        dimensions__chart=chart,
-        dimensions__chart_source_data=chart_source_data,
-        dimensions__chart_2_source_data=chart_source_data,
+        dimensions__dimension_chart__chart_object=chart,
+        dimensions__dimension_chart__settings_and_source_data=chart_settings_and_source_data,
         dimensions__dimension_chart__classification=ClassificationFactory(id="2A"),
         dimensions__dimension_chart__includes_parents=False,
         dimensions__dimension_chart__includes_all=True,
         dimensions__dimension_chart__includes_unknown=False,
         # Table
-        dimensions__table=table,
-        dimensions__table_source_data=table_source_data,
-        dimensions__table_2_source_data=table_source_data,
+        dimensions__dimension_table__table_object=table,
+        dimensions__dimension_table__settings_and_source_data=table_settings_and_source_data,
         dimensions__dimension_table__classification=ClassificationFactory(id="5A"),
         dimensions__dimension_table__includes_parents=True,
         dimensions__dimension_table__includes_all=False,

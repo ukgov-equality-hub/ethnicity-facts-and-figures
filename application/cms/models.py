@@ -571,6 +571,7 @@ class Dimension(db.Model):
     updated_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
 
     # TODO: Delete these once chart and table data has been copied over and code updated to look in Chart and Table
+    #       Don't forget to update the FactoryBoy models and the to_dict() method at the same time
     chart = db.Column(JSON)
     chart_builder_version = db.Column(db.Integer)
     chart_source_data = db.Column(JSON)
