@@ -167,6 +167,7 @@ def measure_version(topic_slug, subtopic_slug, measure_slug, version):
         static_mode=get_bool(request.args.get("static_mode", False)),
     )
 
+
 @static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/dimension-<dimension_number>")
 @login_required
 def measure_version_dimension(topic_slug, subtopic_slug, measure_slug, version, dimension_number):
@@ -244,6 +245,7 @@ def measure_version_data_sources(topic_slug, subtopic_slug, measure_slug, versio
         section="data_sources",
         static_mode=get_bool(request.args.get("static_mode", False)),
     )
+
 
 @static_site_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/methodology")
 @login_required
