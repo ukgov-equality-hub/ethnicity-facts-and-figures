@@ -1,0 +1,21 @@
+/* Single stats with a description */
+.eff-stat {
+  background-color: #BFC1C3;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 20px;
+  min-height: 80px;
+}
+
+.eff-stat span {
+  display: block;
+}
+
+.eff-stat__figure {
+  @include govuk-font(48, $weight: bold);
+}
+
+.eff-stat__description {
+  @include govuk-font(19);
+}

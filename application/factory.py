@@ -12,6 +12,7 @@ from raven.contrib.flask import Sentry
 
 from application import csrf, db, mail
 from application.auth.models import User
+from application.auth.forms import LoginForm
 from application.data.standardisers.ethnicity_classification_finder_builder import (
     ethnicity_classification_finder_from_file,
 )
@@ -99,7 +100,7 @@ def create_app(config_object):
 
     # Note not using Flask-Security role model
     user_datastore = SQLAlchemyUserDatastore(db, User, None)
-    Security(app, user_datastore)
+    Security(app, user_datastore, login_form=LoginForm)
 
     if os.environ.get("SENTRY_DSN") is not None:
         Sentry(app, dsn=os.environ["SENTRY_DSN"])

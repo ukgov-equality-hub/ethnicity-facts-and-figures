@@ -1,22 +1,24 @@
 {% macro render_breadcrumbs(breadcrumbs) %}
   {% if breadcrumbs or breadcrumbs is not defined %}
-    <div class="grid-row">
-      <div class="column-full">
-        <nav class="" aria-label="You are here:" role="navigation">
-          <ol class='breadcrumbs'>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+
+        <div class="govuk-breadcrumbs">
+          <ol class="govuk-breadcrumbs__list">
             {% if breadcrumbs %}
               {% for breadcrumb in breadcrumbs %}
-              <li>
-                  <a href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a>
+              <li class="govuk-breadcrumbs__list-item">
+                  <a class="govuk-breadcrumbs__link" href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a>
               </li>
               {% endfor %}
             {% else %}
             <li>
-              <a href="{{ url_for('static_site.index') }}">Ethnicity facts and figures</a>
+              <a class="govuk-breadcrumbs__list-item" href="{{ url_for('static_site.index') }}">Ethnicity facts and figures</a>
             </li>
             {% endif %}
           </ol>
-        </nav>
+        </div>
+
       </div>
     </div>
   {% endif %}

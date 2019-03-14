@@ -25,7 +25,7 @@
     {% endif %}
 {% endblock %}
 
-{% block mainElementDefinition %}<main id="content" itemscope itemtype="http://schema.org/NewsArticle">{% endblock %}
+{% block mainAttributes %}itemscope itemtype="http://schema.org/NewsArticle"{% endblock %}
 
 {% block content %}
   <meta itemprop="image" content="https://www.ethnicity-facts-figures.service.gov.uk/static/images/opengraph-image.png" />
@@ -38,10 +38,10 @@
 
   {% if not static_mode and not preview %}
     {% call status_banner(sticky=False) %}
-      <div class="version-info left">
+      <div class="left">
           <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure_version.version }}{% endif %}</b></span>
       </div>
-      <div class="centre">
+      <div>
           <span class="info" id="status">Status:&nbsp;<b>
               {% if measure_version.published == True and measure_version.status == "APPROVED" %}
                   Published
@@ -54,7 +54,7 @@
             <span class="info"><a href="{{ url_for('cms.list_measure_versions',
                                   topic_slug=topic_slug,
                                   subtopic_slug=subtopic_slug,
-                                  measure_slug=measure_version.measure.slug)}}">Version history</a></span>
+                                  measure_slug=measure_version.measure.slug)}}" class="govuk-link">Version history</a></span>
 
           {% endif %}
 
@@ -67,7 +67,7 @@
              topic_slug=topic_slug,
              subtopic_slug=subtopic_slug,
              measure_slug=measure_version.measure.slug,
-             version=measure_version.version) }}">Export</a>
+             version=measure_version.version) }}" class="govuk-link">Export</a>
         </span>
 
         <span class="info">
@@ -75,7 +75,7 @@
 
             {% if measure_version.status == 'APPROVED' %}
               {% if current_user.is_authenticated and current_user.can(CREATE_VERSION) %}
-                <a class="button" href="{{ url_for('cms.new_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">
+                <a class="govuk-button" href="{{ url_for('cms.new_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">
                   Update
                 </a>
               {% endif %}
@@ -84,7 +84,7 @@
            topic_slug=topic_slug,
            subtopic_slug=subtopic_slug,
            measure_slug=measure_version.measure.slug,
-           version=measure_version.version) }}" class="button">Edit</a>
+           version=measure_version.version) }}" class="govuk-button">Edit</a>
             {% endif %}
           {% endif %}
         </span>
@@ -92,7 +92,7 @@
         {% if measure_version.status == 'DRAFT' %}
 
 
-          <a class="button delete" href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Delete</a>
+          <a class="govuk-button eff-button--destructive" href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Delete</a>
 
         {% endif %}
       </div>
@@ -101,9 +101,9 @@
 
 
 
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-large" itemprop="headline">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l" itemprop="headline">
         {{ measure_version.title }}
       </h1>
     </div>
@@ -111,8 +111,8 @@
 
   {% if version != 'latest' %}
     <div class="old-edition-notice">
-      <h2 class="heading-large">There is a new version of this page</h2>
-      <p>View the <a href="{{ url_for('static_site.measure_version',
+      <h2 class="govuk-heading-l">There is a new version of this page</h2>
+      <p class="govuk-body">View the <a class="govuk-link" href="{{ url_for('static_site.measure_version',
                             topic_slug=topic_slug,
                             subtopic_slug=subtopic_slug,
                             measure_slug=measure_version.measure.slug,
@@ -120,8 +120,8 @@
     </div>
   {% endif %}
 
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
       <div class="metadata">
         <dl>
           {% if measure_version.primary_data_source and measure_version.primary_data_source.publisher %}
@@ -139,14 +139,14 @@
 
           {% if measure_version.version != '1.0' and measure_version.published_at %}
             <dt>Last updated:</dt>
-            <dd><time itemprop="dateModified" datetime="{{ measure_version.published_at | format_iso8601_date }}">{{ measure_version.published_at | format_friendly_date }}</time>, <a href="#history">see all updates</a>
+            <dd><time itemprop="dateModified" datetime="{{ measure_version.published_at | format_iso8601_date }}">{{ measure_version.published_at | format_friendly_date }}</time>, <a class="govuk-link" href="#history">see all updates</a>
             </dd>
           {% endif %}
 
           {% if measure_version.primary_data_source %}
           <dt>Source:</dt>
           <dd>
-            <a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_version.primary_data_source.title }}">
+            <a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_version.primary_data_source.title }}">
               {{ measure_version.primary_data_source.title }}
             </a>
           </dd>
@@ -171,83 +171,68 @@
     </div>
   </div>
 
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <p>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <p class="govuk-body">
         The main facts and figures show that:
       </p>
         {% if measure_version.summary %}
-            <div class="bullets spaced-out">
+            <div class="eff-summary--with-bullets-spaced-out">
                 {{ measure_version.summary | render_markdown }}
             </div>
         {% endif %}
 
 
       {% if measure_version.need_to_know %}
-      <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Things you need to know" class="normalize">
-        <summary>
-          <span id="things-you-need-to-know" class="summary">
+      <details class="govuk-details govuk-!-margin-bottom-0" data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Things you need to know" class="normalize">
+        <summary class="govuk-details__summary">
+          <span id="things-you-need-to-know" class="govuk-details__summary-text">
             Things you need to know
           </span>
         </summary>
-        <div class="panel panel-border-narrow">
+        <div class="govuk-details__text">
             {{ measure_version.need_to_know | render_markdown  }}
         </div>
-        <noscript>
-          <div>
-            {{ measure_version.need_to_know | render_markdown  }}
-          </div>
-        </noscript>
       </details>
       {% endif %}
 
       {% if measure_version.measure_summary %}
-      <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="What the data measures" class="normalize">
-        <summary>
-          <span id="what-the-data-measures" class="summary">
+      <details class="govuk-details govuk-!-margin-bottom-0" data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="What the data measures" class="normalize">
+        <summary class="govuk-details__summary">
+          <span id="what-the-data-measures" class="govuk-details__summary-text">
             What the data measures
           </span>
         </summary>
-        <div class="panel panel-border-narrow" itemprop="description">
+        <div class="govuk-details__text" itemprop="description">
             {{ measure_version.measure_summary | render_markdown  }}
         </div>
-        <noscript>
-          <div>
-            {{ measure_version.measure_summary | render_markdown  }}
-          </div>
-        </noscript>
       </details>
       {% endif %}
 
       {% if measure_version.ethnicity_definition_summary %}
-      <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="The ethnic categories used in this data" class="normalize">
-        <summary>
-          <span id="the-ethnic-categories-used-in-this-data" class="summary">
+      <details class="govuk-details" data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="The ethnic categories used in this data" class="normalize">
+        <summary class="govuk-details__summary">
+          <span id="the-ethnic-categories-used-in-this-data" class="govuk-details__summary-text">
             The ethnic categories used in this data
           </span>
         </summary>
-        <div class="panel panel-border-narrow">
+        <div class="govuk-details__text">
             {{ measure_version.ethnicity_definition_summary | render_markdown  }}
-          <p><a href="{{ url_for('static_site.ethnicity_in_the_uk') }}">Ethnic groups and how data on ethnicity is collected</a></p>
+          <p class="govuk-body"><a class="govuk-link" href="{{ url_for('static_site.ethnicity_in_the_uk') }}">Ethnic groups and how data on ethnicity is collected</a></p>
         </div>
-        <noscript>
-          <div id="ethnicity-definition" class="section-expandable-region">
-            {{ measure_version.ethnicity_definition_summary | render_markdown  }}
-          </div>
-        </noscript>
       </details>
       {% endif %}
     </div>
   </div>
 
-  <div class="grid-row">
+  <div class="govuk-grid-row">
       {% if measure_version.dimensions %}
           {% for dimension in dimensions %}
 
             {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
 
-              <div class="column-two-thirds">
-                  <h2 class="heading-medium" id="{{ dimension.title|slugify_value }}">{{ dimension.title }}</h2>
+              <div class="govuk-grid-column-two-thirds">
+                  <h2 class="govuk-heading-m" id="{{ dimension.title|slugify_value }}">{{ dimension.title }}</h2>
                   <div class="metadata">
                       <dl>
                           {% if measure_version.area_covered %}
@@ -265,7 +250,7 @@
                           {% if measure_version.primary_data_source %}
                               <dt>Source:</dt>
                               <dd>
-                                  <a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_version.primary_data_source.title }}">
+                                  <a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_version.primary_data_source.title }}">
                                       {{ measure_version.primary_data_source.title }}
                                   </a>
                               </dd>
@@ -273,11 +258,15 @@
                       </dl>
                   </div>
               </div>
+            </div>
 
               <div class="chart-and-footer">
-                <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
+                <div class="govuk-grid-row">
+                  <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
+                </div>
 
-                <div class="column-full chart-footer">
+                <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full chart-footer">
                   {% set chart_text_data = dimension.chart | flatten_chart %}
 
                   {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data %}
@@ -303,7 +292,7 @@
 
                     {% if chart_and_downloadable %}
                         <p class="chart-download">
-                            <a href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension.chart.title.text }}" class="download-png"
+                            <a class="govuk-link" href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension.chart.title.text }}" class="download-png"
                                id="download-{{ dimension.guid }}" data-title="{{ dimension.chart.title.text }}">
                                 Download chart (PNG)
                             </a>
@@ -311,9 +300,11 @@
                     {% endif %}
                 </div>
               </div>
+            </div>
 
+            <div class="govuk-grid-row">
               {% set tabular_download_viable = True if dimension.table else False %}
-              <div class="column-full"
+              <div class="govuk-grid-column-full"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
                   {% if dimension.table %}
                       {% include "static_site/_table.html" %}
@@ -321,10 +312,10 @@
                       {% if tabular_download_viable %}
                       <p class="chart-download">
                           {% if static_mode %}
-                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
+                              <a class="govuk-link" href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
                                  download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
                           {% else %}
-                              <a href="{{ url_for('static_site.dimension_file_table_download',
+                              <a class="govuk-link" href="{{ url_for('static_site.dimension_file_table_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
                                    measure_slug=measure_version.measure.slug,
@@ -333,10 +324,10 @@
                           {% endif %}
 
                           {% if static_mode %}
-                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
+                              <a class="govuk-link" href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
                                  data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% else %}
-                              <a href="{{ url_for('static_site.dimension_file_download',
+                              <a class="govuk-link" href="{{ url_for('static_site.dimension_file_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
                                    measure_slug=measure_version.measure.slug,
@@ -347,9 +338,11 @@
                     {% endif %}
                   {% endif %}
               </div>
-              <div class="column-two-thirds">
-                  <h3 class="heading-small">Summary</h3>
-                  <div class="bullets spaced-out">
+            </div>
+            <div class="govuk-grid-row">
+              <div class="govuk-grid-column-two-thirds">
+                  <h3 class="govuk-heading-s">Summary</h3>
+                  <div class="govuk-!-margin-bottom-8 eff-summary--with-bullets-spaced-out">
                     {{ dimension.summary | render_markdown }}
                   </div>
               </div>
@@ -357,49 +350,52 @@
       {% endif %}
   </div>
 
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <div class="accordion">
-        <div class="accordion-section">
-          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Methodology" class="accordion-section-header">
-            <h2 id="methodology" class="heading-medium">Methodology</h2>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <div class="govuk-accordion" data-module="accordion" id="mv-{{ measure_version.id }}">
+        <div class="govuk-accordion__section">
+          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Methodology" class="govuk-accordion__section-header">
+            <h2 id="methodology" class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="mv-{{ measure_version.id }}-methodology">
+                Methodology
+              </span>
+            </h2>
           </div>
 
-          <div class="accordion-section-body">
+          <div class="govuk-accordion__section-content" aria-labelledby="mv-{{ measure_version.id }}-methodology">
 
             {% if measure_version.methodology %}
-            <h3 class="heading-small">
+            <h3 class="govuk-heading-s">
               Methodology
             </h3>
               {{ measure_version.methodology | render_markdown  }}
             {% endif %}
 
             {% if measure_version.suppression_and_disclosure %}
-                <h3 class="heading-small">Suppression rules and disclosure control</h3>
+                <h3 class="govuk-heading-s">Suppression rules and disclosure control</h3>
               {{ measure_version.suppression_and_disclosure | render_markdown }}
             {% endif %}
 
             {% if measure_version.estimation %}
-                <h3 class="heading-small">Rounding</h3>
+                <h3 class="govuk-heading-s">Rounding</h3>
                 {{ measure_version.estimation  | render_markdown  }}
             {% endif %}
 
             {% if measure_version.related_publications %}
-              <h3 class="heading-small">Related publications</h3>
+              <h3 class="govuk-heading-s">Related publications</h3>
               {{ measure_version.related_publications | render_markdown }}
             {% endif %}
 
             {% if measure_version.qmi_url %}
-              <a href="{{ measure_version.qmi_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Quality and methodology information" data-event-label="{{ measure_version.title }}">Quality and methodology information</a>
+              <a class="govuk-body govuk-link" href="{{ measure_version.qmi_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Quality and methodology information" data-event-label="{{ measure_version.title }}">Quality and methodology information</a>
             {% endif %}
 
             {% if measure_version.further_technical_information %}
-            <h3 class="heading-small">
+            <h3 class="govuk-heading-s">
               Further technical information
             </h3>
-              {{ measure_version.further_technical_information  | render_markdown }}
+              {{ measure_version.further_technical_information | render_markdown }}
             {% endif %}
-
           </div>
         </div>
 
@@ -414,51 +410,55 @@
             <meta itemprop="name" content="Race Disparity Unit">
             <meta itemprop="url" content="https://www.gov.uk/government/organisations/race-disparity-unit">
           </div>
-        <div class="accordion-section">
+        <div class="govuk-accordion__section">
 
-          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Data sources" class="accordion-section-header">
-            <h2 id="data-sources" class="heading-medium">Data sources</h2>
+          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Data sources" class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="data-sources-heading">
+                Data sources
+              </span>
+            </h2>
           </div>
 
-          <div class="accordion-section-body">
+          <div class="govuk-accordion__section-content" id="data-sources-content" aria-labelledby="data-sources-heading">
             <div itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
-            <h3 class="heading-small">Source</h3>
-            <p itemprop="name"><a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.title }}" itemprop="url">
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Source</h3>
+            <p class="govuk-body" itemprop="name"><a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.title }}" itemprop="url">
                 {{ measure_version.primary_data_source.title }}</a>
             </p>
 
             {% if measure_version.primary_data_source %}
               {% if measure_version.primary_data_source.type_of_data %}
-              <h3 class="heading-small">Type of data</h3>
-              <p>{{ measure_version.primary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
+              <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of data</h3>
+              <p class="govuk-body">{{ measure_version.primary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
               {% endif %}
 
               {% if measure_version.primary_data_source.type_of_statistic %}
-                <h3 class="heading-small">Type of statistic</h3>
-                <p>{{ measure_version.primary_data_source.type_of_statistic.external }}</p>
+                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of statistic</h3>
+                <p class="govuk-body">{{ measure_version.primary_data_source.type_of_statistic.external }}</p>
               {% endif %}
 
               {% if measure_version.primary_data_source.publisher %}
-                <h3 class="heading-small">Publisher</h3>
-                <p itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><span itemprop="name">{{ measure_version.primary_data_source.publisher.name }}</span></p>
+                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publisher</h3>
+                <p class="govuk-body" itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><span itemprop="name">{{ measure_version.primary_data_source.publisher.name }}</span></p>
               {% endif %}
 
               {% if measure_version.primary_data_source.note_on_corrections_or_updates %}
-                <h3 class="heading-small">Note on corrections or updates</h3>
-                <p>{{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
+                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Note on corrections or updates</h3>
+                <p class="govuk-body">{{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
               {% endif %}
 
               {% if measure_version.primary_data_source.frequency_of_release %}
-                <h3 class="heading-small">Publication frequency</h3>
+                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publication frequency</h3>
                 {% if measure_version.primary_data_source.frequency_of_release.description == 'Other' %}
-                      {{ measure_version.primary_data_source.frequency_other }}
+                  <p class="govuk-body">{{ measure_version.primary_data_source.frequency_other }}</p>
                 {% else %}
-                    {{ measure_version.primary_data_source.frequency_of_release.description }}
+                  <p class="govuk-body">{{ measure_version.primary_data_source.frequency_of_release.description }}</p>
                 {% endif %}
               {% endif %}
 
               {% if measure_version.primary_data_source.purpose %}
-                  <h3 class="heading-small">Purpose of data source</h3>
+                  <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Purpose of data source</h3>
                   {{ measure_version.primary_data_source.purpose | render_markdown }}
               {% endif %}
             {% endif %}
@@ -466,40 +466,40 @@
             </div>
             {% if measure_version.secondary_data_source %}
               <div class="secondary-source" itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
-                <h3 class="heading-small">Secondary source</h3>
-                <p itemprop="name"><a href="{{ measure_version.secondary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.secondary_data_source.title }}" itemprop="url">
+                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Secondary source</h3>
+                <p class="govuk-body" itemprop="name"><a class="govuk-link" href="{{ measure_version.secondary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.secondary_data_source.title }}" itemprop="url">
                     {{ measure_version.secondary_data_source.title }}
                 </a></p>
 
                 {% if measure_version.secondary_data_source.type_of_data %}
-                 <h3 class="heading-small">Type of data</h3>
-                 <p>{{ measure_version.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
+                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of data</h3>
+                 <p class="govuk-body">{{ measure_version.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
                 {% endif %}
 
                 {% if measure_version.secondary_data_source.type_of_statistic %}
-                 <h3 class="heading-small">Type of statistic</h3>
-                 <p>{{ measure_version.secondary_data_source.type_of_statistic.external }}</p>
+                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of statistic</h3>
+                 <p class="govuk-body">{{ measure_version.secondary_data_source.type_of_statistic.external }}</p>
                 {% endif %}
 
                 {% if measure_version.secondary_data_source.publisher %}
-                  <h3 class="heading-small">Publisher</h3>
-                  <p itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><span itemprop="name">{{ measure_version.secondary_data_source.publisher.name }}</span></p>
+                  <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publisher</h3>
+                  <p class="govuk-body" itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><span itemprop="name">{{ measure_version.secondary_data_source.publisher.name }}</span></p>
                 {% endif %}
 
               {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
                 {% if measure_version.secondary_data_source.publication_date %}
-                  <h3 class="heading-small">Publication release date</h3>
-                  <p>{{ measure_version.secondary_data_source.publication_date }}</p>
+                  <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publication release date</h3>
+                  <p class="govuk-body">{{ measure_version.secondary_data_source.publication_date }}</p>
                 {% endif %}
               #}
 
                 {% if measure_version.secondary_data_source.note_on_corrections_or_updates %}
-                  <h3 class="heading-small">Note on corrections or updates</h3>
-                  <p>{{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
+                  <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Note on corrections or updates</h3>
+                  <p class="govuk-body">{{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
                 {% endif %}
 
                 {% if measure_version.secondary_data_source.frequency_of_release %}
-                  <h3 class="heading-small">Publication frequency</h3>
+                  <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publication frequency</h3>
                   {% if measure_version.secondary_data_source.frequency_of_release.description == 'Other' %}
                         {{ measure_version.secondary_data_source.frequency_of_release_other }}
                   {% else %}
@@ -508,7 +508,7 @@
                 {% endif %}
 
                 {% if measure_version.secondary_data_source.purpose %}
-                  <h3 class="heading-small">Purpose of data source</h3>
+                  <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Purpose of data source</h3>
                   {{ measure_version.secondary_data_source.purpose | render_markdown }}
                 {% endif %}
               </div>
@@ -519,12 +519,16 @@
 
         </div>
 
-        <div class="accordion-section">
-          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Download the data" class="accordion-section-header">
-            <h2 id="download-the-data" class="heading-medium">Download the data</h2>
+        <div class="govuk-accordion__section">
+          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Download the data" class="govuk-accordion__section-header">
+            <h2 id="download-the-data" class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="download-the-data-heading">
+                Download the data
+              </span>
+            </h2>
           </div>
 
-          <div class="accordion-section-body downloads">
+          <div class="govuk-accordion__section-content downloads" aria-labelledby="download-the-data-heading">
             <div itemprop="license" itemscope itemtype="http://schema.org/CreativeWork">
               <meta itemprop="url" content="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">
               <meta itemprop="name" content="Open Government Licence">
@@ -549,7 +553,7 @@
                   <meta itemprop="encodingFormat" content="text/csv">
                   <meta itemprop="contentSize" content="{{ file.size|filesize }}">
                   <meta itemprop="name" content="{{ file.title | striptags }}">
-                  <a itemprop="contentUrl" href="{{ measure_version_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
+                  <a class="govuk-link govuk-!-font-size-19" itemprop="contentUrl" href="{{ measure_version_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
                         {{ file.title }}
                         {{ " - Spreadsheet " if file.extension() == "csv" }}
                         {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
@@ -558,14 +562,14 @@
                         {{ file.size|filesize }}
                   </a>
                   {% if file.description %}
-                    <p>{{ file.description }}</p>
+                    <p class="govuk-body">{{ file.description }}</p>
                   {% else %}
                     <br />
                   {% endif %}
                 </div>
               {% endif %}
             {% endfor %}
-            <button class="js--print print-btn" data-on="click" data-event-category="Page printed" data-event-action="Link clicked">Print this page</button>
+            <button class="js--print govuk-link print-btn" data-on="click" data-event-category="Page printed" data-event-action="Link clicked">Print this page</button>
           </div>
         </div>
 
@@ -579,7 +583,7 @@
       </div>
     </div>
 
-      <div class="govuk-document-footer">
+      <div class="eff-document-footer">
 
         <div class="history-information" id="history">
 
@@ -602,11 +606,15 @@
 
           <div class="change-notes">
 
-            <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Full page history" class="normalize" class="full-page-history">
-              <summary>full page history</summary>
+            <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Full page history" class="govuk-details" class="">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text eff-document-footer__full_history_summary_text">
+                  full page history
+                </span>
+              </summary>
 
-              <div class="" id="full-history" aria-live="polite" role="region"><span class="arrow"></span>
-                <ol>
+              <div class="eff-document-footer__full_history_body" id="full-history" aria-live="polite" role="region">
+                <ol class="govuk-list">
                 {% set current_edit_summary = measure_version.external_edit_summary %}
                 {% if measure_version.published_at %}
                     {% set publish_date = measure_version.published_at|format_friendly_date %}
@@ -656,10 +664,10 @@
             <div class="previous-editions">
               Previous {{ "editions" if version_count > 1 else "edition" }}:
 
-              <ol>
+              <ol class="govuk-list">
                 {% for page_version in versions %}
                     <li>
-                        <a href="{{ url_for('static_site.measure_version',
+                        <a class="govuk-link" href="{{ url_for('static_site.measure_version',
                             topic_slug=topic_slug,
                             subtopic_slug=subtopic_slug,
                             measure_slug=page_version.measure.slug,
@@ -692,8 +700,8 @@
       if(chartObject) {
           // code writes title as html and creates sub-container
           var chartContainer = 'chart_' + dimensions[d].guid;
-          var chartHtml = '<div class="column-full">';
-          chartHtml = chartObject.title.text ? chartHtml + '<h3 class="heading-small">' + chartObject.title.text + '</h3>': chartHtml;
+          var chartHtml = '<div class="govuk-grid-column-full">';
+          chartHtml = chartObject.title.text ? chartHtml + '<h3 class="govuk-heading-s">' + chartObject.title.text + '</h3>': chartHtml;
           chartHtml = chartHtml + '<div id="' + chartContainer + '_image"></div>';
           chartHtml = chartHtml + '</div>';
           $('#' + chartContainer).html(chartHtml);

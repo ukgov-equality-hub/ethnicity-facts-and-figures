@@ -273,7 +273,7 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
     suppression_and_disclosure = page.find("div", attrs={"id": "suppression-and-disclosure"})
     assert suppression_and_disclosure.text.strip() == "Suppression rules and disclosure control"
 
-    data_source_details = page.find("h1", attrs={"id": "data-sources"})
+    data_source_details = page.find("h2", attrs={"id": "data-sources"})
     assert data_source_details.text.strip() == "Data sources"
 
     primary_source = page.find("div", attrs={"id": "primary-source-title"})
@@ -532,9 +532,9 @@ def test_view_measure_page(test_app_client, logged_in_rdu_user):
     assert methodology_headings[3].text.strip() == "Related publications"
 
     # data sources accordion
-    data_source_details = page.find("h2", attrs={"id": "data-sources"})
+    data_source_details = page.find("span", attrs={"id": "data-sources-heading"})
     assert data_source_details.text.strip() == "Data sources"
-    data_source_headings = data_source_details.parent.parent.find_all("h3")
+    data_source_headings = data_source_details.parent.parent.parent.find_all("h3")
     assert data_source_headings[0].text.strip() == "Source"
     assert data_source_headings[1].text.strip() == "Type of data"
     assert data_source_headings[2].text.strip() == "Type of statistic"

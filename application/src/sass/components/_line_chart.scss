@@ -1,0 +1,13 @@
+
+/* Line chart component
+ *
+ * Use this to illustrate how a data changes over time.
+ *
+ * TODO: convert stroke width and colours from inline attributes
+ * to stylesheet controlled.
+ */
+.eff-line-chart {
+  text {
+    @include govuk-font(19);
+  }
+}

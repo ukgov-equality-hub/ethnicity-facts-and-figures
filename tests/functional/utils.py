@@ -1,5 +1,7 @@
 from random import shuffle
 
+import selenium
+
 from tests.functional.pages import HomePage, LogInPage, MeasureCreatePage, MeasureEditPage, TopicPage
 from tests.utils import get_page_with_title
 
@@ -98,10 +100,14 @@ def navigate_to_edit_page(driver, live_server, topic, subtopic, measure):
 
     driver.find_element_by_link_text(topic.title).click()
 
-    # Open the accordion section for the sub-topic
-    driver.find_element_by_xpath(f"//h2[normalize-space(text())='{subtopic.title}']").click()
+    try:
+        # Accordion might already be open - let's try to click the measure immediately.
+        driver.find_element_by_link_text(measure.title).click()
 
-    driver.find_element_by_link_text(measure.title).click()
+    except selenium.common.exceptions.NoSuchElementException:
+        # Accordion is probably closed; open it and then try to click the measure again.
+        driver.find_element_by_xpath(f"//button[normalize-space(text())='{subtopic.title}']").click()
+        driver.find_element_by_link_text(measure.title).click()
 
     driver.find_element_by_link_text("Edit").click()
 

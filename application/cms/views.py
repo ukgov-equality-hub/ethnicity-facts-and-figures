@@ -29,7 +29,7 @@ from application.cms.models import NewVersionType
 from application.cms.models import publish_status, Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
-from application.cms.utils import copy_form_errors, flash_message_with_form_errors, get_data_source_forms
+from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data
 from application.data.charts import ChartObjectDataBuilder
 from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
 from application.data.tables import TableObjectDataBuilder
@@ -314,12 +314,6 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             current_app.logger.info(e)
             flash(str(e), "error")
 
-    if measure_version_form.errors or data_source_form.errors or data_source_2_form.errors:
-        flash_message_with_form_errors(
-            lede="This page could not be saved. Please check for errors below:",
-            forms=(measure_version_form, data_source_form, data_source_2_form),
-        )
-
     current_status = measure_version.status
     available_actions = measure_version.available_actions()
     if "APPROVE" in available_actions:
@@ -357,6 +351,9 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "diffs": diffs,
         "organisations_by_type": Organisation.select_options_by_type(),
         "topics": page_service.get_topics(include_testing_space=True),
+        "error_summary": get_error_summary_data(
+            title="This page could not be saved.", forms=[measure_version_form, data_source_form, data_source_2_form]
+        ),
     }
 
     return render_template("cms/edit_measure_version.html", **context)
@@ -396,7 +393,7 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
                     "form": form,
                     "topic": topic,
                     "subtopic": subtopic,
-                    "measure": measure_version.measure,
+                    "measure": measure,
                     "measure_version": measure_version,
                 }
                 return render_template("cms/create_upload.html", **context)
@@ -415,7 +412,7 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
         "form": form,
         "topic": topic,
         "subtopic": subtopic,
-        "measure": measure_version.measure,
+        "measure": measure,
         "measure_version": measure_version,
     }
     return render_template("cms/create_upload.html", **context)
@@ -485,11 +482,6 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             copy_form_errors(from_form=data_source_form_to_validate, to_form=data_source_form)
             copy_form_errors(from_form=data_source_2_form_to_validate, to_form=data_source_2_form)
 
-            flash_message_with_form_errors(
-                lede="Cannot submit for review, please see errors below:",
-                forms=(measure_version_form, data_source_form, data_source_2_form),
-            )
-
             if invalid_dimensions:
                 for invalid_dimension in invalid_dimensions:
                     message = (
@@ -518,6 +510,10 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 "next_approval_state": approval_state if "APPROVE" in available_actions else None,
                 "organisations_by_type": Organisation.select_options_by_type(),
                 "topics": page_service.get_topics(include_testing_space=True),
+                "error_summary": get_error_summary_data(
+                    title="Cannot submit for review.",
+                    forms=[measure_version_form, data_source_form, data_source_2_form],
+                ),
             }
 
             return render_template("cms/edit_measure_version.html", **context)

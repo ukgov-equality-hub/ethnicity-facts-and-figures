@@ -6,19 +6,23 @@ Naming convention follows https://design-system.service.gov.uk/styles/spacing/
 
 */
 
-.eff-\!-margin-top-0 {
-  margin-top: 0;
-}
-
-.eff-\!-padding-bottom-40 {
-  padding-bottom: 40px;
-}
-
 /* Overrides for specific colours */
-.background-light-blue {
-  background-color: $light-blue;
+.eff-\!-background-light-blue {
+  background-color: govuk-colour("light-blue");
 }
 
-.background-turquoise {
-  background-color: $turquoise;
+.eff-\!-background-turquoise {
+  background-color: govuk-colour("turquoise");
+}
+
+.eff-\!-grey-1 {
+  color: govuk-colour("grey-1");
+}
+
+
+.eff-\!-fill-width {
+  width: 100%;
+  width: -moz-available;
+  width: -webkit-fill-available;
+  width: fill-available;
 }

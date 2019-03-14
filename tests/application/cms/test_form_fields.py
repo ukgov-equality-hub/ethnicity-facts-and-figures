@@ -14,6 +14,7 @@ from application.cms.form_fields import (
     RDUStringField,
     RDUTextAreaField,
     RDUURLField,
+    RDUPasswordField,
 )
 
 
@@ -126,6 +127,13 @@ class TestRDURadioField:
         assert doc.xpath("//legend")
         assert "radio_field" in doc.xpath("//legend")[0].text
 
+    def test_legend_class_is_rendered(self):
+        # TODO: I really test FormGroups, not just radio fields. should be split out into separate test class for them.
+        doc = html.fromstring(self.form.radio_field(legend_class="govuk-!-font-weight-bold"))
+
+        assert doc.xpath("//legend")
+        assert doc.xpath("//legend/@class")[0] == "govuk-fieldset__legend govuk-!-font-weight-bold"
+
     def test_radio_choices_are_rendered(self):
         doc = html.fromstring(self.form.radio_field())
 
@@ -235,6 +243,59 @@ class TestRDUStringField:
 
         assert self.form.string_field.data == "   blah   "
         assert self.form.string_field_strip.data == "blah"
+
+
+class TestRDUPasswordField:
+    class FormForTest(FlaskForm):
+        password_field = RDUPasswordField(label="password_field", hint="password_field hint")
+        password_field_invalid = RDUPasswordField(
+            label="password_field", hint="password_field hint", validators=[DataRequired(message="failed validation")]
+        )
+
+    def setup(self):
+        self.form = self.FormForTest()
+
+    def teardown(self):
+        self.form = None
+
+    def test_label_is_rendered(self):
+        doc = html.fromstring(self.form.password_field())
+
+        assert doc.xpath("//label")
+
+    def test_input_element_is_rendered(self):
+        doc = html.fromstring(self.form.password_field())
+
+        assert doc.xpath("//input[@type='password']")
+
+    def test_hint_is_rendered_if_no_errors(self):
+        doc = html.fromstring(self.form.password_field())
+
+        assert not self.form.password_field.errors
+        assert doc.xpath("//*[text()='password_field hint']")
+
+    def test_hint_is_still_rendered_when_field_has_errors(self):
+        self.form.validate()
+        doc = html.fromstring(self.form.password_field_invalid())
+
+        assert self.form.password_field_invalid.errors
+        assert doc.xpath("//*[text()='password_field hint']")
+
+    def test_error_message_rendered_if_field_fails_validation(self):
+        self.form.validate()
+        doc = html.fromstring(self.form.password_field_invalid())
+
+        assert self.form.password_field_invalid.errors
+        assert doc.xpath("//*[text()='failed validation']")
+
+    def test_can_populate_object_with_data_from_field(self):
+        formdata = ImmutableMultiDict({"password_field": "some data"})
+        self.form.process(formdata=formdata)
+        obj = mock.Mock()
+
+        self.form.populate_obj(obj)
+
+        assert obj.password_field == "some data"
 
 
 class TestRDUURLField:
@@ -349,15 +410,18 @@ class TestRDUTextAreaField:
 
         assert len(character_count_element) == 1
         assert character_count_element[0].text == "Please try to keep within 130 characters."
-        assert character_count_element[0].get("class") == "govuk-hint govuk-character-count__message"
+        assert {"govuk-hint", "govuk-character-count__message"} <= set(
+            character_count_element[0].get("class", "").split()
+        )
         assert character_count_element[0].get("aria-live") == "polite"
 
     def test_character_count_javascript_is_enabled(self):
         doc = html.fromstring(self.form.textarea_field())
 
-        textarea = doc.xpath("//textarea")[0]
+        govuk_char_count_element = doc.xpath("//*[@class='govuk-character-count']")
+        assert len(govuk_char_count_element) == 1
+        assert govuk_char_count_element[0].get("data-module") == "character-count"
+        assert govuk_char_count_element[0].get("data-maxlength") == "130"
 
-        assert doc.get("class") == "govuk-character-count"
-        assert doc.get("data-module") == "character-count"
-        assert doc.get("data-maxlength") == "130"
-        assert textarea.get("class") == "govuk-textarea  js-character-count"
+        textarea = doc.xpath("//textarea")[0]
+        assert {"govuk-textarea", "js-character-count"} <= set(textarea.get("class", "").split())

@@ -39,7 +39,7 @@ function drawTable(container_id, tableObject) {
 function simpleHtmlTable(container_id, tableObject) {
 
     var table_html = "";
-    table_html = table_html + "<table class='table table-sm'>";
+    table_html = table_html + "<table class='govuk-table eff-table--dense'>";
     table_html = appendSimpleTableHeader(table_html, tableObject);
     table_html = appendSimpleTableBody(table_html, tableObject);
     table_html = table_html + "</table>";
@@ -52,35 +52,35 @@ function simpleHtmlTable(container_id, tableObject) {
 function appendSimpleTableHeader(table_html, tableObject) {
     var header_html = "";
     if (tableObject['category_caption'] == null) {
-        header_html = "<thead><tr><td></td>";
+        header_html = "<thead class='govuk-table__head'><tr class='govuk-table__row'><td></td>";
     } else {
-        header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
+        header_html = "<thead class='govuk-table__head'><tr class='govuk-table__row'><th class='govuk-table__header' scope='col'>" + tableObject.category_caption + "</th>";
     }
 
     _.forEach(tableObject.columns, function (column) {
-        header_html = header_html + '<th>' + column + '</th>';
+        header_html = header_html + '<th class="govuk-table__header" scope="col">' + column + '</th>';
     });
-    header_html = header_html + "</tr></thead>"
+    header_html = header_html + '</tr></thead>';
     return table_html + header_html;
 }
 
 function appendSimpleTableBody(table_html, tableObject) {
-    var body_html = "<tbody>";
+    var body_html = "<tbody class='govuk-table__body'>";
     _.forEach(tableObject.data, function (item) {
-        body_html = body_html + "<tr>";
+        body_html = body_html + "<tr class='govuk-table__row'>";
         if (tableObject.parent_child) {
             if (item.relationships.is_parent) {
-                body_html = body_html + '<th class="parent_row">'
+                body_html = body_html + '<th class="govuk-table__header parent_row" scope="row">'
             } else {
-                body_html = body_html + '<th class="child_row">'
+                body_html = body_html + '<th class="govuk-table__header child_row" scope="row">'
             }
         } else {
-            body_html = body_html + '<th>'
+            body_html = body_html + '<th class="govuk-table__header" scope="row">'
         }
         body_html = body_html + item.category + '</th>';
 
         _.forEach(item.values, function (cellValue) {
-            body_html = body_html + '<td>' + cellValue + '</td>';
+            body_html = body_html + '<td class="govuk-table__cell">' + cellValue + '</td>';
         });
         body_html = body_html + "</tr>";
     });
@@ -99,7 +99,7 @@ function appendSimpleTableBody(table_html, tableObject) {
 function groupedHtmlTable(container_id, tableObject) {
 
     var table_html = "";
-    table_html = table_html + "<table class='table table-sm'>";
+    table_html = table_html + "<table class='govuk-table eff-table--dense'>";
     table_html = appendGroupTableHeader(table_html, tableObject);
     table_html = appendGroupedTableBody(table_html, tableObject)
     table_html = table_html + "</table>";
@@ -113,28 +113,28 @@ function groupedHtmlTable(container_id, tableObject) {
 
 
 function appendGroupedTableBody(table_html, tableObject) {
-    var body_html = '<tbody>';
+    var body_html = '<tbody class="govuk-table__body">';
 
     var items = _.sortBy(tableObject.groups[0].data, function (item) { return item.order; });
 
     _.forEach(items, function (item) {
         var row = item.category;
-        var row_html = '<tr>';
+        var row_html = '<tr class="govuk-table__row">';
         if (tableObject.parent_child) {
             if (item.relationships.is_parent) {
-                row_html = row_html + '<th class="parent_row">'
+                row_html = row_html + '<th class="govuk-table__header parent_row" scope="row">'
             } else {
-                row_html = row_html + '<th class="child_row">'
+                row_html = row_html + '<th class="govuk-table__header child_row" scope="row">'
             }
         } else {
-            row_html = row_html + '<th>'
+            row_html = row_html + '<th class="govuk-table__header" scope="row">'
         }
         row_html = row_html + row + '</th>';
 
         _.forEach(tableObject.groups, function (group) {
             var row_item = _.findWhere(group.data, { 'category': row });
             _.forEach(row_item.values, function (cellValue) {
-                row_html = row_html + '<td>' + cellValue + '</td>';
+                row_html = row_html + '<td class="govuk-table__cell">' + cellValue + '</td>';
             });
         });
         row_html = row_html + '</tr>';
@@ -156,9 +156,9 @@ function appendGroupTableHeader(table_html, tableObject) {
 
     var header_html = '';
     if (doSecondRow || tableObject['category_caption'] == null) {
-        header_html = "<thead><tr><td></td>";
+        header_html = "<thead class='govuk-table__head'><tr class='govuk-table__row'><td></td>";
     } else {
-        header_html = "<thead><tr><th>" + tableObject.category_caption + "</th>";
+        header_html = "<thead class='govuk-table__head'><tr class='govuk-table__row'><th class='govuk-table__header' scope='col'>" + tableObject.category_caption + "</th>";
     }
 
     // Add a row with titles for each group
@@ -171,14 +171,14 @@ function appendGroupTableHeader(table_html, tableObject) {
     if (doSecondRow) {
         // category_caption should go in the second row if there is one
         if (tableObject['category_caption'] != null) {
-            header_html = header_html + "<tr><th>" + tableObject.category_caption + "</th>";
+            header_html = header_html + "<tr class='govuk-table__row'><th class='govuk-table__header'>" + tableObject.category_caption + "</th>";
         } else {
-            header_html = header_html + '<tr><td></td>';
+            header_html = header_html + '<tr class="govuk-table__row"><td></td>';
         }
 
         _.forEach(tableObject.groups, function (group) {
             _.forEach(tableObject.columns, function (column) {
-                header_html = header_html + '<th>' + column + '</th>';
+                header_html = header_html + '<th class="govuk-table__header">' + column + '</th>';
             });
         });
         header_html = header_html + '</tr>';
@@ -220,5 +220,5 @@ function insertTableFooter(table_html, tableObject) {
 }
 
 function multicell_th(text, total_cells) {
-    return '<th colspan=' + total_cells + '>' + text + '</th>';
+    return '<th class="govuk-table__header" scope="col" colspan=' + total_cells + '>' + text + '</th>';
 }

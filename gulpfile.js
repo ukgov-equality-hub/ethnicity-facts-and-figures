@@ -129,7 +129,7 @@ gulp.task('manifest-js', function () {
 });
 
 gulp.task('manifest-css', function () {
-  return gulp.src(['./application/static/stylesheets/application.css', './application/static/stylesheets/cms.css'])
+  return gulp.src(['./application/static/stylesheets/application.css'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/stylesheets'))
     .pipe(rev.manifest())

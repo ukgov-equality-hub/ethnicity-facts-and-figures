@@ -1,0 +1,19 @@
+.metadata {
+  @include govuk-font(16);
+  padding-bottom: 40px;
+  dt {
+    float: left;
+    clear: left;
+    width: auto;
+    min-width: 120px;
+  }
+  a {
+    @include govuk-font(16);
+  }
+  dd {
+    display: table-cell;
+  }
+  p {
+    margin: 0;
+  }
+}

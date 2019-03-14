@@ -40,7 +40,7 @@ ErrorSummaryWithStickyBanner.prototype.init = function () {
     }
 }
 
-var $validationErrorBox = document.querySelector('.flash-message .alert-box.error');
+var $validationErrorBox = document.querySelector('.govuk-error-summary');
 var $stickyStatusBanner = document.querySelector('.status-banner.sticky-js');
 if ($validationErrorBox != null && $stickyStatusBanner != null) {
     new ErrorSummaryWithStickyBanner($validationErrorBox, $stickyStatusBanner).init();

@@ -1,0 +1,43 @@
+/* Reversed-out 'Phase Banner'
+
+  This is a version of the 'BETA' banner which is white-on-blue, for use on our homepage which starts with a
+  white-on-blue section.
+
+  Minimal adapted copy of the GOV.UK Frontend phase-banner component:
+  https://github.com/alphagov/govuk-frontend/blob/master/src/components/phase-banner/_phase-banner.scss
+ */
+
+.eff-phase-banner-container {
+  margin-top: -10px;
+  background-color: govuk-colour("blue");
+}
+
+.eff-phase-banner {
+  padding-top: govuk-spacing(2);
+  padding-bottom: govuk-spacing(2);
+  border-bottom: 0;
+}
+
+.eff-phase-banner__content {
+  @include govuk-font($size: 16);
+  @include govuk-text-colour;
+
+  display: table;
+  margin: 0;
+
+  color: govuk-colour("white");
+}
+
+.eff-phase-banner .govuk-link,
+.eff-phase-banner .govuk-link:visited {
+  color: govuk-colour("white");
+}
+
+.eff-phase-banner .govuk-tag {
+  color: govuk-colour("blue");
+  background-color: govuk-colour("white");
+}
+
+.eff-phase-banner__content__tag {
+  margin-right: govuk-spacing(2);
+}

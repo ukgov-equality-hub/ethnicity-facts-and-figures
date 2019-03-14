@@ -11,40 +11,40 @@
 
 {% block content %}
     <div class="progress">
-        <div class="progress__title heading-xlarge">
+        <div class="progress__title govuk-heading-xl">
             Planned pages
         </div>
-        <div class="progress__explanatory-text">
-            The dashboard shows what we are planning to publish and which new pages or updated versions we are working on now. You can also find out what we have <a href="{{ url_for('dashboards.whats_new') }}">recently published</a>.
+        <div class="govuk-body">
+            The dashboard shows what we are planning to publish and which new pages or updated versions we are working on now. You can also find out what we have <a class="govuk-link" href="{{ url_for('dashboards.whats_new') }}">recently published</a>.
         </div>
         <div class="progress__cards">
-            <div class="grid-row">
-                <div class="column-one-third">
-                    <div id='planned' class="progress-card progress-card--selected">
-                        <div id='planned-measures' class="progress-card__value font-xlarge">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-third">
+                    <div id="planned" class="govuk-body progress-card progress-card--selected">
+                        <div id="planned-measures" class="govuk-!-font-size-48">
                             {{ planned_count }}
                         </div>
-                        <div class="progress-card__text bold-small">
+                        <div class="govuk-!-font-weight-bold">
                             Planned
                         </div>
                     </div>
                 </div>
-                <div class="column-one-third">
-                    <div id='progress' class="progress-card progress-card--active">
-                        <div id='progress-measures' class="progress-card__value font-xlarge">
+                <div class="govuk-grid-column-one-third">
+                    <div id="progress" class="govuk-body progress-card progress-card--active">
+                        <div id="progress-measures" class="govuk-!-font-size-48">
                             {{ progress_count }}
                         </div>
-                        <div class="progress-card__text bold-small">
+                        <div class="govuk-!-font-weight-bold">
                             In progress
                         </div>
                     </div>
                 </div>
-                <div class="column-one-third">
-                    <div id='review' class="progress-card progress-card--active">
-                        <div id='review-measures' class="progress-card__value progress-card__value--review font-xlarge">
+                <div class="govuk-grid-column-one-third">
+                    <div id="review" class="govuk-body progress-card progress-card--active">
+                        <div id="review-measures" class="govuk-!-font-size-48">
                             {{ review_count }}
                         </div>
-                        <div class="progress-card__text bold-small">
+                        <div class="govuk-!-font-weight-bold">
                             Under review
                         </div>
                     </div>
@@ -53,24 +53,23 @@
         </div>
     </div>
 
-    <table id="measure-table" class="measure-table">
-
-        <thead>
-            <tr>
-                <th class="column-width-40" aria-sort="none">Page</th>
-                <th class="column-width-30" aria-sort="descending">Organisation</th>
-                <th class="column-width-15" aria-sort="none">Stage</th>
-                <th class="column-width-15" aria-sort="none">Type</th>
+    <table id="measure-table" class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header column-width-40" aria-sort="none">Page</th>
+                <th class="govuk-table__header column-width-30" aria-sort="none">Organisation</th>
+                <th class="govuk-table__header column-width-15" aria-sort="none">Stage</th>
+                <th class="govuk-table__header column-width-15" aria-sort="none">Type</th>
             </tr>
         </thead>
 
-        <tbody id='measure-table-body'>
+        <tbody class="govuk-table__body">
         {% for measure in measures %}
-            <tr class='measure-row {{ measure.stage }}'>
-                <td>{{ measure.name }}</td>
-                <td>{{ measure.department }}</td>
-                <td>{{ measure.list }}</td>
-                <td>{{ measure.type }}</td>
+            <tr class="govuk-table__row measure-row {{ measure.stage }}">
+                <td class="govuk-table__cell">{{ measure.name }}</td>
+                <td class="govuk-table__cell">{{ measure.department }}</td>
+                <td class="govuk-table__cell">{{ measure.list }}</td>
+                <td class="govuk-table__cell">{{ measure.type }}</td>
             </tr>
         {% endfor %}
         </tbody>
