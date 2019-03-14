@@ -241,7 +241,7 @@
                       <span class="form-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
                       {% include 'forms/extended_hints/_chart_and_table_title.html' %}
                         <textarea id="table_title" class="full-width" rows="2" data-module="autoresize no-newlines"
-                               {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.table_2_source_data %}{{ dimension.table_2_source_data.tableValues.table_title }}{% endif %}</textarea>
+                               {% if form_disabled %}disabled="disabled"{% endif %}>{{ dimension_table.title }}</textarea>
                     </div>
 
                     <h2 class="heading-medium builder-section-number">Preview</h2>
