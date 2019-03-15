@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_shared/_status_banner_macro.html" import status_banner %}
+{% from "_macros/_details.html" import govukDetails %}
 
 {% set breadcrumbs =
   [
@@ -183,17 +184,29 @@
         {% endif %}
 
 
+      {{ govukDetails(
+        summaryText= "Help with nationality",
+        text= "We need to know your nationality so we can work out which elections you’re entitled to vote in. If you cannot provide your nationality, you’ll have to send copies of identity documents through the post.",
+        attributes={
+          "style":"color: red;"
+        }
+      ) }}
+
+
       {% if measure_version.need_to_know %}
-      <details class="govuk-details govuk-!-margin-bottom-0" data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Things you need to know" class="normalize">
-        <summary class="govuk-details__summary">
-          <span id="things-you-need-to-know" class="govuk-details__summary-text">
-            Things you need to know
-          </span>
-        </summary>
-        <div class="govuk-details__text">
-            {{ measure_version.need_to_know | render_markdown  }}
-        </div>
-      </details>
+
+        {{ govukDetails(
+          summaryText= "Things you need to know",
+          text= measure_version.need_to_know | render_markdown,
+          classes="govuk-!-margin-bottom-0",
+          attributes={
+            "data-on":"click",
+            "data-event-category":"Disclosure",
+            "data-event-action":"Opened",
+            "data-event-label":"Things you need to know"
+          }
+        ) }}
+
       {% endif %}
 
       {% if measure_version.measure_summary %}
