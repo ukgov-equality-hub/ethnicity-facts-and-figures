@@ -591,8 +591,8 @@ class Dimension(db.Model):
     table_id = db.Column(db.Integer, ForeignKey("dimension_table.id", name="dimension_table_id_fkey"))
 
     # relationships
-    dimension_chart = db.relationship("Chart")
-    dimension_table = db.relationship("Table")
+    dimension_chart = db.relationship("Chart", back_populates="dimension")
+    dimension_table = db.relationship("Table", back_populates="dimension")
     measure_version = db.relationship("MeasureVersion", back_populates="dimensions")
     classification_links = db.relationship(
         "DimensionClassification", back_populates="dimension", lazy="dynamic", cascade="all,delete"
@@ -665,34 +665,6 @@ class Dimension(db.Model):
             db.session.delete(self.dimension_classification)
 
         db.session.commit()
-
-    # TODO: Refactor Dimension so that all chart and table data lives in dimension_chart and dimension_table
-    # Once the chart and table data is moved out into dimension_chart and dimension_table models we can add
-    # delete() to the ChartAndTableMixin so we can just do dimension.chart.delete() and dimension.table.delete()
-    # without the need for the repeated code in the two methods below.
-    def delete_chart(self):
-        if self.chart_id:
-            db.session.delete(Chart.query.get(self.chart_id))
-        self.chart = sqlalchemy.null()
-        self.chart_source_data = sqlalchemy.null()
-        self.chart_2_source_data = sqlalchemy.null()
-        self.chart_id = None
-
-        db.session.commit()
-
-        self.update_dimension_classification_from_chart_or_table()
-
-    def delete_table(self):
-        if self.table_id:
-            db.session.delete(Table.query.get(self.table_id))
-        self.table = sqlalchemy.null()
-        self.table_source_data = sqlalchemy.null()
-        self.table_2_source_data = sqlalchemy.null()
-        self.table_id = None
-
-        db.session.commit()
-
-        self.update_dimension_classification_from_chart_or_table()
 
     def to_dict(self):
         return {
@@ -892,6 +864,11 @@ class ChartAndTableMixin(object):
                 setattr(new_object, name, getattr(self, name))
         return new_object
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        self.dimension.update_dimension_classification_from_chart_or_table()
+
     def __str__(self):
         return (
             f"{self.id} {self.classification_id} "
@@ -905,14 +882,22 @@ class Chart(db.Model, ChartAndTableMixin):
     # metadata
     __tablename__ = "dimension_chart"
 
+    # fields
     chart_object = db.Column(JSON)
+
+    # relationships
+    dimension = db.relationship("Dimension", back_populates="dimension_chart", uselist=False)
 
 
 class Table(db.Model, ChartAndTableMixin):
     # metadata
     __tablename__ = "dimension_table"
 
+    # fields
     table_object = db.Column(JSON)
+
+    # relationships
+    dimension = db.relationship("Dimension", back_populates="dimension_table", uselist=False)
 
 
 class Organisation(db.Model):

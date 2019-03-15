@@ -497,7 +497,7 @@ class TestDimensionModel:
         assert dimension.dimension_classification is not None
 
         # When the chart is deleted
-        dimension.delete_chart()
+        dimension.dimension_chart.delete()
 
         # refresh the dimension from the database
         dimension = Dimension.query.get(dimension.guid)
@@ -541,7 +541,7 @@ class TestDimensionModel:
         assert dimension.dimension_classification.classification_id == "3A"
 
         # When the table is deleted
-        dimension.delete_table()
+        dimension.dimension_table.delete()
 
         # refresh the dimension from the database
         dimension = Dimension.query.get(dimension.guid)
