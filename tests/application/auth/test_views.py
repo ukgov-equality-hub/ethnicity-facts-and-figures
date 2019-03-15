@@ -28,7 +28,6 @@ from tests.models import UserFactory
         "/cms/topic-name/subtopic-name/measure/v2.0/upload",
         "/cms/topic-name/subtopic-name/measure/v2.0/dimension/new",
         "/cms/topic-name/subtopic-name/measure/v2.0/dimension/edit",
-        "/cms/topic-name/subtopic-name/measure/v2.0/dimension/chartbuilder",
         "/cms/topic-name/subtopic-name/measure/v2.0/dimension/create-chart",
         "/cms/topic-name/subtopic-name/measure/v2.0/dimension/create-table",
         "/cms/topic-name/subtopic-name/measure/versions",

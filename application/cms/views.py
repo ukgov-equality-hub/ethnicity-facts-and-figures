@@ -734,27 +734,6 @@ def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid,
     return render_template("cms/edit_dimension.html", **context), 400 if form.errors else 200
 
 
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/chartbuilder")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def chartbuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    return redirect(
-        url_for(
-            "cms.create_chart",
-            topic_slug=topic.slug,
-            subtopic_slug=subtopic.slug,
-            measure_slug=measure.slug,
-            version=measure_version.version,
-            dimension_guid=dimension_object.guid,
-        )
-    )
-
-
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-chart")
 @login_required
 @user_has_access
@@ -778,27 +757,6 @@ def __get_classification_finder_classifications():
     classification_collection = current_app.classification_finder.get_classification_collection()
     classifications = classification_collection.get_sorted_classifications()
     return [{"code": classification.get_id(), "name": classification.get_name()} for classification in classifications]
-
-
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/tablebuilder")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def tablebuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    return redirect(
-        url_for(
-            "cms.create_table",
-            topic_slug=topic.slug,
-            subtopic_slug=subtopic.slug,
-            measure_slug=measure.slug,
-            version=measure_version.version,
-            dimension_guid=dimension_object.guid,
-        )
-    )
 
 
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-table")
