@@ -42,7 +42,7 @@ class DimensionService(Service):
             return measure_version.get_dimension(dimension.guid)
 
     # This does some pre-processing of form data submitted by chart and table builders
-    # It also sets the flag update_clasification=True when update_dimension is called, to
+    # It also sets the flag update_classification=True when update_dimension is called, to
     # trigger reclassification of the dimension based on the updated chart or table
     def update_dimension_chart_or_table(self, dimension, post_data):
         data = {}
@@ -209,10 +209,10 @@ class DimensionService(Service):
     @staticmethod
     def __get_classification_from_custom_request(code_from_builder, has_parents, has_all, has_unknown):
         classification_matcher = DimensionService.__get_classification_matcher()
-        builder_clasification = BuilderClassification(
+        builder_classification = BuilderClassification(
             code_from_builder, has_parents=has_parents, has_all=has_all, has_unknown=has_unknown
         )
-        classification = classification_matcher.convert_builder_classification_to_classification(builder_clasification)
+        classification = classification_matcher.convert_builder_classification_to_classification(builder_classification)
         return classification
 
     @staticmethod
