@@ -8,7 +8,7 @@ from tests.test_data.chart_and_table import simple_table, grouped_table
 
 
 def test_table_object_builder_does_build_object_from_simple_table():
-    measure_version = MeasureVersionWithDimensionFactory(dimensions__table=simple_table())
+    measure_version = MeasureVersionWithDimensionFactory(dimensions__dimension_table__table_object=simple_table())
     # given - a table without a category_caption value
     builder = DimensionObjectBuilder()
     dimension = measure_version.dimensions[0]
@@ -22,7 +22,7 @@ def test_table_object_builder_does_build_object_from_simple_table():
 
 
 def test_table_object_builder_does_build_object_from_grouped_table():
-    measure_version = MeasureVersionWithDimensionFactory(dimensions__table=grouped_table())
+    measure_version = MeasureVersionWithDimensionFactory(dimensions__dimension_table__table_object=grouped_table())
     # given - a table without a category_caption value
     builder = DimensionObjectBuilder()
     dimension = measure_version.dimensions[0]
@@ -43,7 +43,7 @@ def test_table_object_builder_does_build_with_page_level_data_from_simple_table(
         title="Test Measure Page",
         area_covered=[UKCountry.ENGLAND],
         data_sources=[data_source],
-        dimensions__table=simple_table(),
+        dimensions__dimension_table__table_object=simple_table(),
         measure__slug="test-measure-page-slug",
     )
     # given - a table without a category_caption value
@@ -70,7 +70,7 @@ def test_dimension_object_builder_does_build_with_page_level_data_from_grouped_t
         title="Test Measure Page",
         area_covered=[UKCountry.ENGLAND],
         data_sources=[data_source],
-        dimensions__table=grouped_table(),
+        dimensions__dimension_table__table_object=grouped_table(),
         measure__slug="test-measure-page-slug",
     )
     # given - a table without a category_caption value
@@ -96,7 +96,7 @@ def test_table_object_builder_does_build_with_dimension_level_data_from_simple_t
         dimensions__title="Dimension title",
         dimensions__guid="dimension-guid",
         dimensions__time_period="dimension-time-period",
-        dimensions__table=simple_table(),
+        dimensions__dimension_table__table_object=simple_table(),
         measure__slug="test-measure-page-slug",
     )
     # given - a table without a category_caption value
@@ -117,7 +117,7 @@ def test_table_object_builder_does_build_with_dimension_level_data_from_grouped_
         dimensions__title="Dimension title",
         dimensions__guid="dimension-guid",
         dimensions__time_period="dimension-time-period",
-        dimensions__table=grouped_table(),
+        dimensions__dimension_table__table_object=grouped_table(),
     )
     # given - a table without a category_caption value
     builder = DimensionObjectBuilder()

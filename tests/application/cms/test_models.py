@@ -108,7 +108,8 @@ class TestDimensionModel:
 
     def test_classification_source_string_is_manually_selected_if_no_chart_or_table_classification(self):
         measure_version = MeasureVersionWithDimensionFactory(
-            dimensions__chart__clasification=None, dimensions__table__clasification=None
+            dimensions__dimension_chart__settings_and_source_data__classification=None,
+            dimensions__dimension_table__settings_and_source_data__classification=None,
         )
         dimension = measure_version.dimensions[0]
 

@@ -280,7 +280,7 @@ def test_adding_chart_with_custom_data_classification(two_classifications_2A_5A)
     # refresh the dimension from the database
     dimension = Dimension.query.get(dimension.guid)
 
-    # The chart and chart_2_source_data objects get passed straight to the database
+    # The chart_object and settings_and_source_data objects get passed straight to the database
     assert dimension.dimension_chart.chart_object == {"title": "My chart title"}
     assert dimension.dimension_chart.settings_and_source_data == {"chartOptions": {}}
 

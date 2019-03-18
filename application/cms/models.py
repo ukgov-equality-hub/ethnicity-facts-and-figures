@@ -652,7 +652,7 @@ class Dimension(db.Model):
             else:
                 chart_or_table = self.dimension_table
 
-        if chart_or_table:
+        if chart_or_table and chart_or_table.classification_id is not None:
             dimension_classification = self.dimension_classification or DimensionClassification()
             dimension_classification.classification_id = chart_or_table.classification_id
             dimension_classification.includes_parents = chart_or_table.includes_parents
@@ -673,14 +673,10 @@ class Dimension(db.Model):
             "measure": self.measure_version.measure.id,
             "time_period": self.time_period,
             "summary": self.summary,
-            "chart": self.chart,
-            "table": self.table,
-            "chart_builder_version": self.chart_builder_version,
-            "chart_source_data": self.chart_source_data,
-            "chart_2_source_data": self.chart_2_source_data,
-            "table_source_data": self.table_source_data,
-            "table_2_source_data": self.table_2_source_data,
-            "table_builder_version": self.table_builder_version,
+            "chart": self.dimension_chart.chart_object if self.dimension_chart else None,
+            "chart_2_source_data": self.dimension_chart.settings_and_source_data if self.dimension_chart else None,
+            "table": self.dimension_table.table_object if self.dimension_table else None,
+            "table_2_source_data": self.dimension_table.settings_and_source_data if self.dimension_table else None,
         }
 
     # Note that this copy() function does not commit the new object to the database.
