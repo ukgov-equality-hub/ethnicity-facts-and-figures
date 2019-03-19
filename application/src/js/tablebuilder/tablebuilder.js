@@ -352,7 +352,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 url: url_save_table_to_page,
                 dataType: 'json',
                 data: JSON.stringify({
-                    'tableObject': tableObject, 'source': src, 'tableBuilderVersion': 2,
+                    'tableObject': tableObject,
+                    'source': src,
                     'classificationCode': getPresetCode(),
                     'customClassificationCode': getCustomClassificationCode(),
                     'customClassification': getCustomObject(),
@@ -375,7 +376,6 @@ document.addEventListener('DOMContentLoaded', function() {
             'custom': getCustomObject(),
             'tableOptions': getTableTypeOptions(),
             'tableValues': getTableValues(),
-            'version': '2.0'
         }
     }
 
