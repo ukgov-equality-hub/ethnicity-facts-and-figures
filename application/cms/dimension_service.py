@@ -81,13 +81,13 @@ class DimensionService(Service):
         if db.session.dirty:
             db.session.commit()
 
-    def delete_dimension(self, page, guid):
-        if page.not_editable():
-            message = 'Error updating page "{}" - only pages in DRAFT or REJECT can be edited'.format(page.title)
+    def delete_dimension(self, measure_version, guid):
+        if measure_version.not_editable():
+            message = f'Error updating page "{measure_version.title}" - only pages in DRAFT or REJECT can be edited'
             self.logger.error(message)
             raise PageUnEditable(message)
 
-        dimension = page.get_dimension(guid)
+        dimension = measure_version.get_dimension(guid)
 
         db.session.delete(dimension)
         db.session.commit()
