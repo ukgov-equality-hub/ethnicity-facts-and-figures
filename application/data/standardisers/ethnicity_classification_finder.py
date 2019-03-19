@@ -1,12 +1,12 @@
 class EthnicityClassificationFinder:
     """
-    EthnicityClassificationFinder is our advanced standardiser used by ChartBuilder2 and TableBuilder2
+    EthnicityClassificationFinder is the standardiser used by ChartBuilder and TableBuilder
 
     EthnicityClassificationFinder uses the observation that government ethnicity data uses certain defined
-    classifications and these determine how charts and tables should be displayed. See the dashboards for examples
+    classifications and these determine how charts and tables should be displayed.
 
     EthnicityClassificationFinder first converts raw entry data to standard labels from the Race Disparity Audit
-    Then it searches our classification library for possible matches from known classifications
+    Then it searches our classification library for possible matches from known classifications.
     """
 
     def __init__(self, ethnicity_standardiser, ethnicity_classification_collection):
