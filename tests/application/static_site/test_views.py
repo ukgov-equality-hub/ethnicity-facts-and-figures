@@ -510,7 +510,7 @@ def test_view_measure_page(test_app_client, logged_in_rdu_user):
     assert metadata_values[2].text.strip() == "England"
     assert metadata_values[3].text.strip() == "4 months"
 
-    things_to_know = page.find("span", attrs={"id": "things-you-need-to-know"})
+    things_to_know = page.select_one("#things-you-need-to-know summary")
     assert things_to_know
     assert things_to_know.text.strip() == "Things you need to know"
 
