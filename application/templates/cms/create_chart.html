@@ -2,261 +2,421 @@
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 
 {% set form_disabled = measure_version.status != 'DRAFT' %}
-
 {% set breadcrumbs =
   [
     {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
     {"url": url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version), "text": measure_version.title},
-    {"url": url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid), "text": dimension.title},
+    {"url": url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension_dict.guid), "text": dimension_dict.title},
   ]
 %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
 
+{% block headEnd %}
+  {{ super() }}
+  <script>
+    {% if dimension_dict.chart_settings_and_source_data %}
+    var settings = {{ dimension_dict.chart_settings_and_source_data|tojson|safe }};
+    {% else %}
+    var settings = {};
+    {% endif %}
+
+    var url_get_classifications = "{{ url_for('cms.get_valid_classifications') }}";
+    var url_save_chart_to_page = "{{ url_for('cms.save_chart_to_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension_dict.guid ) }}";
+  </script>
+{% endblock %}
+
 {% block content %}
-    <div class="grid-row">
-        <div class="column-full">
-            <h1 class="heading-medium">
-                Add Chart
-            </h1>
+    <div class="govuk-grid-row eff-numbered-sections">
+        <div class="govuk-grid-column-full">
+            <h1 id="builder-title" class="govuk-heading-l">{% if dimension_dict.chart_settings_and_source_data %}Format and view{% else %}Create a{% endif %} chart</h1>
         </div>
-        <div class='column-one-third'>
-            <div id="tab_seperated_content" class="chart-builder-section">
-                <form>
-                    <div class="form-group">
-                        <label for="data_text_area">
-                            <h2 class="heading-medium">1. Copy data from excel</h2>
-                        </label>
-                        <textarea class="form-control" id="data_text_area" rows="3" {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
-                    </div>
-                </form>
-            </div>
+        {#
+        DATA ENTRY PANEL
+        This panel appears on create or when editing data
+#}
+        <div id="data-panel" class="data-panel {% if dimension_dict.chart_settings_and_source_data %}hidden{% endif %}">
+            <div class="govuk-grid-column-full">
+                <h2 class="govuk-heading-m no-top-border eff-numbered-sections__item">Data</h2>
 
-            <div id="select_chart_type" class="chart-builder-section" style="display:none">
-                <label for="chart_type_selector">
-                    <h2 class="heading-medium">2. Select chart type</h2>
-                </label>
-                <select class="form-control" id="chart_type_selector" {% if form_disabled %}disabled="disabled"{% endif %}>
-                    <option value="none">Select a chart type</option>
-                    <option value="line_graph">Line chart</option>
-                    <option value="bar_chart">Bar chart</option>
-                    <option value="component_chart">Component chart</option>
-                    {% if simple_chart_builder %}
-                        <!-- complex chart options are suppressed in this environment.-->
-                    {% else %}
+                <div class="govuk-hint">
+                    <p class="govuk-hint">Copy and paste your data here. You should:</p>
+                    <ul class="govuk-list govuk-list--bullet eff-list--hint">
+                        <li>only select the columns and rows you need for this chart or table</li>
+                        <li>not paste any empty rows</li>
+                        <li>include columns for ‘Ethnicity’ and ‘Value’</li>
+                        <li>not format numbers (for example, by adding a % sign to percentages)</li>
+                    </ul>
+                </div>
+
+                <div class="govuk-form-group">
+                  <form onsubmit="return false;">
+                          <textarea class="govuk-textarea" id="data_text_area" rows="10"
+                                    {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
+                      <button class="btn govuk-button btn-primary" id="confirm-data">Next</button>
+                  </form>
+                </div>
+                <p class="govuk-body"><a class="govuk-link" id="cancel-edit-data" href="#">Cancel</a></p>
+            </div>
+        </div>
+
+        <div id="edit-panel" class="edit-panel {% if not dimension_dict.chart_settings_and_source_data %}hidden{% endif %}">
+            <div class="govuk-grid-column-one-third">
+                {#
+                    DATA DISPLAY
+                    Data is displayed on the main builder in a small section that just lists its rows
+                    and columns with an option to return to the DATA ENTRY PANEL
+                #}
+                <div id="tab_seperated_content" class="chart-builder-section">
+                      <h2 class="govuk-heading-m eff-numbered-sections__item">Data</h2>
+
+                      <div>
+                          <p class="govuk-body" id="data-description">(no data)</p>
+                          <p class="govuk-body"><a class="govuk-link" id="edit-data" href="#">Edit</a></p>
+                      </div>
+                </div>
+
+                {#
+                    ETHNICITY SETTINGS
+                    Here you select which of the preset options you want to use for this chart
+                    (presets are selected using a call to the /get-valid-presets-for-data python endpoint)
+                #}
+                <div id="ethnicity_settings_section" class="chart-builder-section govuk-form-group">
+                    <form>
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="ethnicity_settings">
+                                    <h2 class="govuk-heading-m eff-numbered-sections__item">Ethnicity classification</h2>
+                                </label>
+                                <select id="ethnicity_settings" class="govuk-select"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>Please select</option>
+                                </select>
+                                {% include "cms/_custom_classification.html" %}
+                            </div>
+                    </form>
+                </div>
+
+                {#
+                    CHART TYPE
+                    Option list to pick a chart type
+                 #}
+                <div id="select_chart_type" class="chart-builder-section hidden govuk-form-group">
+                    <label class="govuk-label" for="chart_type_selector">
+                        <h2 class="govuk-heading-m eff-numbered-sections__item">Select chart type</h2>
+                    </label>
+                    <p class="govuk-hint">Choose the chart type that will make it easiest for the user to see and understand the data. See guidance on <a class="govuk-link" href="https://guide.ethnicity-facts-figures.service.gov.uk/data-style-guide#types-of-chart" target="_blank" rel="noopener noreferrer">which chart type to use</a> (this will open a new page).</p>
+                    <select class="govuk-select eff-!-fill-width" id="chart_type_selector"
+                            {% if form_disabled %}disabled="disabled"{% endif %}>
+                        <option value="none">Select a chart type</option>
+                        <option value="bar_chart">Bar chart</option>
+                        <option value="grouped_bar_chart">Grouped bar chart</option>
                         <option value="panel_bar_chart">Panel bar chart</option>
+                        <option value="line_graph">Line chart</option>
                         <option value="panel_line_chart">Panel line chart</option>
-                    {% endif %}
+                        <option value="component_chart">Component chart</option>
+                    </select>
+                </div>
 
-                </select>
-            </div>
+                {#
+                    CHART OPTIONS SECTIONS
+                    These allow you to enter appropriate settings for your charts
+                    Builder 1 was data agnostic so had plenty of settings to standardise, order and display data
+                    Builder 2 recognises all charts are BY ETHNICITY so makes the necessary assumptions
+                #}
+                {#
+                    BAR CHARTS _______________________________
+                    Builder 2 recognises a bar chart will have Ethnicity for bars,
+                    it knows there standard display values for ethnicity,
+                    it knows standard ordering,
+                    it knows about parent-child relationships
+                    simple bar charts require no settings at all
+                #}
+                <div id="bar_chart_options" class="chart-builder-section chart-option-group hidden">
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Bar chart options</h2>
+                    <p class="govuk-body">No settings needed</p>
+                </div>
 
-            <div id="line_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-                <h2 class="heading-medium">3. Line chart options</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="line_series_column">Series</label>
-                        <select id="line_series_column" class="form-control">
-                            <option>Ethnicity</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="x_axis_column">X-Axis</label>
-                        <select id="x_axis_column" class="form-control">
-                            <option>Time</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="line_series_order">Series order</label>
-                        <select id="line_series_order" class="form-control">
-                            <option>[None]</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
 
-            <div id="bar_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-                <h2 class="heading-medium">3. Bar chart options</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="primary_column">Primary grouping</label>
-                        <select id="primary_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>Ethnicity</option>
+                {#
+                    GROUPED BAR CHARTS _______________________________
+                    Here you require two columns to set up the charts
+                    Ethnicity must be one of the two
+                #}
+                <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group hidden">
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Grouped bar chart options</h2>
+                    <p class="govuk-body">Use ethnicity for sub-groups if your data only includes 2 ethnic groups (for example, White and Other).</p>
+                    <form>
+                        {#
+                            Select style
+                        #}
+                        <select class="govuk-select eff-!-fill-width" id="grouped-bar__data_style"
+                                {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="ethnicity_as_group" selected>Use ethnicity for major groups</option>
+                            <option value="ethnicity_as_bar">Use ethnicity for sub-groups</option>
                         </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="secondary_column">Secondary grouping</label>
-                        <select id="secondary_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="parent_column">Parent</label>
-                        <select id="parent_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="order_column">Order</label>
-                        <select id="order_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
 
-            <div id="component_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-                <h2 class="heading-medium">3. Component chart options</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="component_bar_column">Bar grouping</label>
-                        <select id="component_bar_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>Ethnicity</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="component_component_column">Component grouping</label>
-                        <select id="component_component_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
-                        </select>
-                    </div>
-                </form>
+                        {#
+                            Style 1 - Ethnicity for groups
+                        #}
+                        <div class="indented-option-block" id="grouped-bar__ethnicity_is_group">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="grouped-bar__bar_column">Sub-grouping</label>
+                                <select id="grouped-bar__bar_column" class="govuk-select eff-!-fill-width"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>Please select</option>
+                                </select>
+                            </div>
+                        </div>
 
-                <h2 class="heading-medium">+ Advanced</h2>
-                 <form>
-                     <div class="form-group">
-                         <label for="component_row_order_column">Bar order</label>
-                         <select id="component_row_order_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                             <option>[None]</option>
-                         </select>
-                     </div>
-                     <div class="form-group">
-                         <label for="component_series_order_column">Component order</label>
-                         <select id="component_series_order_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                             <option>[None]</option>
-                         </select>
-                     </div>
-                 </form>
-            </div>
+                        {#
+                            Style 2  - Ethnicity for sub-groups
+                        #}
+                        <div class="indented-option-block hidden" id="grouped-bar__ethnicity_is_bar">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="grouped-bar__groups_column">Major grouping</label>
+                                <select id="grouped-bar__groups_column" class="govuk-select eff-!-fill-width"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>Please select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
-            <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-                <h2 class="heading-medium">3. Panel bar chart options</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="panel_primary_column">Primary grouping</label>
-                        <select id="panel_primary_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="panel_grouping_column">Panel grouping</label>
-                        <select id="panel_grouping_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>Ethnicity</option>
-                        </select>
-                    </div>
-                </form>
-                <h2 class="heading-medium">+ Advanced</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="panel_primary_order_column">Primary order</label>
-                        <select id="panel_primary_order_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="panel_order_column">Panel order</label>
-                        <select id="panel_order_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
 
-            <div id="panel_line_chart_options" class="chart-builder-section chart-option-group" style="display:none">
-                <h2 class="heading-medium">3. Panel line chart options</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="panel_line_series">Panels</label>
-                        <select id="panel_line_series" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>Ethnicity</option>
+                {#
+                    PANEL BAR CHARTS _______________________________
+                    Here you require two columns to set up the charts
+                    Ethnicity must be one of the two
+                #}
+                <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group hidden">
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Panel chart options</h2>
+                    <p class="govuk-body">Most of the time you should use ethnicity for bars.</p>
+                    <p class="govuk-body">Only use ethnicity for panels if you’re comparing outcomes within an ethnic group, rather than between groups.</p>
+                    <p class="govuk-body">Don’t have more than 16 panels or 10 bars within a panel.</p>
+                    <form>
+                        {#
+                            Select style
+                        #}
+                        <select class="govuk-select eff-!-fill-width" id="panel-bar__data_style"
+                                {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="ethnicity_as_panel_bars" selected>Use ethnicity for bars</option>
+                            <option value="ethnicity_as_panels">Use ethnicity for panels</option>
                         </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="panel_line_x_axis">X-Axis</label>
-                            <select id="panel_line_x_axis" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
+
+
+                        {#
+                            Style 1 - Ethnicity for the bars
+                        #}
+                        <div class="indented-option-block" id="panel-bar__ethnicity_as_bar">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="panel-bar__panel_column">Panels</label>
+                                <select class="govuk-select eff-!-fill-width" id="panel-bar__panel_column"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>Please select</option>
+                                </select>
+                            </div>
+                            <div class="">
+                                <label class="govuk-label" for="panel-bar__panel_order">Order</label>
+                                <select class="govuk-select eff-!-fill-width" id="panel-bar__panel_order"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        {#
+                            Style 2 - Ethnicity for the panels
+                        #}
+                        <div class="indented-option-block hidden" id="panel-bar__ethnicity_as_panels">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="panel-bar__bar_column">Bars</label>
+                                <select id="panel-bar__bar_column" class="govuk-select eff-!-fill-width"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>s
+                                    <option>Please select</option>
+                                </select>
+                            </div>
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="panel-bar__bar_order">Order</label>
+                                <select id="panel-bar__bar_order" class="govuk-select eff-!-fill-width"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                {#
+                    LINE CHARTS _______________________________
+                    Must have ETHNICITY as their series - we only need to set a column for the x-axis
+                #}
+                <div id="line_graph_options" class="chart-builder-section chart-option-group hidden">
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Line chart options</h2>
+                    <form>
+                        <div class="govuk-form-group">
+                            <label for="line__x-axis_column" class="govuk-label">Select a value for the horizontal (X) axis.<br>Choose 'Time' for time series data.</label>
+                            <select id="line__x-axis_column" class="govuk-select eff-!-fill-width">
                                 <option>Time</option>
                             </select>
-                    </div>
-                </form>
-                <h2 class="heading-medium">+ Advanced</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="panel_line_order_column">Panel order</label>
-                        <select id="panel_line_order_column" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option>[None]</option>
+                        </div>
+                    </form>
+                </div>
+
+                {#
+                    PANEL LINE CHARTS _______________________________
+                    Are not more complex than regular line charts
+                    Must have ETHNICITY as their panels - we only need to set a column for the x-axis
+                #}
+                <div id="panel_line_chart_options" class="chart-builder-section chart-option-group hidden">
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Panel line chart options</h2>
+                    <form>
+                        <div class="govuk-form-group">
+                            <label for="panel-line__x-axis_column" class="govuk-label">Select a value for the horizontal (X) axis.<br>Choose 'Time' for time series data.</label>
+                            <select id="panel-line__x-axis_column" class="govuk-select eff-!-fill-width">
+                                <option>Time</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+                {#
+                    COMPONENT CHARTS _______________________________
+                    Here you require two columns to set up the charts
+                    Ethnicity must be one of the two
+                #}
+                <div id="component_chart_options" class="chart-builder-section chart-option-group hidden">
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Component chart options</h2>
+                    <form>
+                        <div class="govuk-form-group">
+                        {#
+                            Select style
+                        #}
+                        <select class="govuk-select eff-!-fill-width" id="component__data_style"
+                                {% if form_disabled %}disabled="disabled"{% endif %}>
+                            <option value="ethnicity_as_bar" selected>Use ethnicity for bars</option>
+                            <option value="ethnicity_as_sections">Use ethnicity for bar sections</option>
                         </select>
-                    </div>
-                </form>
+                        </div>
+
+
+                        {#
+                            Style 1 - Ethnicity for the bars
+                        #}
+                        <div class="indented-option-block" id="component__ethnicity_is_bar">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="component__section_column">Sections</label>
+                                <select id="component__section_column" class="govuk-select eff-!-fill-width"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>Please select</option>
+                                </select>
+                            </div>
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="component__section_order">Order</label>
+                                <select id="component__section_order" class="govuk-select eff-!-fill-width"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        {#
+                            Style 2 - Ethnicity for the sections
+                        #}
+                        <div class="indented-option-block hidden" id="component__ethnicity_is_sections">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="component__bar_column">Bars</label>
+                                <select id="component__bar_column" class="govuk-select eff-!-fill-width"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>Please select</option>
+                                </select>
+                            </div>
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="component__bar_order">Order</label>
+                                <select id="component__bar_order" class="govuk-select eff-!-fill-width"
+                                        {% if form_disabled %}disabled="disabled"{% endif %}>
+                                    <option>[None]</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="chart_format_options" class="chart-builder-section chart-option-group hidden">
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Chart format options</h2>
+                    <form>
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="number_format">Number format</label>
+                            <select id="number_format" class="govuk-select eff-!-fill-width"
+                                    {% if form_disabled %}disabled="disabled"{% endif %}>
+                                <option value="none" selected>None</option>
+                                <option value="percent">Percentage (%)</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div id="other_number_format" class="govuk-form-group hidden govuk-!-margin-top-4">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label" for="number_format_prefix">Prefix (for example, £)</label>
+                                    <input class="govuk-input" id="number_format_prefix" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                </div>
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label" for="number_format_suffix">Suffix (for example, %)</label>
+                                    <input class="govuk-input" id="number_format_suffix" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                </div>
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label" for="number_format_min">Vertical axis: Minimum value</label>
+                                    <input class="govuk-input" id="number_format_min" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                </div>
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label" for="number_format_max">Vertical axis: Maximum value</label>
+                                    <input class="govuk-input" id="number_format_max" {% if form_disabled %}disabled="disabled"{% endif %}>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <div id="chart_format_options" class="chart-builder-section chart-option-group" style="display:none">
-                <h2 class="heading-medium">4. Chart format options</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="chart_title">Chart title</label>
-                        <textarea id="chart_title" rows=2 data-module="autoresize no-newlines" {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension.chart_source_data %}{{ dimension.chart_source_data.chartFormat.chart_title }}{% endif %}</textarea>
+            <div class="govuk-grid-column-two-thirds">
+                <div id="tips_container" class="hidden">
+                    <div id="notes_container" class="hidden">
+                        <h2 class="govuk-heading-m">Note</h2>
+                        <ul class="govuk-list govuk-list--bullet">
+                            <li class="tip" id="tip__required-settings">Please complete all required settings</li>
+                        </ul>
                     </div>
-                    <div class="form-group">
-                        <label for="x_axis_label">X axis</label>
-                        <input id="x_axis_label" {% if form_disabled %}disabled="disabled"{% endif %}>
+                    <div id="errors_container" class="hidden">
+                        <h2 class="govuk-heading-m">Error</h2>
+                        <ul class="govuk-list govuk-list--bullet" id="tip-list">
+                            <li class="tip hidden" id="tip__ethnicity-column">Your data is missing an ethnicity column</li>
+                            <li class="tip hidden" id="tip__value-column">Your data is missing a value column</li>
+                            <li class="tip hidden" id="tip__rectangular-data">Your data is not a table</li>
+                            <li class="tip hidden" id="tip__complex-data">Your data has some repeating values, so please choose either grouped bar chart, component bar chart, panel bar chart or panel line chart</li>
+                            <li class="tip hidden" id="tip__duplicate-data">There are rows duplicated in your data</li>
+                            <li class="tip hidden" id="tip__missing-data">There are rows missing from your data</li>
+                        </ul>
                     </div>
-                    <div class="form-group">
-                        <label for="y_axis_label">Y axis</label>
-                        <input id="y_axis_label" {% if form_disabled %}disabled="disabled"{% endif %}>
+                </div>
+                <div id="preview_container">
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Chart title</h2>
+                    <div class="chart-builder-section">
+                      <span class="govuk-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
+                      {% include 'forms/extended_hints/_chart_and_table_title.html' %}
+                        <textarea id="chart_title" class="govuk-textarea" rows="2" data-module="autoresize no-newlines"
+                               {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension_dict.chart_settings_and_source_data %}{{ dimension_dict.chart_settings_and_source_data.chartFormat.chart_title }}{% endif %}</textarea>
                     </div>
-                    <div class="form-group">
-                        <label for="number_format">Number format</label>
-                        <select id="number_format" class="form-control" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="none" selected="selected">[None]</option>
-                            <option value="percent">Percentage</option>
-                            <option value="percent100">Multiply up to percentage</option>
-                            <option value="other">Other</option>
-                        </select>
-                        <div id="other_number_format" class="form-group" style="display:none">
-                            <label for="number_format_prefix">Prefix</label>
-                            <input id="number_format_prefix" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <label for="number_format_suffix">Suffix</label>
-                            <input id="number_format_suffix" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <label for="number_format_min">Minimum</label>
-                            <input id="number_format_min" {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <label for="number_format_max">Maximum</label>
-                            <input id="number_format_max" {% if form_disabled %}disabled="disabled"{% endif %}>
+
+                    <h2 class="govuk-heading-m eff-numbered-sections__item">Preview</h2>
+                    <div id="container" class="chart-container"></div>
+
+                    {% if 'UPDATE' in measure_version.available_actions() %}
+                    <br>
+                    <div id="save_section" class="chart-builder-section hidden">
+                        <div class="govuk-!-padding-left-8">
+                            <button class="govuk-button" id="save">Save</button>
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="column-two-thirds">
-            <div id="preview_section" class="chart-builder-section" style="display:none">
-                <h2 class="heading-medium">5. Generate chart</h2>
-                <p>
-                    <button class="btn button btn-primary" id="preview">Preview</button>
-                </p>
-            </div>
-
-            <div id="error_container"></div>
-
-            <div id="title-container" class="chart-title-container"></div>
-            <div id="container" class="chart-container"></div>
-
-            <div id="save_section" class="chart-builder-section" style="display:none">
-                {% if 'UPDATE' in measure_version.available_actions() %}
-                    <h2 class="heading-medium">5. Save chart</h2>
-                {%  endif %}
-                <div>
-                    {% if 'UPDATE' in measure_version.available_actions() %}
-                        <button class="govuk-button" id="save">Save</button>
                     {% endif %}
                 </div>
             </div>
@@ -264,603 +424,10 @@
     </div>
 {% endblock %}
 
+
 {% block bodyEnd %}
   {{ super() }}
+
   <script type="text/javascript" src="/static/javascripts/{{ 'charts.js' | version_filter }}"></script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        const excluded_headers = exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
-            'Upper bound', 'Lower bound',
-            'Upper confidence interval', 'Lower confidence interval',
-            'Note', 'Notes'];
-
-        $('#data_text_area').keyup(paste);
-        $('#preview').click(preview);
-        $('#save').click(saveChart);
-
-        var source_data = null;
-        var data = null;
-
-        function uniqueDataInColumn(data, index) {
-            var values = _.map(data.slice(start = 1), function(item) {
-                return item[index]; });
-            return _.uniq(values).sort();
-        }
-
-        function paste(evt) {
-
-            var settings = getChartPageSettings();
-            handleNewData(function() { refreshSettings(settings) });
-        }
-
-        function setDropdownWithDefault(dropdown_id, value, default_value) {
-            if(value) {
-                $('#' + dropdown_id).val(value);
-            } else {
-                $('#' + dropdown_id).val(default_value);
-            }
-        }
-
-        function refreshSettings(settings) {
-            $('#chart_type_selector').val(settings.type);
-            selectChartType(settings.type);
-
-            setDropdownWithDefault('primary_column', settings.chartOptions.primary_column, 'Ethnicity');
-            setDropdownWithDefault('secondary_column', settings.chartOptions.secondary_column, '[None]');
-            setDropdownWithDefault('parent_column', settings.chartOptions.parent_column, '[None]');
-            setDropdownWithDefault('order_column', settings.chartOptions.order_column, '[None]');
-            setDropdownWithDefault('x_axis_column', settings.chartOptions.x_axis_column, 'Ethnicity');
-            setDropdownWithDefault('line_series_column', settings.chartOptions.line_series_column, 'Time');
-            setDropdownWithDefault('line_series_order', settings.chartOptions.line_series_order, '[None]');
-
-            setDropdownWithDefault('component_bar_column', settings.chartOptions.component_bar_column, 'Ethnicity');
-            setDropdownWithDefault('component_component_column', settings.chartOptions.component_component_column, '[None]');
-            setDropdownWithDefault('component_row_order_column', settings.chartOptions.component_row_order_column, '[None]');
-            setDropdownWithDefault('component_series_order_column', settings.chartOptions.component_series_order_column, '[None]');
-
-            setDropdownWithDefault('panel_primary_column', settings.chartOptions.panel_primary_column, 'Ethnicity');
-            setDropdownWithDefault('panel_primary_order_column', settings.chartOptions.panel_primary_order_column, '[None]');
-            setDropdownWithDefault('panel_order_column', settings.chartOptions.panel_order_column, '[None]');
-            setDropdownWithDefault('panel_grouping_column', settings.chartOptions.panel_grouping_column, '[None]');
-
-            setDropdownWithDefault('panel_line_series', settings.chartOptions.panel_line_series, 'Ethnicity');
-            setDropdownWithDefault('panel_line_x_axis', settings.chartOptions.panel_line_x_axis, 'Time');
-            setDropdownWithDefault('panel_line_order_column', settings.chartOptions.panel_line_order_column, '[None]');
-
-            $('#chart_title').val(settings.chartFormat.chart_title);
-            document.getElementById('chart_title').dispatchEvent(new Event("input"));
-            $('#x_axis_label').val(settings.chartFormat.x_axis_label);
-            $('#y_axis_label').val(settings.chartFormat.y_axis_label);
-
-
-            $('#number_format').val(settings.chartFormat.number_format);
-            $('#number_format_prefix').val(settings.chartFormat.number_format_prefix);
-            $('#number_format_suffix').val(settings.chartFormat.number_format_suffix);
-            $('#number_format_min').val(settings.chartFormat.number_format_min);
-            $('#number_format_max').val(settings.chartFormat.number_format_max);
-            if (settings.chartFormat.number_format === 'other') {
-                $('#other_number_format').show();
-            }
-
-            preview(null);
-        }
-
-        function handleNewData(on_success) {
-            // get the data
-            var tabbedData = $("#data_text_area").val();
-
-            // read data
-            source_data = textToData(tabbedData);
-            data = _.clone(source_data);
-
-            $.ajax({
-                type: "post",
-                url: "{{ url_for('cms.process_input_data') }}",
-                dataType: 'json',
-                data: JSON.stringify({'data': data}),
-                contentType: 'application/json; charset=utf-8',
-                success: function (response) {
-                    // get the headers
-                    data = response['data'];
-                    headers = data[0];
-                    populateChartOptions(headers);
-                    $('#select_chart_type').show();
-
-                    if(on_success) {
-                        on_success();
-                    }
-                },
-                failure: function() {
-                    headers = data[0];
-                    populateChartOptions(headers);
-                    $('#select_chart_type').show();
-                },
-                error: function(err) {
-                    console.log(err);
-                }
-            });
-        }
-
-        function strippedHeaders(headers) {
-            const exclude = ['Measure', 'Value', 'Numerator', 'Denominator',
-                'Upper bound', 'Lower bound',
-                'Upper confidence interval', 'Lower confidence interval',
-                'Note', 'Notes'];
-            var stripped = [];
-            for(h in headers) {
-                var header = headers[h];
-                if(exclude.indexOf(header) < 0) { stripped.push(header); }
-            }
-            return stripped;
-        }
-
-        function populateChartOptions(headers) {
-
-            $('#line_series_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-            $('#x_axis_column').html(optionlistWithDefault(headers, 'Time'));
-            $('#line_series_order').html(optionlistWithNone(headers));
-
-            $('#primary_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-            $('#secondary_column').html(optionlistWithNone(headers));
-            $('#parent_column').html(optionlistWithNone(headers));
-            $('#order_column').html(optionlistWithNone(headers));
-
-            $('#component_bar_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-            $('#component_component_column').html(optionlistWithNone(headers));
-            $('#component_row_order_column').html(optionlistWithNone(headers));
-            $('#component_series_order_column').html(optionlistWithNone(headers));
-
-            $('#panel_primary_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-            $('#panel_grouping_column').html(optionlistWithDefault(headers, 'Ethnicity'));
-            $('#panel_primary_order_column').html(optionlistWithNone(headers));
-            $('#panel_order_column').html(optionlistWithNone(headers));
-
-            $('#panel_line_series').html(optionlistWithDefault(headers, 'Ethnicity'));
-            $('#panel_line_x_axis').html(optionlistWithDefault(headers, 'Time'));
-            $('#panel_line_order_column').html(optionlistWithNone(headers));
-
-        }
-
-        function optionlistWithNone(headers) {
-            var html = '<option>[None]</option>';
-            var stripped = strippedHeaders(headers);
-            for(var h in stripped) {
-                var header = stripped[h];
-                html = html + '<option>' + header + '</option>';
-            }
-            return html;
-        }
-
-        function optionlistWithDefault(headers, defaultValue) {
-            var html = '';
-            var stripped = strippedHeaders(headers);
-            for(var h in stripped) {
-                var header = stripped[h];
-                if(header === defaultValue) {
-                    html = html + '<option selected="selected">' + header + '</option>';
-                } else {
-                    html = html + '<option>' + header + '</option>';
-                }
-            }
-            return html;
-        }
-
-        function optionlistWithAll(headers) {
-            var html = '<option value="none">[None]</option>';
-            for(var h in headers) {
-                html = html + '<option value="' + headers[h] + '">' + headers[h] + '</option>';
-            }
-            return html;
-        }
-
-        function getErrors(chart_type) {
-            var category, group;
-            if((chart_type) === 'bar_chart') {
-                category = $('#primary_column').val();
-                group = $('#secondary_column').val();
-                return validateData(data, category, group==='[None]' ? null: group);
-
-            } else if (chart_type === 'line_graph') {
-                category = $('#x_axis_column').val();
-                group = $('#line_series_column').val();
-                return validateDataDuplicatesOnly(data, category, group==='[None]' ? null: group);
-
-            } else if (chart_type === 'component_chart') {
-                category = $('#component_bar_column').val();
-                group = $('#component_component_column').val();
-                return validateData(data, category, group==='[None]' ? null: group);
-
-            } else if (chart_type === 'panel_bar_chart') {
-                category = $('#panel_primary_column').val();
-                group = $('#panel_grouping_column').val();
-                return validateData(data, category, group==='[None]' ? null: group);
-
-            } else if (chart_type === 'panel_line_chart') {
-                category = $('#panel_line_x_axis').val();
-                group = $('#panel_line_series').val();
-                return validateDataDuplicatesOnly(data, category, group==='[None]' ? null: group);
-
-            } else {
-                return []
-            }
-
-        }
-
-        function preview(evt) {
-
-            var chart_type = $('#chart_type_selector').val();
-            var chartObject = null;
-
-            var errors = getErrors(chart_type);
-            if(errors.length > 0) {
-                showErrors(errors);
-                return;
-            } else {
-                clearErrors();
-            }
-
-            if(chart_type === 'bar_chart') {
-                chartObject = barchartObject(data,
-                    $('#primary_column').val(),
-                    $('#secondary_column').val(),
-                    $('#parent_column').val(),
-                    $('#order_column').val(),
-                    $('#chart_title').val(),
-                    $('#x_axis_label').val(),
-                    $('#y_axis_label').val(),
-                    getNumberFormat());
-            } else if (chart_type === 'line_graph') {
-                chartObject = linechartObject(data, $('#x_axis_column').val(),
-                    $('#line_series_column').val(),
-                    $('#chart_title').val(),
-                    $('#x_axis_label').val(),
-                    $('#y_axis_label').val(),
-                    getNumberFormat(),
-                    $('#line_series_order').val());
-            } else if (chart_type === 'component_chart') {
-                chartObject = componentChartObject(data, $('#component_bar_column').val(),
-                    $('#component_component_column').val(),
-                    $('#chart_title').val(),
-                    $('#x_axis_label').val(),
-                    $('#y_axis_label').val(),
-                    getNumberFormat(),
-                    $('#component_row_order_column').val(),
-                    $('#component_series_order_column').val());
-            } else if (chart_type === 'panel_bar_chart') {
-                chartObject = panelBarchartObject(
-                    data,
-                    $('#panel_primary_column').val(),
-                    $('#panel_grouping_column').val(),
-                    $('#chart_title').val(),
-                    $('#x_axis_label').val(),
-                    $('#y_axis_label').val(),
-                    getNumberFormat(),
-                    $('#panel_primary_order_column').val(),
-                    $('#panel_order_column').val());
-            } else if (chart_type === 'panel_line_chart') {
-                chartObject = panelLinechartObject(
-                    data,
-                    $('#panel_line_x_axis').val(),
-                    $('#panel_line_series').val(),
-                    $('#chart_title').val(),
-                    $('#x_axis_label').val(),
-                    $('#y_axis_label').val(),
-                    getNumberFormat(),
-                    $('#panel_line_order_column').val()
-                );
-            }
-
-            if(chartObject) {
-
-                if(chartObject.title && chartObject.title.text) {
-                    $('#title-container').html('<h3 class="heading-small">' + chartObject.title.text + '</h3>');
-                }
-                chartObject.title = '';
-
-                drawChart('container', chartObject);
-            }
-
-            $('#save_section').show();
-        }
-
-        function saveChart(evt) {
-
-            $('#save').attr('disabled','disabled');
-
-            var chart_type = $('#chart_type_selector').val();
-            var chartObject = null;
-            if(chart_type === 'bar_chart') {
-                chartObject = barchartObject(data,
-                    $('#primary_column').val(),
-                    $('#secondary_column').val(),
-                    $('#parent_column').val(),
-                    $('#order_column').val(),
-                    $('#chart_title').val(),
-                    $('#x_axis_label').val(),
-                    $('#y_axis_label').val(),
-                    getNumberFormat());
-            } else if (chart_type === 'line_graph') {
-                chartObject = linechartObject(data,
-                    $('#x_axis_column').val(),
-                    $('#line_series_column').val(),
-                    $('#chart_title').val(),
-                    $('#x_axis_label').val(),
-                    $('#y_axis_label').val(),
-                    getNumberFormat(),
-                    $('#line_series_order').val());
-            } else if (chart_type === 'component_chart') {
-                chartObject = componentChartObject(data,
-                    $('#component_bar_column').val(),
-                    $('#component_component_column').val(),
-                    $('#chart_title').val(),
-                    $('#x_axis_label').val(),
-                    $('#y_axis_label').val(),
-                    getNumberFormat(),
-                    $('#component_row_order_column').val(),
-                    $('#component_series_order_column').val());
-            } else if (chart_type === 'panel_bar_chart') {
-                chartObject = panelBarchartObject(
-                    data,
-                    $('#panel_primary_column').val(),
-                    $('#panel_grouping_column').val(),
-                    $('#chart_title').val(),
-                    $('#x_axis_label').val(),
-                    $('#y_axis_label').val(),
-                    getNumberFormat(),
-                    $('#panel_primary_order_column').val(),
-                    $('#panel_order_column').val());
-            }   else if (chart_type === 'panel_line_chart') {
-                chartObject = panelLinechartObject(
-                    data,
-                    $('#panel_line_x_axis').val(),
-                    $('#panel_line_series').val(),
-                    $('#chart_title').val(),
-                    $('#x_axis_label').val(),
-                    $('#y_axis_label').val(),
-                    getNumberFormat(),
-                    $('#panel_line_order_column').val());
-            }
-
-            if(chartObject) {
-                $.each(chartObject.series, function() {
-                    for (var i = 0; i < this.data.length; i++) {
-
-                        if(isNaN(this.data[i].y)) {
-                            this.data[i].y = 0;
-                        }
-                    }
-                });
-                postChartObject(chartObject, getChartPageSettings());
-            }
-        }
-
-        function getChartPageSettings() {
-             // get the data
-            var tabbedData = $("#data_text_area").val();
-
-            return {
-                'data': textToData(tabbedData),
-                'type': $('#chart_type_selector').val(),
-                'chartOptions':{
-                    'primary_column': $('#primary_column').val(),
-                    'secondary_column': $('#secondary_column').val(),
-                    'parent_column': $('#parent_column').val(),
-                    'order_column': $('#order_column').val(),
-                    'x_axis_column': $('#x_axis_column').val(),
-                    'line_series_column': $('#line_series_column').val(),
-                    'line_series_order': $('#line_series_order').val(),
-                    'component_bar_column': $('#component_bar_column').val(),
-                    'component_component_column': $('#component_component_column').val(),
-                    'component_row_order_column': $('#component_row_order_column').val(),
-                    'component_series_order_column': $('#component_series_order_column').val(),
-                    'panel_primary_column': $('#panel_primary_column').val(),
-                    'panel_grouping_column': $('#panel_grouping_column').val(),
-                    'panel_line_x_axis': $('#panel_line_x_axis').val(),
-                    'panel_line_series': $('#panel_line_series').val(),
-                    'panel_line_order_column': $('#panel_line_order_column').val(),
-                    'panel_primary_order_column': $('#panel_primary_order_column').val(),
-                    'panel_order_column': $('#panel_order_column').val()
-                },
-                'chartFormat':{
-                    'chart_title':$('#chart_title').val(),
-                    'x_axis_label':$('#x_axis_label').val(),
-                    'y_axis_label':$('#y_axis_label').val(),
-                    'number_format':$('#number_format').val(),
-                    'number_format_prefix':$('#number_format_prefix').val(),
-                    'number_format_suffix':$('#number_format_suffix').val(),
-                    'number_format_min':$('#number_format_min').val(),
-                    'number_format_max':$('#number_format_max').val()
-                },
-                'version': '1.1'
-            }
-        }
-
-        function postChartObject(chartObject, src) {
-            if (chartObject) {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url_for('cms.save_chart_to_page', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}",
-                    dataType: 'json',
-                    data: JSON.stringify({'chartObject': chartObject, 'source': src, 'chartBuilderVersion': 1}),
-                    contentType: 'application/json',
-                    success: function () {
-                        location.reload();
-                    }
-                });
-            }
-        }
-
-        function selectChartType(chart_type) {
-            $('.chart-option-group').hide();
-            if(chart_type !== 'none') {
-                $('#' + chart_type + "_options").show();
-                $('#chart_format_options').show();
-            }
-            $('#preview_section').show();
-        }
-
-        $(function() {
-            $('#chart_type_selector').change(function(){
-                selectChartType($(this).val())
-            });
-        });
-
-        $(function() {
-            $('#number_format').change(function(){
-                if($(this).val() === 'other') {
-                    $('#other_number_format').show()
-                } else {
-                    $('#other_number_format').hide()
-                }
-            });
-        });
-
-        function getNumberFormat() {
-            var format = $('#number_format').val();
-            if(format === 'none') {
-                return {'multiplier':1.0, 'prefix':'', 'suffix':'', 'min':'', 'max':''}
-            } else if (format === 'percent') {
-                return {'multiplier':1.0, 'prefix':'', 'suffix':'%', 'min':0.0, 'max':100.0}
-            } else if (format === 'percent100') {
-                return {'multiplier':100.0, 'prefix':'', 'suffix':'%', 'min':0.0, 'max':100.0}
-            } else if (format === 'other') {
-                return {'multiplier':1.0,
-                    'prefix':$('#number_format_prefix').val(),
-                    'suffix':$('#number_format_suffix').val(),
-                    'min':$('#number_format_min').val(),
-                    'max':$('#number_format_max').val()}
-            }
-        }
-
-        function showErrors(errors) {
-
-            var errorString = "<div class=\"error-summary\" role=\"alert\" aria-labelledby=\"error-summary-heading-example-1\" tabindex=\"-1\">"
-
-            errorString = errorString + "<h2 class=\"heading-medium error-summary-heading\" id=\"error-summary-heading-example-1\">"
-            errorString = errorString + "There are problems with your data";
-            errorString = errorString + "</h2>";
-            errorString = errorString + "<ul>";
-
-            _.forEach(errors, function(error) {
-                errorString = errorString + "<li>" + errorDescription(error) + "</li>"
-            });
-
-            errorString = errorString + "</ul></div>";
-
-
-            $('#error_container').html(errorString);
-
-            $('#save_section').hide();
-            clearChartArea();
-        }
-
-        function errorDescription(error) {
-            if(error.error === "could not find data column") {
-                return "Column '" + error.column + "' not found"
-            } else if(error.error === "missing data") {
-                return "The data is missing an entry for pair '" + error.category + "' and '" + error.group + "'"
-            } else if(error.error === "duplicate data") {
-                if('group' in error) {
-                    return "The data has duplicate entries for pair '" + error.category + "' and '" + error.group + "'"
-                } else {
-                    return "The data has duplicate entries for '" + error.category + "'"
-                }
-            }
-        }
-
-        function clearErrors() {
-            $('#error_container').html('');
-        }
-        function clearChartArea() {
-            $('#title-container').html('');
-            $('#container').html('');
-        }
-
-        function initialiseForm() {
-              {% if dimension.chart_source_data %}
-                  var settings = {{dimension.chart_source_data|tojson|safe}};
-              {% else %}
-                  var settings = "";
-              {% endif %}
-
-            if(settings.data) {
-
-                var data_text = _.map(settings.data, function(d) { return d.join('\t')}).join('\n');
-                $('#data_text_area').val(data_text);
-
-                handleNewData(function() {
-
-                    $('#chart_type_selector').val(settings.type);
-                    selectChartType(settings.type);
-
-                    $('#primary_column').val(settings.chartOptions.primary_column);
-                    $('#secondary_column').val(settings.chartOptions.secondary_column);
-                    $('#parent_column').val(settings.chartOptions.parent_column);
-                    $('#order_column').val(settings.chartOptions.order_column);
-                    $('#x_axis_column').val(settings.chartOptions.x_axis_column);
-                    $('#line_series_column').val(settings.chartOptions.line_series_column);
-                    if(settings.chartOptions.line_series_order) {
-                        $('#line_series_order').val(settings.chartOptions.line_series_order)
-                    }
-
-                    $('#component_bar_column').val(settings.chartOptions.component_bar_column);
-                    $('#component_component_column').val(settings.chartOptions.component_component_column);
-                    if(settings.chartOptions.component_row_order_column) {
-                        $('#component_row_order_column').val(settings.chartOptions.component_row_order_column)
-                    }
-                    if(settings.chartOptions.component_series_order_column) {
-                        $('#component_series_order_column').val(settings.chartOptions.component_series_order_column)
-                    }
-
-
-                    $('#panel_primary_column').val(settings.chartOptions.panel_primary_column);
-                    if(settings.chartOptions.panel_primary_order_column) {
-                        $('#panel_primary_order_column').val(settings.chartOptions.panel_primary_order_column)
-                    }
-                    if(settings.chartOptions.panel_order_column) {
-                        $('#panel_order_column').val(settings.chartOptions.panel_order_column)
-                    }
-                    if(settings.chartOptions.panel_line_order_column) {
-                        $('#panel_line_order_column').val(settings.chartOptions.panel_line_order_column)
-                    }
-
-                    $('#panel_grouping_column').val(settings.chartOptions.panel_grouping_column);
-                    $('#panel_line_x_axis').val(settings.chartOptions.panel_line_x_axis);
-                    $('#panel_line_series').val(settings.chartOptions.panel_line_series);
-                    if(settings.chartOptions.panel_order_column) {
-                        $('#panel_order_column').val(settings.chartOptions.panel_order_column)
-                    }
-
-                    $('#chart_title').val(settings.chartFormat.chart_title);
-                    document.getElementById('chart_title').dispatchEvent(new Event("input"));
-                    $('#x_axis_label').val(settings.chartFormat.x_axis_label);
-                    $('#y_axis_label').val(settings.chartFormat.y_axis_label);
-
-
-                    $('#number_format').val(settings.chartFormat.number_format);
-                    $('#number_format_prefix').val(settings.chartFormat.number_format_prefix);
-                    $('#number_format_suffix').val(settings.chartFormat.number_format_suffix);
-                    $('#number_format_min').val(settings.chartFormat.number_format_min);
-                    $('#number_format_max').val(settings.chartFormat.number_format_max);
-                    if (settings.chartFormat.number_format === 'other') {
-                        $('#other_number_format').show();
-                    }
-
-                    preview(null);
-                });
-            }
-        }
-
-        initialiseForm();
-    });
-</script>
-
-<script>
-    function pasteJson(json) {
-        var data_text_area = document.getElementById('data_text_area');
-
-        data_text_area.value = _.map(json, function(row) { return row.join('\t'); }).join('\n');
-        data_text_area.dispatchEvent(new Event("keyup"));
-    }
-</script>
+  <script src="{{ url_for('static', filename='javascripts/') }}{{ 'chartbuilder.js' | version_filter }}"></script>
 {% endblock %}

@@ -30,9 +30,7 @@ from application.cms.models import publish_status, Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data
-from application.data.charts import ChartObjectDataBuilder
 from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
-from application.data.tables import TableObjectDataBuilder
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
 
@@ -736,78 +734,11 @@ def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid,
     return render_template("cms/edit_dimension.html", **context), 400 if form.errors else 200
 
 
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/chartbuilder")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def chartbuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    dimension_dict = dimension_object.to_dict()
-
-    if "chart_builder_version" in dimension_dict and dimension_dict["chart_builder_version"] == 1:
-        return redirect(
-            url_for(
-                "cms.create_chart_original",
-                topic_slug=topic.slug,
-                subtopic_slug=subtopic.slug,
-                measure_slug=measure.slug,
-                version=measure_version.version,
-                dimension_guid=dimension_object.guid,
-            )
-        )
-
-    return redirect(
-        url_for(
-            "cms.create_chart",
-            topic_slug=topic.slug,
-            subtopic_slug=subtopic.slug,
-            measure_slug=measure.slug,
-            version=measure_version.version,
-            dimension_guid=dimension_object.guid,
-        )
-    )
-
-
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-chart")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    dimension_dict = dimension_object.to_dict()
-
-    if dimension_dict["chart_source_data"] is not None and dimension_dict["chart_2_source_data"] is None:
-        dimension_dict["chart_2_source_data"] = ChartObjectDataBuilder.upgrade_v1_to_v2(
-            dimension_dict["chart"], dimension_dict["chart_source_data"]
-        )
-
-    return render_template(
-        "cms/create_chart_2.html",
-        topic=topic,
-        subtopic=subtopic,
-        measure=measure,
-        measure_version=measure_version,
-        dimension=dimension_dict,
-    )
-
-
-def __get_classification_finder_classifications():
-    classification_collection = current_app.classification_finder.get_classification_collection()
-    classifications = classification_collection.get_sorted_classifications()
-    return [{"code": classification.get_id(), "name": classification.get_name()} for classification in classifications]
-
-
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-chart/advanced")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def create_chart_original(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
@@ -818,62 +749,14 @@ def create_chart_original(topic_slug, subtopic_slug, measure_slug, version, dime
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
-        dimension=dimension_object.to_dict(),
+        dimension_dict=dimension_object.to_dict(),
     )
 
 
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/tablebuilder")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def tablebuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    dimension_dict = dimension_object.to_dict()
-
-    if "table_builder_version" in dimension_dict and dimension_dict["table_builder_version"] == 1:
-        return redirect(
-            url_for(
-                "cms.create_table_original",
-                topic_slug=topic.slug,
-                subtopic_slug=subtopic.slug,
-                measure_slug=measure.slug,
-                version=measure_version.version,
-                dimension_guid=dimension_object.guid,
-            )
-        )
-
-    return redirect(
-        url_for(
-            "cms.create_table",
-            topic_slug=topic.slug,
-            subtopic_slug=subtopic.slug,
-            measure_slug=measure.slug,
-            version=measure_version.version,
-            dimension_guid=dimension_object.guid,
-        )
-    )
-
-
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-table/advanced")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def create_table_original(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    return render_template(
-        "cms/create_table.html",
-        topic=topic,
-        subtopic=subtopic,
-        measure=measure,
-        measure_version=measure_version,
-        dimension=dimension_object.to_dict(),
-    )
+def __get_classification_finder_classifications():
+    classification_collection = current_app.classification_finder.get_classification_collection()
+    classifications = classification_collection.get_sorted_classifications()
+    return [{"code": classification.get_id(), "name": classification.get_name()} for classification in classifications]
 
 
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-table")
@@ -885,21 +768,13 @@ def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    dimension_dict = dimension_object.to_dict()
-
-    # migration step
-    if dimension_dict["table_source_data"] is not None and dimension_dict["table_2_source_data"] is None:
-        dimension_dict["table_2_source_data"] = TableObjectDataBuilder.upgrade_v1_to_v2(
-            dimension_dict["table"], dimension_dict["table_source_data"], current_app.dictionary_lookup
-        )
-
     return render_template(
-        "cms/create_table_2.html",
+        "cms/create_table.html",
         topic=topic,
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
-        dimension=dimension_dict,
+        dimension_dict=dimension_object.to_dict(),
     )
 
 
@@ -941,7 +816,7 @@ def delete_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    dimension_object.delete_chart()
+    dimension_object.dimension_chart.delete()
 
     message = "Deleted chart from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_version.title)
     current_app.logger.info(message)
@@ -997,7 +872,7 @@ def delete_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    dimension_object.delete_table()
+    dimension_object.dimension_table.delete()
 
     message = "Deleted table from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_version.title)
     current_app.logger.info(message)

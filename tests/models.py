@@ -414,6 +414,10 @@ class _ChartAndTableFactoryMixin(factory.alchemy.SQLAlchemyModelFactory):
     includes_all = factory.Faker("boolean")
     includes_unknown = factory.Faker("boolean")
 
+    # Too hard to realistically generate valid settings and source data, so leave these blank by default.
+    # If tests need them ... DIY.
+    settings_and_source_data = None
+
     # scalar relationships
     classification = factory.SubFactory(ClassificationFactory)
 
@@ -423,11 +427,19 @@ class ChartFactory(_ChartAndTableFactoryMixin):
         model = Chart
         sqlalchemy_session_persistence = "commit"
 
+    # Too hard to realistically generate valid highcharts chart data, so leave these blank by default.
+    # If tests need them ... DIY.
+    chart_object = None
+
 
 class TableFactory(_ChartAndTableFactoryMixin):
     class Meta:
         model = Table
         sqlalchemy_session_persistence = "commit"
+
+    # Too hard to realistically generate valid table data, so leave these blank by default.
+    # If tests need them ... DIY.
+    table_object = None
 
 
 class DimensionFactory(factory.alchemy.SQLAlchemyModelFactory):
