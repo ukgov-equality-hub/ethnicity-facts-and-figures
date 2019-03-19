@@ -48,11 +48,11 @@ class DimensionService(Service):
         data = {}
         if "chartObject" in post_data:
             data["chart"] = post_data["chartObject"]
-            data["chart_2_source_data"] = post_data["source"]
+            data["chart_settings_and_source_data"] = post_data["source"]
 
         if "tableObject" in post_data:
             data["table"] = post_data["tableObject"]
-            data["table_2_source_data"] = post_data["source"]
+            data["table_settings_and_source_data"] = post_data["source"]
 
         if "classificationCode" in post_data:
             if post_data["classificationCode"] == "custom":
@@ -123,14 +123,14 @@ class DimensionService(Service):
         if (
             dimension.dimension_chart
             and dimension.dimension_chart.chart_object
-            and data.get("chart_2_source_data") is not None
+            and data.get("chart_settings_and_source_data") is not None
         ):
-            chart_options = data.get("chart_2_source_data").get("chartOptions")
+            chart_options = data.get("chart_settings_and_source_data").get("chartOptions")
             for key, val in chart_options.items():
                 if val is None:
                     chart_options[key] = "[None]"
-            data["chart_2_source_data"]["chartOptions"] = chart_options
-            dimension.dimension_chart.settings_and_source_data = data.get("chart_2_source_data")
+            data["chart_settings_and_source_data"]["chartOptions"] = chart_options
+            dimension.dimension_chart.settings_and_source_data = data.get("chart_settings_and_source_data")
             if data["use_custom"] is False:
                 self.__set_chart_dimension_classification_through_builder(dimension, data)
             else:
@@ -139,14 +139,14 @@ class DimensionService(Service):
         if (
             dimension.dimension_table
             and dimension.dimension_table.table_object
-            and data.get("table_2_source_data") is not None
+            and data.get("table_settings_and_source_data") is not None
         ):
-            table_options = data.get("table_2_source_data").get("tableOptions")
+            table_options = data.get("table_settings_and_source_data").get("tableOptions")
             for key, val in table_options.items():
                 if val is None:
                     table_options[key] = "[None]"
-            data["table_2_source_data"]["tableOptions"] = table_options
-            dimension.dimension_table.settings_and_source_data = data.get("table_2_source_data")
+            data["table_settings_and_source_data"]["tableOptions"] = table_options
+            dimension.dimension_table.settings_and_source_data = data.get("table_settings_and_source_data")
             if data["use_custom"] is False:
                 self.__set_table_dimension_classification_through_builder(dimension, data)
             else:

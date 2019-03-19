@@ -15,8 +15,8 @@
 {% block headEnd %}
   {{ super() }}
   <script>
-    {% if dimension_dict.chart_2_source_data %}
-    var settings = {{ dimension_dict.chart_2_source_data|tojson|safe }};
+    {% if dimension_dict.chart_settings_and_source_data %}
+    var settings = {{ dimension_dict.chart_settings_and_source_data|tojson|safe }};
     {% else %}
     var settings = {};
     {% endif %}
@@ -29,13 +29,13 @@
 {% block content %}
     <div class="govuk-grid-row eff-numbered-sections">
         <div class="govuk-grid-column-full">
-            <h1 id="builder-title" class="govuk-heading-l">{% if dimension_dict.chart_2_source_data %}Format and view{% else %}Create a{% endif %} chart</h1>
+            <h1 id="builder-title" class="govuk-heading-l">{% if dimension_dict.chart_settings_and_source_data %}Format and view{% else %}Create a{% endif %} chart</h1>
         </div>
         {#
         DATA ENTRY PANEL
         This panel appears on create or when editing data
 #}
-        <div id="data-panel" class="data-panel {% if dimension_dict.chart_2_source_data %}hidden{% endif %}">
+        <div id="data-panel" class="data-panel {% if dimension_dict.chart_settings_and_source_data %}hidden{% endif %}">
             <div class="govuk-grid-column-full">
                 <h2 class="govuk-heading-m no-top-border eff-numbered-sections__item">Data</h2>
 
@@ -60,7 +60,7 @@
             </div>
         </div>
 
-        <div id="edit-panel" class="edit-panel {% if not dimension_dict.chart_2_source_data %}hidden{% endif %}">
+        <div id="edit-panel" class="edit-panel {% if not dimension_dict.chart_settings_and_source_data %}hidden{% endif %}">
             <div class="govuk-grid-column-one-third">
                 {#
                     DATA DISPLAY
@@ -404,7 +404,7 @@
                       <span class="govuk-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
                       {% include 'forms/extended_hints/_chart_and_table_title.html' %}
                         <textarea id="chart_title" class="govuk-textarea" rows="2" data-module="autoresize no-newlines"
-                               {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension_dict.chart_2_source_data %}{{ dimension_dict.chart_2_source_data.chartFormat.chart_title }}{% endif %}</textarea>
+                               {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension_dict.chart_settings_and_source_data %}{{ dimension_dict.chart_settings_and_source_data.chartFormat.chart_title }}{% endif %}</textarea>
                     </div>
 
                     <h2 class="govuk-heading-m eff-numbered-sections__item">Preview</h2>

@@ -158,7 +158,7 @@ def test_adding_table_with_data_matching_an_ethnicity_classification(two_classif
         {
             "use_custom": False,
             "table": {"title": "My table title"},
-            "table_2_source_data": {"tableOptions": {}},
+            "table_settings_and_source_data": {"tableOptions": {}},
             "classification_code": "5A",
             "ethnicity_values": ["All", "Asian", "Black", "Mixed", "White", "Other", "Unknown"],
         },
@@ -189,7 +189,7 @@ def test_adding_chart_with_data_matching_an_ethnicity_classification(two_classif
         {
             "use_custom": False,
             "chart": {"title": "My chart title"},
-            "chart_2_source_data": {"chartOptions": {}},
+            "chart_settings_and_source_data": {"chartOptions": {}},
             "classification_code": "5A",
             "ethnicity_values": ["All", "Asian", "Black", "Mixed", "White", "Other", "Unknown"],
         },
@@ -220,7 +220,7 @@ def test_adding_table_with_custom_data_classification(two_classifications_2A_5A)
         {
             "use_custom": True,
             "table": {"title": "My table title"},
-            "table_2_source_data": {"tableOptions": {}},
+            "table_settings_and_source_data": {"tableOptions": {}},
             "classification_code": "2A",
             "has_parents": True,
             "has_all": True,
@@ -234,7 +234,7 @@ def test_adding_table_with_custom_data_classification(two_classifications_2A_5A)
     # refresh the dimension from the database
     dimension = Dimension.query.get(dimension.guid)
 
-    # The table and table_2_source_data objects get passed straight to the database
+    # The table and table_settings_and_source_data objects get passed straight to the database
     assert dimension.dimension_table.table_object == {"title": "My table title"}
     assert dimension.dimension_table.settings_and_source_data == {"tableOptions": {}}
 
@@ -266,7 +266,7 @@ def test_adding_chart_with_custom_data_classification(two_classifications_2A_5A)
         {
             "use_custom": True,
             "chart": {"title": "My chart title"},
-            "chart_2_source_data": {"chartOptions": {}},
+            "chart_settings_and_source_data": {"chartOptions": {}},
             "classification_code": "2A",
             "has_parents": True,
             "has_all": True,
@@ -326,7 +326,7 @@ def test_adding_table_with_custom_data_and_existing_more_detailed_chart(two_clas
         {
             "use_custom": True,
             "table": {"title": "My table title"},
-            "table_2_source_data": {"tableOptions": {}},
+            "table_settings_and_source_data": {"tableOptions": {}},
             "classification_code": "2A",
             "has_parents": True,
             "has_all": True,
@@ -340,7 +340,7 @@ def test_adding_table_with_custom_data_and_existing_more_detailed_chart(two_clas
     # refresh the dimension from the database
     dimension = Dimension.query.get(dimension.guid)
 
-    # The table and table_2_source_data objects get passed straight to the database
+    # The table and table_settings_and_source_data objects get passed straight to the database
     assert dimension.dimension_table.table_object == {"title": "My table title"}
     assert dimension.dimension_table.settings_and_source_data == {"tableOptions": {}}
 
@@ -386,7 +386,7 @@ def test_adding_table_with_custom_data_and_existing_less_detailed_chart(two_clas
         {
             "use_custom": True,
             "table": {"title": "My table title"},
-            "table_2_source_data": {"tableOptions": {}},
+            "table_settings_and_source_data": {"tableOptions": {}},
             "classification_code": "5A",
             "has_parents": False,
             "has_all": True,
@@ -400,7 +400,7 @@ def test_adding_table_with_custom_data_and_existing_less_detailed_chart(two_clas
     # refresh the dimension from the database
     dimension = Dimension.query.get(dimension.guid)
 
-    # The table and table_2_source_data objects get passed straight to the database
+    # The table and table_settings_and_source_data objects get passed straight to the database
     assert dimension.dimension_table.table_object == {"title": "My table title"}
     assert dimension.dimension_table.settings_and_source_data == {"tableOptions": {}}
 

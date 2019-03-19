@@ -3,7 +3,7 @@
 
 
     On open **initialiseForm()**
-    - grab current_settings from dimension.table_2_source_data if such a thing exists
+    - grab current_settings from dimension.table_settings_and_source_data if such a thing exists
     - if current_settings doesn't exist open with the data area open.
     - otherwise set the current_settings from file, paste data into the data panel and run the On new data routine below
 

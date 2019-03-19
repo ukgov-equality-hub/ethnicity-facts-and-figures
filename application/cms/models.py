@@ -674,9 +674,13 @@ class Dimension(db.Model):
             "time_period": self.time_period,
             "summary": self.summary,
             "chart": self.dimension_chart.chart_object if self.dimension_chart else None,
-            "chart_2_source_data": self.dimension_chart.settings_and_source_data if self.dimension_chart else None,
+            "chart_settings_and_source_data": self.dimension_chart.settings_and_source_data
+            if self.dimension_chart
+            else None,
             "table": self.dimension_table.table_object if self.dimension_table else None,
-            "table_2_source_data": self.dimension_table.settings_and_source_data if self.dimension_table else None,
+            "table_settings_and_source_data": self.dimension_table.settings_and_source_data
+            if self.dimension_table
+            else None,
         }
 
     # Note that this copy() function does not commit the new object to the database.
