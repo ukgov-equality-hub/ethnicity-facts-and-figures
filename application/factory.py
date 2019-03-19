@@ -16,7 +16,6 @@ from application.auth.forms import LoginForm
 from application.data.standardisers.ethnicity_classification_finder_builder import (
     ethnicity_classification_finder_from_file,
 )
-from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundException
 from application.cms.file_service import FileService
 from application.cms.filters import (
@@ -88,10 +87,6 @@ def create_app(config_object):
     db.init_app(app)
 
     app.url_map.strict_slashes = False
-
-    app.dictionary_lookup = EthnicityDictionaryLookup(
-        lookup_file=config_object.DICTIONARY_LOOKUP_FILE, default_values=config_object.DICTIONARY_LOOKUP_DEFAULTS
-    )
 
     app.classification_finder = ethnicity_classification_finder_from_file(
         config_object.ETHNICITY_CLASSIFICATION_FINDER_LOOKUP,
