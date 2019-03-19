@@ -292,13 +292,13 @@ class MeasureVersion(db.Model, CopyableModel):
     # relationships
     measure = db.relationship("Measure", back_populates="versions")
     lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="measure_versions")
-    uploads = db.relationship("Upload", back_populates="measure_version", lazy="dynamic", cascade="all,delete")
+    uploads = db.relationship("Upload", back_populates="measure_version", lazy="dynamic", cascade="all, delete-orphan")
     dimensions = db.relationship(
         "Dimension",
         back_populates="measure_version",
         lazy="dynamic",
         order_by="Dimension.position",
-        cascade="all,delete",
+        cascade="all, delete-orphan",
     )
     data_sources = db.relationship(
         "DataSource",
@@ -591,11 +591,15 @@ class Dimension(db.Model):
     table_id = db.Column(db.Integer, ForeignKey("dimension_table.id", name="dimension_table_id_fkey"))
 
     # relationships
-    dimension_chart = db.relationship("Chart", back_populates="dimension")
-    dimension_table = db.relationship("Table", back_populates="dimension")
+    dimension_chart = db.relationship(
+        "Chart", back_populates="dimension", single_parent=True, cascade="all, delete-orphan"
+    )
+    dimension_table = db.relationship(
+        "Table", back_populates="dimension", single_parent=True, cascade="all, delete-orphan"
+    )
     measure_version = db.relationship("MeasureVersion", back_populates="dimensions")
     classification_links = db.relationship(
-        "DimensionClassification", back_populates="dimension", lazy="dynamic", cascade="all,delete"
+        "DimensionClassification", back_populates="dimension", lazy="dynamic", cascade="all, delete-orphan"
     )
 
     @property
@@ -775,7 +779,7 @@ class Classification(db.Model):
 
     # relationships
     dimension_links = db.relationship(
-        "DimensionClassification", back_populates="classification", lazy="dynamic", cascade="all,delete"
+        "DimensionClassification", back_populates="classification", lazy="dynamic", cascade="all, delete-orphan"
     )
     ethnicities = db.relationship("Ethnicity", secondary=association_table, back_populates="classifications")
     parent_values = db.relationship(
