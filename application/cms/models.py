@@ -687,8 +687,6 @@ class Dimension(db.Model):
             else None,
         }
 
-    # Note that this copy() function does not commit the new object to the database.
-    # It it up to the caller to add and commit the copied object.
     def copy(self):
         # get a list of classification_links from this dimension before we make any changes
         # TODO: In reality there will only ever be one of these. We should refactor the model to reflect this.
@@ -710,15 +708,23 @@ class Dimension(db.Model):
         self.guid = create_guid(self.title)
 
         if chart_object:
-            self.dimension_chart = chart_object.copy()
+            copied_chart = chart_object.copy()
+            db.session.add(copied_chart)
+            db.session.flush()
+            self.chart_id = copied_chart.id
 
         if table_object:
-            self.dimension_table = table_object.copy()
+            copied_table = table_object.copy()
+            db.session.add(copied_table)
+            db.session.flush()
+            self.table_id = copied_table.id
 
         for dc in links:
             dc.dimension_guid = self.guid
             self.classification_links.append(dc)
 
+        db.session.add(self)
+        db.session.commit()
         return self
 
 
