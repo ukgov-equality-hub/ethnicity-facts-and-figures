@@ -768,15 +768,13 @@ def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    dimension_dict = dimension_object.to_dict()
-
     return render_template(
         "cms/create_table.html",
         topic=topic,
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
-        dimension=dimension_dict,
+        dimension_dict=dimension_object.to_dict(),
     )
 
 
