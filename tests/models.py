@@ -459,18 +459,6 @@ class DimensionFactory(factory.alchemy.SQLAlchemyModelFactory):
     created_at = factory.Faker("past_date", start_date="-30d")
     updated_at = factory.Faker("past_date", start_date="-7d")
 
-    # Too hard to realistically generate valid highcharts chart/table data, so leave these blank by default.
-    # If tests need them ... DIY.
-    chart = None
-    table = None
-    chart_builder_version = 2
-    chart_source_data = None
-    chart_2_source_data = None
-
-    table_source_data = {}
-    table_builder_version = 2
-    table_2_source_data = {}
-
     measure_version_id = factory.Maybe("measure_version", factory.SelfAttribute("measure_version.id"))
 
     position = factory.Sequence(lambda x: x)
