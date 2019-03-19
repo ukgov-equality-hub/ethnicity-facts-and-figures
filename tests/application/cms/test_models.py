@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from flask import url_for
 
 from application.cms.exceptions import RejectionImpossible
-from application.cms.models import Dimension, UKCountry
+from application.cms.models import Dimension, UKCountry, Table, Chart, DimensionClassification
 from tests.models import (
     MeasureFactory,
     MeasureVersionFactory,
@@ -553,8 +553,42 @@ class TestDimensionModel:
         # Classification is now 2A, set from the remaining chart
         assert dimension.dimension_classification.classification_id == "2A"
 
+    def test_delete_dimension_removes_dimension_chart_table_and_classification(self, db_session):
+        measure_version = MeasureVersionWithDimensionFactory(
+            # Dimension chart
+            dimensions__dimension_chart__chart_object={"chart": "yes"},
+            dimensions__dimension_chart__settings_and_source_data={"source": "settings"},
+            # Dimension table
+            dimensions__dimension_table__table_object={"table": "yes"},
+            dimensions__dimension_table__settings_and_source_data={"source": "data"},
+        )
+        dimension = measure_version.dimensions[0]
 
-class TestMeasureVersion:
+        dimension_table_id = dimension.table_id
+        dimension_chart_id = dimension.chart_id
+        dimension_guid = dimension.guid
+        dimension_classification_links = list(dimension.classification_links)
+
+        # Given the dimension has associated chart, table and classification entries
+        assert Chart.query.get(dimension_chart_id) is not None
+        assert Table.query.get(dimension_table_id) is not None
+        assert len(dimension_classification_links) == 1
+        assert (
+            DimensionClassification.query.filter_by(dimension_guid=dimension_guid).all()
+            == dimension_classification_links
+        )
+
+        # When the dimension is deleted
+        db_session.session.delete(dimension)
+        db_session.session.flush()
+
+        # Then the associated chart, table and classification entries are deleted too
+        assert Table.query.get(dimension_table_id) is None
+        assert Chart.query.get(dimension_chart_id) is None
+        assert DimensionClassification.query.filter_by(dimension_guid=dimension_guid).all() == []
+
+
+class TestMeasureVersionModel:
     def test_publish_to_internal_review(self):
         measure_version = MeasureVersionFactory(status="DRAFT")
         measure_version.next_state()
