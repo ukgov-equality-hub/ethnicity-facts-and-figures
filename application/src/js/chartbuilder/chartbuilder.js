@@ -333,7 +333,9 @@ $(document).ready(function () {
                 type: "POST",
                 url: url_save_chart_to_page,
                 dataType: 'json',
-                data: JSON.stringify({ 'chartObject': chartObject, 'source': src, 'chartBuilderVersion': 2,
+                data: JSON.stringify({
+                    'chartObject': chartObject,
+                    'source': src,
                     'classificationCode': getPresetCode(),
                     'customClassificationCode': getCustomClassificationCode(),
                     'customClassification': getCustomObject(),
@@ -357,7 +359,6 @@ $(document).ready(function () {
             'custom': getCustomObject(),
             'chartOptions': getChartTypeOptions(chartType),
             'chartFormat': getChartFormat(),
-            'version': '2.0'
         }
     }
 
