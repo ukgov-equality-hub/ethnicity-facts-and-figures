@@ -198,12 +198,13 @@
                         {#
                             Select style
                         #}
-                        <select class="govuk-select eff-!-fill-width" id="panel-bar__data_style"
-                                {% if form_disabled %}disabled="disabled"{% endif %}>
-                            <option value="ethnicity_as_panel_bars" selected>Use ethnicity for bars</option>
-                            <option value="ethnicity_as_panels">Use ethnicity for panels</option>
-                        </select>
-
+                        <div class="govuk-form-group">
+                            <select class="govuk-select eff-!-fill-width" id="panel-bar__data_style"
+                                    {% if form_disabled %}disabled="disabled"{% endif %}>
+                                <option value="ethnicity_as_panel_bars" selected>Use ethnicity for bars</option>
+                                <option value="ethnicity_as_panels">Use ethnicity for panels</option>
+                            </select>
+                        </div>
 
                         {#
                             Style 1 - Ethnicity for the bars
@@ -216,7 +217,7 @@
                                     <option>Please select</option>
                                 </select>
                             </div>
-                            <div class="">
+                            <div class="govuk-form-group">
                                 <label class="govuk-label" for="panel-bar__panel_order">Order</label>
                                 <select class="govuk-select eff-!-fill-width" id="panel-bar__panel_order"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
