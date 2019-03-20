@@ -492,7 +492,7 @@ def test_classification_search_given_raw_data_returns_only_output_for_valid_clas
     assert 2 == len(search_outputs)
 
 
-def test_classification_search_given_raw_data_returns_data_for_builders_v2():
+def test_classification_search_given_raw_data_returns_data_for_builders():
     # Given
     # a classification search with a simple classifications
     standardiser = pet_standardiser()

@@ -913,8 +913,7 @@ def get_valid_classifications():
     """
     This is an AJAX endpoint for the EthnicityClassificationFinder data standardiser
 
-    It is called whenever data needs to be cleaned up for use in second generation front end data tools
-    (chartbuilder 2 & potentially tablebuilder 2)
+    It cleans up data and identifies possible ethnicity classifications in use for chartbuilder and tablebuilder
 
     :return: A list of processed versions of input data using different "classifications"
     """
