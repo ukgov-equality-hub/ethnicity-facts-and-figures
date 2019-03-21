@@ -730,23 +730,6 @@
         chart.highcharts().exportChart({"filename" : chartTitle});
         evt.preventDefault();
     });
-
-
-    function getSourceText(source){
-        var regex = /\[(.*?)\]\(.*?\)/;
-        if(regex.test(source)){
-            var match = regex.exec(source);
-            if(match.length == 2) {
-               return match[1];
-            }
-            else {
-                return source;
-            }
-        } else {
-            return source;
-        }
-    };
-
   });
 </script>
 {% endblock %}

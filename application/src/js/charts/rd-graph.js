@@ -775,17 +775,6 @@ function setHeight(chartObject, padding) {
   return ( seriesLength * bar ) + padding;
 }
 
-function tooltipWithText(chart, series, text) {
-    var formatter = chart.series.length > 1 ? series.name + ': <b>' : '<b>';
-    formatter = formatter + text + '</b>';
-    return formatter;
-}
-function tooltipWithNumber(chart, series, prefix, suffix, decimalPlaces, number) {
-    var formatter = chart.series.length > 1 ? series.name + ': <b>' : '<b>';
-    formatter = formatter + prefix + formatNumberWithDecimalPlaces(number, decimalPlaces) + suffix + '</b>';
-    return formatter;
-}
-
 function decimalPointFormat(label, dp) {
     if(dp && dp > 0) {
         return '{' + label + ':.' + dp + 'f}';
