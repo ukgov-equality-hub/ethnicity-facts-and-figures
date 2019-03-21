@@ -329,7 +329,7 @@ function panelBarchart(container_id, chartObject) {
     var max = chartMax(chartObject);
 
     for(var c in chartObject.panels) {
-        internal_divs = internal_divs + "<div id=\"" + container_id + "_" + c + "\" class=\"chart-container column-one-" + (chartObject.panels.length > 2 ? 'third' : 'half') + "\"></div>";
+        internal_divs = internal_divs + "<div id=\"" + container_id + "_" + c + "\" class=\"chart-container govuk-grid-column-one-" + (chartObject.panels.length > 2 ? 'third' : 'half') + "\"></div>";
     }
     $('#' + container_id).html(internal_divs);
 
@@ -544,7 +544,7 @@ function panelLinechart(container_id, chartObject) {
     }
 
     for(var c in chartObject.panels) {
-        internal_divs = internal_divs + "<div id=\"" + container_id + "_" + c + "\" class=\"chart-container column-one-"+ (chartObject.panels.length > 2 ? 'third' : 'half') +"\"></div>";
+        internal_divs = internal_divs + "<div id=\"" + container_id + "_" + c + "\" class=\"chart-container govuk-grid-column-one-"+ (chartObject.panels.length > 2 ? 'third' : 'half') +"\"></div>";
     }
     $('#' + container_id).addClass('panel-line-chart').html(internal_divs);
 

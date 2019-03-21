@@ -292,13 +292,13 @@ class MeasureVersion(db.Model, CopyableModel):
     # relationships
     measure = db.relationship("Measure", back_populates="versions")
     lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="measure_versions")
-    uploads = db.relationship("Upload", back_populates="measure_version", lazy="dynamic", cascade="all,delete")
+    uploads = db.relationship("Upload", back_populates="measure_version", lazy="dynamic", cascade="all, delete-orphan")
     dimensions = db.relationship(
         "Dimension",
         back_populates="measure_version",
         lazy="dynamic",
         order_by="Dimension.position",
-        cascade="all,delete",
+        cascade="all, delete-orphan",
     )
     data_sources = db.relationship(
         "DataSource",
@@ -570,18 +570,6 @@ class Dimension(db.Model):
     created_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
     updated_at = db.Column(db.DateTime, server_default=__SQL_CURRENT_UTC_TIME, nullable=False)
 
-    # TODO: Delete these once chart and table data has been copied over and code updated to look in Chart and Table
-    chart = db.Column(JSON)
-    chart_builder_version = db.Column(db.Integer)
-    chart_source_data = db.Column(JSON)
-    chart_2_source_data = db.Column(JSON)
-
-    table = db.Column(JSON)
-    table_source_data = db.Column(JSON)
-    table_builder_version = db.Column(db.Integer)
-    table_2_source_data = db.Column(JSON)
-    # TODO: End delete
-
     measure_version_id = db.Column(db.Integer, nullable=False)
 
     position = db.Column(db.Integer)
@@ -590,11 +578,15 @@ class Dimension(db.Model):
     table_id = db.Column(db.Integer, ForeignKey("dimension_table.id", name="dimension_table_id_fkey"))
 
     # relationships
-    dimension_chart = db.relationship("Chart")
-    dimension_table = db.relationship("Table")
+    dimension_chart = db.relationship(
+        "Chart", back_populates="dimension", single_parent=True, cascade="all, delete-orphan"
+    )
+    dimension_table = db.relationship(
+        "Table", back_populates="dimension", single_parent=True, cascade="all, delete-orphan"
+    )
     measure_version = db.relationship("MeasureVersion", back_populates="dimensions")
     classification_links = db.relationship(
-        "DimensionClassification", back_populates="dimension", lazy="dynamic", cascade="all,delete"
+        "DimensionClassification", back_populates="dimension", lazy="dynamic", cascade="all, delete-orphan"
     )
 
     @property
@@ -638,11 +630,29 @@ class Dimension(db.Model):
 
         chart_or_table = None
 
-        if self.dimension_chart and (self.dimension_table is None):
+        # If there is a chart classification but no table classification, use the chart
+        if (
+            self.dimension_chart
+            and self.dimension_chart.classification
+            and (self.dimension_table is None or self.dimension_table.classification is None)
+        ):
             chart_or_table = self.dimension_chart
-        elif self.dimension_table and (self.dimension_chart is None):
+
+        # If there is a table classification but no chart classification, use the table
+        elif (
+            self.dimension_table
+            and self.dimension_table.classification
+            and (self.dimension_chart is None or self.dimension_chart.classification is None)
+        ):
             chart_or_table = self.dimension_table
-        elif self.dimension_table and self.dimension_chart:
+
+        # If there is both a table classification and chart classification, use the most specific
+        elif (
+            self.dimension_table
+            and self.dimension_table.classification
+            and self.dimension_chart
+            and self.dimension_chart.classification
+        ):
             if (
                 self.dimension_chart.classification.ethnicities_count
                 > self.dimension_table.classification.ethnicities_count
@@ -651,7 +661,7 @@ class Dimension(db.Model):
             else:
                 chart_or_table = self.dimension_table
 
-        if chart_or_table:
+        if chart_or_table and chart_or_table.classification_id is not None:
             dimension_classification = self.dimension_classification or DimensionClassification()
             dimension_classification.classification_id = chart_or_table.classification_id
             dimension_classification.includes_parents = chart_or_table.includes_parents
@@ -665,34 +675,6 @@ class Dimension(db.Model):
 
         db.session.commit()
 
-    # TODO: Refactor Dimension so that all chart and table data lives in dimension_chart and dimension_table
-    # Once the chart and table data is moved out into dimension_chart and dimension_table models we can add
-    # delete() to the ChartAndTableMixin so we can just do dimension.chart.delete() and dimension.table.delete()
-    # without the need for the repeated code in the two methods below.
-    def delete_chart(self):
-        if self.chart_id:
-            db.session.delete(Chart.query.get(self.chart_id))
-        self.chart = sqlalchemy.null()
-        self.chart_source_data = sqlalchemy.null()
-        self.chart_2_source_data = sqlalchemy.null()
-        self.chart_id = None
-
-        db.session.commit()
-
-        self.update_dimension_classification_from_chart_or_table()
-
-    def delete_table(self):
-        if self.table_id:
-            db.session.delete(Table.query.get(self.table_id))
-        self.table = sqlalchemy.null()
-        self.table_source_data = sqlalchemy.null()
-        self.table_2_source_data = sqlalchemy.null()
-        self.table_id = None
-
-        db.session.commit()
-
-        self.update_dimension_classification_from_chart_or_table()
-
     def to_dict(self):
         return {
             "guid": self.guid,
@@ -700,18 +682,16 @@ class Dimension(db.Model):
             "measure": self.measure_version.measure.id,
             "time_period": self.time_period,
             "summary": self.summary,
-            "chart": self.chart,
-            "table": self.table,
-            "chart_builder_version": self.chart_builder_version,
-            "chart_source_data": self.chart_source_data,
-            "chart_2_source_data": self.chart_2_source_data,
-            "table_source_data": self.table_source_data,
-            "table_2_source_data": self.table_2_source_data,
-            "table_builder_version": self.table_builder_version,
+            "chart": self.dimension_chart.chart_object if self.dimension_chart else None,
+            "chart_settings_and_source_data": self.dimension_chart.settings_and_source_data
+            if self.dimension_chart
+            else None,
+            "table": self.dimension_table.table_object if self.dimension_table else None,
+            "table_settings_and_source_data": self.dimension_table.settings_and_source_data
+            if self.dimension_table
+            else None,
         }
 
-    # Note that this copy() function does not commit the new object to the database.
-    # It it up to the caller to add and commit the copied object.
     def copy(self):
         # get a list of classification_links from this dimension before we make any changes
         # TODO: In reality there will only ever be one of these. We should refactor the model to reflect this.
@@ -733,15 +713,23 @@ class Dimension(db.Model):
         self.guid = create_guid(self.title)
 
         if chart_object:
-            self.dimension_chart = chart_object.copy()
+            copied_chart = chart_object.copy()
+            db.session.add(copied_chart)
+            db.session.flush()
+            self.chart_id = copied_chart.id
 
         if table_object:
-            self.dimension_table = table_object.copy()
+            copied_table = table_object.copy()
+            db.session.add(copied_table)
+            db.session.flush()
+            self.table_id = copied_table.id
 
         for dc in links:
             dc.dimension_guid = self.guid
             self.classification_links.append(dc)
 
+        db.session.add(self)
+        db.session.commit()
         return self
 
 
@@ -802,7 +790,7 @@ class Classification(db.Model):
 
     # relationships
     dimension_links = db.relationship(
-        "DimensionClassification", back_populates="classification", lazy="dynamic", cascade="all,delete"
+        "DimensionClassification", back_populates="classification", lazy="dynamic", cascade="all, delete-orphan"
     )
     ethnicities = db.relationship("Ethnicity", secondary=association_table, back_populates="classifications")
     parent_values = db.relationship(
@@ -872,9 +860,7 @@ class ChartAndTableMixin(object):
 
     settings_and_source_data = db.Column(JSON)
 
-    @classmethod
-    def get_by_id(cls, id):
-        return cls.query.filter_by(id=id).first()
+    title = db.Column(db.String(255))
 
     @declared_attr
     def classification(cls):
@@ -895,6 +881,11 @@ class ChartAndTableMixin(object):
                 setattr(new_object, name, getattr(self, name))
         return new_object
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        self.dimension.update_dimension_classification_from_chart_or_table()
+
     def __str__(self):
         return (
             f"{self.id} {self.classification_id} "
@@ -908,14 +899,22 @@ class Chart(db.Model, ChartAndTableMixin):
     # metadata
     __tablename__ = "dimension_chart"
 
+    # fields
     chart_object = db.Column(JSON)
+
+    # relationships
+    dimension = db.relationship("Dimension", back_populates="dimension_chart", uselist=False)
 
 
 class Table(db.Model, ChartAndTableMixin):
     # metadata
     __tablename__ = "dimension_table"
 
+    # fields
     table_object = db.Column(JSON)
+
+    # relationships
+    dimension = db.relationship("Dimension", back_populates="dimension_table", uselist=False)
 
 
 class Organisation(db.Model):

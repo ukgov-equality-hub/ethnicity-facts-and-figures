@@ -1,0 +1,32 @@
+// Minimal adapted copy of the GOV.UK Frontend error-summary component:
+// https://github.com/alphagov/govuk-frontend/blob/master/src/components/error-summary/_error-summary.scss
+
+@import "node_modules/govuk-frontend/settings/all";
+@import "node_modules/govuk-frontend/tools/all";
+@import "node_modules/govuk-frontend/helpers/all";
+
+@import "node_modules/govuk-frontend/core/lists";
+
+$eff-flash-colour: #00833F;
+
+.eff-flash-message {
+  @include govuk-text-colour;
+  @include govuk-responsive-padding(4);
+  @include govuk-responsive-margin(8, "bottom");
+  @include govuk-focusable;
+
+  border: $govuk-border-width-mobile solid $eff-flash-colour;
+
+  @include govuk-media-query($from: tablet) {
+    border: $govuk-border-width solid $eff-flash-colour;
+  }
+}
+
+.eff-flash-message__body {
+  @include govuk-font($size: 19);
+
+  p {
+    margin-top: 0;
+    @include govuk-responsive-margin(4, "bottom");
+  }
+}

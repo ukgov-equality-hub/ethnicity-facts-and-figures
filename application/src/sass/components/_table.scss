@@ -1,0 +1,492 @@
+/* Table modifiers
+ *
+ * These all modify the standard GOV.UK Design System table component,
+ * and should be used in addition to those classes.
+ */
+
+
+.eff-table__header--dense {
+  @include govuk-font(16, $weight: bold);
+}
+
+.eff-table__header--numeric--dense {
+  @include govuk-font(16, $weight: bold, $tabular: true);
+}
+
+.eff-table__cell--dense {
+  @include govuk-font(16);
+}
+
+.eff-table__cell--numeric--dense {
+  @include govuk-font(16, $tabular: true);
+}
+
+
+/* Cells with borders on the right
+ *
+ * This adds borders to the right hand side of a cell, and reduces
+ * the padding. Useful for grouping several columns together.
+ */
+.eff-table__header--border-right,
+.eff-table__cell--border-right {
+  border-right: 1px solid $govuk-border-colour;
+  padding-right: 10px;
+}
+
+
+/* Cells with reduced padding on the left
+ *
+ * This reduces the padding on the left from 20px to 10px.
+ * Useful if there's a border on the left hand side.
+ */
+.eff-table__header--padding-left,
+.eff-table__cell--padding-left {
+  padding-left: 10px;
+}
+
+
+
+.eff-table__head--reversed .govuk-table__header {
+  background-color: #005EA5;
+  color: white;
+  border-bottom-color: #005EA5;
+}
+
+.eff-table__head--reversed .govuk-table__header:first-child {
+  padding-left: 5px;
+}
+
+
+/* Table header cells with a fixed width of80px
+ *
+ */
+.eff-table__header--width-80 {
+  width: 80px;
+}
+
+
+
+/* Styles to keep measure page tables constrained to a fixed height */
+
+
+/* Hide the main table header content (in case it peeks through
+   when bouncing back from momentum scroll) */
+.table-container thead th, .table-container thead td {
+  opacity: 0;
+  border-color: transparent;
+}
+
+/* Outer container is max-width */
+.table-container-outer {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* Middle container scrolls horizontally */
+.table-container-middle {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Inner container needs to have relative position so that
+   the fixed inner table can be absolutely positioned relative
+   to it*/
+.table-container-inner {
+  position: relative;
+}
+
+/* Table container scrolls vertically */
+.table-container {
+  overflow-y: scroll;
+  max-height: 400px;
+}
+
+.fixed-header-container {
+  position: absolute;
+  top: 0px;
+  overflow-x: visible;
+}
+
+/* Show the fixed table (which just contains a header)
+   and fix its position to the top of the containing element */
+.fixed-headers table.fixed {
+  width: auto;
+}
+
+/* Set a maximum height with overflow scrolling on table container */
+.fixed-headers .table-container {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+.table-container table {
+  width: auto;
+}
+
+
+
+table.measure-data {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 0px;
+
+  td, th {
+    font-size: 16px;
+    padding-left: 5px;
+    padding-right: 5px;
+    vertical-align: top;
+    font-family: $govuk-font-family-tabular;
+  }
+
+  th.line, td.line {
+    border-right: 1px solid $govuk-border-colour;
+    padding-right: 10px;
+  }
+
+  td {
+    text-align: right;
+  }
+
+  thead th {
+    padding-top: 0;
+    text-align: right;
+  }
+
+  thead th:first-child {
+    text-align: left;
+  }
+
+  thead th {
+    font-weight: normal;
+  }
+
+  thead tr:first-child th,
+  thead tr th:first-child {
+    font-weight: bold;
+  }
+
+
+  th:first-child {
+    padding-left: 0;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: $govuk-border-colour;
+  }
+
+  th:last-of-type,
+  td:last-of-type {
+    padding-right: 10px;
+  }
+
+  /* grouped tables (columns) */
+
+  &.grouped {
+
+    thead {
+
+      tr {
+        &:first-child {
+
+          td,th {
+            border-bottom-width: 0;
+          }
+
+          td {
+            font-weight: bold;
+          }
+        }
+      }
+
+      th {
+        border-bottom: 1px solid $govuk-border-colour;
+
+        &:first-child {
+          text-align: left;
+        }
+      }
+    }
+    tbody {
+      th {
+        border-right: 1px solid $govuk-border-colour;
+        padding-right: 5px;
+      }
+
+    }
+
+  }
+
+  /* grouped tables (rows) */
+
+  &.grouped-rows tbody th {
+    font-weight: normal;
+    padding-left: 10px;
+  }
+
+  &.grouped-rows tbody th[scope="rowgroup"] {
+    font-weight: bold;
+    padding-left: 0;
+  }
+
+    &.last {
+      padding-right: 5px;
+    }
+
+    &:focus {
+      outline-width: 0;
+    }
+
+    &.sorting_asc, &.sorting_desc {
+      position: relative;
+
+      button {
+        outline-width: 0;
+        font-weight: bold;
+
+        &:first-child {
+          &:after {
+            display: inline-block;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            content: '';
+          }
+        }
+
+        &:after {
+          position: absolute;
+          border-left: 3px solid transparent;
+          border-right: 3px solid transparent;
+          border-top: 6px solid govuk-colour("blue");
+          content: '';
+          margin-left: 2px;
+          margin-top: 8px;
+        }
+      }
+    }
+
+    &.sorting_desc {
+      button {
+        &:after {
+          border-top: 0px solid transparent;
+          border-bottom: 6px solid govuk-colour("blue");
+        }
+      }
+    }
+
+  .border-bottom {
+    border-bottom: 1px solid $govuk-border-colour;
+  }
+
+  thead {
+    tr {
+      font-weight: normal;
+
+      td {
+        &.first {
+          text-align: left;
+        }
+      }
+
+      &.top {
+        td {
+          border-bottom: 0px transparent solid;
+          font-weight: bold;
+          text-align: left;
+          padding-left: 5px;
+        }
+      }
+    }
+  }
+
+  .right-border {
+      border-right: 1px solid $govuk-border-colour;
+      padding-right: 5px;
+    }
+
+  tbody {
+    td {
+      border-bottom: 1px solid $govuk-border-colour;
+    }
+  }
+
+  .breakdown-controller {
+    color: $govuk-link-colour;
+    &:hover {
+      color: $govuk-link-hover-colour;
+      cursor: pointer;
+    }
+  }
+
+  .not-bold {
+    font-weight: 400 !important;
+  }
+
+  .breakdown {
+    td {
+    padding-left: 20px;
+    }
+  }
+}
+
+.chart-footer {
+  font-size: 16px;
+}
+
+.table-footer {
+  font-size: 16px;
+  padding: 15px 0 0;
+  display: block;
+}
+
+
+.table-footer .missing-data-explanation,
+.chart-footer .missing-data-explanation {
+  color: govuk-colour("grey-1");
+}
+
+.missing-data-explanation .explanation {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+/* Used for showing N/A in tables */
+.not-applicable {
+  color: govuk-colour("grey-1");
+}
+
+
+
+/* Collapsible table
+ *
+ * TODO: convert to Design System css coding conventions.
+ */
+.measures-by-week {
+
+  .week th,
+  .week td {
+    cursor: pointer;
+    -webkit-user-select: none; /* Chrome all / Safari all */
+    -moz-user-select: none; /* Firefox all */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Likely future */
+  }
+
+  .week.empty th,
+  .week.empty td {
+    cursor: inherit;
+  }
+
+  .week td,
+  .week th,
+  tbody.collapsed .week:hover td,
+  tbody.collapsed .week:hover th {
+    background-color: #e6e6e6;
+    border-bottom-color: #e6e6e6;
+  }
+
+  tbody .week td:last-child {
+    position: relative;
+  }
+
+  tbody .week td:last-child:after {
+    position: absolute;
+    right: 10px;
+    font-size: 19px;
+    font-weight: bold;
+    color: govuk-colour("grey-1");
+  }
+
+  tbody .week.empty td:last-child:after {
+    display: none;
+  }
+
+  tbody .week td:last-child:after {
+    content: '–';
+  }
+
+  tbody.collapsed .week td:last-child:after {
+    content: '+';
+  }
+
+  tbody.collapsed .week td,
+  tbody.collapsed .week th,
+  tbody.collapsed .week.empty:hover td,
+  tbody.collapsed .week.empty:hover th {
+    background-color: govuk-colour("white");
+  }
+
+  .week th {
+    color: $govuk-brand-colour;
+  }
+
+  .week.empty th {
+    color: govuk-colour("black");
+  }
+
+  .week.empty th {
+    cursor: auto;
+  }
+
+  tbody.collapsed .measure-titles {
+    display: none;
+  }
+
+  .measure-titles {
+
+    ul {
+      list-style-type: none;
+      margin-left: 0;
+      margin-top: 0;
+      margin-bottom: 1em;
+    }
+
+    li {
+      margin-bottom: .5em;
+    }
+
+    a {
+      margin-right: .5em;
+    }
+
+    .source {
+      color: #6F777B;
+      margin-right: .5em;
+    }
+  }
+
+}
+
+/* Fixed with numeric columns
+ *
+ * TODO: replace with width override classes?
+ */
+table.numeric {
+  width: 100px;
+}
+
+/* Use on <th> for fixing column widths */
+table .column-width-40 {
+    width: 40%;
+}
+
+table .column-width-30 {
+    width: 30%;
+}
+
+table .column-width-15 {
+    width: 15%;
+}
+
+.eff-table__list--inset {
+  padding-inline-start: 40px;
+}
+
+.eff-table__list--dense {
+  @include govuk-font(16);
+  @include govuk-responsive-margin(0, $direction: "bottom");
+}
+
+.eff-table__cell--align-top {
+  vertical-align: top;
+}

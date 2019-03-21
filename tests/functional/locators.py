@@ -14,7 +14,7 @@ class NavigationLocators:
 
 class HeaderLocators:
     SEARCH_INPUT = (By.ID, "site-search-text")
-    SEARCH_SUBMIT = (By.CSS_SELECTOR, "header #search-form input.submit")
+    SEARCH_SUBMIT = (By.CSS_SELECTOR, ".eff-search__input--submit")
 
 
 class FooterLinkLocators:
@@ -208,7 +208,7 @@ class TableBuilderPageLocators:
 class TopicPageLocators:
     @staticmethod
     def get_accordion(data_event_text):
-        return By.CSS_SELECTOR, "div[data-event-label='%s']" % data_event_text
+        return By.XPATH, "//h2[contains(., '%s')]" % data_event_text
 
     @staticmethod
     def get_add_measure_link(link_text):

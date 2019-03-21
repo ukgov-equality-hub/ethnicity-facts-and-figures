@@ -11,40 +11,40 @@
 {% block pageTitle %}{{ level_of_geography }}{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-xlarge">{{ level_of_geography }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ level_of_geography }}</h1>
 
         {% if page_count > 1 %}
-            <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this level of geography.</p>
+            <p class="govuk-body-l">There are <strong>{{ page_count }}</strong> published pages using this level of geography.</p>
         {% else %}
-            <p class="lede">There is <strong>1</strong> published pages using this level of geography.</p>
+            <p class="govuk-body-l">There is <strong>1</strong> published pages using this level of geography.</p>
         {% endif %}
     </div>
   </div>
 
-  <table class="measures smaller-text" id="measures">
-      <thead>
-        <tr>
-          <th class="" aria-sort="none">Topic</th>
-          <th class="" aria-sort="none">Sub-topic</th>
-          <th class="" aria-sort="ascending">Title</th>
+  <table class="govuk-table measures" id="measures">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Topic</th>
+          <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Sub-topic</th>
+          <th class="govuk-table__header eff-table__header--dense" aria-sort="ascending">Title</th>
         </tr>
       </thead>
 
-    <tbody>
+    <tbody class="govuk-table__body">
     {% for topic_title, measure_titles_and_urls_by_subtopic in measure_titles_and_urls_by_topic_and_subtopic.items() %}
         {% for subtopic_title, measure_titles_and_urls in measure_titles_and_urls_by_subtopic.items() %}
-        <tr>
-            <td>{{ topic_title }}</td>
-            <td>{{ subtopic_title }}</td>
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">{{ topic_title }}</td>
+            <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">{{ subtopic_title }}</td>
 
-            <td>
-            {% for measure_title_and_url in measure_titles_and_urls %}
-                <ul class="dimensions">
-                    <a href="{{ measure_title_and_url.url }}">{{ measure_title_and_url.title }}</a>
-                </ul>
-            {%  endfor %}
+            <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">
+              <ul class="govuk-list eff-table__list--dense">
+              {% for measure_title_and_url in measure_titles_and_urls %}
+                <li><a class="govuk-link" href="{{ measure_title_and_url.url }}">{{ measure_title_and_url.title }}</a></li>
+              {%  endfor %}
+              </ul>
             </td>
 
           </tr>

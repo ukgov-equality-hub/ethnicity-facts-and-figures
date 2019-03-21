@@ -34,24 +34,26 @@ derived from the GOV.UK Design System: https://design-system.service.gov.uk/styl
     * Can be used to set the `class` attribute on the `<body>` element.
 * bodyStart
     * A hook into the start of the `<body>` element.
-* skipLink
-    * Can be used to override the default `skipLink` container used to allow keyboard users to skip past the navbar.
 * cookieMessage
     * Contains the global GOV.UK cookie messages
 * header
     * Contains the default page header for the site, including the CMS header (if appropriate)
+* phaseBanner
+    * Wraps around the phase (beta) banner, used to override it on the homepage to invert the colours.
 * main
     * Wrapper around the declaration of the `<main>` element.
     * Sub-blocks:
-        * mainElementDefinition
-            * Wraps around the opening tag of the default `<main>` element, allowing to override it and assign additional/alternative properties.
         * beforeContent
-            * A hook into the `main` element, before any of the core content of the specific page is rendered. By default, contains the page breadcrumbs.
+            * A hook within the main content container, but before and outside the `main` element.
             * Sub-blocks:
                 * breadcrumbs
                     * Renders the breadcrumbs for the page, using the `breadcrumbs` variable defined in each sub-template.
                 * flashMessages
                     * Renders flash messages for the page, retrieving them from `get_flashed_messages` exposed by Flask.
+                * errorSummary
+                    * Renders an error summary for any forms on the page, populated from the `error_summary` variable.
+        * mainAttributes
+            * A hook into additional attributes for the `main` element.
         * content
             * Where sub-templates should declare the content for the specific page, including its `<h1>`.
 * footer

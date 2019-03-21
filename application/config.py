@@ -55,11 +55,6 @@ class Config:
     S3_REGION = os.environ.get("S3_REGION", "eu-west-2")
     LOCAL_ROOT = os.environ.get("LOCAL_ROOT", None)
 
-    DICTIONARY_LOOKUP_FILE = os.environ.get(
-        "DICTIONARY_LOOKUP_FILE", "./application/data/static/standardisers/dictionary_lookup.csv"
-    )
-    DICTIONARY_LOOKUP_DEFAULTS = ["*", "*", "Unclassified", 960]
-
     ETHNICITY_CLASSIFICATION_FINDER_LOOKUP = os.environ.get(
         "CLASSIFICATION_FINDER_LOOKUP", "./application/data/static/standardisers/classification_lookup.csv"
     )
@@ -124,10 +119,6 @@ class TestConfig(DevConfig):
     LOGIN_DISABLED = False
     WORK_WITH_REMOTE = False
     FILE_SERVICE = "Local"
-
-    DICTIONARY_LOOKUP_FILE = os.environ.get(
-        "DICTIONARY_LOOKUP_FILE", "tests/test_data/test_dictionary_lookup/test_lookup.csv"
-    )
 
     WTF_CSRF_ENABLED = False
     SESSION_COOKIE_SECURE = False

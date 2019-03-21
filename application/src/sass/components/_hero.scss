@@ -1,0 +1,30 @@
+.hero-container {
+  background-color: govuk-colour("blue");
+  width: 100%;
+  padding-bottom: 20px;
+  clear: both;
+  overflow: hidden;
+  margin-bottom: 45px;
+  font-size: 19px;
+
+  .hero {
+    max-width: 990px;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  .hero-inner {
+    padding: 15px 15px 0 15px;
+  }
+
+  #content {
+    padding-bottom: 0px;
+  }
+  h1, p {
+    color: white;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+
+}

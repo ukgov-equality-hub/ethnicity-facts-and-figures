@@ -1,28 +1,33 @@
-{# Required parameters: id_, name, class_, fieldset_class, field_class, legend, fields, errors, label_class, disabled #}
+{# Required parameters: id_, name, class_, fieldset_class, field_class, field_type, legend, fields, errors, label_class, disabled #}
 
-<div id="{{ id_ }}" class="form-group {{ class_ }} {% if errors %}form-group-error{% endif %}">
+{% set govukBaseClass = 'govuk-' + ('checkboxes' if field_type == 'checkbox' else 'radios') %}
+
+<div id="{{ id_ }}" name="{{ name }}" class="govuk-form-group{% if class_ %} {{ class_ }}{% endif %}{% if errors %} govuk-form-group--error{% endif %}">
   {% if fields|length == 1 %}
     {{ fields[0](disabled=disabled) }}
   {% else %}
-  <fieldset {% if fieldset_class %}class="{{ fieldset_class }}"{% endif %}>
-    <legend id="{{ id_ + '-label'}}">
-      {{- field.label.text }} {% if errors %}<span class="error-message">{{ errors[0] }}</span>{% endif -%}
+  <fieldset class="govuk-fieldset{% if fieldset_class %} {{ fieldset_class }}{% endif %}">
+    <legend id="{{ id_ + '-label'}}" class="govuk-fieldset__legend{% if legend_class %} {{ legend_class }}{% endif %}">
+      {{- field.label.text }} {% if errors %}<span class="govuk-error-message">{{ errors[0] }}</span>{% endif -%}
     </legend>
     {% if field.hint or hint %}
-    <span class="form-hint">{{ field.hint or hint }}</span>
+    <span class="govuk-hint">{{ field.hint or hint }}</span>
     {% endif %}
-      {% for field in fields %}
-          {% set field_options = {"disabled": disabled, "class_": field_class} %}
-          {% if loop.last and other_field %}
-            {% do field_options.update({"disabled": disabled, "aria-controls": other_field.id + "-wrapper", "aria-expanded": "false"}) %}
-          {% endif %}
-          {{ field(**field_options) }}
-      {% endfor %}
+      <div class="{{ govukBaseClass }}">
+        {% for field in fields %}
+            {% set field_options = {"disabled": disabled, "class_": field_class} %}
+            {% if loop.last and other_field %}
+              {% do field_options.update({"aria-controls": other_field.id + "-wrapper", "aria-expanded": "false"}) %}
+            {% endif %}
+            {{ field(**field_options) }}
+        {% endfor %}
+      </div>
 
       {% if fields and other_field %}
-        <div class="panel panel-border-narrow form-group {% if other_field.errors %}form-group-error{% endif %}"
+        <div class="panel panel-border-narrow govuk-form-group{% if other_field.errors %} govuk-form-group--error{% endif %}"
               id="{{ other_field.id }}-wrapper">
-          {{ other_field(disabled=disabled) }}
+          {% set field_options = {"disabled": disabled, "class_": field_class} %}
+          {{ other_field(**field_options) }}
         </div>
 
         <script>

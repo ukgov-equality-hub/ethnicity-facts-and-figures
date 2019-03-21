@@ -16,15 +16,17 @@ function ukCountriesSelect(element) {
     )) { return; }
 
     ukInput = document.createElement('input')
+    ukInput.setAttribute('class', 'govuk-checkboxes__input')
     ukInput.setAttribute('type', 'checkbox')
     ukInput.setAttribute('id', 'uk')
 
     var ukInputLabel = document.createElement('label')
+    ukInputLabel.setAttribute('class', 'govuk-label govuk-checkboxes__label')
     ukInputLabel.setAttribute('for', 'uk')
     ukInputLabel.textContent = 'United Kingdom'
 
     var ukInputContainer = document.createElement('div')
-    ukInputContainer.setAttribute('class', 'multiple-choice uk')
+    ukInputContainer.setAttribute('class', 'govuk-checkboxes__item uk')
 
     ukInputContainer.appendChild(ukInput)
     ukInputContainer.appendChild(ukInputLabel)
@@ -36,7 +38,7 @@ function ukCountriesSelect(element) {
       return;
     }
 
-    legend.parentElement.appendChild(ukInputContainer)
+    this.element.querySelector('.govuk-checkboxes').appendChild(ukInputContainer)
 
     if (ukInput) {
       ukInput.addEventListener('change', ukChanged)

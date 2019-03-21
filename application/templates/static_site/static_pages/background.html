@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% set breadcrumbs = 
+{% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
   ]
@@ -13,29 +13,29 @@
 {% block headEnd %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.background') }}">{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-xlarge">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
         Background
       </h1>
     </div>
   </div>
 
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <p>The <a href="https://www.gov.uk/government/news/prime-minister-orders-government-audit-to-tackle-racial-disparities-in-public-service-outcomes" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="Prime Minister announcement">Prime Minister announced the Race Disparity Audit in August 2016</a> to publish government data on disparities in treatment and outcomes in public services for all races and ethnicities.</p>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <p class="govuk-body">The <a class="govuk-link" href="https://www.gov.uk/government/news/prime-minister-orders-government-audit-to-tackle-racial-disparities-in-public-service-outcomes" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="Prime Minister announcement">Prime Minister announced the Race Disparity Audit in August 2016</a> to publish government data on disparities in treatment and outcomes in public services for all races and ethnicities.</p>
 
-      <p>The aim of the project was to gather data collected by government about the different experiences of the UK’s ethnic groups, and publish it.</p>
+      <p class="govuk-body">The aim of the project was to gather data collected by government about the different experiences of the UK’s ethnic groups, and publish it.</p>
 
-      <p>Below, we explain how the project was carried out and the underlying principles and goals that guided it.</p>
+      <p class="govuk-body">Below, we explain how the project was carried out and the underlying principles and goals that guided it.</p>
 
-      <h2 class="heading-medium" id="understanding-users">Understanding users</h2>
+      <h2 class="govuk-heading-m" id="understanding-users">Understanding users</h2>
 
-      <p>In order to be sure that the project would deliver value, hundreds of users have been interviewed or involved in user research since the start. It was important to understand who our users are, their different needs, how those needs might already be met elsewhere, and which of their problems could be solved by Ethnicity facts and figures.</p>
+      <p class="govuk-body">In order to be sure that the project would deliver value, hundreds of users have been interviewed or involved in user research since the start. It was important to understand who our users are, their different needs, how those needs might already be met elsewhere, and which of their problems could be solved by Ethnicity facts and figures.</p>
 
-      <p>The groups of users included:</p>
+      <p class="govuk-body">The groups of users included:</p>
 
-      <ul>
+      <ul class="govuk-list govuk-list--bullet">
         <li>members of the public from diverse backgrounds and ethnicities</li>
         <li>government policy officials and analysts</li>
         <li>NGOs</li>
@@ -43,95 +43,96 @@
         <li>public service managers (for example, headteachers and Jobcentre managers)</li>
       </ul>
 
-      <p>The needs of users vary a great deal, as does their understanding of statistical data. For this reason, the content of the website had to be clear and meaningful for people who aren’t experts in statistics and data. The website also had to be accessible, so that people with disabilities could use the service. Users with more expertise in statistics needed access to the raw data itself and more detailed background information about how it was collected and analysed.</p>
+      <p class="govuk-body">The needs of users vary a great deal, as does their understanding of statistical data. For this reason, the content of the website had to be clear and meaningful for people who aren’t experts in statistics and data. The website also had to be accessible, so that people with disabilities could use the service. Users with more expertise in statistics needed access to the raw data itself and more detailed background information about how it was collected and analysed.</p>
 
-      <p>Trust was an important factor across the different user groups. They all wanted to feel confident that the information on the website was reliable and impartial, and presented in a way that was of value to the public.</p>
+      <p class="govuk-body">Trust was an important factor across the different user groups. They all wanted to feel confident that the information on the website was reliable and impartial, and presented in a way that was of value to the public.</p>
 
-      <p>Users came from a variety of ethnic backgrounds, locations and demographic profiles to reflect the diversity of the website’s user base.</p>
+      <p class="govuk-body">Users came from a variety of ethnic backgrounds, locations and demographic profiles to reflect the diversity of the website’s user base.</p>
 
-      <h2 class="heading-medium" id="principles-and-good-practice">Principles and good practice</h2>
+      <h2 class="govuk-heading-m" id="principles-and-good-practice">Principles and good practice</h2>
 
-      <p>There are well-established principles, standards and practices for working on data and statistics, and for delivering digital services. These helped the team produce work of a high quality that could be trusted and understood by users.</p>
+      <p class="govuk-body">There are well-established principles, standards and practices for working on data and statistics, and for delivering digital services. These helped the team produce work of a high quality that could be trusted and understood by users.</p>
 
-      <p>The UK Statistics Authority <a href="https://www.statisticsauthority.gov.uk/osr/code-of-practice/" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="Code of Practice">Code of Practice</a> sets out the necessary principles and practices to produce statistics that are trustworthy, high quality and of public value.</p>
+      <p class="govuk-body">The UK Statistics Authority <a class="govuk-link" href="https://www.statisticsauthority.gov.uk/osr/code-of-practice/" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="Code of Practice">Code of Practice</a> sets out the necessary principles and practices to produce statistics that are trustworthy, high quality and of public value.</p>
 
-      <p>The <a href="https://www.gov.uk/service-manual/service-standard" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="Digital Service Standard">Digital Service Standard</a> is a set of 18 criteria to help government create and run good digital services. All public-facing transactional services must meet the standard. It is used by government departments and the Government Digital Service to check whether a service is good enough for public use.</p>
+      <p class="govuk-body">The <a class="govuk-link" href="https://www.gov.uk/service-manual/service-standard" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="Digital Service Standard">Digital Service Standard</a> is a set of 18 criteria to help government create and run good digital services. All public-facing transactional services must meet the standard. It is used by government departments and the Government Digital Service to check whether a service is good enough for public use.</p>
 
-      <p>The <a href="https://style.ons.gov.uk" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="ONS style guide">Office of National Statistics (ONS) style guide</a> provides guidance on writing about statistics and visualising data. The <a href="https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK style guide">GOV.UK style guide</a> covers style, spelling and grammar conventions for all content published on GOV.UK. Both of these guides help keep the content of the website consistent, clear, concise and correct.</p>
+      <p class="govuk-body">The <a class="govuk-link" href="https://style.ons.gov.uk" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="ONS style guide">Office of National Statistics (ONS) style guide</a> provides guidance on writing about statistics and visualising data. The <a class="govuk-link" href="https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK style guide">GOV.UK style guide</a> covers style, spelling and grammar conventions for all content published on GOV.UK. Both of these guides help keep the content of the website consistent, clear, concise and correct.</p>
 
-      <h2 class="heading-medium" id="consultation-and-engagement">Consultation and engagement</h2>
+      <h2 class="govuk-heading-m" id="consultation-and-engagement">Consultation and engagement</h2>
 
-      <p>In order to benefit from good practice, expertise and rigorous public consultation and testing, the project has engaged users and stakeholders in co-designing the programme.</p>
+      <p class="govuk-body">In order to benefit from good practice, expertise and rigorous public consultation and testing, the project has engaged users and stakeholders in co-designing the programme.</p>
 
-      <p>For example, we used the Equality and Human Rights Commission (EHRC)’s measurement framework as a reference point for the structure of Ethnicity facts and figures.</p>
+      <p class="govuk-body">For example, we used the Equality and Human Rights Commission (EHRC)’s measurement framework as a reference point for the structure of Ethnicity facts and figures.</p>
 
-      <p>The EHRC framework monitors progress on equality and human rights in England, Scotland and Wales and and is organised into broad subject areas, or ‘domains’, indicators and measures of equality.</p>
+      <p class="govuk-body">The EHRC framework monitors progress on equality and human rights in England, Scotland and Wales and and is organised into broad subject areas, or ‘domains’, indicators and measures of equality.</p>
 
-      <p>The Ethnicity facts and figures framework has a similar structure in the form of topics, sub-topics and measures:</p>
+      <p class="govuk-body">The Ethnicity facts and figures framework has a similar structure in the form of topics, sub-topics and measures:</p>
 
-      <ul class="bullets spaced-out">
+      <ul class="govuk-list govuk-list--bullet">
         <li>important aspects of life in the UK (for example, health, education and housing) are organised into topics</li>
         <li>sub-topics group together similar subject areas within a topic (for example, patient experiences and patient outcomes under health)</li>
         <li>measures capture specific facts and figures relating to a subject area (for example, GP services, dental services and hospital care under patient experiences)</li>
       </ul>
 
-      <p>This structure has been thoroughly tested to check that users can navigate it easily and find the content they are looking for.</p>
+      <p class="govuk-body">This structure has been thoroughly tested to check that users can navigate it easily and find the content they are looking for.</p>
 
-      <h2 class="heading-medium" id="project-phases">Project phases</h2>
+      <h2 class="govuk-heading-m" id="project-phases">Project phases</h2>
+      <div class="eff-numbered-sections">
+        <h3 class="govuk-heading-s eff-numbered-sections__item">Identification</h3>
 
-      <h3 class="heading-small">1. Identification</h3>
+        <p class="govuk-body">The initial review asked all government departments to identify what information on ethnicity they held on important aspects of life in the UK (for example, health, education, work and housing). Devolved administrations were asked to participate and share their data in order to provide a UK-wide picture, a discussion that is ongoing.</p>
 
-      <p>The initial review asked all government departments to identify what information on ethnicity they held on important aspects of life in the UK (for example, health, education, work and housing). Devolved administrations were asked to participate and share their data in order to provide a UK-wide picture, a discussion that is ongoing.</p>
+        <p class="govuk-body">This means that:</p>
 
-      <p>This means that:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>local authority data is not included unless it is also available from a central department (for example, the Department for Education provides school data in England at a local level)</li>
+          <li>Scotland, Wales and Northern Ireland data is included in areas that are not devolved (for example, the Home Office reports on victims of crime across the UK)</li>
+        </ul>
 
-      <ul class="bullets spaced-out">
-        <li>local authority data is not included unless it is also available from a central department (for example, the Department for Education provides school data in England at a local level)</li>
-        <li>Scotland, Wales and Northern Ireland data is included in areas that are not devolved (for example, the Home Office reports on victims of crime across the UK)</li>
-      </ul>
+        <h3 class="govuk-heading-s eff-numbered-sections__item">Prioritisation</h3>
 
-      <h3 class="heading-small">2. Prioritisation</h3>
+        <p class="govuk-body">During this initial review, government departments identified a vast amount of data which it was not possible to collect and publish in the time we had available.</p>
 
-      <p>During this initial review, government departments identified a vast amount of data which it was not possible to collect and publish in the time we had available.</p>
+        <p class="govuk-body">So the team, in consultation with the departments and drawing on user research, agreed a set of criteria to shorten the list for the first release. The agreed prioritisation criteria were:</p>
 
-      <p>So the team, in consultation with the departments and drawing on user research, agreed a set of criteria to shorten the list for the first release. The agreed prioritisation criteria were:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>does the dataset relate to a government priority?</li>
+          <li>has it been identified by future users of the website as a priority for them?</li>
+          <li>how much work is involved in preparing the data for publication?</li>
+        </ul>
 
-      <ul>
-        <li>does the dataset relate to a government priority?</li>
-        <li>has it been identified by future users of the website as a priority for them?</li>
-        <li>how much work is involved in preparing the data for publication?</li>
-      </ul>
+        <h3 class="govuk-heading-s eff-numbered-sections__item">Collection</h3>
 
-      <h3 class="heading-small">3. Collection</h3>
+        <p class="govuk-body">Based on Cabinet Office user research, data expertise and ONS’s existing good publishing practice, a format for collecting content from departments for each measure was established.</p>
 
-      <p>Based on Cabinet Office user research, data expertise and ONS’s existing good publishing practice, a format for collecting content from departments for each measure was established.</p>
+        <p class="govuk-body">The data held by different departments varies greatly in size, consistency and quality. There is limited standardisation, and classification of the different ethnicities can differ widely depending on how data was collected, when and by whom. A common format was needed to ensure trust, quality and value across the content presented on the website. Each measure, which relates to an individual web page, is built of a combination of 2 file templates:</p>
 
-      <p>The data held by different departments varies greatly in size, consistency and quality. There is limited standardisation, and classification of the different ethnicities can differ widely depending on how data was collected, when and by whom. A common format was needed to ensure trust, quality and value across the content presented on the website. Each measure, which relates to an individual web page, is built of a combination of 2 file templates:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>a data format file, used to populate charts and tables</li>
+          <li>commentary, which explains the facts and figures displayed, and provides caveats, technical details and information on how the data was collected</li>
+        </ul>
 
-      <ul class="bullets spaced-out">
-        <li>a data format file, used to populate charts and tables</li>
-        <li>commentary, which explains the facts and figures displayed, and provides caveats, technical details and information on how the data was collected</li>
-      </ul>
+        <p class="govuk-body">Government departments returned these files for each of the prioritised measures. The measures then went through additional checks to ensure their quality and consistency, before being uploaded to the site.</p>
 
-      <p>Government departments returned these files for each of the prioritised measures. The measures then went through additional checks to ensure their quality and consistency, before being uploaded to the site.</p>
+        <h3 class="govuk-heading-s eff-numbered-sections__item govuk-!-margin-bottom-0">Publishing</h3>
 
-      <h3 class="heading-small">4. Publishing</h3>
+        <p class="govuk-body">The Ethnicity facts and figures website was developed based on extensive user research and the government’s <a class="govuk-link" href="https://www.gov.uk/service-manual/service-standard">Digital Service Standard</a>. This work has been undertaken in 3 stages:</p>
 
-      <p>The Ethnicity facts and figures website was developed based on extensive user research and the government’s <a href="https://www.gov.uk/service-manual/service-standard">Digital Service Standard</a>. This work has been undertaken in 3 stages:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li><a class="govuk-link" href="https://www.gov.uk/service-manual/agile-delivery/how-the-discovery-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Discovery">discovery</a>: understand the project scope and identify users</li>
+          <li><a class="govuk-link" href="https://www.gov.uk/service-manual/agile-delivery/how-the-alpha-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Alpha">alpha</a>: prototype the website, refine user needs and identify the technology and skills needed</li>
+          <li><a class="govuk-link" href="https://www.gov.uk/service-manual/agile-delivery/how-the-beta-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Beta">beta</a>: build the platform and continue testing extensively with users</li>
+        </ul>
 
-      <ul class="bullets spaced-out">
-        <li><a href="https://www.gov.uk/service-manual/agile-delivery/how-the-discovery-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Discovery">discovery</a>: understand the project scope and identify users</li>
-        <li><a href="https://www.gov.uk/service-manual/agile-delivery/how-the-alpha-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Alpha">alpha</a>: prototype the website, refine user needs and identify the technology and skills needed</li>
-        <li><a href="https://www.gov.uk/service-manual/agile-delivery/how-the-beta-phase-works" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service Manual: Beta">beta</a>: build the platform and continue testing extensively with users</li>
-      </ul>
+        <p class="govuk-body">Ethnicity facts and figures has been reviewed by experts by means of <a class="govuk-link" href="https://www.gov.uk/service-manual/service-assessments/how-service-assessments-work" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service assessments">service assessments</a> to check it meets the required standards. This rigorous approach ensures a government service is good enough for public use and meets user needs.</p>
+      </div>
 
-      <p>Ethnicity facts and figures has been reviewed by experts by means of <a href="https://www.gov.uk/service-manual/service-assessments/how-service-assessments-work" data-on="click" data-event-category="External link clicked" data-event-action="Background link" data-event-label="GOV.UK Service assessments">service assessments</a> to check it meets the required standards. This rigorous approach ensures a government service is good enough for public use and meets user needs.</p>
+      <h2 class="govuk-heading-m" id="future-changes">Future changes</h2>
 
-      <h2 class="heading-medium" id="future-changes">Future changes</h2>
+      <p class="govuk-body">More measures will be added to the website over time: these will consist of new measures as well as updates to those already published.</p>
 
-      <p>More measures will be added to the website over time: these will consist of new measures as well as updates to those already published.</p>
-
-      <p>The website will continue to be updated based on user feedback and what we learn after launch. Any feedback or queries should be sent to <a href="mailto:ethnicity@cabinetoffice.gov.uk" data-on="click" data-event-category="E-mail link clicked" data-event-action="Contact e-mail" data-event-label="Background">ethnicity@cabinetoffice.gov.uk</a>.</p>
+      <p class="govuk-body">The website will continue to be updated based on user feedback and what we learn after launch. Any feedback or queries should be sent to <a class="govuk-link" href="mailto:ethnicity@cabinetoffice.gov.uk" data-on="click" data-event-category="E-mail link clicked" data-event-action="Contact e-mail" data-event-label="Background">ethnicity@cabinetoffice.gov.uk</a>.</p>
 
     </div>
   </div>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% set breadcrumbs = 
+{% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
     {"url": url_for("admin.index"), "text": "Admin"},
@@ -11,9 +11,9 @@
 {% block bodyClasses %}rd_cms{% endblock %}
 
 {% block content %}
-        <div class="grid-row">
-            <div class="column-full">
-                <h1 class='heading-large no-breadcrumb'>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class='govuk-heading-xl no-breadcrumb'>
                     Things to do with builds
                 </h1>
                 <p>Some ways to interact with builds? Kick them off, view results etc?</p>

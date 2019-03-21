@@ -10,49 +10,53 @@
 {% block pageTitle %}{{ ethnic_group }}{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-xlarge">{{ ethnic_group }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ ethnic_group }}</h1>
 
         {% if measure_count > 1 %}
-            <p class="lede">There are <strong>{{ measure_count }}</strong> published pages using this ethnic group.</p>
+            <p class="govuk-body-l">There are <strong>{{ measure_count }}</strong> published pages using this ethnic group.</p>
         {% else %}
-            <p class="lede">There is <strong>1</strong> published page using this ethnic group.</p>
+            <p class="govuk-body-l">There is <strong>1</strong> published page using this ethnic group.</p>
         {% endif %}
     </div>
   </div>
 
-  <table class="measures smaller-text" id="measures">
-      <thead>
-        <tr>
-          <th class="" aria-sort="none">Topic</th>
-          <th class="" aria-sort="none">Sub-topic</th>
-          <th class="" aria-sort="ascending">Title</th>
-        </tr>
-      </thead>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <table class="govuk-table measures" id="measures">
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Topic</th>
+            <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Sub-topic</th>
+            <th class="govuk-table__header eff-table__header--dense" aria-sort="ascending">Title</th>
+          </tr>
+        </thead>
 
-    <tbody>
-    {% for topic_title, measures_with_dimensions_by_subtopic in nested_measures_and_dimensions.items() %}
-        {% for subtopic_title, measures_with_dimensions in measures_with_dimensions_by_subtopic.items() %}
-            {% for measure_title, measure_with_dimensions in measures_with_dimensions.items() %}
-              <tr>
-                <td>{{ topic_title }}</td>
-                <td>{{ subtopic_title }}</td>
-                <td>
-                  <a href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
-                    {% for dimension in measure_with_dimensions.dimensions %}
-                        <ul class="dimensions">
-                           <li><a href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
-                        </ul>
-                    {%  endfor %}
-                </td>
-              </tr>
+        <tbody class="govuk-table__body">
+        {% for topic_title, measures_with_dimensions_by_subtopic in nested_measures_and_dimensions.items() %}
+            {% for subtopic_title, measures_with_dimensions in measures_with_dimensions_by_subtopic.items() %}
+                {% for measure_title, measure_with_dimensions in measures_with_dimensions.items() %}
+                  <tr class="govuk-table__row">
+                    <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">{{ topic_title }}</td>
+                    <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">{{ subtopic_title }}</td>
+                    <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">
+                      <a class="govuk-link" href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
+
+                      <ul class="govuk-list govuk-!-margin-top-1 eff-table__list--inset eff-table__list--dense">
+                        {% for dimension in measure_with_dimensions.dimensions %}
+                          <li><a class="govuk-link" href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
+                        {% endfor %}
+                      </ul>
+                    </td>
+                  </tr>
+                {%  endfor %}
             {%  endfor %}
-        {%  endfor %}
-    {% endfor %}
-    </tbody>
-  </table>
-
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
 

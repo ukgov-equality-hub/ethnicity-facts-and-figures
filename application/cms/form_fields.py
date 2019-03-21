@@ -5,6 +5,8 @@ the elements in the `application/templates/forms/` directory.
 """
 
 from enum import Enum
+from functools import partial
+
 
 from flask import render_template
 from markupsafe import Markup
@@ -81,6 +83,10 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
         )
 
 
+class _RDUPasswordInput(_RDUTextInput):
+    input_type = "password"
+
+
 class _RDUTextAreaInput(_RDUTextInput):
     def __call__(self, field, class_="", diffs=None, disabled=False, rows=10, cols=100, **kwargs):
         if rows:
@@ -98,10 +104,9 @@ class _RDUURLInput(_RDUTextInput):
 class _RDUChoiceInput(_FormFieldTemplateRenderer):
     TEMPLATE = "forms/_choice_input.html"
 
-    def __init__(self, type_: _ChoiceInputs, *args, **kwargs):
+    def __init__(self, field_type, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self.type = type_.value
+        self.field_type = field_type
 
     def __call__(self, field, class_="", diffs=None, disabled=False, **kwargs):
         if getattr(field, "checked", field.data):
@@ -114,19 +119,22 @@ class _RDUChoiceInput(_FormFieldTemplateRenderer):
             class_=class_,
             diffs=diffs,
             disabled=disabled,
-            render_params={"value": field.data},
-            field_params={"type": self.type, **kwargs},
+            render_params={"value": field.data, "field_type": self.field_type.value},
+            field_params={**kwargs},
         )
 
 
 class _FormGroup(_FormFieldTemplateRenderer):
     TEMPLATE = "forms/_form_group.html"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, field_type: _ChoiceInputs, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.field_type = field_type
         self.other_field = None
 
-    def __call__(self, field, class_="", fieldset_class="", field_class="", diffs=None, disabled=False, **kwargs):
+    def __call__(
+        self, field, class_="", fieldset_class="", legend_class="", field_class="", diffs=None, disabled=False, **kwargs
+    ):
         subfields = [subfield for subfield in field]
 
         return super().__call__(
@@ -140,7 +148,9 @@ class _FormGroup(_FormFieldTemplateRenderer):
                 "fields": subfields,
                 "other_field": self.other_field,
                 "fieldset_class": fieldset_class,
+                "legend_class": legend_class,
                 "field_class": field_class,
+                "field_type": self.field_type.value,
             },
             field_params={**kwargs},
         )
@@ -150,8 +160,8 @@ class _FormGroup(_FormFieldTemplateRenderer):
 
 
 class RDUCheckboxField(SelectMultipleField):
-    widget = _FormGroup()
-    option_widget = _RDUChoiceInput(type_=_ChoiceInputs.CHECKBOX)
+    widget = _FormGroup(field_type=_ChoiceInputs.CHECKBOX)
+    option_widget = _RDUChoiceInput(field_type=widget.field_type)
 
     def __init__(self, label=None, validators=None, enum=None, hint=None, **kwargs):
         if enum:
@@ -172,9 +182,9 @@ class RDURadioField(RadioField):
     selected - the current limitation/expectation being that the last field is an "other" selection.
     """
 
-    _widget_class = _FormGroup
+    _widget_class = partial(_FormGroup, field_type=_ChoiceInputs.RADIO)
     widget = _widget_class()
-    option_widget = _RDUChoiceInput(type_=_ChoiceInputs.RADIO)
+    option_widget = _RDUChoiceInput(field_type=widget.field_type)
 
     def __init__(self, label=None, validators=None, hint=None, **kwargs):
         kwargs["filters"] = kwargs.get("filters", [])
@@ -232,6 +242,10 @@ class RDUStringField(StringField):
 
 class RDUTextAreaField(RDUStringField):
     widget = _RDUTextAreaInput()
+
+
+class RDUPasswordField(RDUStringField):
+    widget = _RDUPasswordInput()
 
 
 class RDUURLField(RDUStringField):
