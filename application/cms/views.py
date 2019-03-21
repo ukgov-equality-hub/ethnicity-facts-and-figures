@@ -24,7 +24,14 @@ from application.cms.exceptions import (
     UploadAlreadyExists,
     PageUnEditable,
 )
-from application.cms.forms import DimensionForm, DimensionRequiredForm, MeasureVersionForm, NewVersionForm, UploadForm
+from application.cms.forms import (
+    DimensionForm,
+    DimensionRequiredForm,
+    MeasureVersionForm,
+    NewUploadForm,
+    NewVersionForm,
+    UploadForm,
+)
 from application.cms.models import NewVersionType
 from application.cms.models import publish_status, Organisation
 from application.cms.page_service import page_service
@@ -366,9 +373,8 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    form = UploadForm()
     if request.method == "POST":
-        form = UploadForm(CombinedMultiDict((request.files, request.form)))
+        form = NewUploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
             file_data = form.upload.data
             try:
@@ -405,6 +411,8 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
                     version=measure_version.version,
                 )
             )
+    else:
+        form = NewUploadForm()
 
     context = {
         "form": form,
