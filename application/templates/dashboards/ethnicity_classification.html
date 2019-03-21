@@ -11,42 +11,42 @@
 {% block pageTitle %}{{ classification_title }}{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-xlarge">{{ classification_title }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ classification_title }}</h1>
 
         {% if page_count > 1 %}
-            <p class="lede">There are <strong>{{ page_count }}</strong> published pages using this classification.</p>
+            <p class="govuk-body-l">There are <strong>{{ page_count }}</strong> published pages using this classification.</p>
         {% else %}
-            <p class="lede">There is <strong>1</strong> published pages using this classification.</p>
+            <p class="govuk-body-l">There is <strong>1</strong> published pages using this classification.</p>
         {% endif %}
     </div>
   </div>
 
-  <table class="measures smaller-text" id="measures">
-      <thead>
-        <tr>
-          <th class="" aria-sort="none">Topic</th>
-          <th class="" aria-sort="none">Sub-topic</th>
-          <th class="" aria-sort="ascending">Title</th>
+  <table class="govuk-table measures" id="measures">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Topic</th>
+          <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Sub-topic</th>
+          <th class="govuk-table__header eff-table__header--dense" aria-sort="ascending">Title</th>
         </tr>
       </thead>
 
-    <tbody>
+    <tbody class="govuk-table__body">
     {% for topic_title, measures_with_dimensions_by_subtopic in nested_measures_and_dimensions.items() %}
       {% for subtopic_title, measures_with_dimensions in measures_with_dimensions_by_subtopic.items() %}
         {% for measure_title, measure_with_dimensions in measures_with_dimensions.items() %}
-          <tr>
-            <td>{{ topic_title }}</td>
-            <td>{{ subtopic_title }}</td>
-            <td>
-              <a href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">{{ topic_title }}</td>
+            <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">{{ subtopic_title }}</td>
+            <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">
+              <a class="govuk-link" href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
 
+              <ul class="govuk-list govuk-!-margin-top-1 eff-table__list--inset eff-table__list--dense">
               {% for dimension in measure_with_dimensions.dimensions %}
-                <ul class="dimensions">
-                   <li><a href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
-                </ul>
+                 <li><a class="govuk-link" href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
               {%  endfor %}
+              </ul>
             </td>
           </tr>
         {%  endfor %}
@@ -54,14 +54,14 @@
     {%  endfor %}
 
     {% for page in pages %}
-        <tr>
-        <td>{{ page.topic }}</td>
-        <td>{{ page.subtopic }}</td>
-        <td>
-          <a href="{{ page.measure_url }}">{{ page.measure }}</a>
+        <tr class="govuk-table__row">
+        <td class="govuk-table__cell eff-table__cell--align-top">{{ page.topic }}</td>
+        <td class="govuk-table__cell eff-table__cell--align-top">{{ page.subtopic }}</td>
+        <td class="govuk-table__cell eff-table__cell--align-top">
+          <a class="govuk-link" href="{{ page.measure_url }}">{{ page.measure }}</a>
             {% for dimension in page.dimensions %}
                 <ul class="dimensions">
-                   <li><a href="{{ page.measure_url }}#{{ dimension.dimension|slugify_value }}">… {{ dimension.short_title }}</a></li>
+                   <li><a class="govuk-link" href="{{ page.measure_url }}#{{ dimension.dimension|slugify_value }}">… {{ dimension.short_title }}</a></li>
                 </ul>
             {%  endfor %}
         </td>

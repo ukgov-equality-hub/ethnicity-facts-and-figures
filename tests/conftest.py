@@ -14,7 +14,6 @@ from application.cms.classification_service import ClassificationService
 from application.cms.scanner_service import ScannerService
 from application.cms.upload_service import UploadService
 from application.config import TestConfig
-from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.factory import create_app
 from tests.models import UserFactory
 from tests.test_data.chart_and_table import grouped_table, simple_table
@@ -267,14 +266,6 @@ def scanner_service_mock(mocker):
 # ########################################################################
 # #######################   OBJECTS AND SERVICES   #######################
 # ########################################################################
-
-
-@pytest.fixture(scope="session")
-def dictionary_lookup():
-    return EthnicityDictionaryLookup(
-        "./tests/test_data/test_dictionary_lookup/test_ethnicity_lookup.csv",
-        default_values=TestConfig.DICTIONARY_LOOKUP_DEFAULTS,
-    )
 
 
 @pytest.fixture(scope="function")

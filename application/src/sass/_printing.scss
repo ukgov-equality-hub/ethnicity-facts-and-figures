@@ -1,0 +1,22 @@
+.print-btn {
+  background: transparent url(../images/icon-print.png) no-repeat center left;
+  border-width: 0;
+  text-decoration: underline;
+  color: govuk-colour("blue");
+  cursor: pointer;
+  outline-width: 0;
+  font-size: 16px;
+  padding: 5px 0 5px 30px;
+
+  &:hover {
+    color: govuk-colour("light-blue");
+  }
+
+  @media(min-width: 641px) {
+    font-size: 19px;
+  }
+
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), not all, not all, not all, only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    background: transparent url(../images/icon-print-2x.png) no-repeat center left 0 50%;
+  }
+}

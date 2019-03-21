@@ -1,14 +1,16 @@
-<div class="banner-container-outer">
-  <div class="banner-container">
-    <div class="phase-banner-reversed font-xsmall">
-      <p>
-        <strong class="phase-tag">BETA</strong>
+{% macro render_phase_banner(reversed=False) %}
+<div class="{% if reversed %}eff-phase-banner-container{% else %}govuk-phase-banner-container{% endif %}">
+  <div class="govuk-width-container">
+    <div class="{% if reversed%}eff-phase-banner{% else %}govuk-phase-banner{% endif %}">
+      <p class="{% if reversed%}eff-phase-banner__content{% else %}govuk-phase-banner__content{% endif %}">
+        <strong class="govuk-tag {% if reversed%}eff-phase-banner__content__tag{% else %}govuk-phase-banner__content__tag{% endif %}">BETA</strong>
         {% if config.SURVEY_ENABLED %}
-          <span>Help us improve this website – <a href="https://www.surveymonkey.co.uk/r/B2CBF6Z" data-on="click" data-event-category="Survey" data-event-action="Link clicked" data-event-label="Page header">answer 4 short questions</a>.</span>
+          <span>Help us improve this website – <a class="govuk-link" href="https://www.surveymonkey.co.uk/r/B2CBF6Z" data-on="click" data-event-category="Survey" data-event-action="Link clicked" data-event-label="Page header">answer 4 short questions</a>.</span>
         {% else %}
-          <span>This is a new service – please send your feedback to <a data-on="click" data-event-category="E-mail link clicked" data-event-action="Contact e-mail" data-event-label="Header" href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a></span>
+          <span>This is a new service – please send your feedback to <a class="govuk-link" data-on="click" data-event-category="E-mail link clicked" data-event-action="Contact e-mail" data-event-label="Header" href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a></span>
         {% endif %}
       </p>
     </div>
   </div>
 </div>
+{% endmacro %}

@@ -12,10 +12,10 @@ from raven.contrib.flask import Sentry
 
 from application import csrf, db, mail
 from application.auth.models import User
+from application.auth.forms import LoginForm
 from application.data.standardisers.ethnicity_classification_finder_builder import (
     ethnicity_classification_finder_from_file,
 )
-from application.data.standardisers.ethnicity_dictionary_lookup import EthnicityDictionaryLookup
 from application.cms.exceptions import InvalidPageHierarchy, PageNotFoundException
 from application.cms.file_service import FileService
 from application.cms.filters import (
@@ -88,10 +88,6 @@ def create_app(config_object):
 
     app.url_map.strict_slashes = False
 
-    app.dictionary_lookup = EthnicityDictionaryLookup(
-        lookup_file=config_object.DICTIONARY_LOOKUP_FILE, default_values=config_object.DICTIONARY_LOOKUP_DEFAULTS
-    )
-
     app.classification_finder = ethnicity_classification_finder_from_file(
         config_object.ETHNICITY_CLASSIFICATION_FINDER_LOOKUP,
         config_object.ETHNICITY_CLASSIFICATION_FINDER_CLASSIFICATIONS,
@@ -99,7 +95,7 @@ def create_app(config_object):
 
     # Note not using Flask-Security role model
     user_datastore = SQLAlchemyUserDatastore(db, User, None)
-    Security(app, user_datastore)
+    Security(app, user_datastore, login_form=LoginForm)
 
     if os.environ.get("SENTRY_DSN") is not None:
         Sentry(app, dsn=os.environ["SENTRY_DSN"])

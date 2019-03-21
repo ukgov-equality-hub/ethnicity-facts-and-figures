@@ -53,7 +53,7 @@
           <div class="accordion-section-body">
             <div itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
             <h3 class="heading-small">Source</h3>
-            <p itemprop="name"><a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.title }}" itemprop="url">
+            <p itemprop="name"><a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.title }}" itemprop="url">
                 {{ measure_version.primary_data_source.title }}</a>
             </p>
 
@@ -97,7 +97,7 @@
             {% if measure_version.secondary_data_source %}
               <div class="secondary-source" itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
                 <h3 class="heading-small">Secondary source</h3>
-                <p itemprop="name"><a href="{{ measure_version.secondary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.secondary_data_source.title }}" itemprop="url">
+                <p itemprop="name"><a class="govuk-link" href="{{ measure_version.secondary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.secondary_data_source.title }}" itemprop="url">
                     {{ measure_version.secondary_data_source.title }}
                 </a></p>
 

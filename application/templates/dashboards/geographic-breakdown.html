@@ -7,33 +7,33 @@
   ]
 %}
 
-{% block pageTitle %}Geographic breakdown{% endblock %}
+{% block pageTitle %}Geographic areas{% endblock %}
 
 {% block content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class='heading-xlarge'>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
           Geographic areas
       </h1>
 
-        <p class="lede">There are <strong>{{ location_levels|length }}</strong> different levels of geography used on the pages:</p>
+        <p class="govuk-body-l">There are <strong>{{ location_levels|length }}</strong> different levels of geography used on the pages:</p>
     </div>
-  </div>
 
-  <table class="column-two-thirds table-skinny ethnic-groups smaller-text dashboard" id="ethnic-group">
+    <div class="govuk-grid-column-two-thirds">
+      <table class="govuk-table" id="geographic-area">
 
-    <thead>
-      <tr>
-        <th aria-sort="none">Level of geography</th>
-        <th class="numeric" aria-sort="descending">Pages</th>
-      </tr>
-    </thead>
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+           <th class="govuk-table__header eff-table__header--dense" aria-sort="none">Level of geography</th>
+           <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--numeric--dense numeric" aria-sort="descending">Pages</th>
+        </tr>
+      </thead>
 
-    <tbody>
+    <tbody class="govuk-table__body">
       {% for location_level in location_levels %}
-            <tr>
-              <th><a href="{{ location_level.url }}">{{ location_level.name }}</a></th>
-              <td class="numeric">{{ location_level.pages }}</td>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell eff-table__cell--numeric eff-table__cell--numeric--dense"><a class="govuk-link" href="{{ location_level.url }}">{{ location_level.name }}</a></td>
+              <td class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--numeric eff-table__cell--numeric--dense numeric">{{ location_level.pages }}</td>
             </tr>
         {% endfor %}
     </tbody>
@@ -43,7 +43,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-      var table = document.getElementById('ethnic-group');
+      var table = document.getElementById('geographic-area');
 
       if (table) {
         new SortableTable(table)

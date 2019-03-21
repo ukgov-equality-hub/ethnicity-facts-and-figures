@@ -80,15 +80,15 @@ gulp.task('compile-js-cms', function (cb) {
 
 });
 
-gulp.task('compile-js-tablebuilder2', function (cb) {
+gulp.task('compile-js-tablebuilder', function (cb) {
   pump([
     gulp.src([
-      './application/src/js/tablebuilder2/*.js',
+      './application/src/js/tablebuilder/*.js',
       './application/src/js/cms/rd-builder.js',
       './application/src/js/charts/rd-data-tools.js'
     ]),
     sourcemaps.init(),
-    concat('tablebuilder2.js'),
+    concat('tablebuilder.js'),
     gulpif(!process.env.DISABLE_UGLIFY, uglify()),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
@@ -97,13 +97,13 @@ gulp.task('compile-js-tablebuilder2', function (cb) {
   );
 });
 
-gulp.task('compile-js-chartbuilder2', function (cb) {
+gulp.task('compile-js-chartbuilder', function (cb) {
   pump([
     gulp.src([
-      './application/src/js/chartbuilder2/*.js'
+      './application/src/js/chartbuilder/*.js'
     ]),
     sourcemaps.init(),
-    concat('chartbuilder2.js'),
+    concat('chartbuilder.js'),
     gulpif(!process.env.DISABLE_UGLIFY, uglify()),
     sourcemaps.write('.', { sourceRoot: '../src' }),
     gulp.dest('./application/static/javascripts')
@@ -120,8 +120,8 @@ gulp.task('manifest-js', function () {
   return gulp.src(['./application/static/javascripts/all.js',
     './application/static/javascripts/charts.js',
     './application/static/javascripts/cms.js',
-    './application/static/javascripts/tablebuilder2.js',
-    './application/static/javascripts/chartbuilder2.js'])
+    './application/static/javascripts/tablebuilder.js',
+    './application/static/javascripts/chartbuilder.js'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/javascripts'))
     .pipe(rev.manifest())
@@ -129,14 +129,14 @@ gulp.task('manifest-js', function () {
 });
 
 gulp.task('manifest-css', function () {
-  return gulp.src(['./application/static/stylesheets/application.css', './application/static/stylesheets/cms.css'])
+  return gulp.src(['./application/static/stylesheets/application.css'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/stylesheets'))
     .pipe(rev.manifest())
     .pipe(gulp.dest('./application/static/stylesheets'))
 });
 
-gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-charts', 'compile-js-cms', 'compile-js-tablebuilder2', 'compile-js-chartbuilder2'), 'manifest-js'));
+gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-charts', 'compile-js-cms', 'compile-js-tablebuilder', 'compile-js-chartbuilder'), 'manifest-js'));
 
 gulp.task('make-css', gulp.series(gulp.parallel('compile-css'), 'manifest-css'));
 

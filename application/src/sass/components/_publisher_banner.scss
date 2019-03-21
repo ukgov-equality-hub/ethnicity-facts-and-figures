@@ -1,0 +1,96 @@
+// TODO: Make me a proper BEM-ish component. I shouldn't be in this folder yet.
+/* Publisher Banner
+
+This serves the dual purposes of reminding publishers that they're looking at a 'preview' rather than the live website,
+and also of providing access to some publisher-only navigation features such as signing out and the 'testing space'.
+
+*/
+
+/* White on Red to stand out */
+.cms-banner {
+  background-color: govuk-colour("red");
+  color: govuk-colour("white");
+  width: 100%;
+  margin-bottom: 0px;
+}
+
+.cms-banner .container {
+  padding: 5px 10px;
+}
+
+.cms-banner .govuk-link, .cms-banner .eff-button--link {
+  color: inherit;
+}
+
+.cms-banner .eff-button--link {
+  text-decoration: underline;
+}
+
+.cms-banner .application-name {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  font-size: 14px;
+  line-height: 16px;
+}
+
+/* Separate links with a middle dot.. */
+.cms-banner .middle span:before {
+  content: '·';
+  font-weight: bold;
+}
+
+/* ...excepr for the first one. */
+.cms-banner .middle span:first-child:before {
+  content: '';
+}
+
+.cms-banner .middle a {
+  margin: 0 5px;
+}
+
+@media (min-width: 641px) {
+
+  .cms-banner .container-outer {
+    margin: 0 30px;
+    max-width: 960px;
+  }
+
+  .cms-banner .container {
+    padding: 5px 0;
+  }
+
+  .cms-banner .nav {
+    display: table;
+    width: 100%;
+  }
+
+  .cms-banner .left,
+  .cms-banner .middle,
+  .cms-banner .right {
+    display: table-cell;
+  }
+
+  .cms-banner .left,
+  .cms-banner .right {
+    width: 25%;
+  }
+
+  .cms-banner .middle {
+    text-align: center;
+  }
+
+  .cms-banner .right {
+    text-align: right;
+  }
+}
+
+.cms-banner .middle span:first-child a {
+  margin-left: 0px;
+}
+
+@media (min-width: 1020px) {
+  .cms-banner .container-outer {
+    margin: 0 auto;
+  }
+}

@@ -48,6 +48,8 @@ def review_page(review_token):
         abort(404)
 
 
+# TODO: This is super-weird the way it sends a fragment of HTML back to the page to swap in. There must be a better way.
+# TODO: This should probably be a POST action as it changes state on the server
 @review_blueprint.route("/new-review-url/<id>")
 @login_required
 def get_new_review_url(id):
@@ -62,7 +64,7 @@ def get_new_review_url(id):
     expires = measure_version.review_token_expires_in(current_app.config)
     day = "day" if expires == 1 else "days"
     return """<a href="{url}">Review link</a> expires in {expires} {day}
-                <button id="copy-to-clipboard" class="button neutral">Copy link</button>
+                <button id="copy-to-clipboard" class="govuk-button eff-button--secondary-quiet">Copy link</button>
                 <input id="review-link" value="{url}">
                 """.format(
         expires=expires, day=day, url=url

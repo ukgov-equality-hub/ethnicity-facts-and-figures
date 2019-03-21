@@ -13,54 +13,54 @@
 {% block pageTitle %}Version history: {{ measure.latest_version.title }}{% endblock %}
 
 {% block content %}
-    <div class='grid-row'>
-        <div class="column-two-thirds">
-            <h1 class='heading-large'>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
               Version history
-              <span class="heading-secondary">
-                <span class="visually-hidden">of </span>
+              <span class="govuk-caption-l">
+                <span class="govuk-visually-hidden">of </span>
                 {{ measure.latest_version.title }}
               </span>
             </h1>
         </div>
     </div>
-    <div class='grid-row'>
-        <div class='column-full'>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
 
-            <table class='table-of-measures'>
-                <thead>
-                <tr>
-                    <th>
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header">
                         Version
                     </th>
-                     <th>
+                     <th class="govuk-table__header">
                         Internal note
                     </th>
-                    <th>
+                    <th class="govuk-table__header">
                         Status
                     </th>
-                    <th>
+                    <th class="govuk-table__header">
                         Published
                     </th>
-                    <td>
+                    <td class="govuk-table__header">
                     </td>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="govuk-table__body">
                 {% for measure_version in measure.versions %}
-                    <tr>
-                        <td>
-                          <a class="measure-link" href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                          <a class="measure-link govuk-link" href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
                             {{ measure_version.version }}
                           </a>
                         </td>
-                        <td>
+                        <td class="govuk-table__cell">
                             {{ measure_version.internal_edit_summary if measure_version.internal_edit_summary else '' }}
                         </td>
 
-                        <td>{{ measure_version.status | format_status | safe }}</td>
-                        <td>{{ measure_version.published_at | format_friendly_date }}</td>
-                        <td class="actions">
+                        <td class="govuk-table__cell">{{ measure_version.status | format_status | safe }}</td>
+                        <td class="govuk-table__cell">{{ measure_version.published_at | format_friendly_date }}</td>
+                        <td class="govuk-table__cell actions">
                             {{ render_actions(topic, subtopic, measure, measure_version, current_user.can(DELETE_MEASURE)) }}
                         </td>
                     </tr>

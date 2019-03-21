@@ -27,7 +27,7 @@
     {% endif %}
 {% endblock %}
 
-{% block mainElementDefinition %}<main id="content" itemscope itemtype="http://schema.org/NewsArticle">{% endblock %}
+{% block mainAttributes %}itemscope itemtype="http://schema.org/NewsArticle"{% endblock %}
 
 {% block content %}
   {% include "static_site/_measure_header.html" %}
@@ -40,64 +40,49 @@
         The main facts and figures show that:
       </p>
         {% if measure_version.summary %}
-            <div class="bullets spaced-out">
+            <div class="eff-summary--with-bullets-spaced-out">
                 {{ measure_version.summary | render_markdown }}
             </div>
         {% endif %}
 
 
       {% if measure_version.need_to_know %}
-      <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Things you need to know" class="normalize">
-        <summary>
-          <span id="things-you-need-to-know" class="summary">
+      <details class="govuk-details govuk-!-margin-bottom-0" data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Things you need to know" class="normalize">
+        <summary class="govuk-details__summary">
+          <span id="things-you-need-to-know" class="govuk-details__summary-text">
             Things you need to know
           </span>
         </summary>
-        <div class="panel panel-border-narrow">
+        <div class="govuk-details__text">
             {{ measure_version.need_to_know | render_markdown  }}
         </div>
-        <noscript>
-          <div>
-            {{ measure_version.need_to_know | render_markdown  }}
-          </div>
-        </noscript>
       </details>
       {% endif %}
 
       {% if measure_version.measure_summary %}
-      <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="What the data measures" class="normalize">
-        <summary>
-          <span id="what-the-data-measures" class="summary">
+      <details class="govuk-details govuk-!-margin-bottom-0" data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="What the data measures" class="normalize">
+        <summary class="govuk-details__summary">
+          <span id="what-the-data-measures" class="govuk-details__summary-text">
             What the data measures
           </span>
         </summary>
-        <div class="panel panel-border-narrow" itemprop="description">
+        <div class="govuk-details__text" itemprop="description">
             {{ measure_version.measure_summary | render_markdown  }}
         </div>
-        <noscript>
-          <div>
-            {{ measure_version.measure_summary | render_markdown  }}
-          </div>
-        </noscript>
       </details>
       {% endif %}
 
       {% if measure_version.ethnicity_definition_summary %}
-      <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="The ethnic categories used in this data" class="normalize">
-        <summary>
-          <span id="the-ethnic-categories-used-in-this-data" class="summary">
+      <details class="govuk-details" data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="The ethnic categories used in this data" class="normalize">
+        <summary class="govuk-details__summary">
+          <span id="the-ethnic-categories-used-in-this-data" class="govuk-details__summary-text">
             The ethnic categories used in this data
           </span>
         </summary>
-        <div class="panel panel-border-narrow">
+        <div class="govuk-details__text">
             {{ measure_version.ethnicity_definition_summary | render_markdown  }}
-          <p><a href="{{ url_for('static_site.ethnicity_in_the_uk') }}">Ethnic groups and how data on ethnicity is collected</a></p>
+          <p class="govuk-body"><a class="govuk-link" href="{{ url_for('static_site.ethnicity_in_the_uk') }}">Ethnic groups and how data on ethnicity is collected</a></p>
         </div>
-        <noscript>
-          <div id="ethnicity-definition" class="section-expandable-region">
-            {{ measure_version.ethnicity_definition_summary | render_markdown  }}
-          </div>
-        </noscript>
       </details>
       {% endif %}
     </div>

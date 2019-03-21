@@ -9,9 +9,9 @@
 {% block pageTitle %}Measure pages{% endblock %}
 
 {% block content %}
-    <div class="grid-row">
-        <div class="column-full">
-            <h1 class='heading-xlarge no-breadcrumb'>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class='govuk-heading-xl no-breadcrumb'>
                 Measure pages
             </h1>
             <table id="status-table">
@@ -30,9 +30,9 @@
                     {% for subtopic in topic.subtopics %}
                         {% for measure in subtopic.measures %}
                             <tr>
-                                <td><a href="{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.latest_version.version) }}">{{ measure.latest_version.title }}</a></td>
+                                <td><a class="govuk-link" href="{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.latest_version.version) }}">{{ measure.latest_version.title }}</a></td>
                                 <td>{{ measure.reference }}</td>
-                                <td><a href="{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.latest_version.version) }}">{{ measure.latest_version.version }}</a></td>
+                                <td><a class="govuk-link" href="{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure.latest_version.version) }}">{{ measure.latest_version.version }}</a></td>
                                 <td>{{ topic.title}}</td>
                                 <td>{{ subtopic.title }}</td>
                                 <td>{{ measure.latest_version.status }}</td>

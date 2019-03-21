@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from flask import url_for
 
 from application.cms.exceptions import RejectionImpossible
-from application.cms.models import Dimension, UKCountry
+from application.cms.models import Dimension, UKCountry, Table, Chart, DimensionClassification
 from tests.models import (
     MeasureFactory,
     MeasureVersionFactory,
@@ -108,7 +108,8 @@ class TestDimensionModel:
 
     def test_classification_source_string_is_manually_selected_if_no_chart_or_table_classification(self):
         measure_version = MeasureVersionWithDimensionFactory(
-            dimensions__chart__clasification=None, dimensions__table__clasification=None
+            dimensions__dimension_chart__settings_and_source_data__classification=None,
+            dimensions__dimension_table__settings_and_source_data__classification=None,
         )
         dimension = measure_version.dimensions[0]
 
@@ -486,28 +487,21 @@ class TestDimensionModel:
 
     def test_delete_chart_from_dimension(self):
         measure_version = MeasureVersionWithDimensionFactory(
-            dimensions__chart={"chart": "foobar"},
-            dimensions__chart_source_data={"xAxis": "time"},
-            dimensions__chart_2_source_data={"yAxis": "space"},
+            dimensions__dimension_chart__chart_object={"chart": "foobar"},
+            dimensions__dimension_chart__settings_and_source_data={"xAxis": "time"},
             dimensions__dimension_table=None,
         )
         dimension = measure_version.dimensions[0]
-        assert dimension.chart is not None
-        assert dimension.chart_source_data is not None
-        assert dimension.chart_2_source_data is not None
         assert dimension.dimension_chart is not None
+        assert dimension.dimension_chart.chart_object is not None
+        assert dimension.dimension_chart.settings_and_source_data is not None
         assert dimension.dimension_classification is not None
 
         # When the chart is deleted
-        dimension.delete_chart()
+        dimension.dimension_chart.delete()
 
         # refresh the dimension from the database
         dimension = Dimension.query.get(dimension.guid)
-
-        # Then the chart attributes should have been removed
-        assert dimension.chart is None
-        assert dimension.chart_source_data is None
-        assert dimension.chart_2_source_data is None
 
         # And the associated chart object should have been removed
         assert dimension.dimension_chart is None
@@ -534,40 +528,67 @@ class TestDimensionModel:
             dimensions__dimension_table__includes_parents=True,
             dimensions__dimension_table__includes_all=False,
             dimensions__dimension_table__includes_unknown=True,
-            dimensions__table={"col1": "ethnicity"},
-            dimensions__table_source_data={"foo": "bar"},
-            dimensions__table_2_source_data={"hey": "you"},
+            dimensions__dimension_table__table_object={"col1": "ethnicity"},
+            dimensions__dimension_table__settings_and_source_data={"foo": "bar"},
         )
         dimension = measure_version.dimensions[0]
 
-        assert dimension.table is not None
-        assert dimension.table_source_data is not None
-        assert dimension.table_2_source_data is not None
         assert dimension.dimension_table is not None
+        assert dimension.dimension_table.table_object is not None
+        assert dimension.dimension_table.settings_and_source_data is not None
         assert dimension.dimension_classification is not None
         # Classification 3A is set from the table
         dimension.update_dimension_classification_from_chart_or_table()
         assert dimension.dimension_classification.classification_id == "3A"
 
         # When the table is deleted
-        dimension.delete_table()
+        dimension.dimension_table.delete()
 
         # refresh the dimension from the database
         dimension = Dimension.query.get(dimension.guid)
 
         # Then it should have removed all the table data
-        assert dimension.table is None
-        assert dimension.table_source_data is None
-        assert dimension.table_2_source_data is None
-
-        # And the associated table metadata
         assert dimension.dimension_table is None
 
         # Classification is now 2A, set from the remaining chart
         assert dimension.dimension_classification.classification_id == "2A"
 
+    def test_delete_dimension_removes_dimension_chart_table_and_classification(self, db_session):
+        measure_version = MeasureVersionWithDimensionFactory(
+            # Dimension chart
+            dimensions__dimension_chart__chart_object={"chart": "yes"},
+            dimensions__dimension_chart__settings_and_source_data={"source": "settings"},
+            # Dimension table
+            dimensions__dimension_table__table_object={"table": "yes"},
+            dimensions__dimension_table__settings_and_source_data={"source": "data"},
+        )
+        dimension = measure_version.dimensions[0]
 
-class TestMeasureVersion:
+        dimension_table_id = dimension.table_id
+        dimension_chart_id = dimension.chart_id
+        dimension_guid = dimension.guid
+        dimension_classification_links = list(dimension.classification_links)
+
+        # Given the dimension has associated chart, table and classification entries
+        assert Chart.query.get(dimension_chart_id) is not None
+        assert Table.query.get(dimension_table_id) is not None
+        assert len(dimension_classification_links) == 1
+        assert (
+            DimensionClassification.query.filter_by(dimension_guid=dimension_guid).all()
+            == dimension_classification_links
+        )
+
+        # When the dimension is deleted
+        db_session.session.delete(dimension)
+        db_session.session.flush()
+
+        # Then the associated chart, table and classification entries are deleted too
+        assert Table.query.get(dimension_table_id) is None
+        assert Chart.query.get(dimension_chart_id) is None
+        assert DimensionClassification.query.filter_by(dimension_guid=dimension_guid).all() == []
+
+
+class TestMeasureVersionModel:
     def test_publish_to_internal_review(self):
         measure_version = MeasureVersionFactory(status="DRAFT")
         measure_version.next_state()

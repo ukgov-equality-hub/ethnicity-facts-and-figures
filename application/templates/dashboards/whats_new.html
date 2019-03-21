@@ -10,21 +10,21 @@
 {% block pageTitle %}New and updated pages for Ethnicity facts and figures - GOV.UK{% endblock %}
 
 {% block content %}
-    <h1 class="heading-xlarge">New and updated pages</h1>
+    <h1 class="govuk-heading-xl">New and updated pages</h1>
 
-    <p>All pages published on Ethnicity facts and figures, starting with the most recent.</p>
+    <p class="govuk-body">All pages published on Ethnicity facts and figures, starting with the most recent.</p>
 
     {% for year, months in pages_by_years_and_months|dictsort(reverse=True) %}
 
-      <h2 class="heading-large">{{ year }}</h2>
+      <h2 class="govuk-heading-l">{{ year }}</h2>
 
       {% for month, pages in months|dictsort(reverse=True) %}
 
-        <h3 class="heading-medium">{{ month.strftime("%B") }}</h3>
+        <h3 class="govuk-heading-m">{{ month.strftime("%B") }}</h3>
 
-        <ol>
+        <ol class="govuk-!-margin-bottom-5 govuk-list">
           {% for page in pages %}
-            <li><a href="{{ url_for(
+            <li><a class="govuk-link" href="{{ url_for(
               'static_site.measure_version',
               topic_slug=page.measure.subtopic.topic.slug,
               subtopic_slug=page.measure.subtopic.slug,
@@ -34,11 +34,13 @@
 
               {{ page.title }}</a>
 
+              <span class="govuk-!-font-size-16">
               {% if page.version == '1.0' %}
-                <strong class="new-tag">new</strong>
+                <strong class="new-tag govuk-!-margin-left-2">New</strong>
               {% endif %}
 
-              <span class="item-date">{{ page.published_at | format_friendly_short_date }}</span>
+              <span class="item-date govuk-!-margin-left-2 eff-!-grey-1">{{ page.published_at | format_friendly_short_date }}</span>
+              </span>
             </li>
           {% endfor %}
           </ol>

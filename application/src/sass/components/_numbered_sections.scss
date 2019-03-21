@@ -1,0 +1,14 @@
+/* Numbered sections component
+
+   Automatically prefixes sections with a number that correlates to their position in the page. Only visible sections
+   contribute to the numbering.
+ */
+
+.eff-numbered-sections {
+  counter-reset: eff-numbered-sections;
+}
+
+.eff-numbered-sections__item:before {
+  counter-increment: eff-numbered-sections;
+  content: counter(eff-numbered-sections) ". ";
+}

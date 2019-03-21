@@ -5,19 +5,12 @@
 {% block pageTitle %}Done{% endblock %}
 
 {% block content %}
-        <div class="grid-row">
-            <div class="column-full">
-                <h1 class='heading-large no-breadcrumb'>
-                    Ethnicity facts and figures
-                </h1>
-            </div>
-        </div>
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h2>Registration complete</h2>
-                    <p>Your password for the Ethnicity Facts and Figures content management system has been set.</p>
-                    <p>Your user name is {{ user.email }}.</p>
-                    <p>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">Registration complete</h1>
+                    <p class="govuk-body">Your password for the Ethnicity Facts and Figures content management system has been set.</p>
+                    <p class="govuk-body">Your user name is {{ user.email }}.</p>
+                    <p class="govuk-body">
                         Race Disparity Unit users can now share pages with you to update and edit.
                     </p>
             </div>
