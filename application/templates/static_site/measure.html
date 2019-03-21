@@ -288,7 +288,7 @@
             {% set chart_and_downloadable = True if dimension_dict.chart and dimension_dict.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
 
               <div class="govuk-grid-column-two-thirds">
-                  <h2 class="govuk-heading-m govuk-!-margin-top-9" id="{{ dimension.title|slugify_value }}">{{ loop.index + 1}}. {{ dimension.title }}</h2>
+                  <h2 class="govuk-heading-m govuk-!-margin-top-9" id="{{ dimension_dict.title|slugify_value }}">{{ loop.index + 1}}. {{ dimension_dict.title }}</h2>
                   <div class="metadata">
                       <dl>
                           {% if measure_version.area_covered %}
