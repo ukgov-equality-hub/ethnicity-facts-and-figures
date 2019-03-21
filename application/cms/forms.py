@@ -325,9 +325,7 @@ class DimensionForm(FlaskForm):
 
 class UploadForm(FlaskForm):
     guid = StringField()
-    upload = FileField(
-        label="File in CSV format", validators=[DataRequired(message="Please choose a file for users to download")]
-    )
+    upload = FileField(label="File in CSV format", validators=[])
     title = RDUStringField(label="Title", hint="For example, ‘Household income data’", validators=[DataRequired()])
     description = RDUTextAreaField(
         hint=(
@@ -336,6 +334,12 @@ class UploadForm(FlaskForm):
                 "measure, ethnicity, year, gender, age group, value, confidence intervals (upper bound, lower bound)."
             )
         )
+    )
+
+
+class NewUploadForm(UploadForm):
+    upload = FileField(
+        label="File in CSV format", validators=[DataRequired(message="Please choose a file for users to download.")]
     )
 
 
