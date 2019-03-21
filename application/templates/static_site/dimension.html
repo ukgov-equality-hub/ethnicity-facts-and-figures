@@ -56,7 +56,7 @@
                           {% if measure_version.primary_data_source %}
                               <dt>Source:</dt>
                               <dd>
-                                  <a href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_version.primary_data_source.title }}">
+                                  <a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (section header)" data-event-label="{{ measure_version.primary_data_source.title }}">
                                       {{ measure_version.primary_data_source.title }}
                                   </a>
                               </dd>
@@ -94,7 +94,7 @@
 
                     {% if chart_and_downloadable %}
                         <p class="chart-download">
-                            <a href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension.chart.title.text }}" class="download-png"
+                            <a class="govuk-link" href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension.chart.title.text }}" class="download-png"
                                id="download-{{ dimension.guid }}" data-title="{{ dimension.chart.title.text }}">
                                 Download chart (PNG)
                             </a>
@@ -112,10 +112,10 @@
                       {% if tabular_download_viable %}
                       <p class="chart-download">
                           {% if static_mode %}
-                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
+                              <a class="govuk-link" href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
                                  download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
                           {% else %}
-                              <a href="{{ url_for('static_site.dimension_file_table_download',
+                              <a class="govuk-link" href="{{ url_for('static_site.dimension_file_table_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
                                    measure_slug=measure_version.measure.slug,
@@ -124,10 +124,10 @@
                           {% endif %}
 
                           {% if static_mode %}
-                              <a href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
+                              <a class="govuk-link" href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
                                  data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
                           {% else %}
-                              <a href="{{ url_for('static_site.dimension_file_download',
+                              <a class="govuk-link" href="{{ url_for('static_site.dimension_file_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
                                    measure_slug=measure_version.measure.slug,
