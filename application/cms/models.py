@@ -630,11 +630,29 @@ class Dimension(db.Model):
 
         chart_or_table = None
 
-        if self.dimension_chart and (self.dimension_table is None):
+        # If there is a chart classification but no table classification, use the chart
+        if (
+            self.dimension_chart
+            and self.dimension_chart.classification
+            and (self.dimension_table is None or self.dimension_table.classification is None)
+        ):
             chart_or_table = self.dimension_chart
-        elif self.dimension_table and (self.dimension_chart is None):
+
+        # If there is a table classification but no chart classification, use the table
+        elif (
+            self.dimension_table
+            and self.dimension_table.classification
+            and (self.dimension_chart is None or self.dimension_chart.classification is None)
+        ):
             chart_or_table = self.dimension_table
-        elif self.dimension_table and self.dimension_chart:
+
+        # If there is both a table classification and chart classification, use the most specific
+        elif (
+            self.dimension_table
+            and self.dimension_table.classification
+            and self.dimension_chart
+            and self.dimension_chart.classification
+        ):
             if (
                 self.dimension_chart.classification.ethnicities_count
                 > self.dimension_table.classification.ethnicities_count
