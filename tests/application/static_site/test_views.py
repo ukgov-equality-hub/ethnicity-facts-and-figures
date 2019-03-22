@@ -258,13 +258,13 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
     assert metadata.find("div", attrs={"id": "lowest-level-of-geography-value"}).text.strip() == "UK"
     assert metadata.find("div", attrs={"id": "time-period-value"}).text.strip() == "4 months"
 
-    things_to_know = page.find("div", attrs={"id": "things-you-need-to-know"})
+    things_to_know = page.select_one("#things-you-need-to-know .govuk-details__text")
     assert things_to_know.text.strip() == "Need to know this"
 
-    what_measured = page.find("div", attrs={"id": "what-the-data-measures"})
-    assert what_measured.text.strip() == "Unemployment measure summary"
+    what_measured = page.select_one("#what-the-data-measures .govuk-details__text")
+    assert what_measured.text.strip() == "Unemployment measure"
 
-    categories_used = page.find("div", attrs={"id": "ethnic-categories-used-in-this-data"})
+    categories_used = page.select_one("#ethnic-categories-used-in-this-data .govuk-details__text")
     assert categories_used.text.strip() == "This is a summary of ethnicity definitions"
 
     methodology = page.find("div", attrs={"id": "methodology"})
