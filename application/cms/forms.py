@@ -324,10 +324,12 @@ class DimensionForm(FlaskForm):
 
 
 class UploadForm(FlaskForm):
+    """
+    This is used for editing an existing upload to a measure version; a file already exists, so only title is required
+    """
+
     guid = StringField()
-    upload = FileField(
-        label="File in CSV format", validators=[DataRequired(message="Please choose a file for users to download")]
-    )
+    upload = FileField(label="File in CSV format", validators=[])
     title = RDUStringField(label="Title", hint="For example, ‘Household income data’", validators=[DataRequired()])
     description = RDUTextAreaField(
         hint=(
@@ -336,6 +338,16 @@ class UploadForm(FlaskForm):
                 "measure, ethnicity, year, gender, age group, value, confidence intervals (upper bound, lower bound)."
             )
         )
+    )
+
+
+class NewUploadForm(UploadForm):
+    """
+    This is used for adding a new upload to a measure version, so a file upload is required
+    """
+
+    upload = FileField(
+        label="File in CSV format", validators=[DataRequired(message="Please choose a file for users to download.")]
     )
 
 

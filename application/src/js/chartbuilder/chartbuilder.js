@@ -4,7 +4,7 @@
 
 
     On open **initialiseForm()**
-    - grab current_settings from dimension.chart_2_source_data if such a thing exists
+    - grab current_settings from dimension.chart_settings_and_source_data if such a thing exists
     - if current_settings doesn't exist open with the data area open.
     - otherwise set the current_settings from file, paste data into the data panel and run the On new data routine below
 
@@ -333,7 +333,10 @@ $(document).ready(function () {
                 type: "POST",
                 url: url_save_chart_to_page,
                 dataType: 'json',
-                data: JSON.stringify({ 'chartObject': chartObject, 'source': src, 'chartBuilderVersion': 2,
+                data: JSON.stringify({
+                    'chartObject': chartObject,
+                    'source': src,
+                    'chartTitle': getChartTitle(),
                     'classificationCode': getPresetCode(),
                     'customClassificationCode': getCustomClassificationCode(),
                     'customClassification': getCustomObject(),
@@ -357,7 +360,6 @@ $(document).ready(function () {
             'custom': getCustomObject(),
             'chartOptions': getChartTypeOptions(chartType),
             'chartFormat': getChartFormat(),
-            'version': '2.0'
         }
     }
 
@@ -409,7 +411,6 @@ $(document).ready(function () {
 
     function getChartFormat() {
         return {
-            'chart_title': $('#chart_title').val(),
             'x_axis_label': $('#x_axis_label').val(),
             'y_axis_label': $('#y_axis_label').val(),
             'number_format': $('#number_format').val(),
@@ -418,6 +419,10 @@ $(document).ready(function () {
             'number_format_min': $('#number_format_min').val(),
             'number_format_max': $('#number_format_max').val()
         }
+    }
+
+    function getChartTitle() {
+        return document.getElementById('chart_title').value;
     }
 
     function getPresetCode() {
@@ -780,8 +785,6 @@ $(document).ready(function () {
         }
 
         showHideCustomEthnicityPanel()
-
-        $('#chart_title').val(settings.chartFormat.chart_title);
 
         switch (settings.type) {
             case 'line_graph':

@@ -24,15 +24,20 @@ from application.cms.exceptions import (
     UploadAlreadyExists,
     PageUnEditable,
 )
-from application.cms.forms import DimensionForm, DimensionRequiredForm, MeasureVersionForm, NewVersionForm, UploadForm
+from application.cms.forms import (
+    DimensionForm,
+    DimensionRequiredForm,
+    MeasureVersionForm,
+    NewUploadForm,
+    NewVersionForm,
+    UploadForm,
+)
 from application.cms.models import NewVersionType
 from application.cms.models import publish_status, Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data
-from application.data.charts import ChartObjectDataBuilder
 from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
-from application.data.tables import TableObjectDataBuilder
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
 
@@ -368,9 +373,8 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    form = UploadForm()
     if request.method == "POST":
-        form = UploadForm(CombinedMultiDict((request.files, request.form)))
+        form = NewUploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
             file_data = form.upload.data
             try:
@@ -407,6 +411,8 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
                     version=measure_version.version,
                 )
             )
+    else:
+        form = NewUploadForm()
 
     context = {
         "form": form,
@@ -736,78 +742,11 @@ def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid,
     return render_template("cms/edit_dimension.html", **context), 400 if form.errors else 200
 
 
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/chartbuilder")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def chartbuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    dimension_dict = dimension_object.to_dict()
-
-    if "chart_builder_version" in dimension_dict and dimension_dict["chart_builder_version"] == 1:
-        return redirect(
-            url_for(
-                "cms.create_chart_original",
-                topic_slug=topic.slug,
-                subtopic_slug=subtopic.slug,
-                measure_slug=measure.slug,
-                version=measure_version.version,
-                dimension_guid=dimension_object.guid,
-            )
-        )
-
-    return redirect(
-        url_for(
-            "cms.create_chart",
-            topic_slug=topic.slug,
-            subtopic_slug=subtopic.slug,
-            measure_slug=measure.slug,
-            version=measure_version.version,
-            dimension_guid=dimension_object.guid,
-        )
-    )
-
-
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-chart")
 @login_required
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    dimension_dict = dimension_object.to_dict()
-
-    if dimension_dict["chart_source_data"] is not None and dimension_dict["chart_2_source_data"] is None:
-        dimension_dict["chart_2_source_data"] = ChartObjectDataBuilder.upgrade_v1_to_v2(
-            dimension_dict["chart"], dimension_dict["chart_source_data"]
-        )
-
-    return render_template(
-        "cms/create_chart_2.html",
-        topic=topic,
-        subtopic=subtopic,
-        measure=measure,
-        measure_version=measure_version,
-        dimension=dimension_dict,
-    )
-
-
-def __get_classification_finder_classifications():
-    classification_collection = current_app.classification_finder.get_classification_collection()
-    classifications = classification_collection.get_sorted_classifications()
-    return [{"code": classification.get_id(), "name": classification.get_name()} for classification in classifications]
-
-
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-chart/advanced")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def create_chart_original(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
     topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
@@ -818,62 +757,15 @@ def create_chart_original(topic_slug, subtopic_slug, measure_slug, version, dime
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
-        dimension=dimension_object.to_dict(),
+        dimension_dict=dimension_object.to_dict(),
+        dimension_chart=dimension_object.dimension_chart,
     )
 
 
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/tablebuilder")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def tablebuilder(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    dimension_dict = dimension_object.to_dict()
-
-    if "table_builder_version" in dimension_dict and dimension_dict["table_builder_version"] == 1:
-        return redirect(
-            url_for(
-                "cms.create_table_original",
-                topic_slug=topic.slug,
-                subtopic_slug=subtopic.slug,
-                measure_slug=measure.slug,
-                version=measure_version.version,
-                dimension_guid=dimension_object.guid,
-            )
-        )
-
-    return redirect(
-        url_for(
-            "cms.create_table",
-            topic_slug=topic.slug,
-            subtopic_slug=subtopic.slug,
-            measure_slug=measure.slug,
-            version=measure_version.version,
-            dimension_guid=dimension_object.guid,
-        )
-    )
-
-
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-table/advanced")
-@login_required
-@user_has_access
-@user_can(UPDATE_MEASURE)
-def create_table_original(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
-        topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
-    )
-
-    return render_template(
-        "cms/create_table.html",
-        topic=topic,
-        subtopic=subtopic,
-        measure=measure,
-        measure_version=measure_version,
-        dimension=dimension_object.to_dict(),
-    )
+def __get_classification_finder_classifications():
+    classification_collection = current_app.classification_finder.get_classification_collection()
+    classifications = classification_collection.get_sorted_classifications()
+    return [{"code": classification.get_id(), "name": classification.get_name()} for classification in classifications]
 
 
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-table")
@@ -885,21 +777,14 @@ def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    dimension_dict = dimension_object.to_dict()
-
-    # migration step
-    if dimension_dict["table_source_data"] is not None and dimension_dict["table_2_source_data"] is None:
-        dimension_dict["table_2_source_data"] = TableObjectDataBuilder.upgrade_v1_to_v2(
-            dimension_dict["table"], dimension_dict["table_source_data"], current_app.dictionary_lookup
-        )
-
     return render_template(
-        "cms/create_table_2.html",
+        "cms/create_table.html",
         topic=topic,
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
-        dimension=dimension_dict,
+        dimension_dict=dimension_object.to_dict(),
+        dimension_table=dimension_object.dimension_table,
     )
 
 
@@ -941,7 +826,7 @@ def delete_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    dimension_object.delete_chart()
+    dimension_object.dimension_chart.delete()
 
     message = "Deleted chart from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_version.title)
     current_app.logger.info(message)
@@ -997,7 +882,7 @@ def delete_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
-    dimension_object.delete_table()
+    dimension_object.dimension_table.delete()
 
     message = "Deleted table from dimension ‘{}’ of measure ‘{}’".format(dimension_object.title, measure_version.title)
     current_app.logger.info(message)
@@ -1032,25 +917,13 @@ def _build_is_required(page, req, beta_publication_states):
     return False
 
 
-@cms_blueprint.route("/data-processor", methods=["POST"])
-@login_required
-def process_input_data():
-    if current_app.dictionary_lookup:
-        request_json = request.json
-        return_data = current_app.dictionary_lookup.process_data(request_json["data"])
-        return json.dumps({"data": return_data}), 200
-    else:
-        return json.dumps(request.json), 200
-
-
 @cms_blueprint.route("/get-valid-classifications-for-data", methods=["POST"])
 @login_required
 def get_valid_classifications():
     """
     This is an AJAX endpoint for the EthnicityClassificationFinder data standardiser
 
-    It is called whenever data needs to be cleaned up for use in second generation front end data tools
-    (chartbuilder 2 & potentially tablebuilder 2)
+    It cleans up data and identifies possible ethnicity classifications in use for chartbuilder and tablebuilder
 
     :return: A list of processed versions of input data using different "classifications"
     """

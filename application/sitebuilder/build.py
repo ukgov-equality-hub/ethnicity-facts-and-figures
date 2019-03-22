@@ -225,7 +225,11 @@ def process_dimensions(measure_version, slug):
     dimensions = []
     for dimension in measure_version.dimensions:
 
-        if dimension.chart and dimension.chart["type"] != "panel_bar_chart":
+        if (
+            dimension.dimension_chart
+            and dimension.dimension_chart.chart_object
+            and dimension.dimension_chart.chart_object["type"] != "panel_bar_chart"
+        ):
             chart_dir = "%s/charts" % slug
             os.makedirs(chart_dir, exist_ok=True)
 
@@ -250,7 +254,7 @@ def process_dimensions(measure_version, slug):
         d_as_dict = dimension.to_dict()
         d_as_dict["static_file_name"] = filename
 
-        if dimension.table:
+        if dimension.dimension_table and dimension.dimension_table.table_object:
             table_output = write_dimension_tabular_csv(dimension=dimension_obj)
 
             table_file_path = os.path.join(download_dir, table_filename)

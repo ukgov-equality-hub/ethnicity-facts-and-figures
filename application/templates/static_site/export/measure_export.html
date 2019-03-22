@@ -329,30 +329,30 @@
             </div>
 
             {% if measure_version.dimensions %}
-                {% for dimension in dimensions %}
+                {% for dimension_dict in dimensions %}
                     <h2 class="govuk-heading-l">Dimension {{ loop.index }}</h2>
-                    <h3 class="govuk-heading-m">Title: {{ dimension.title }}</h3>
+                    <h3 class="govuk-heading-m">Title: {{ dimension_dict.title }}</h3>
                     <div class="metadata">
                         <div style="padding-bottom: 10px">
                             <div class="govuk-!-font-size-16 govuk-!-font-weight-bold">Time period covered</div>
-                            {% if dimension.time_period %}
-                                <div>{{ dimension.time_period }}</div>
+                            {% if dimension_dict.time_period %}
+                                <div>{{ dimension_dict.time_period }}</div>
                             {% else %}
                                 <div>[...]</div>
                             {% endif %}
                         </div>
                     </div>
 
-                    <div style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
+                    <div style="{% if not dimension_dict.table and not dimension_dict.chart %}display: none;{% endif %}">
                         <h4 class="govuk-heading-s">Charts and tables</h4>
                         <ul>
-                            {% if dimension.chart and dimension.table %}
-                                <li>Chart - {{ dimension.chart.title.text }}</li>
-                                <li>Table - {{ dimension.table.header }}</li>
-                            {% elif dimension.chart %}
-                                <li>Chart - {{ dimension.chart.title.text }}</li>
-                            {% elif dimension.table %}
-                                <li>Table - {{ dimension.table.header }}</li>
+                            {% if dimension_dict.chart and dimension_dict.table %}
+                                <li>Chart - {{ dimension_dict.chart_title }}</li>
+                                <li>Table - {{ dimension_dict.table_title }}</li>
+                            {% elif dimension_dict.chart %}
+                                <li>Chart - {{ dimension_dict.chart_title }}</li>
+                            {% elif dimension_dict.table %}
+                                <li>Table - {{ dimension_dict.table_title }}</li>
 
                             {% else %}
                                 <li>None</li>
@@ -361,7 +361,7 @@
                     </div>
                     <h4 class="govuk-heading-s">Summary</h4>
                     <div class="bullets spaced-out">
-                        {{ dimension.summary | render_markdown }}
+                        {{ dimension_dict.summary | render_markdown }}
                     </div>
                 {% endfor %}
             {% endif %}
