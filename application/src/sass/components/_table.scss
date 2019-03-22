@@ -274,13 +274,3 @@ table .column-width-30 {
 table .column-width-15 {
     width: 15%;
 }
-
-.eff-table__list--inset {
-  padding-inline-start: 40px;
-}
-
-.eff-table__list--dense {
-  @include govuk-font(16);
-  @include govuk-responsive-margin(0, $direction: "bottom");
-}
-

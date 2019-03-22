@@ -42,7 +42,7 @@
             <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">
               <a class="govuk-link" href="{{ measure_with_dimensions.url }}">{{ measure_with_dimensions.title }}</a>
 
-              <ul class="govuk-list govuk-!-margin-top-1 eff-table__list--inset eff-table__list--dense">
+              <ul class="govuk-list govuk-!-margin-top-1 eff-table__list--inset govuk-!-font-size-16">
               {% for dimension in measure_with_dimensions.dimensions %}
                  <li><a class="govuk-link" href="{{ measure_with_dimensions.url }}#{{ dimension.title|slugify_value }}">… {{ dimension.short_title }}</a></li>
               {%  endfor %}

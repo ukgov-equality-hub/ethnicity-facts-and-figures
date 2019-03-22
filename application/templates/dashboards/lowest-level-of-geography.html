@@ -40,9 +40,9 @@
             <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">{{ subtopic_title }}</td>
 
             <td class="govuk-table__cell eff-table__cell--dense eff-table__cell--align-top">
-              <ul class="govuk-list eff-table__list--dense">
+              <ul class="govuk-list">
               {% for measure_title_and_url in measure_titles_and_urls %}
-                <li><a class="govuk-link" href="{{ measure_title_and_url.url }}">{{ measure_title_and_url.title }}</a></li>
+                <li class="govuk-!-font-size-16"><a class="govuk-link" href="{{ measure_title_and_url.url }}">{{ measure_title_and_url.title }}</a></li>
               {%  endfor %}
               </ul>
             </td>
