@@ -292,8 +292,8 @@
 
                     {% if chart_and_downloadable %}
                         <p class="chart-download">
-                            <a class="govuk-link download-png" href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension_dict.chart.title.text }}" class="download-png"
-                               id="download-{{ dimension_dict.guid }}" data-title="{{ dimension_dict.chart.title.text }}">
+                            <a class="govuk-link download-png" href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension_dict.chart_title }}" class="download-png"
+                               id="download-{{ dimension_dict.guid }}" data-title="{{ dimension_dict.chart_title }}">
                                 Download chart (PNG)
                             </a>
                         </p>
@@ -312,7 +312,7 @@
                       {% if tabular_download_viable %}
                       <p class="chart-download">
                           {% if static_mode %}
-                              <a class="govuk-link" href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension_dict.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension_dict.table.header}}"
+                              <a class="govuk-link" href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension_dict.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{ dimension_dict.table_title }}"
                                  download="{{ dimension_dict.static_table_file_name }}">Download table data (CSV)</a>
                           {% else %}
                               <a class="govuk-link" href="{{ url_for('static_site.dimension_file_table_download',
@@ -320,19 +320,19 @@
                                    subtopic_slug=subtopic_slug,
                                    measure_slug=measure_version.measure.slug,
                                    version=measure_version.version,
-                                   dimension_guid=dimension_dict.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension_dict.table.header}}">Download table data (CSV)</a>
+                                   dimension_guid=dimension_dict.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{ dimension_dict.table_title }}">Download table data (CSV)</a>
                           {% endif %}
 
                           {% if static_mode %}
                               <a class="govuk-link" href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension_dict.static_file_name }}" data-on="click"
-                                 data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension_dict.table.header}}">Source data (CSV)</a>
+                                 data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{ dimension_dict.table_title }}">Source data (CSV)</a>
                           {% else %}
                               <a class="govuk-link" href="{{ url_for('static_site.dimension_file_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
                                    measure_slug=measure_version.measure.slug,
                                    version=measure_version.version,
-                                   dimension_guid=dimension_dict.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension_dict.table.header}}">Source data (CSV)</a>
+                                   dimension_guid=dimension_dict.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{ dimension_dict.table_title }}">Source data (CSV)</a>
                           {% endif %}
                       </p>
                     {% endif %}
@@ -695,13 +695,13 @@
   var dimensions = {{ dimensions|tojson }};
 
   $(document).ready(function () {
-    for (d in dimensions) {
+    for (var d in dimensions) {
       var chartObject = dimensions[d].chart;
       if(chartObject) {
           // code writes title as html and creates sub-container
           var chartContainer = 'chart_' + dimensions[d].guid;
           var chartHtml = '<div class="govuk-grid-column-full">';
-          chartHtml = chartObject.title.text ? chartHtml + '<h3 class="govuk-heading-s">' + chartObject.title.text + '</h3>': chartHtml;
+          chartHtml = dimensions[d].chart_title ? chartHtml + '<h3 class="govuk-heading-s">' + dimensions[d].chart_title + '</h3>': chartHtml;
           chartHtml = chartHtml + '<div id="' + chartContainer + '_image"></div>';
           chartHtml = chartHtml + '</div>';
           $('#' + chartContainer).html(chartHtml);
@@ -730,23 +730,6 @@
         chart.highcharts().exportChart({"filename" : chartTitle});
         evt.preventDefault();
     });
-
-
-    function getSourceText(source){
-        var regex = /\[(.*?)\]\(.*?\)/;
-        if(regex.test(source)){
-            var match = regex.exec(source);
-            if(match.length == 2) {
-               return match[1];
-            }
-            else {
-                return source;
-            }
-        } else {
-            return source;
-        }
-    };
-
   });
 </script>
 {% endblock %}

@@ -354,6 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data: JSON.stringify({
                     'tableObject': tableObject,
                     'source': src,
+                    'tableTitle': getTableTitle(),
                     'classificationCode': getPresetCode(),
                     'customClassificationCode': getCustomClassificationCode(),
                     'customClassification': getCustomObject(),
@@ -399,7 +400,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function getTableValues() {
         return {
-            'table_title': $('#table_title').val(),
             'table_column_1': $('#table_column_1').val(),
             'table_column_1_name': $('#table_column_1_name').val(),
             'table_column_2': $('#table_column_2').val(),
@@ -412,6 +412,10 @@ document.addEventListener('DOMContentLoaded', function() {
             'table_column_5_name': $('#table_column_5_name').val(),
             'table_index_column_name': $('#index_column_name').val(),
         }
+    }
+
+    function getTableTitle() {
+        return document.getElementById('table_title').value;
     }
 
     function getPresetCode() {
