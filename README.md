@@ -313,3 +313,30 @@ The following environment variables will need to be set for this step to work:
 * `S3_STATIC_SITE_BUCKET`: The bucket name
 * `AWS_ACCESS_KEY_ID`: An AWS access key with permissions to access the S3 bucket
 * `AWS_SECRET_ACCESS_KEY`: An AWS secret access key for the above access key
+
+### Performing data migrations
+We maintain structural and data migrations in separate directories, `migrations/versions` and `scripts/data_migrations`
+respectively. Structural migrations are guaranteed to run automatically when the code is deployed to Heroku, while data
+migrations are manual tasks that need to be done by a developer at a suitable time.
+
+Data migrations are, by default, written as pure SQL. Where this is the case, they can be run via the `run_data_migration`
+management command, like so (without the `.sql` file extension):
+
+```bash
+./manage.py run_data_migration --migration=2019-03-22-delete-old-chart-and-table-titles
+```
+
+```bash
+heroku run -a rd-cms-staging ./manage.py run_data_migration --migration=2019-03-22-delete-old-chart-and-table-titles
+```
+
+If you need more complex logic in your data migration then you can also write these as a Python script. In this case,
+make sure the file is executable (`chmod +x <filename>`) and then you can run the file directory, eg:
+
+```bash
+./scripts/data_migrations/2018-11-19_planned-pages-redirect.py
+```
+
+```bash
+heroku run -a rd-cms-staging ./scripts/data_migrations/2018-11-19_planned-pages-redirect.py
+```
