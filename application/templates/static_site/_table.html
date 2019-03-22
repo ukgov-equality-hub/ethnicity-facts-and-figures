@@ -14,7 +14,7 @@
     <div class="table-container-inner">
 
       <div class="table-container">
-    <table class="govuk-table eff-table--dense {{ 'grouped' if dimension.table.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension.table.parent_child }}">
+    <table class="govuk-table eff-table--dense {{ 'grouped' if dimension_dict.table.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension_dict.table.parent_child }}">
     <thead class="govuk-table__head">
 
       {% if (dimension_dict.table.type == "grouped") and (dimension_dict.table.columns|length > 1) %}
@@ -22,9 +22,9 @@
 
         <tr class="govuk-table__row">
           <th class="govuk-table__header first eff-table__header--border-right eff-table__header--dense eff-table__header--padding-top-0"> </th>
-          {% for group_column in dimension.table.group_columns %}
+          {% for group_column in dimension_dict.table.group_columns %}
               {% if group_column %}
-                  <th colspan="{{ dimension.table.columns|length }}" class="govuk-table__header eff-table__header--dense eff-table__header--padding-top-0 {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
+                  <th colspan="{{ dimension_dict.table.columns|length }}" class="govuk-table__header eff-table__header--dense eff-table__header--padding-top-0 {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
               {% endif %}
           {% endfor %}
         </tr>
@@ -35,8 +35,8 @@
 
       <tr>
         <th class="govuk-table__header first eff-table__header--border-right eff-table__header--dense eff-table__header--border-bottom-0 eff-table__header--padding-top-0 eff-table__cell--align-top" aria-sort="none">
-            {% if dimension.table.category_caption %}
-                {{ dimension.table.category_caption }}
+            {% if dimension_dict.table.category_caption %}
+                {{ dimension_dict.table.category_caption }}
             {% else %}
                 {{ dimension_dict.table.category }}
             {% endif %}
