@@ -5,21 +5,9 @@
  */
 
 
-.eff-table__header--dense {
-  @include govuk-font(16, $weight: bold);
-}
-
-.eff-table__header--numeric--dense {
-  @include govuk-font(16, $weight: bold, $tabular: true);
-}
-
+.eff-table__header--dense,
 .eff-table__cell--dense {
-  @include govuk-font(16);
-}
-
-.eff-table__cell--numeric--dense {
-  @include govuk-font(16, $tabular: true);
-  text-align: right;
+  @include govuk-typography-responsive(16);
 }
 
 
@@ -69,13 +57,21 @@
 }
 
 
-/* Table header cells with a fixed width of80px
+/* Table header cells with a fixed width of 80px
  *
  */
 .eff-table__header--width-80 {
   width: 80px;
 }
 
+
+/* Set text to vertically align to the top of the cell
+ *
+ */
+.eff-table__header--align-top,
+.eff-table__cell--align-top {
+  vertical-align: top;
+}
 
 
 /* Styles to keep measure page tables constrained to a fixed height */
@@ -261,13 +257,6 @@
 
 }
 
-/* Fixed with numeric columns
- *
- * TODO: replace with width override classes?
- */
-table.numeric {
-  width: 100px;
-}
 
 /* Use on <th> for fixing column widths */
 table .column-width-40 {
@@ -291,6 +280,3 @@ table .column-width-15 {
   @include govuk-responsive-margin(0, $direction: "bottom");
 }
 
-.eff-table__cell--align-top {
-  vertical-align: top;
-}
