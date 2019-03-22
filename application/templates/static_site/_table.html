@@ -1,7 +1,5 @@
-
-{{ dimension.header }}
-{% if dimension.table.header %}
-  <h3 class="govuk-heading-s">{{ dimension.table.header }}</h3>
+{% if dimension_dict.table_title %}
+  <h3 class="govuk-heading-s">{{ dimension_dict.table_title }}</h3>
 {% endif %}
 
 {% set missing_data_sort_order_values = {
@@ -16,39 +14,39 @@
     <div class="table-container-inner">
 
       <div class="table-container">
-    <table class="govuk-table eff-table--dense measure-data {{ 'grouped' if dimension.table.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension.table.parent_child }}">
+    <table class="govuk-table eff-table--dense measure-data {{ 'grouped' if dimension_dict.table.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension_dict.table.parent_child }}">
     <thead class="govuk-table__head">
 
-      {% if (dimension.table.type == "grouped") and (dimension.table.columns|length > 1) %}
-        {% set total_cells = (dimension.table.columns|length * (dimension.table.group_columns|length)) + 1 %}
+      {% if (dimension_dict.table.type == "grouped") and (dimension_dict.table.columns|length > 1) %}
+        {% set total_cells = (dimension_dict.table.columns|length * (dimension_dict.table.group_columns|length)) + 1 %}
 
         <tr class="govuk-table__row">
           <th class="govuk-table__header first eff-table__header--border-right"> </th>
-          {% for group_column in dimension.table.group_columns %}
+          {% for group_column in dimension_dict.table.group_columns %}
               {% if group_column %}
-                  <th colspan="{{ dimension.table.columns|length }}" class="govuk-table__header eff-table__cell--padding-left {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
+                  <th colspan="{{ dimension_dict.table.columns|length }}" class="govuk-table__header eff-table__cell--padding-left {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
               {% endif %}
           {% endfor %}
         </tr>
 
       {% else %}
-      {% set total_cells = (dimension.table.columns|length + 1) %}
+      {% set total_cells = (dimension_dict.table.columns|length + 1) %}
       {% endif %}
 
       <tr>
         <th class="govuk-table__header first eff-table__header--border-right eff-table__cell--padding-left" aria-sort="none">
-            {% if dimension.table.category_caption %}
-                {{ dimension.table.category_caption }}
+            {% if dimension_dict.table.category_caption %}
+                {{ dimension_dict.table.category_caption }}
             {% else %}
-                {{ dimension.table.category }}
+                {{ dimension_dict.table.category }}
             {% endif %}
         </th>
 
-        {% if dimension.table.type == "grouped" %}
+        {% if dimension_dict.table.type == "grouped" %}
 
-          {% if (dimension.table.columns|length == 1) %}
+          {% if (dimension_dict.table.columns|length == 1) %}
 
-            {% for group_column in dimension.table.group_columns %}
+            {% for group_column in dimension_dict.table.group_columns %}
 
                 {% set th_class = "eff-table__header--border-right" if (loop.index != loop.length) %}
 
@@ -59,10 +57,10 @@
 
           {% else %}
 
-            {% for group_column in dimension.table.group_columns %}
+            {% for group_column in dimension_dict.table.group_columns %}
                 {% set group_loop = loop %}
                 {% if group_column %}
-                    {% for column in dimension.table.columns %}
+                    {% for column in dimension_dict.table.columns %}
                       {% set th_class = "eff-table__header--border-right" if loop.last and (group_loop.index != group_loop.length) %}
                       <th class="govuk-table__header eff-table__cell--padding-left {{ th_class }}" aria-sort="none">{{ column }}</th>
                     {% endfor %}
@@ -70,7 +68,7 @@
             {% endfor %}
           {% endif %}
         {% else %}
-          {% for text in dimension.table.columns %}
+          {% for text in dimension_dict.table.columns %}
           <th aria-sort="none" class="govuk-table__header eff-table__cell--padding-left">
             {{ text|safe }}
           </th>
@@ -79,12 +77,12 @@
         {% endif %}
       </tr>
 
-      {% if (dimension.table.type == "grouped") and (dimension.table.columns|length == 1) %}
-        {% for heading in dimension.table.columns %}
+      {% if (dimension_dict.table.type == "grouped") and (dimension_dict.table.columns|length == 1) %}
+        {% for heading in dimension_dict.table.columns %}
           {% if heading != '' %}
             <tr class="govuk-table__row">
               <td class="govuk-table__cell eff-table__cell--border-right eff-table__cell--padding-left"></td>
-              {% for group_column in dimension.table.group_columns %}
+              {% for group_column in dimension_dict.table.group_columns %}
                 {% set th_class = "eff-table__header--border-right" if (loop.index != loop.length) %}
 
                 {% if group_column %}
@@ -98,8 +96,8 @@
 
     </thead>
     <tbody>
-      {% for data in dimension.table.data %}
-        {% set next_row = dimension.table.data[loop.index0 + 1] %}
+      {% for data in dimension_dict.table.data %}
+        {% set next_row = dimension_dict.table.data[loop.index0 + 1] %}
         <tr class="govuk-table__row">
           {% set row_loop = loop %}
           {% for value in data['values'] %}
@@ -122,7 +120,7 @@
             {% endif %}
 
             {# We only want the 'eff-table-__header-border-right' class on the last column within each group #}
-            {% set td_class = "eff-table__header--border-right" if ((loop.index != loop.length) and (loop.index % (dimension.table.columns|length) == 0)) %}
+            {% set td_class = "eff-table__header--border-right" if ((loop.index != loop.length) and (loop.index % (dimension_dict.table.columns|length) == 0)) %}
 
             <td data-sort-value="{{sort_value}}" class="govuk-table__cell eff-table__cell--padding-left {{ td_class }}">{{ value|value_filter|safe }}</td>
           {% endfor %}
@@ -140,7 +138,7 @@
 <div class="table-footer">
 
     <p class="missing-data-explanation govuk-body">
-        {% set table_data = dimension.table.data | flatten %}
+        {% set table_data = dimension_dict.table.data | flatten %}
 
         {% if "N/A" in table_data or "n/a" in table_data %}
             <span class="explanation"><sup>*</sup> Not applicable</span>
@@ -160,8 +158,8 @@
 
     </p>
 
-    {% if dimension.table.footer %}
-      <p>{{ dimension.table.footer }}</p>
+    {% if dimension_dict.table.footer %}
+      <p>{{ dimension_dict.table.footer }}</p>
     {% endif %}
 
 </div>

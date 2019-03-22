@@ -14,7 +14,7 @@ chart = {
     "number_format": {"multiplier": 1, "prefix": "", "suffix": "%", "min": 0, "max": 100},
 }
 
-chart_source_data = {
+chart_settings_and_source_data = {
     "data": [
         ["Measure", "Time", "Ethnicity", "Value"],
         ["Proportion of adults that fear crime", "2013/14", "White", "17.9"],
@@ -189,7 +189,7 @@ table = {
 """
 For data download builder we are going for freshly structured table objects - correct as at 27/09/2017
 """
-table_source_data = {
+table_settings_and_source_data = {
     "data": [
         ["Measure", "Time", "Ethnicity", "Ethnicity_type", "Value"],
         ["Proportion of adults that fear crime", "2013/14", "White", "ONS 5+1", "17.9"],

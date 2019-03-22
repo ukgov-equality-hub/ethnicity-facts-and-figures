@@ -40,12 +40,12 @@
                         <h2 class="govuk-heading-m">Charts & Tables</h2>
                         <table class="govuk-table">
                           <tbody class="govuk-table__body">
-                            {% if dimension.chart and dimension.chart != '""' %}
+                            {% if dimension.dimension_chart and dimension.dimension_chart.chart_object is not none and dimension.dimension_chart.chart_object != '""' %}
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__header" scope="row">Chart</td>
-                                    <td class="govuk-table__cell">{{ dimension.chart.title.text }}</td>
+                                    <td class="govuk-table__cell">{{ dimension.dimension_chart.chart_object.title.text }}</td>
                                     <td class="govuk-table__cell"><a class="govuk-link" id="edit_chart"
-                                           href="{{ url_for('cms.chartbuilder', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
+                                           href="{{ url_for('cms.create_chart', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure_version.available_actions() %}edit{% else %}
                                             view{% endif %}</a></td>
                                     <td class="govuk-table__cell">
@@ -58,12 +58,12 @@
                                     </td>
                                 </tr>
                             {% endif %}
-                            {% if dimension.table and dimension.table != '""' %}
+                            {% if dimension.dimension_table and dimension.dimension_table.table_object is not none and dimension.dimension_table.table_object != '""' %}
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__header" scope="row">Table</td>
-                                    <td class="govuk-table__cell">{{ dimension.table.header }}</td>
+                                    <td class="govuk-table__cell">{{ dimension.dimension_table.title }}</td>
                                     <td class="govuk-table__cell"><a class="govuk-link" id="edit_table"
-                                           href="{{ url_for('cms.tablebuilder', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
+                                           href="{{ url_for('cms.create_table', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure_version.available_actions() %}edit{% else %}
                                             view{% endif %}</a></td>
                                     <td class="govuk-table__cell">
@@ -80,15 +80,15 @@
                         </table>
                         {% if 'UPDATE' in  measure_version.available_actions() %}
 
-                                {% if not dimension.chart or dimension.chart == '""' %}
+                                {% if not dimension.dimension_chart or (dimension.dimension_chart and (dimension.dimension_chart.chart_object is none or dimension.dimension_chart.chart_object == '""')) %}
                                 <p class="govuk-body">
                                     <a class="govuk-link" id="create_chart"
-                                       href="{{ url_for('cms.chartbuilder', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
+                                       href="{{ url_for('cms.create_chart', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
                                         Add chart
                                     </a>
                                 </p>
                                 {% endif %}
-                                {% if not dimension.table or dimension.table == '""' %}
+                                {% if not dimension.dimension_table or (dimension.dimension_table and (dimension.dimension_table.table_object is none or dimension.dimension_table.table_object == '""')) %}
                                 <p class="govuk-body">
                                     <a class="govuk-link" id="create_table"
                                        href="{{ url_for('cms.create_table', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">

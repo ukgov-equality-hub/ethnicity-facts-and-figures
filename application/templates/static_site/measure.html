@@ -231,12 +231,12 @@
 
   <div class="govuk-grid-row">
       {% if measure_version.dimensions %}
-          {% for dimension in dimensions %}
+          {% for dimension_dict in dimensions %}
 
-            {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
+            {% set chart_and_downloadable = True if dimension_dict.chart and dimension_dict.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
 
               <div class="govuk-grid-column-two-thirds">
-                  <h2 class="govuk-heading-m" id="{{ dimension.title|slugify_value }}">{{ dimension.title }}</h2>
+                  <h2 class="govuk-heading-m" id="{{ dimension_dict.title|slugify_value }}">{{ dimension_dict.title }}</h2>
                   <div class="metadata">
                       <dl>
                           {% if measure_version.area_covered %}
@@ -245,10 +245,10 @@
                                   {{ measure_version.format_area_covered()  }}
                               </dd>
                           {% endif %}
-                          {% if dimension.time_period %}
+                          {% if dimension_dict.time_period %}
                               <dt>Time period:</dt>
                               <dd>
-                                  {{ dimension.time_period }}
+                                  {{ dimension_dict.time_period }}
                               </dd>
                           {% endif %}
                           {% if measure_version.primary_data_source %}
@@ -266,12 +266,12 @@
 
               <div class="chart-and-footer">
                 <div class="govuk-grid-row">
-                  <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
+                  <div class="rd_chart" id="chart_{{ dimension_dict.guid }}" style="clear: both; overflow: hidden"></div>
                 </div>
 
                 <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full chart-footer">
-                  {% set chart_text_data = dimension.chart | flatten_chart %}
+                  {% set chart_text_data = dimension_dict.chart | flatten_chart %}
 
                   {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data %}
                     <p class="missing-data-explanation">
@@ -296,8 +296,8 @@
 
                     {% if chart_and_downloadable %}
                         <p class="chart-download">
-                            <a class="govuk-link" href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension.chart.title.text }}" class="download-png"
-                               id="download-{{ dimension.guid }}" data-title="{{ dimension.chart.title.text }}">
+                            <a class="govuk-link download-png" href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension_dict.chart_title }}" class="download-png"
+                               id="download-{{ dimension_dict.guid }}" data-title="{{ dimension_dict.chart_title }}">
                                 Download chart (PNG)
                             </a>
                         </p>
@@ -307,36 +307,36 @@
             </div>
 
             <div class="govuk-grid-row">
-              {% set tabular_download_viable = True if dimension.table else False %}
+              {% set tabular_download_viable = True if dimension_dict.table else False %}
               <div class="govuk-grid-column-full"
-                   style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
-                  {% if dimension.table %}
+                   style="{% if not dimension_dict.table and not dimension_dict.chart %}display: none;{% endif %}">
+                  {% if dimension_dict.table %}
                       {% include "static_site/_table.html" %}
 
                       {% if tabular_download_viable %}
                       <p class="chart-download">
                           {% if static_mode %}
-                              <a class="govuk-link" href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}"
-                                 download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
+                              <a class="govuk-link" href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension_dict.static_table_file_name }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{ dimension_dict.table_title }}"
+                                 download="{{ dimension_dict.static_table_file_name }}">Download table data (CSV)</a>
                           {% else %}
                               <a class="govuk-link" href="{{ url_for('static_site.dimension_file_table_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
                                    measure_slug=measure_version.measure.slug,
                                    version=measure_version.version,
-                                   dimension_guid=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.table.header}}">Download table data (CSV)</a>
+                                   dimension_guid=dimension_dict.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{ dimension_dict.table_title }}">Download table data (CSV)</a>
                           {% endif %}
 
                           {% if static_mode %}
-                              <a class="govuk-link" href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension.static_file_name }}" data-on="click"
-                                 data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
+                              <a class="govuk-link" href="/{{ topic_slug }}/{{ subtopic_slug }}/{{ measure_version.measure.slug }}/{{ version }}/downloads/{{ dimension_dict.static_file_name }}" data-on="click"
+                                 data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{ dimension_dict.table_title }}">Source data (CSV)</a>
                           {% else %}
                               <a class="govuk-link" href="{{ url_for('static_site.dimension_file_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
                                    measure_slug=measure_version.measure.slug,
                                    version=measure_version.version,
-                                   dimension_guid=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.table.header}}">Source data (CSV)</a>
+                                   dimension_guid=dimension_dict.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{ dimension_dict.table_title }}">Source data (CSV)</a>
                           {% endif %}
                       </p>
                     {% endif %}
@@ -347,7 +347,7 @@
               <div class="govuk-grid-column-two-thirds">
                   <h3 class="govuk-heading-s">Summary</h3>
                   <div class="govuk-!-margin-bottom-8 eff-summary--with-bullets-spaced-out">
-                    {{ dimension.summary | render_markdown }}
+                    {{ dimension_dict.summary | render_markdown }}
                   </div>
               </div>
           {% endfor %}
@@ -699,13 +699,13 @@
   var dimensions = {{ dimensions|tojson }};
 
   $(document).ready(function () {
-    for (d in dimensions) {
+    for (var d in dimensions) {
       var chartObject = dimensions[d].chart;
       if(chartObject) {
           // code writes title as html and creates sub-container
           var chartContainer = 'chart_' + dimensions[d].guid;
           var chartHtml = '<div class="govuk-grid-column-full">';
-          chartHtml = chartObject.title.text ? chartHtml + '<h3 class="govuk-heading-s">' + chartObject.title.text + '</h3>': chartHtml;
+          chartHtml = dimensions[d].chart_title ? chartHtml + '<h3 class="govuk-heading-s">' + dimensions[d].chart_title + '</h3>': chartHtml;
           chartHtml = chartHtml + '<div id="' + chartContainer + '_image"></div>';
           chartHtml = chartHtml + '</div>';
           $('#' + chartContainer).html(chartHtml);
@@ -734,23 +734,6 @@
         chart.highcharts().exportChart({"filename" : chartTitle});
         evt.preventDefault();
     });
-
-
-    function getSourceText(source){
-        var regex = /\[(.*?)\]\(.*?\)/;
-        if(regex.test(source)){
-            var match = regex.exec(source);
-            if(match.length == 2) {
-               return match[1];
-            }
-            else {
-                return source;
-            }
-        } else {
-            return source;
-        }
-    };
-
   });
 </script>
 {% endblock %}

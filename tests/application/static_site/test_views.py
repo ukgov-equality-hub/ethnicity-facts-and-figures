@@ -779,8 +779,8 @@ class TestMeasurePage:
             measure__subtopics__slug="subtopic",
             measure__slug="measure",
             dimensions__guid="dimension-guid",
-            dimensions__chart=chart,
-            dimensions__table=simple_table(),
+            dimensions__dimension_chart__chart_object=chart,
+            dimensions__dimension_table__table_object=simple_table(),
             uploads__guid="test-download",
         )
 
@@ -810,8 +810,8 @@ class TestMeasurePage:
             measure__subtopics__slug="subtopic",
             measure__slug="measure",
             dimensions__guid="dimension-guid",
-            dimensions__chart=chart,
-            dimensions__table=simple_table(),
+            dimensions__dimension_chart__chart_object=chart,
+            dimensions__dimension_table__table_object=simple_table(),
             uploads__guid="test-download",
         )
         resp = test_app_client.get(f"/topic/subtopic/measure/latest?static_mode={static_mode}", follow_redirects=False)
@@ -840,8 +840,8 @@ class TestMeasurePage:
             measure__subtopics__slug="subtopic",
             measure__slug="measure",
             dimensions__guid="dimension-guid",
-            dimensions__chart=chart,
-            dimensions__table=simple_table(),
+            dimensions__dimension_chart__chart_object=chart,
+            dimensions__dimension_table__table_object=simple_table(),
             uploads__guid="test-download",
             uploads__title="Test measure page data",
             uploads__file_name="test-measure-page-data.csv",
