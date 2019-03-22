@@ -186,8 +186,8 @@
       {% if measure_version.need_to_know %}
 
         {{ govukDetails(
-          summaryText= "Things you need to know",
-          html= measure_version.need_to_know | render_markdown,
+          summaryText="Things you need to know",
+          html=measure_version.need_to_know | render_markdown,
           classes="govuk-!-margin-bottom-0",
           id="things-you-need-to-know",
           attributes={
@@ -203,8 +203,8 @@
       {% if measure_version.measure_summary %}
 
         {{ govukDetails(
-          summaryText= "What the data measures",
-          html= measure_version.measure_summary | render_markdown,
+          summaryText="What the data measures",
+          html=measure_version.measure_summary | render_markdown,
           classes="govuk-!-margin-bottom-0",
           id="what-the-data-measures",
           attributes={
@@ -226,8 +226,8 @@
 
 
         {{ govukDetails(
-          summaryText= "The ethnic categories used in this data",
-          html= ethnicCategoriesHTML,
+          summaryText="The ethnic categories used in this data",
+          html=ethnicCategoriesHTML,
           classes="",
           id="what-the-data-measures",
           attributes={
