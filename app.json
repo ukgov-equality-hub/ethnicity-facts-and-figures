@@ -113,7 +113,7 @@
   },
   "addons": [
     "attachment-scanner",
-    {"plan": "heroku-postgresql", "options":  {"version": "10"}},
+    {"plan": "heroku-postgresql:hobby-basic", "options":  {"version": "10"}},
     "scheduler"
   ],
   "buildpacks": [
