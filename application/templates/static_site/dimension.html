@@ -31,13 +31,13 @@
 
   {% include "static_site/_measure_header.html" %}
 
-  <div class="grid-row">
+  <div class="govuk-grid-row">
       {% if measure_version.dimensions %}
           {% set dimension = dimensions[dimension_number - 0] %}
 
             {% set chart_and_downloadable = True if dimension.chart and dimension.chart['type'] not in ['panel_bar_chart', 'panel_line_chart'] else False %}
 
-              <div class="column-two-thirds">
+              <div class="govuk-grid-column-two-thirds">
                   <h2 class="govuk-heading-m" id="section">{{ dimension.title }}</h2>
                   <div class="metadata">
                       <dl>
@@ -68,7 +68,7 @@
               <div class="chart-and-footer">
                 <div class="rd_chart" id="chart" style="clear: both; overflow: hidden"></div>
 
-                <div class="column-full chart-footer">
+                <div class="govuk-grid-column-full chart-footer">
                   {% set chart_text_data = dimension.chart | flatten_chart %}
 
                   {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data %}
@@ -104,7 +104,7 @@
               </div>
 
               {% set tabular_download_viable = True if dimension.table else False %}
-              <div class="column-full"
+              <div class="govuk-grid-column-full"
                    style="{% if not dimension.table and not dimension.chart %}display: none;{% endif %}">
                   {% if dimension.table %}
                       {% include "static_site/_table.html" %}
@@ -138,8 +138,8 @@
                     {% endif %}
                   {% endif %}
               </div>
-              <div class="column-two-thirds">
-                  <h3 class="heading-small">Summary</h3>
+              <div class="govuk-grid-column-two-thirds">
+                  <h3 class="govuk-heading-s">Summary</h3>
                   <div class="bullets spaced-out">
                     {{ dimension.summary | render_markdown }}
                   </div>
