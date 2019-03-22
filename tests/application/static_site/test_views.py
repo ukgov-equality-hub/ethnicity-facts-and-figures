@@ -258,13 +258,13 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
     assert metadata.find("div", attrs={"id": "lowest-level-of-geography-value"}).text.strip() == "UK"
     assert metadata.find("div", attrs={"id": "time-period-value"}).text.strip() == "4 months"
 
-    things_to_know = page.select_one("#things-you-need-to-know .govuk-details__text")
+    things_to_know = page.select_one("#things-you-need-to-know")
     assert things_to_know.text.strip() == "Need to know this"
 
-    what_measured = page.select_one("#what-the-data-measures .govuk-details__text")
-    assert what_measured.text.strip() == "Unemployment measure"
+    what_measured = page.select_one("#what-the-data-measures")
+    assert what_measured.text.strip() == "Unemployment measure summary"
 
-    categories_used = page.select_one("#ethnic-categories-used-in-this-data .govuk-details__text")
+    categories_used = page.select_one("#ethnic-categories-used-in-this-data")
     assert categories_used.text.strip() == "This is a summary of ethnicity definitions"
 
     methodology = page.find("div", attrs={"id": "methodology"})
@@ -511,15 +511,12 @@ def test_view_measure_page(test_app_client, logged_in_rdu_user):
     assert metadata_values[3].text.strip() == "4 months"
 
     things_to_know = page.select_one("#things-you-need-to-know summary")
-    assert things_to_know
     assert things_to_know.text.strip() == "Things you need to know"
 
-    what_measured = page.find("span", attrs={"id": "what-the-data-measures"})
-    assert what_measured
+    what_measured = page.select_one("#what-the-data-measures summary")
     assert what_measured.text.strip() == "What the data measures"
 
-    categories_used = page.find("span", attrs={"id": "the-ethnic-categories-used-in-this-data"})
-    assert categories_used
+    categories_used = page.select_one("#the-ethnic-categories-used-in-this-data summary")
     assert categories_used.text.strip() == "The ethnic categories used in this data"
 
     # methodology accordion
