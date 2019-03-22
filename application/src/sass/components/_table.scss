@@ -4,7 +4,11 @@
  * and should be used in addition to those classes.
  */
 
-
+/* Dense header and table cells
+ *
+ * This is for use with tables that contain a lot of data.
+ * It sets a smaller than usual font size.
+ */
 .eff-table__header--dense,
 .eff-table__cell--dense {
   @include govuk-typography-responsive(16);
