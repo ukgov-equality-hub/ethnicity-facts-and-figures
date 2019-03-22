@@ -14,17 +14,17 @@
     <div class="table-container-inner">
 
       <div class="table-container">
-    <table class="govuk-table eff-table--dense {{ 'grouped' if dimension_dict.table.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension_dict.table.parent_child }}">
+    <table class="govuk-table {{ 'grouped' if dimension_dict.table.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension_dict.table.parent_child }}">
     <thead class="govuk-table__head">
 
       {% if (dimension_dict.table.type == "grouped") and (dimension_dict.table.columns|length > 1) %}
         {% set total_cells = (dimension_dict.table.columns|length * (dimension_dict.table.group_columns|length)) + 1 %}
 
         <tr class="govuk-table__row">
-          <th class="govuk-table__header first eff-table__header--border-right eff-table__header--dense eff-table__header--padding-top-0"> </th>
+          <th class="govuk-table__header eff-table__header--border-bottom-0 eff-table__header--border-right"> </th>
           {% for group_column in dimension_dict.table.group_columns %}
               {% if group_column %}
-                  <th colspan="{{ dimension_dict.table.columns|length }}" class="govuk-table__header eff-table__header--dense eff-table__header--padding-top-0 {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
+                  <th colspan="{{ dimension_dict.table.columns|length }}" class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--border-bottom-0 eff-table__header--padding-top-0 {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
               {% endif %}
           {% endfor %}
         </tr>
@@ -33,8 +33,13 @@
       {% set total_cells = (dimension_dict.table.columns|length + 1) %}
       {% endif %}
 
+
+      {% if (dimension_dict.table.type == "grouped") and (dimension_dict.table.columns|length == 1) %}
+        {% set th_class = "eff-table__header--border-bottom-0" %}
+      {% endif %}
+
       <tr>
-        <th class="govuk-table__header first eff-table__header--border-right eff-table__header--dense eff-table__header--border-bottom-0 eff-table__header--padding-top-0 eff-table__cell--align-top" aria-sort="none">
+        <th class="govuk-table__header govuk-!-font-weight-regular eff-table__header--border-right  eff-table__header--dense eff-table__header--padding-top-0 {{ th_class }}" aria-sort="none">
             {% if dimension_dict.table.category_caption %}
                 {{ dimension_dict.table.category_caption }}
             {% else %}
@@ -51,7 +56,7 @@
                 {% set th_class = "eff-table__header--border-right" if (loop.index != loop.length) %}
 
                 {% if group_column %}
-                    <th class="govuk-table__header eff-table__cell--padding-left eff-table__header--dense eff-table__header--border-bottom-0 eff-table__header--padding-top-0 {{th_class}}" aria-sort="none"> {{ group}} {{ group_column|safe }}</th>
+                    <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--border-bottom-0  eff-table__header--padding-top-0 {{th_class}}" aria-sort="none"> {{ group}} {{ group_column|safe }}</th>
                 {% endif %}
             {% endfor %}
 
@@ -62,7 +67,7 @@
                 {% if group_column %}
                     {% for column in dimension_dict.table.columns %}
                       {% set th_class = "eff-table__header--border-right" if loop.last and (group_loop.index != group_loop.length) %}
-                      <th class="govuk-table__header eff-table__header--dense eff-table__cell--padding-left {{ th_class }}" aria-sort="none">{{ column }}</th>
+                      <th class="govuk-table__header govuk-table__header--numeric govuk-!-font-weight-regular eff-table__header--dense eff-table__cell--padding-left {{ th_class }}" aria-sort="none">{{ column }}</th>
                     {% endfor %}
                 {% endif %}
             {% endfor %}
@@ -81,12 +86,12 @@
         {% for heading in dimension_dict.table.columns %}
           {% if heading != '' %}
             <tr class="govuk-table__row">
-              <td class="govuk-table__cell eff-table__cell--border-right eff-table__cell--padding-left"></td>
+              <td class="govuk-table__cell eff-table__cell--border-right "></td>
               {% for group_column in dimension_dict.table.group_columns %}
                 {% set th_class = "eff-table__header--border-right" if (loop.index != loop.length) %}
 
                 {% if group_column %}
-                  <th class="govuk-table__header eff-table__cell--padding-left eff-table__header--dense {{th_class}}"> {{ heading }}</th>
+                  <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--padding-top-0 {{th_class}}"> {{ heading }}</th>
                 {% endif %}
               {% endfor %}
             </tr>
