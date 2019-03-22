@@ -41,7 +41,7 @@
               <td class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--dense eff-table__cell--numeric--dense">{{ ethnicity_classification.measure_count }}</td>
               <td class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--dense eff-table__cell--numeric--dense">{{ ethnicity_classification.dimension_count }}</td>
                 {% if not ethnicity_classification.has_parents %}
-                <td class="govuk-table__cell govuk-table__cell--numeric not-applicable" >N/A</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric  eff-table__cell--dense not-applicable" >N/A</td>
                 {% else %}
               <td class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--dense eff-table__cell--numeric--dense" data-sort-value="{{ (100 * ethnicity_classification.includes_parents_count / ethnicity_classification.dimension_count) }}">{{ (100 * ethnicity_classification.includes_parents_count / ethnicity_classification.dimension_count)|round|int }}%</td>
                 {% endif %}
