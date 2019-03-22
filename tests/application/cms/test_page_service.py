@@ -414,7 +414,7 @@ class TestPageService:
 
     def test_create_new_minor_version_duplicates_uploads(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        measure_version = MeasureVersionWithDimensionFactory(latest=True)
+        measure_version = MeasureVersionFactory(latest=True)
         assert measure_version.uploads.count() == 1
         original_upload = measure_version.uploads[0]
 
@@ -429,7 +429,7 @@ class TestPageService:
 
     def test_create_new_major_version_does_not_duplicate_uploads(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
-        measure_version = MeasureVersionWithDimensionFactory(latest=True)
+        measure_version = MeasureVersionFactory(latest=True)
 
         new_version = page_service.create_measure_version(measure_version, NewVersionType.MAJOR_UPDATE, user=user)
 
