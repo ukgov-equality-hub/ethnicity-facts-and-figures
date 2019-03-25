@@ -1,15 +1,10 @@
-from application.cms.models import Table
-
-
 class TableObjectDataBuilder:
     """
     Generates table objects that can be used to generate tables on the front end and data download files
     """
 
     @staticmethod
-    def build(dimension_table: Table):
-        table_object = dimension_table.table_object
-
+    def build(table_object):
         if "category_caption" in table_object:
             category_caption = table_object["category_caption"]
         else:
@@ -22,7 +17,7 @@ class TableObjectDataBuilder:
 
         return {
             "type": table_object["type"],
-            "title": dimension_table.title,
+            "title": table_object["header"],
             "primary_category_column": category_caption,
             "secondary_category_column": group_column,
             "value_columns": table_object["columns"],
@@ -76,13 +71,11 @@ class TableObjectDataBuilder:
 
 class TableObjectTableBuilder:
     @staticmethod
-    def build(dimension_table: Table):
-        table_object = dimension_table.table_object
-
+    def build(table_object):
         if table_object["type"] == "simple":
-            return TableObjectDataBuilder.build(dimension_table)
+            return TableObjectDataBuilder.build(table_object)
         else:
-            table = TableObjectDataBuilder.build(dimension_table)
+            table = TableObjectDataBuilder.build(table_object)
             table["data"] = TableObjectTableBuilder.get_data_table(table_object)
             return table
 

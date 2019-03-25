@@ -301,6 +301,7 @@ def simple_table():
     return {
         "type": "simple",
         "parent_child": False,
+        "header": "Title of simple table",
         "subtitle": "",
         "footer": "",
         "category": "Ethnicity",
@@ -348,6 +349,7 @@ def grouped_table():
                 "sort_values": [16.6, 0.166, 10, 0.1],
             },
         ],
+        "header": "Title of grouped table",
         "subtitle": "",
         "footer": "",
         "groups": [
