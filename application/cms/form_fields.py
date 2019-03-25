@@ -34,9 +34,25 @@ def _coerce_string_none_to_python_none(value):
     return None if value == "None" else value
 
 
-def _strip_whitespace(value):
+def _strip_whitespace_basic(value):
+    """Strip whitespace from the start and end of `value`"""
     if value is not None and hasattr(value, "strip"):
         return value.strip()
+    return value
+
+
+def _strip_whitespace_extended(value):
+    """Strip whitespace from the start and end of `value`, as well as from the start of each line in `value`. We use
+    this so that our markdown renderer doesn't find any 'code blocks' which would spit out <pre><code></code></pre>,
+    and instead just returns normal paragraphs."""
+    if value is not None and hasattr(value, "strip"):
+        value = value.strip()
+
+        text_lines = value.split("\n")
+        for i, text_line in enumerate(text_lines):
+            text_lines[i] = text_line.lstrip()
+        value = "\n".join(text_lines)
+
     return value
 
 
@@ -205,14 +221,7 @@ class RDUStringField(StringField):
     widget = _RDUTextInput()
 
     def __init__(
-        self,
-        label=None,
-        validators=None,
-        hint=None,
-        extended_hint=None,
-        strip_whitespace=False,
-        character_count_limit=None,
-        **kwargs,
+        self, label=None, validators=None, hint=None, extended_hint=None, character_count_limit=None, **kwargs
     ):
         # Automatically coalesce `None` values to blank strings
         # If we get null values from the database, we don't want to render these as 'None' strings in form fields.
@@ -220,10 +229,13 @@ class RDUStringField(StringField):
         if _coerce_none_to_blank_string not in kwargs["filters"]:
             kwargs["filters"].append(_coerce_none_to_blank_string)
 
-        if strip_whitespace and _strip_whitespace not in kwargs["filters"]:
-            kwargs["filters"].append(_strip_whitespace)
-        elif not strip_whitespace and _strip_whitespace in kwargs["filters"]:
-            kwargs["filters"].remove(_strip_whitespace)
+        if self.__class__ is RDUStringField or self.__class__ is RDUURLField:
+            if _strip_whitespace_basic not in kwargs["filters"]:
+                kwargs["filters"].append(_strip_whitespace_basic)
+
+        elif self.__class__ is RDUTextAreaField:
+            if _strip_whitespace_extended not in kwargs["filters"]:
+                kwargs["filters"].append(_strip_whitespace_extended)
 
         super().__init__(label, validators, **kwargs)
         self.hint = hint
