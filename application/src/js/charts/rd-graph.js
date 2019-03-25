@@ -74,7 +74,7 @@ function barchartHighchartObject(chartObject) {
             height: setHeight(chartObject)
         },
         title: {
-            text: chartObject.title.text,
+            text: chartObject.chart_title,
             style: {
               color: "black"
             }
@@ -205,7 +205,7 @@ function linechartHighchartObject(chartObject) {
         },
         colors: setColour(chartObject),
         title: {
-            text: chartObject.title.text
+            text: chartObject.chart_title
         },
         xAxis: {
             categories: chartObject.xAxis.categories,
@@ -259,7 +259,7 @@ function componentChart(container_id, chartObject) {
         },
         colors: setColour(chartObject),
         title: {
-            text:  chartObject.title.text
+            text:  chartObject.chart_title
         },
         xAxis: {
             categories: chartObject.xAxis.categories,
@@ -407,7 +407,7 @@ function smallBarchart(container_id, chartObject, max) {
                 }
             },
             title: {
-                text: chartObject.title.text
+                text: chartObject.chart_title
             },
             xAxis: {
                 categories: chartObject.xAxis.categories,
@@ -593,7 +593,7 @@ function smallLinechart(container_id, chartObject, max, min) {
         },
         colors: setColour(chartObject),
         title: {
-            text: chartObject.title.text,
+            text: chartObject.chart_title,
             useHTML: true
         },
         legend: {

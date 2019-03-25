@@ -43,7 +43,7 @@
                             {% if dimension.dimension_chart and dimension.dimension_chart.chart_object is not none and dimension.dimension_chart.chart_object != '""' %}
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__header" scope="row">Chart</td>
-                                    <td class="govuk-table__cell">{{ dimension.dimension_chart.chart_object.title.text }}</td>
+                                    <td class="govuk-table__cell">{{ dimension.dimension_chart.title }}</td>
                                     <td class="govuk-table__cell"><a class="govuk-link" id="edit_chart"
                                            href="{{ url_for('cms.create_chart', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure_version.available_actions() %}edit{% else %}
