@@ -49,12 +49,12 @@ class DimensionService(Service):
         if "chartObject" in post_data:
             data["chart"] = post_data["chartObject"]
             data["chart_settings_and_source_data"] = post_data["source"]
-            data["chart_title"] = post_data["chartTitle"]
+            data["chart_title"] = post_data["source"]["chartFormat"]["chart_title"]
 
         if "tableObject" in post_data:
             data["table"] = post_data["tableObject"]
             data["table_settings_and_source_data"] = post_data["source"]
-            data["table_title"] = post_data["tableTitle"]
+            data["table_title"] = post_data["source"]["tableValues"]["table_title"]
 
         if "classificationCode" in post_data:
             if post_data["classificationCode"] == "custom":
