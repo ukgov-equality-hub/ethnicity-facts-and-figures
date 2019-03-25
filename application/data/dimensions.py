@@ -16,13 +16,13 @@ class DimensionObjectBuilder:
         dimension_object = {"context": DimensionObjectBuilder.get_context(dimension)}
 
         if dimension.dimension_table and dimension.dimension_table.table_object:
-            dimension_object["table"] = TableObjectDataBuilder.build(dimension.dimension_table)
+            dimension_object["table"] = TableObjectDataBuilder.build(dimension.dimension_table.table_object)
 
         if dimension.dimension_chart and dimension.dimension_chart.chart_object:
-            dimension_object["chart"] = ChartObjectDataBuilder.build(dimension.dimension_chart)
+            dimension_object["chart"] = ChartObjectDataBuilder.build(dimension.dimension_chart.chart_object)
 
         if dimension.dimension_table and dimension.dimension_table.table_object:
-            dimension_object["tabular"] = TableObjectTableBuilder.build(dimension.dimension_table)
+            dimension_object["tabular"] = TableObjectTableBuilder.build(dimension.dimension_table.table_object)
 
         return dimension_object
 
