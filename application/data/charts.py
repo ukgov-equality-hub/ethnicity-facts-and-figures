@@ -1,7 +1,12 @@
+from application.cms.models import Chart
+
+
 class ChartObjectDataBuilder:
     @staticmethod
-    def build(chart_object):
+    def build(dimension_chart: Chart):
+        chart_object = dimension_chart.chart_object
         builder = None
+
         if chart_object["type"] == "bar" or chart_object["type"] == "small_bar":
             builder = BarChartObjectDataBuilder
         elif chart_object["type"] == "line":
@@ -14,26 +19,24 @@ class ChartObjectDataBuilder:
             builder = PanelLineChartObjectDataBuilder
 
         if builder:
-            return builder.build(chart_object)
+            return builder.build(dimension_chart, chart_object)
         else:
             return None
 
 
 class PanelBarChartObjectDataBuilder:
     @staticmethod
-    def build(chart_object):
-
+    def build(dimension_chart, chart_object):
         return {
             "type": chart_object["type"],
-            "title": chart_object["title"]["text"],
+            "title": dimension_chart.title,
             "x-axis": chart_object["xAxis"]["title"].get("text", ""),
             "y-axis": chart_object["yAxis"]["title"].get("text", ""),
-            "data": PanelBarChartObjectDataBuilder.panel_bar_chart_data(chart_object),
+            "data": PanelBarChartObjectDataBuilder.panel_bar_chart_data(dimension_chart, chart_object),
         }
 
     @staticmethod
-    def panel_bar_chart_data(chart_object):
-
+    def panel_bar_chart_data(dimension_chart, chart_object):
         panels = chart_object["panels"]
 
         if len(panels) > 0:
@@ -47,7 +50,7 @@ class PanelBarChartObjectDataBuilder:
             rows = []
             for panel in panels:
                 panel_name = panel["title"]["text"]
-                panel_rows = BarChartObjectDataBuilder.build(panel)["data"][1:]
+                panel_rows = BarChartObjectDataBuilder.build(dimension_chart, panel)["data"][1:]
                 for row in panel_rows:
                     rows = rows + [[panel_name] + row]
 
@@ -58,10 +61,10 @@ class PanelBarChartObjectDataBuilder:
 
 class PanelLineChartObjectDataBuilder:
     @staticmethod
-    def build(chart_object):
+    def build(dimension_chart, chart_object):
         panel_object = {
             "type": chart_object["type"],
-            "title": chart_object["title"]["text"],
+            "title": dimension_chart.title,
             "x-axis": "",
             "y-axis": "",
             "data": [],
@@ -74,13 +77,12 @@ class PanelLineChartObjectDataBuilder:
         panel = panels[0]
         panel_object["x-axis"] = panel["xAxis"]["title"].get("text", "")
         panel_object["y-axis"] = panel["yAxis"]["title"].get("text", "")
-        panel_object["data"] = PanelLineChartObjectDataBuilder.panel_line_chart_data(chart_object)
+        panel_object["data"] = PanelLineChartObjectDataBuilder.panel_line_chart_data(dimension_chart, chart_object)
 
         return panel_object
 
     @staticmethod
-    def panel_line_chart_data(chart_object):
-
+    def panel_line_chart_data(dimension_chart, chart_object):
         panels = chart_object["panels"]
 
         if len(panels) > 0:
@@ -93,7 +95,7 @@ class PanelLineChartObjectDataBuilder:
 
             rows = []
             for panel in panels:
-                panel_rows = LineChartObjectDataBuilder.build(panel)["data"][1:]
+                panel_rows = LineChartObjectDataBuilder.build(dimension_chart, panel)["data"][1:]
                 for row in panel_rows:
                     rows = rows + [row]
 
@@ -104,11 +106,10 @@ class PanelLineChartObjectDataBuilder:
 
 class ComponentChartObjectDataBuilder:
     @staticmethod
-    def build(chart_object):
-
+    def build(dimension_chart, chart_object):
         return {
             "type": chart_object["type"],
-            "title": chart_object["title"]["text"],
+            "title": dimension_chart.title,
             "x-axis": chart_object["xAxis"]["title"].get("text", ""),
             "y-axis": chart_object["yAxis"]["title"].get("text", ""),
             "data": ComponentChartObjectDataBuilder.component_chart_data(chart_object),
@@ -134,11 +135,10 @@ class ComponentChartObjectDataBuilder:
 
 class LineChartObjectDataBuilder:
     @staticmethod
-    def build(chart_object):
-
+    def build(dimension_chart, chart_object):
         return {
             "type": chart_object["type"],
-            "title": chart_object["title"]["text"],
+            "title": dimension_chart.title,
             "x-axis": chart_object["xAxis"]["title"].get("text", ""),
             "y-axis": chart_object["yAxis"]["title"].get("text", ""),
             "data": LineChartObjectDataBuilder.line_chart_data(chart_object),
@@ -164,7 +164,7 @@ class LineChartObjectDataBuilder:
 
 class BarChartObjectDataBuilder:
     @staticmethod
-    def build(chart_object):
+    def build(dimension_chart, chart_object):
         if chart_object["series"].__len__() > 1:
             data = BarChartObjectDataBuilder.multi_series_bar_chart_data(chart_object)
         else:
@@ -172,7 +172,7 @@ class BarChartObjectDataBuilder:
 
         return {
             "type": chart_object["type"],
-            "title": chart_object["title"]["text"],
+            "title": dimension_chart.title,
             "x-axis": chart_object["xAxis"]["title"].get("text", ""),
             "y-axis": chart_object["yAxis"]["title"].get("text", ""),
             "data": data,

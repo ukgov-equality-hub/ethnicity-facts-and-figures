@@ -8,7 +8,10 @@ from tests.test_data.chart_and_table import simple_table, grouped_table
 
 
 def test_table_object_builder_does_build_object_from_simple_table():
-    measure_version = MeasureVersionWithDimensionFactory(dimensions__dimension_table__table_object=simple_table())
+    measure_version = MeasureVersionWithDimensionFactory(
+        dimensions__dimension_table__title="My dimension table",
+        dimensions__dimension_table__table_object=simple_table(),
+    )
     # given - a table without a category_caption value
     builder = DimensionObjectBuilder()
     dimension = measure_version.dimensions[0]
@@ -16,13 +19,17 @@ def test_table_object_builder_does_build_object_from_simple_table():
     # when we process the object
     table_object = builder.build(dimension)
 
-    # then the header for the returned table should match the ones from the simple table
+    # then the title should come from the dimension table, and the type should come from the table_object
     assert table_object is not None
-    assert table_object.get("table").get("title") == "Title of simple table"
+    assert table_object["table"]["type"] == "simple"
+    assert table_object["table"]["title"] == "My dimension table"
 
 
 def test_table_object_builder_does_build_object_from_grouped_table():
-    measure_version = MeasureVersionWithDimensionFactory(dimensions__dimension_table__table_object=grouped_table())
+    measure_version = MeasureVersionWithDimensionFactory(
+        dimensions__dimension_table__title="My dimension table",
+        dimensions__dimension_table__table_object=grouped_table(),
+    )
     # given - a table without a category_caption value
     builder = DimensionObjectBuilder()
     dimension = measure_version.dimensions[0]
@@ -32,7 +39,8 @@ def test_table_object_builder_does_build_object_from_grouped_table():
 
     # then the header for the returned table should match the ones from the grouped table
     assert table_object is not None
-    assert table_object.get("table").get("title") == "Title of grouped table"
+    assert table_object["table"]["type"] == "grouped"
+    assert table_object["table"]["title"] == "My dimension table"
 
 
 def test_table_object_builder_does_build_with_page_level_data_from_simple_table():
