@@ -1,5 +1,7 @@
-{% if dimension_dict.table_title %}
-  <h3 class="govuk-heading-s">{{ dimension_dict.table_title }}</h3>
+
+{{ dimension_dict.header }}
+{% if dimension_dict.table.header %}
+  <h3 class="govuk-heading-s">{{ dimension_dict.table.header }}</h3>
 {% endif %}
 
 {% set missing_data_sort_order_values = {

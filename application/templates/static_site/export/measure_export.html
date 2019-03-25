@@ -347,12 +347,12 @@
                         <h4 class="govuk-heading-s">Charts and tables</h4>
                         <ul>
                             {% if dimension_dict.chart and dimension_dict.table %}
-                                <li>Chart - {{ dimension_dict.chart_title }}</li>
-                                <li>Table - {{ dimension_dict.table_title }}</li>
+                                <li>Chart - {{ dimension_dict.chart.title.text }}</li>
+                                <li>Table - {{ dimension_dict.table.header }}</li>
                             {% elif dimension_dict.chart %}
-                                <li>Chart - {{ dimension_dict.chart_title }}</li>
+                                <li>Chart - {{ dimension_dict.chart.title.text }}</li>
                             {% elif dimension_dict.table %}
-                                <li>Table - {{ dimension_dict.table_title }}</li>
+                                <li>Table - {{ dimension_dict.table.header }}</li>
 
                             {% else %}
                                 <li>None</li>

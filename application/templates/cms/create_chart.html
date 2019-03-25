@@ -405,7 +405,7 @@
                       <span class="govuk-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
                       {% include 'forms/extended_hints/_chart_and_table_title.html' %}
                         <textarea id="chart_title" class="govuk-textarea" rows="2" data-module="autoresize no-newlines"
-                               {% if form_disabled %}disabled="disabled"{% endif %}>{{ dimension_chart.title }}</textarea>
+                               {% if form_disabled %}disabled="disabled"{% endif %}>{% if dimension_dict.chart_settings_and_source_data %}{{ dimension_dict.chart_settings_and_source_data.chartFormat.chart_title }}{% endif %}</textarea>
                     </div>
 
                     <h2 class="govuk-heading-m eff-numbered-sections__item">Preview</h2>
