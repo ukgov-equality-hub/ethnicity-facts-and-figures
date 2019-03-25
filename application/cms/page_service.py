@@ -299,10 +299,13 @@ class PageService(Service):
         new_version.latest = True
 
         new_version.uploads = []
-        for upload in measure_version.uploads:
-            new_upload = upload.copy()
-            new_upload.guid = create_guid(upload.file_name)
-            new_version.uploads.append(new_upload)
+
+        # We don't copy uploads for major updates, as major updates should always have new data
+        if update_type != NewVersionType.MAJOR_UPDATE:
+            for upload in measure_version.uploads:
+                new_upload = upload.copy()
+                new_upload.guid = create_guid(upload.file_name)
+                new_version.uploads.append(new_upload)
 
         db.session.add(new_version)
         db.session.flush()
