@@ -181,7 +181,6 @@ class TestRDUStringField:
         string_field_invalid = RDUStringField(
             label="string_field", hint="string_field hint", validators=[DataRequired(message="failed validation")]
         )
-        string_field_strip = RDUStringField(label="string_field_strip", strip_whitespace=True)
 
     def setup(self):
         self.form = self.FormForTest()
@@ -237,12 +236,11 @@ class TestRDUStringField:
 
         assert obj.string_field is None
 
-    def test_can_strip_whitespace(self):
-        formdata = ImmutableMultiDict({"string_field": "   blah   ", "string_field_strip": "   blah   "})
+    def test_strips_leading_and_trailing_whitespace(self):
+        formdata = ImmutableMultiDict({"string_field": "   blah   \n\n   blah   "})
         self.form.process(formdata=formdata)
 
-        assert self.form.string_field.data == "   blah   "
-        assert self.form.string_field_strip.data == "blah"
+        assert self.form.string_field.data == "blah   \n\n   blah"
 
 
 class TestRDUPasswordField:
@@ -297,6 +295,12 @@ class TestRDUPasswordField:
 
         assert obj.password_field == "some data"
 
+    def test_does_not_strip_leading_and_trailing_whitespace(self):
+        formdata = ImmutableMultiDict({"password_field": "   blah   \n\n   blah   "})
+        self.form.process(formdata=formdata)
+
+        assert self.form.password_field.data == "   blah   \n\n   blah   "
+
 
 class TestRDUURLField:
     class FormForTest(FlaskForm):
@@ -349,6 +353,12 @@ class TestRDUURLField:
         self.form.populate_obj(obj)
 
         assert obj.url_field == "some data"
+
+    def test_strips_leading_and_trailing_whitespace(self):
+        formdata = ImmutableMultiDict({"url_field": "   blah   \n\n   blah   "})
+        self.form.process(formdata=formdata)
+
+        assert self.form.url_field.data == "blah   \n\n   blah"
 
 
 class TestRDUTextAreaField:
@@ -425,3 +435,9 @@ class TestRDUTextAreaField:
 
         textarea = doc.xpath("//textarea")[0]
         assert {"govuk-textarea", "js-character-count"} <= set(textarea.get("class", "").split())
+
+    def test_strips_whitespace_from_start_and_end_of_text_and_start_of_each_line(self):
+        formdata = ImmutableMultiDict({"textarea_field": "   blah   \n\n   blah   "})
+        self.form.process(formdata=formdata)
+
+        assert self.form.textarea_field.data == "blah   \n\nblah"
