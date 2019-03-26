@@ -223,21 +223,21 @@ class RDUStringField(StringField):
     def __init__(
         self, label=None, validators=None, hint=None, extended_hint=None, character_count_limit=None, **kwargs
     ):
+        kwargs["filters"] = kwargs.get("filters", [])
+
         # Automatically coalesce `None` values to blank strings
         # If we get null values from the database, we don't want to render these as 'None' strings in form fields.
-        kwargs["filters"] = kwargs.get("filters", [])
-        if _coerce_none_to_blank_string not in kwargs["filters"]:
-            kwargs["filters"].append(_coerce_none_to_blank_string)
+        kwargs["filters"].append(_coerce_none_to_blank_string)
 
+        # Strip whitespace depending on the field type
         if self.__class__ is RDUStringField or self.__class__ is RDUURLField:
-            if _strip_whitespace_basic not in kwargs["filters"]:
-                kwargs["filters"].append(_strip_whitespace_basic)
+            kwargs["filters"].append(_strip_whitespace_basic)
 
         elif self.__class__ is RDUTextAreaField:
-            if _strip_whitespace_extended not in kwargs["filters"]:
-                kwargs["filters"].append(_strip_whitespace_extended)
+            kwargs["filters"].append(_strip_whitespace_extended)
 
         super().__init__(label, validators, **kwargs)
+
         self.hint = hint
         self.character_count_limit = character_count_limit
         self.extended_hint = Markup(render_template(f"forms/extended_hints/{extended_hint}")) if extended_hint else None
