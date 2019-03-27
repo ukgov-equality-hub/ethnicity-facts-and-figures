@@ -464,11 +464,15 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             data_source_2_form_to_validate.validate() if any(data_source_2_form_to_validate.data.values()) else True
         )
 
+        # Measure versions should have a data file uploaded before sending to review
+        data_file_uploaded = len(measure_version.uploads.all()) > 0
+
         if (
             not measure_version_form_validated
             or invalid_dimensions
             or not data_source_form_validated
             or not data_source_2_form_validated
+            or not data_file_uploaded
         ):
             # don't need to show user page has been saved when
             # required field validation failed.
@@ -488,14 +492,24 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             copy_form_errors(from_form=data_source_form_to_validate, to_form=data_source_form)
             copy_form_errors(from_form=data_source_2_form_to_validate, to_form=data_source_2_form)
 
+            non_form_error_messages = []
+            data_not_uploaded_error = dimensions_not_complete_error = False
             if invalid_dimensions:
+                dimensions_not_complete_error = True
                 for invalid_dimension in invalid_dimensions:
-                    message = (
-                        "Cannot submit for review "
-                        '<a href="./%s/edit?validate=true">%s</a> dimension is not complete.'
-                        % (invalid_dimension.guid, invalid_dimension.title)
+                    non_form_error_messages.append(
+                        {
+                            "field": invalid_dimension.title,
+                            "text": "This dimension is not complete.",
+                            "href": f"./{invalid_dimension.guid}/edit?validate=true",
+                        }
                     )
-                    flash(message, "dimension-error")
+
+            if not data_file_uploaded:
+                data_not_uploaded_error = True
+                non_form_error_messages.append(
+                    {"field": "Data", "text": "Source data must be uploaded.", "href": "#source-data"}
+                )
 
             current_status = measure_version.status
             available_actions = measure_version.available_actions()
@@ -519,7 +533,10 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 "error_summary": get_error_summary_data(
                     title="Cannot submit for review.",
                     forms=[measure_version_form, data_source_form, data_source_2_form],
+                    additional_error_messages=non_form_error_messages,
                 ),
+                "data_not_uploaded_error": data_not_uploaded_error,
+                "dimensions_not_complete_error": dimensions_not_complete_error,
             }
 
             return render_template("cms/edit_measure_version.html", **context)

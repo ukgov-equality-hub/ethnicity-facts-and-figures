@@ -14,12 +14,12 @@ def copy_form_errors(from_form, to_form):
         setattr(to_form, key, field)
 
 
-def get_error_summary_data(title="Please see below errors:", forms=None):
-    if not any(form.errors for form in forms):
-        return {}
-
+def get_error_summary_data(title="Please see below errors:", forms=None, additional_error_messages=None):
     if not forms:
         forms = []
+
+    if not any(form.errors for form in forms) and not additional_error_messages:
+        return {}
 
     error_summary_data = {"title": title, "errors": []}
     for form in forms:
@@ -28,6 +28,9 @@ def get_error_summary_data(title="Please see below errors:", forms=None):
             error_summary_data["errors"].append(
                 {"href": f"#{form_field.id}-label", "field": form_field.label.text, "text": error_message[0]}
             )
+
+    if additional_error_messages:
+        error_summary_data["errors"].extend(additional_error_messages)
 
     return error_summary_data
 
