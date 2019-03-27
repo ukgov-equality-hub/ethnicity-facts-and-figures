@@ -50,6 +50,21 @@ class TestGetErrorSummaryDetails:
             "errors": [{"href": "#field-label", "field": "field", "text": "invalid field"}],
         }
 
+    def test_get_error_summary_data_appends_additional_error_messages(self):
+        form = self.FormForTest()
+        form.validate()
+        additional_error_message = {"href": "#other-label", "field": "other-field", "text": "bad field"}
+
+        assert get_error_summary_data(
+            title="Form validation failed", forms=[form], additional_error_messages=[additional_error_message]
+        ) == {
+            "title": "Form validation failed",
+            "errors": [
+                {"href": "#field-label", "field": "field", "text": "invalid field"},
+                {"href": "#other-label", "field": "other-field", "text": "bad field"},
+            ],
+        }
+
     def test_base_template_renders_error_summary(self):
         form = self.FormForTest()
         form.validate()
