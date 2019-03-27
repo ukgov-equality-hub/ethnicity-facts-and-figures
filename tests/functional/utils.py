@@ -2,7 +2,7 @@ from random import shuffle
 
 import selenium
 
-from tests.functional.pages import HomePage, LogInPage, MeasureCreatePage, MeasureEditPage, TopicPage
+from tests.functional.pages import HomePage, LogInPage, MeasureCreatePage, MeasureEditPage, TopicPage, AddSourceDataPage
 from tests.utils import get_page_with_title
 
 EXPECTED_STATUSES = {
@@ -61,7 +61,14 @@ def create_measure_starting_at_topic_page(
     measure_edit_page.fill_measure_page(sample_measure_version, sample_data_source)
     measure_edit_page.click_save()
     """
-    CREATE v1 5: Now it has been added we ought to have a generated GUID which we will need so
+    CREATE v1 5: Upload a source data file
+    """
+    measure_edit_page.click_add_source_data()
+    add_source_data_page = AddSourceDataPage(driver)
+    add_source_data_page.fill_source_data_page(sample_measure_version.uploads[0])
+    add_source_data_page.click_save()
+    """
+    CREATE v1 6: Now it has been added we ought to have a generated GUID which we will need so
     we may have to retrieve the page again
     """
     created_measure_version = get_page_with_title(sample_measure_version.title)
