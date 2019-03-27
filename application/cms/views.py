@@ -747,7 +747,7 @@ def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid,
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
+    topic, subtopic, measure, measure_version, dimension = page_service.get_measure_version_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
@@ -757,7 +757,7 @@ def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
-        dimension_dict=dimension_object.to_dict(),
+        dimension=dimension,
     )
 
 
@@ -772,7 +772,7 @@ def __get_classification_finder_classifications():
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
+    topic, subtopic, measure, measure_version, dimension = page_service.get_measure_version_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
@@ -782,7 +782,7 @@ def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
-        dimension_dict=dimension_object.to_dict(),
+        dimension=dimension,
     )
 
 

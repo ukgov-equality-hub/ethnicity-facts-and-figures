@@ -6,7 +6,6 @@ from flask import render_template, abort, make_response, send_file, request
 
 from flask_security import current_user
 from flask_security import login_required
-from slugify import slugify
 
 from application.data.dimensions import DimensionObjectBuilder
 from application.cms.exceptions import PageNotFoundException, DimensionNotFoundException, UploadNotFoundException
@@ -20,6 +19,7 @@ from application.utils import (
     write_dimension_tabular_csv,
     user_has_access,
 )
+from application.utils import cleanup_filename
 
 
 @static_site_blueprint.route("")
@@ -159,7 +159,6 @@ def measure_version(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
         measure_version=measure_version,
-        dimensions=[dimension.to_dict() for dimension in measure_version.dimensions],
         versions=measure_version.previous_major_versions,
         first_published_date=measure_version.first_published_date,
         edit_history=measure_version.previous_minor_versions,
@@ -241,10 +240,6 @@ def dimension_file_table_download(topic_slug, subtopic_slug, measure_slug, versi
 
     except DimensionNotFoundException:
         abort(404)
-
-
-def cleanup_filename(filename):
-    return slugify(filename)
 
 
 @static_site_blueprint.route("/search")

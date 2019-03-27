@@ -25,14 +25,11 @@ def review_page(review_token):
         if measure_version.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html", preview=True)
 
-        dimensions = [dimension.to_dict() for dimension in measure_version.dimensions]
-
         return render_template(
             "static_site/measure.html",
             topic_slug=measure_version.measure.subtopic.topic.slug,
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_version=measure_version,
-            dimensions=dimensions,
             versions=measure_version.previous_major_versions,
             first_published_date=measure_version.first_published_date,
             edit_history=measure_version.previous_minor_versions,
