@@ -14,7 +14,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.admin.forms import is_gov_email
+from application.form_fields import is_gov_email
 from application.auth.models import User, TypeOfUser, CAPABILITIES
 from application.cms.classification_service import classification_service
 from application.cms.models import MeasureVersion

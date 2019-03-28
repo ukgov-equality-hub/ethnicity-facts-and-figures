@@ -3,14 +3,18 @@ This module extends a number of WTForm fields and widgets to provide custom inte
 elements. We don't explicitly define HTML in this module; instead, we hook into templated fragments representing
 the elements in the `application/templates/forms/` directory.
 """
-
+import ast
+import os
+import re
 from enum import Enum
+
 from functools import partial
 
 
 from flask import render_template
 from markupsafe import Markup
 from wtforms.fields import SelectMultipleField, RadioField, StringField
+from wtforms.validators import ValidationError
 from wtforms.widgets import HTMLString, html_params
 
 
@@ -54,6 +58,26 @@ def _strip_whitespace_extended(value):
         value = "\n".join(text_lines)
 
     return value
+
+
+def is_gov_email(email):
+    email = email.lower()
+
+    email_whitelist = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "[]"))
+    if email in email_whitelist:
+        return True
+
+    valid_domains = [r"gov\.uk|nhs\.net"]
+    email_regex = r"[\.|@]({})$".format("|".join(valid_domains))
+
+    return bool(re.search(email_regex, email))
+
+
+class ValidGovEmail:
+    def __call__(self, form, field):
+        message = "Enter a government email address"
+        if not is_gov_email(field.data.lower()):
+            raise ValidationError(message)
 
 
 class _FormFieldTemplateRenderer:
@@ -101,6 +125,10 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
 
 class _RDUPasswordInput(_RDUTextInput):
     input_type = "password"
+
+
+class _RDUEmailInput(_RDUTextInput):
+    input_type = "email"
 
 
 class _RDUTextAreaInput(_RDUTextInput):
@@ -258,6 +286,10 @@ class RDUTextAreaField(RDUStringField):
 
 class RDUPasswordField(RDUStringField):
     widget = _RDUPasswordInput()
+
+
+class RDUEmailField(RDUStringField):
+    widget = _RDUEmailInput()
 
 
 class RDUURLField(RDUStringField):
