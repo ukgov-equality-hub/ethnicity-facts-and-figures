@@ -36,7 +36,7 @@ from application.cms.models import NewVersionType
 from application.cms.models import publish_status, Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
-from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data
+from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data, ErrorSummaryMessage
 from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
@@ -498,17 +498,17 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 dimensions_not_complete_error = True
                 for invalid_dimension in invalid_dimensions:
                     non_form_error_messages.append(
-                        {
-                            "field": invalid_dimension.title,
-                            "text": "This dimension is not complete.",
-                            "href": f"./{invalid_dimension.guid}/edit?validate=true",
-                        }
+                        ErrorSummaryMessage(
+                            field=invalid_dimension.title,
+                            text="This dimension is not complete.",
+                            href=f"./{invalid_dimension.guid}/edit?validate=true",
+                        )
                     )
 
             if not data_file_uploaded:
                 data_not_uploaded_error = True
                 non_form_error_messages.append(
-                    {"field": "Data", "text": "Source data must be uploaded.", "href": "#source-data"}
+                    ErrorSummaryMessage(field="Data", text="Source data must be uploaded.", href="#source-data")
                 )
 
             current_status = measure_version.status
@@ -533,7 +533,7 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 "error_summary": get_error_summary_data(
                     title="Cannot submit for review.",
                     forms=[measure_version_form, data_source_form, data_source_2_form],
-                    additional_error_messages=non_form_error_messages,
+                    extra_non_form_errors=non_form_error_messages,
                 ),
                 "data_not_uploaded_error": data_not_uploaded_error,
                 "dimensions_not_complete_error": dimensions_not_complete_error,
