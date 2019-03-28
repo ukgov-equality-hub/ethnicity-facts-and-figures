@@ -14,7 +14,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.form_fields import is_whitelisted_or_government_email
+from application.admin.forms import AddUserForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES
 from application.cms.classification_service import classification_service
 from application.cms.models import MeasureVersion
@@ -45,7 +45,8 @@ user_datastore = SQLAlchemyUserDatastore(db, User, None)
 @manager.option("--email", dest="email")
 @manager.option("--user-type", dest="user_type", default="RDU_USER")
 def create_local_user_account(email, user_type):
-    if is_whitelisted_or_government_email(email):
+    form = AddUserForm(email=email, user_type=user_type)
+    if form.email.validate(form):
         user = user_datastore.find_user(email=email)
         if user:
             print("User %s already exists" % email)
