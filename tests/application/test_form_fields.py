@@ -7,7 +7,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 from wtforms.validators import DataRequired
 import pytest
 
-from application.cms.form_fields import (
+from application.form_fields import (
     _coerce_enum_to_text,
     RDUCheckboxField,
     RDURadioField,

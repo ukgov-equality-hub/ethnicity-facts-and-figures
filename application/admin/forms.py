@@ -7,7 +7,7 @@ from wtforms import ValidationError
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import Length, DataRequired, Email
 
-from application.cms.form_fields import RDURadioField
+from application.form_fields import RDURadioField
 
 
 whitelist = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "[]"))
