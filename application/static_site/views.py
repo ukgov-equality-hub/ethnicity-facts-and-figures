@@ -159,9 +159,6 @@ def measure_version(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
         measure_version=measure_version,
-        versions=measure_version.previous_major_versions,
-        first_published_date=measure_version.first_published_date,
-        edit_history=measure_version.previous_minor_versions,
         static_mode=get_bool(request.args.get("static_mode", False)),
     )
 

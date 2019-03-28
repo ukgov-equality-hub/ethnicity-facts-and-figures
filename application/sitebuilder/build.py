@@ -183,9 +183,6 @@ def write_measure_versions(measure, build_dir, local_build=False):
             topic_slug=measure.subtopic.topic.slug,
             subtopic_slug=measure.subtopic.slug,
             measure_version=measure_version,
-            versions=measure_version.previous_major_versions,
-            first_published_date=measure_version.first_published_date,
-            edit_history=measure_version.previous_minor_versions,
         )
 
         file_path = os.path.join(slug, "index.html")

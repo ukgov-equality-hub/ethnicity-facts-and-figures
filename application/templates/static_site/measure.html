@@ -131,9 +131,9 @@
             </dd>
           {% endif %}
 
-          {%  if first_published_date %}
+          {%  if measure_version.first_published_date %}
             <dt>Published:</dt>
-            <dd><time itemprop="datePublished" datetime="{{ first_published_date | format_iso8601_date }}">{{ first_published_date | format_friendly_date }}</time>
+            <dd><time itemprop="datePublished" datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
             </dd>
           {%  endif %}
 
@@ -413,7 +413,7 @@
             <meta itemprop="name" content="{{ measure_version.format_area_covered() }}">
           </div>
           {% if measure_version.published_at %}<meta itemprop="dateModified" content="{{ measure_version.published_at | format_iso8601_date }}">{% endif %}
-          {% if first_published_date %}<meta itemprop="datePublished" content="{{ first_published_date | format_iso8601_date }}">{% endif %}
+          {% if measure_version.first_published_date %}<meta itemprop="datePublished" content="{{ measure_version.first_published_date | format_iso8601_date }}">{% endif %}
           <div itemprop="creator" itemscope itemtype="http://schema.org/Organization">
             <meta itemprop="name" content="Race Disparity Unit">
             <meta itemprop="url" content="https://www.gov.uk/government/organisations/race-disparity-unit">
@@ -602,15 +602,15 @@
             <p>
                 Publication release date:
                 <span class="published definition">
-                    {% if first_published_date %}
-                        {{ first_published_date|format_friendly_date }}
+                    {% if measure_version.first_published_date %}
+                        {{ measure_version.first_published_date|format_friendly_date }}
                     {% else %}
                         TBC
                     {% endif %}
                 </span>
             </p>
 
-            {% if edit_history %}
+            {% if measure_version.previous_minor_versions %}
                 <p>Updated:
                     <span class="updated definition"> {{ measure_version.published_at|format_friendly_date }}</span>
                 </p>
@@ -643,7 +643,7 @@
                         {{ current_edit_summary }}
                     {% endif %}
                 </li>
-                {% for old_page_version in edit_history %}
+                {% for old_page_version in measure_version.previous_minor_versions %}
                   <li>
                     <time datetime="{{ old_page_version.published_at }}" class="timestamp">{{ old_page_version.published_at|format_friendly_date }}</time>
 
@@ -670,8 +670,8 @@
           </p>
           {%  endif %}
 
-          {% if versions %}
-            {% set version_count = versions|length %}
+          {% if measure_version.previous_major_versions %}
+            {% set version_count = measure_version.previous_major_versions|length %}
 
             <div class="previous-editions">
               Previous {{ "editions" if version_count > 1 else "edition" }}:
