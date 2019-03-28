@@ -151,6 +151,15 @@ class TestRDUCheckboxField:
         for checkbox in checkboxes:
             assert checkbox.get("disabled") == ("disabled" if disabled else None)
 
+    def test_can_be_rendered_block_or_inline(self):
+        doc = html.fromstring(self.form.checkbox_field(inline=False))
+        checkboxes_div = doc.xpath("//div[contains(@class, 'govuk-checkboxes')]")[0]
+        assert "govuk-checkboxes--inline" not in checkboxes_div.attrib["class"]
+
+        doc = html.fromstring(self.form.checkbox_field(inline=True))
+        checkboxes_div = doc.xpath("//div[contains(@class, 'govuk-checkboxes')]")[0]
+        assert "govuk-checkboxes--inline" in checkboxes_div.attrib["class"]
+
 
 class TestRDURadioField:
     class FormForTest(FlaskForm):
@@ -220,6 +229,15 @@ class TestRDURadioField:
         doc = html.fromstring(self.form.radio_field())
 
         assert "showHideControl" in doc.xpath("//script")[0].text
+
+    def test_can_be_rendered_block_or_inline(self):
+        doc = html.fromstring(self.form.radio_field(inline=False))
+        radios_div = doc.xpath("//div[contains(@class, 'govuk-radios')]")[0]
+        assert "govuk-radios--inline" not in radios_div.attrib["class"]
+
+        doc = html.fromstring(self.form.radio_field(inline=True))
+        radios_div = doc.xpath("//div[contains(@class, 'govuk-radios')]")[0]
+        assert "govuk-radios--inline" in radios_div.attrib["class"]
 
 
 class TestRDUStringField:

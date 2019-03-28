@@ -13,7 +13,7 @@
     {% if field.hint or hint %}
     <span class="govuk-hint">{{ field.hint or hint }}</span>
     {% endif %}
-      <div class="{{ govukBaseClass }}">
+      <div class="{{ govukBaseClass }}{% if inline %} {{ govukBaseClass }}--inline{% endif %}">
         {% for field in fields %}
             {% set field_options = {"disabled": disabled, "class_": field_class} %}
             {% if loop.last and other_field %}
