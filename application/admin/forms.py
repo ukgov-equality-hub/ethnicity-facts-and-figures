@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Length, Email
 
-from application.form_fields import RDURadioField, RDUEmailField, ValidGovEmail
+from application.form_fields import RDURadioField, RDUEmailField, ValidPublisherEmailAddress
 
 
 class AddUserForm(FlaskForm):
@@ -11,7 +11,7 @@ class AddUserForm(FlaskForm):
             Length(min=5, max=255),
             DataRequired(message="Can’t be empty"),
             Email(message="Enter a valid email address"),
-            ValidGovEmail(),
+            ValidPublisherEmailAddress(),
         ],
     )
     user_type = RDURadioField(

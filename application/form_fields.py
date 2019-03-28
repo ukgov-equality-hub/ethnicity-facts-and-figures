@@ -73,7 +73,7 @@ def is_whitelisted_or_government_email(email):
     return bool(re.search(email_regex, email))
 
 
-class ValidGovEmail:
+class ValidPublisherEmailAddress:
     def __call__(self, form, field):
         message = "Enter a government email address"
         if not is_whitelisted_or_government_email(field.data.lower()):
