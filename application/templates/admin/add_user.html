@@ -23,7 +23,7 @@
                 <form action="{{ url_for('admin.add_user') }}" method="POST">
                     {{ form.csrf_token }}
                     {{ form.email() }}
-                    {{ form.user_type(legend_class="govuk-!-font-weight-bold", fieldset_class="inline") }}
+                    {{ form.user_type(inline=True) }}
 
                     <button type="submit" class="govuk-button" name="add">Add user</button>
                 </form>
