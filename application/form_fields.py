@@ -60,7 +60,7 @@ def _strip_whitespace_extended(value):
     return value
 
 
-def is_gov_email(email):
+def is_whitelisted_or_government_email(email):
     email = email.lower()
 
     email_whitelist = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "[]"))
@@ -76,7 +76,7 @@ def is_gov_email(email):
 class ValidGovEmail:
     def __call__(self, form, field):
         message = "Enter a government email address"
-        if not is_gov_email(field.data.lower()):
+        if not is_whitelisted_or_government_email(field.data.lower()):
             raise ValidationError(message)
 
 
