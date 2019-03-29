@@ -539,7 +539,7 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 "dimensions_not_complete_error": dimensions_not_complete_error,
             }
 
-            return render_template("cms/edit_measure_version.html", **context)
+            return render_template("cms/edit_measure_version.html", **context), 400
 
     message = page_service.move_measure_version_to_next_state(measure_version, updated_by=current_user.email)
     current_app.logger.info(message)
