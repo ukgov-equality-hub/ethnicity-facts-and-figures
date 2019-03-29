@@ -1,3 +1,4 @@
+import os
 import random
 import time
 
@@ -27,6 +28,7 @@ from tests.functional.locators import (
     ChartBuilderPageLocators,
     TableBuilderPageLocators,
     TopicPageLocators,
+    SourceDataPageLocators,
 )
 
 
@@ -408,6 +410,11 @@ class MeasureEditPage(BasePage):
         self.scroll_to(element)
         element.click()
 
+    def click_add_source_data(self):
+        element = self.wait_for_invisible_element(EditMeasureLocators.ADD_SOURCE_DATA_LINK)
+        self.scroll_to(element)
+        element.click()
+
     def click_preview(self):
         element = self.wait_for_element(EditMeasureLocators.PREVIEW_LINK)
         self.scroll_and_click(element)
@@ -653,6 +660,36 @@ class DimensionEditPage(BasePage):
         element = self.wait_for_element(DimensionPageLocators.SUMMARY_TEXTAREA)
         element.clear()
         element.send_keys(summary)
+
+
+class AddSourceDataPage(BasePage):
+    def __init__(self, driver):
+        super().__init__(driver=driver, base_url=driver.current_url)
+
+    def set_title(self, title):
+        element = self.wait_for_element(SourceDataPageLocators.TITLE_INPUT)
+        element.clear()
+        element.send_keys(title)
+
+    def set_description(self, value):
+        element = self.wait_for_element(SourceDataPageLocators.DESCRIPTION_TEXTAREA)
+        element.clear()
+        element.send_keys(value)
+
+    def set_upload_file(self):
+        element = self.wait_for_element(SourceDataPageLocators.FILE_UPLOAD_INPUT)
+        element.clear()
+        file_abs_path = os.path.abspath("./tests/test_data/csv_with_no_quotes.csv")
+        element.send_keys(file_abs_path)
+
+    def click_save(self):
+        element = self.wait_for_element(SourceDataPageLocators.SAVE_BUTTON)
+        self.scroll_and_click(element)
+
+    def fill_source_data_page(self, upload):
+        self.set_upload_file()
+        self.set_title(upload.title)
+        self.set_description(upload.description)
 
 
 class MeasurePreviewPage(BasePage):

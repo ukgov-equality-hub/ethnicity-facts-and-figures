@@ -219,7 +219,11 @@
 
      <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <h3 class="govuk-heading-m">Dimensions</h3>
+            <div class="govuk-form-group {% if dimensions_not_complete_error %}govuk-form-group--error{% endif %}">
+                <h3 class="govuk-heading-m">Dimensions</h3>
+                {% if dimensions_not_complete_error %}
+                    <span class="govuk-error-message">All dimensions must be complete.</span>
+                {% endif %}
                 {% if measure_version.dimensions %}
                     <table class="govuk-table govuk-!-font-size-16">
                         {% for dimension in measure_version.dimensions %}
@@ -259,13 +263,17 @@
                 {% if new %}
                     <p class="govuk-body">Once this page is saved you will be able to add dimensions</p>
                 {% endif %}
+            </div>
         </div>
     </div>
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-
-                    <h3 class="govuk-heading-m">Data</h3>
+                <div class="govuk-form-group {% if data_not_uploaded_error %}govuk-form-group--error{% endif %}">
+                    <h3 class="govuk-heading-m" id="source-data">Data</h3>
+                    {% if data_not_uploaded_error %}
+                        <span class="govuk-error-message">Source data must be uploaded.</span>
+                    {% endif %}
                     {% if measure_version.uploads %}
                         <table class="govuk-table govuk-!-font-size-16">
                             {% for upload in measure_version.uploads %}
@@ -296,7 +304,7 @@
                     {% if new %}
                         <p class="govuk-body">Once this page is saved you will be able to add downloads</p>
                     {% endif %}
-
+                </div>
             </div>
         </div>
 

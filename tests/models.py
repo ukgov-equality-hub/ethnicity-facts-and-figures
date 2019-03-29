@@ -298,7 +298,7 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     @factory.post_generation
     def uploads(self, create, extracted, **kwargs):
         # If some uploads were passed into the create invocation: eg factory.create(uploads=[upload1, upload2])
-        if extracted:
+        if extracted is not None:
             # Attach those uploads to this newly-created instance.
             for upload in extracted:
                 self.uploads.append(upload)
@@ -310,7 +310,7 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     @factory.post_generation
     def data_sources(self, create, extracted, **kwargs):
         # If some uploads were passed into the create invocation: eg factory.create(data_sources=[data_source1])
-        if extracted:
+        if extracted is not None:
             # Attach those uploads to this newly-created instance.
             for data_source in extracted:
                 self.data_sources.append(data_source)

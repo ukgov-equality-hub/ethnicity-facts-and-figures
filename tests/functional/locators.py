@@ -88,6 +88,7 @@ class EditMeasureLocators:
 
     PREVIEW_LINK = (By.NAME, "preview")
     ADD_DIMENSION_LINK = (By.LINK_TEXT, "Add dimension")
+    ADD_SOURCE_DATA_LINK = (By.LINK_TEXT, "Add source data")
 
     PUBLISHED_AT_DATE_PICKER = (By.NAME, "published_at")
     PUBLISHED_LABEL = (By.NAME, "published")
@@ -142,6 +143,13 @@ class DimensionPageLocators:
     UPDATE_BUTTON = (By.NAME, "update")
     CREATE_CHART = (By.ID, "create_chart")
     CREATE_TABLE = (By.ID, "create_table")
+
+
+class SourceDataPageLocators:
+    FILE_UPLOAD_INPUT = (By.NAME, "upload")
+    TITLE_INPUT = (By.NAME, "title")
+    DESCRIPTION_TEXTAREA = (By.NAME, "description")
+    SAVE_BUTTON = (By.NAME, "save")
 
 
 class ChartBuilderPageLocators:

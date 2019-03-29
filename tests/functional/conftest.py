@@ -60,8 +60,10 @@ def driver(_driver, request):
     yield _driver
     if prev_failed_tests != request.session.testsfailed:
         filename = str(Path.cwd() / "screenshots" / "{}_{}.png".format(datetime.utcnow(), request.function.__name__))
-        _driver.save_screenshot(str(filename))
-        print("Error screenshot saved to " + filename)
+        if _driver.save_screenshot(str(filename)):
+            print("Screenshot of the error saved to " + filename)
+        else:
+            print("Failed to save screenshot to " + filename)
 
 
 @pytest.fixture(scope="function")
