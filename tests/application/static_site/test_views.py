@@ -763,7 +763,7 @@ class TestMeasurePage:
     @pytest.mark.parametrize(
         "static_mode, expected_url",
         (
-            # ("yes", "<some_url>"),
+            ("yes", "/topic/subtopic/measure/latest/downloads/dimension-title-table.csv"),
             ("no", "/topic/subtopic/measure/1.0/dimension/dimension-guid/tabular-download"),
         ),
     )
@@ -779,6 +779,7 @@ class TestMeasurePage:
             measure__subtopics__slug="subtopic",
             measure__slug="measure",
             dimensions__guid="dimension-guid",
+            dimensions__title="dimension-title",
             dimensions__dimension_chart__chart_object=chart,
             dimensions__dimension_table__table_object=simple_table(),
             uploads__guid="test-download",
@@ -794,7 +795,7 @@ class TestMeasurePage:
     @pytest.mark.parametrize(
         "static_mode, expected_url",
         (
-            # ("yes", "<some_url>"),
+            ("yes", "/topic/subtopic/measure/latest/downloads/dimension-title.csv"),
             ("no", "/topic/subtopic/measure/1.0/dimension/dimension-guid/download"),
         ),
     )
@@ -810,6 +811,7 @@ class TestMeasurePage:
             measure__subtopics__slug="subtopic",
             measure__slug="measure",
             dimensions__guid="dimension-guid",
+            dimensions__title="dimension-title",
             dimensions__dimension_chart__chart_object=chart,
             dimensions__dimension_table__table_object=simple_table(),
             uploads__guid="test-download",
@@ -824,7 +826,7 @@ class TestMeasurePage:
     @pytest.mark.parametrize(
         "static_mode, expected_url",
         (
-            # ("yes", "<some_url>"),
+            ("yes", "/topic/subtopic/measure/1.0/downloads/test-measure-page-data.csv"),
             ("no", "/topic/subtopic/measure/1.0/downloads/test-measure-page-data.csv"),
         ),
     )
