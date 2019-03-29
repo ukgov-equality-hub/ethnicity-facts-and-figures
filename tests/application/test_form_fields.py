@@ -1,4 +1,6 @@
 import enum
+import os
+
 from lxml import html
 from unittest import mock
 
@@ -7,7 +9,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 from wtforms.validators import DataRequired
 import pytest
 
-from application.cms.form_fields import (
+from application.form_fields import (
     _coerce_enum_to_text,
     RDUCheckboxField,
     RDURadioField,
@@ -15,6 +17,8 @@ from application.cms.form_fields import (
     RDUTextAreaField,
     RDUURLField,
     RDUPasswordField,
+    RDUEmailField,
+    ValidPublisherEmailAddress,
 )
 
 
@@ -32,6 +36,49 @@ class TestCoerceEnumToText:
 
     def test_returned_function_returns_input_if_input_is_not_an_enum(self):
         assert _coerce_enum_to_text(self.EnumForTest)("other value") == "other value"
+
+
+class TestValidPublisherEmailAddress:
+    class FormForTest(FlaskForm):
+        email = RDUEmailField(validators=[ValidPublisherEmailAddress()])
+
+    def setup(self):
+        self.form = self.FormForTest()
+
+    def teardown(self):
+        self.form = None
+
+    @pytest.mark.parametrize(
+        "valid_address",
+        (
+            "firstname.lastname@gov.uk",
+            "firstlast@sub.gov.uk",
+            "very*forgiving++£checks@sub.domain.gov.uk",
+            "😊@emoji.gov.uk",
+            "firstname.lastname@nhs.net",
+            "firstlast@sub.nhs.net",
+        ),
+    )
+    def test_government_emails_are_accepted(self, valid_address):
+        self.form.email.data = valid_address
+
+        assert self.form.validate() is True
+
+    @pytest.mark.parametrize(
+        "invalid_address",
+        ("firstname.lastname@org.uk", "firstlast@sub.org.uk", "very*forgiving++£checks@evilgov.uk", "emoji@😊gov.uk"),
+    )
+    def test_non_government_emails_are_rejected(self, invalid_address):
+        self.form.email.data = invalid_address
+
+        assert self.form.validate() is False
+
+    def test_whitelisted_emails_are_ok(self):
+        self.form.email.data = "bad@email.com"
+        assert self.form.validate() is False
+
+        os.environ["ACCOUNT_WHITELIST"] = "['bad@email.com']"
+        assert self.form.validate() is True
 
 
 class TestRDUCheckboxField:
@@ -104,6 +151,15 @@ class TestRDUCheckboxField:
         for checkbox in checkboxes:
             assert checkbox.get("disabled") == ("disabled" if disabled else None)
 
+    def test_can_be_rendered_block_or_inline(self):
+        doc = html.fromstring(self.form.checkbox_field(inline=False))
+        checkboxes_div = doc.xpath("//div[contains(@class, 'govuk-checkboxes')]")[0]
+        assert "govuk-checkboxes--inline" not in checkboxes_div.attrib["class"]
+
+        doc = html.fromstring(self.form.checkbox_field(inline=True))
+        checkboxes_div = doc.xpath("//div[contains(@class, 'govuk-checkboxes')]")[0]
+        assert "govuk-checkboxes--inline" in checkboxes_div.attrib["class"]
+
 
 class TestRDURadioField:
     class FormForTest(FlaskForm):
@@ -173,6 +229,15 @@ class TestRDURadioField:
         doc = html.fromstring(self.form.radio_field())
 
         assert "showHideControl" in doc.xpath("//script")[0].text
+
+    def test_can_be_rendered_block_or_inline(self):
+        doc = html.fromstring(self.form.radio_field(inline=False))
+        radios_div = doc.xpath("//div[contains(@class, 'govuk-radios')]")[0]
+        assert "govuk-radios--inline" not in radios_div.attrib["class"]
+
+        doc = html.fromstring(self.form.radio_field(inline=True))
+        radios_div = doc.xpath("//div[contains(@class, 'govuk-radios')]")[0]
+        assert "govuk-radios--inline" in radios_div.attrib["class"]
 
 
 class TestRDUStringField:

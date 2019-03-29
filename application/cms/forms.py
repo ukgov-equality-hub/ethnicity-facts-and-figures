@@ -5,7 +5,7 @@ from wtforms import StringField, TextAreaField, FileField, HiddenField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length, StopValidation, InputRequired
 
-from application.cms.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
+from application.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
 from application.cms.models import (
     TypeOfData,
     UKCountry,

@@ -5,7 +5,7 @@ import pytest
 from wtforms.validators import DataRequired
 
 from application.cms.forms import DataSourceForm
-from application.cms.form_fields import RDUStringField
+from application.form_fields import RDUStringField
 from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data
 from tests.models import MeasureVersionFactory
 

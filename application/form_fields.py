@@ -3,14 +3,18 @@ This module extends a number of WTForm fields and widgets to provide custom inte
 elements. We don't explicitly define HTML in this module; instead, we hook into templated fragments representing
 the elements in the `application/templates/forms/` directory.
 """
-
+import ast
+import os
+import re
 from enum import Enum
+
 from functools import partial
 
 
 from flask import render_template
 from markupsafe import Markup
 from wtforms.fields import SelectMultipleField, RadioField, StringField
+from wtforms.validators import ValidationError
 from wtforms.widgets import HTMLString, html_params
 
 
@@ -54,6 +58,26 @@ def _strip_whitespace_extended(value):
         value = "\n".join(text_lines)
 
     return value
+
+
+def is_whitelisted_or_government_email(email):
+    email = email.lower()
+
+    email_whitelist = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "[]"))
+    if email in email_whitelist:
+        return True
+
+    valid_domains = [r"gov\.uk|nhs\.net"]
+    email_regex = r"[\.|@]({})$".format("|".join(valid_domains))
+
+    return bool(re.search(email_regex, email))
+
+
+class ValidPublisherEmailAddress:
+    def __call__(self, form, field):
+        message = "Enter a government email address"
+        if not is_whitelisted_or_government_email(field.data.lower()):
+            raise ValidationError(message)
 
 
 class _FormFieldTemplateRenderer:
@@ -103,6 +127,10 @@ class _RDUPasswordInput(_RDUTextInput):
     input_type = "password"
 
 
+class _RDUEmailInput(_RDUTextInput):
+    input_type = "email"
+
+
 class _RDUTextAreaInput(_RDUTextInput):
     def __call__(self, field, class_="", diffs=None, disabled=False, rows=10, cols=100, **kwargs):
         if rows:
@@ -149,7 +177,16 @@ class _FormGroup(_FormFieldTemplateRenderer):
         self.other_field = None
 
     def __call__(
-        self, field, class_="", fieldset_class="", legend_class="", field_class="", diffs=None, disabled=False, **kwargs
+        self,
+        field,
+        class_="",
+        fieldset_class="",
+        legend_class="",
+        field_class="",
+        diffs=None,
+        disabled=False,
+        inline=False,
+        **kwargs,
     ):
         subfields = [subfield for subfield in field]
 
@@ -167,6 +204,7 @@ class _FormGroup(_FormFieldTemplateRenderer):
                 "legend_class": legend_class,
                 "field_class": field_class,
                 "field_type": self.field_type.value,
+                "inline": inline,
             },
             field_params={**kwargs},
         )
@@ -258,6 +296,10 @@ class RDUTextAreaField(RDUStringField):
 
 class RDUPasswordField(RDUStringField):
     widget = _RDUPasswordInput()
+
+
+class RDUEmailField(RDUStringField):
+    widget = _RDUEmailInput()
 
 
 class RDUURLField(RDUStringField):
