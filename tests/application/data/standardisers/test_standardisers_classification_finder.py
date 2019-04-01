@@ -252,7 +252,8 @@ def test_classification_functions_correctly_with_raw_data_instead_of_standards()
     # WHEN
     # we validate against data that should map to 'Mammal', 'Cat', 'Dog', 'Fish'
     raw_values = ["Mammal", "FELINE", "Canine  ", "fish  "]
-    classification_is_valid = classification.is_valid_for_raw_ethnicities(raw_values, standardiser)
+    standard_values = standardiser.standardise_all(raw_values)
+    classification_is_valid = classification.is_valid_for_standard_ethnicities(standard_values)
 
     # THEN
     # the classification is valid
@@ -285,7 +286,8 @@ def test_classification_functions_correctly_with_multiple_rows_of_raw_data():
         "Canine  ",
         "fish  ",
     ]
-    classification_is_valid = classification.is_valid_for_raw_ethnicities(many_rows_of_raw_data, standardiser)
+    standard_values = standardiser.standardise_all(many_rows_of_raw_data)
+    classification_is_valid = classification.is_valid_for_standard_ethnicities(standard_values)
 
     # THEN
     # the classification is valid
@@ -376,11 +378,14 @@ def test_classification_may_use_several_raw_values_to_map_to_a_required_display_
     standardiser = pet_standardiser()
     raw_values_1 = ["Mammal", "Fish", "Other"]
     raw_values_2 = ["Mammal", "Fish", "Reptile"]
+    standard_values_1 = standardiser.standardise_all(raw_values_1)
+    standard_values_2 = standardiser.standardise_all(raw_values_2)
 
     # WHEN
     # we test both for validity using our single classification
-    valid_with_other = classification.is_valid_for_raw_ethnicities(raw_values_1, standardiser)
-    valid_with_reptile = classification.is_valid_for_raw_ethnicities(raw_values_2, standardiser)
+
+    valid_with_other = classification.is_valid_for_standard_ethnicities(standard_values_1)
+    valid_with_reptile = classification.is_valid_for_standard_ethnicities(standard_values_2)
 
     # THEN
     # we expect both to be valid
