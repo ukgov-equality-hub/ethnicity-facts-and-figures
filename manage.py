@@ -478,6 +478,12 @@ def delete_all_measures_except_two_per_subtopic():
         Table,
     )
 
+    environment = os.environ.get("ENVIRONMENT", "PRODUCTION")
+    if environment.upper().startswith("PROD"):
+        print("It looks like you are running this in production or some unknown environment.")
+        print("Do not run this command in this environment as it deletes data")
+        sys.exit(-1)
+
     with TimedExecution("Delete 3rd measure and onward in each subtopic"):
         try:
             measure_ids_to_save = []
