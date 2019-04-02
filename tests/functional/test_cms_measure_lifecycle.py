@@ -112,7 +112,7 @@ def test_create_a_measure_as_editor(driver, live_server, government_departments,
     measure_edit_page.click_save_and_send_to_review()
 
     # THEN we get validation errors (corrections radio+edit summary)
-    assert "Cannot submit for review" in driver.page_source
+    assert "There is a problem" in driver.page_source
 
     # WHEN we fill in the required data
     measure_edit_page.fill_measure_page_minor_edit_fields(sample_measure_version)
@@ -138,7 +138,7 @@ def test_create_a_measure_as_editor(driver, live_server, government_departments,
     measure_edit_page.click_save_and_send_to_review()
 
     # THEN we get validation errors (edit summary)
-    assert "Cannot submit for review" in driver.page_source
+    assert "There is a problem" in driver.page_source
 
     # WHEN we add an upload file
     measure_edit_page.click_add_source_data()

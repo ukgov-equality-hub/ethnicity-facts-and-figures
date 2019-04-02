@@ -108,7 +108,7 @@ def test_can_not_send_to_review_without_a_data_source_uploaded(test_app_client, 
     )
     assert response.status_code == 400
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert "Data Source data must be uploaded." in page.find("div", class_="govuk-error-summary").text
+    assert "Upload the source data" in page.find("div", class_="govuk-error-summary").text
 
 
 @pytest.mark.parametrize("cannot_reject_status", ("DRAFT", "APPROVED"))
@@ -639,7 +639,7 @@ def test_dept_user_should_be_able_to_delete_upload_from_shared_page(test_app_cli
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert page.find("div", class_="eff-flash-message__body").get_text(strip=True) == "Deleted upload ‘upload title’"
-    assert len(measure_version.uploads.all()) == 0
+    assert len(measure_version.uploads) == 0
 
 
 def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(

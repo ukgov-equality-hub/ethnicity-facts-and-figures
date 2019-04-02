@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
-{% from "_shared/_page_title.html" import page_title %}
 {% from "_shared/_status_banner_macro.html" import status_banner %}
 {% from "cms/_data_source_form.html" import render_data_source_form %}
 
@@ -12,7 +11,7 @@
 {% set form_disabled = not (measure_version.status == "DRAFT" or new) %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
-{% block pageTitle %}{{ page_title(measure_version.title, error=(form.errors|length > 0)) }}{% endblock %}
+{% block pageTitle %}{{ measure_version.title }}{% endblock %}
 
 {% block content %}
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}{% else %}{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}{% endif %}">
@@ -272,7 +271,7 @@
                 <div class="govuk-form-group {% if data_not_uploaded_error %}govuk-form-group--error{% endif %}">
                     <h3 class="govuk-heading-m" id="source-data">Data</h3>
                     {% if data_not_uploaded_error %}
-                        <span class="govuk-error-message">Source data must be uploaded.</span>
+                        <span class="govuk-error-message">Upload the source data</span>
                     {% endif %}
                     {% if measure_version.uploads %}
                         <table class="govuk-table govuk-!-font-size-16">

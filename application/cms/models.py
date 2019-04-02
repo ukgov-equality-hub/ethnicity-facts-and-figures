@@ -293,7 +293,7 @@ class MeasureVersion(db.Model, CopyableModel):
     # relationships
     measure = db.relationship("Measure", back_populates="versions")
     lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="measure_versions")
-    uploads = db.relationship("Upload", back_populates="measure_version", lazy="dynamic", cascade="all, delete-orphan")
+    uploads = db.relationship("Upload", back_populates="measure_version", cascade="all, delete-orphan")
     dimensions = db.relationship(
         "Dimension",
         back_populates="measure_version",
