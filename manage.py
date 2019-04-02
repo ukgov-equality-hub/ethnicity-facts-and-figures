@@ -537,8 +537,5 @@ def delete_all_measures_except_two_per_subtopic():
     db.session.commit()
 
 
-# TODO: END
-
-
 if __name__ == "__main__":
     manager.run()
