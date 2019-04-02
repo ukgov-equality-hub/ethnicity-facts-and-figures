@@ -80,10 +80,11 @@ class EthnicityClassificationCollection:
         return self.classifications
 
     def get_valid_classifications(self, raw_ethnicity_list, ethnicity_standardiser):
+        standardised_ethnicities = ethnicity_standardiser.standardise_all(raw_ethnicity_list)
         valid_classifications = [
             classification
             for classification in self.classifications
-            if classification.is_valid_for_raw_ethnicities(raw_ethnicity_list, ethnicity_standardiser)
+            if classification.is_valid_for_standard_ethnicities(standardised_ethnicities)
         ]
         valid_classifications.sort(
             key=lambda classification: -classification.get_data_fit_level(raw_ethnicity_list, ethnicity_standardiser)
@@ -181,11 +182,6 @@ class EthnicityClassification:
             if item.get_parent() != item.get_display_ethnicity():
                 return True
         return False
-
-    def is_valid_for_raw_ethnicities(self, raw_ethnicities, ethnicity_standardiser):
-        standard_ethnicities_in_data = ethnicity_standardiser.standardise_all(raw_ethnicities)
-
-        return self.is_valid_for_standard_ethnicities(standard_ethnicities_in_data)
 
     def is_valid_for_standard_ethnicities(self, standard_ethnicities):
         unique_ethnicities = EthnicityClassification.__remove_duplicates(standard_ethnicities)

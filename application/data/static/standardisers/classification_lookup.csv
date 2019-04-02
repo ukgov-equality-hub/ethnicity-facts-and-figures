@@ -166,6 +166,7 @@ asian/asian british: pakistani,Pakistani
 ethnicity_minor_pakistani,Pakistani
 pakistani,Pakistani
 pakistani total,Pakistani
+pakistani and bangladeshi,Pakistani and Bangladeshi
 asian - pakistani/bangladeshi,Pakistani and Bangladeshi
 pakistani/bangladeshi,Pakistani and Bangladeshi
 ethnicity_major_unclassified,Unclassified
@@ -181,6 +182,7 @@ not stated/invalid,Unknown
 unclassified,Unknown
 unknown,Unknown
 unknown ethnicity,Unknown
+unmatched,Unmatched
 unreported,Unknown
 ethnicity_major_white_total,White
 white,White
@@ -209,6 +211,7 @@ irish,White Irish
 white - irish,White Irish
 white irish,White Irish
 white: irish,White Irish
+irish traveller,Irish Traveller
 ethnicity_minor_traveller_of_irish_heritage,Irish Traveller
 traveller of irish heritage,Irish Traveller
 white - irish traveller,Irish Traveller
@@ -253,6 +256,8 @@ asian bangladeshi,Bangladeshi
 asian chinese,Chinese
 asian indian,Indian
 asian pakistani,Pakistani
+asian other inc chinese,Asian other inc Chinese
+asian excluding chinese,Asian excluding Chinese
 mixed and other,Other
 other mixed,Mixed other
 other black,Black other
@@ -271,3 +276,10 @@ mixed - white/asian,Mixed White/Asian
 mixed - white/black african,Mixed White/Black African
 mixed - white/black caribbean,Mixed White/Black Caribbean
 other - chinese,Chinese
+other inc asian,Other inc Asian
+other inc chinese,Other inc Chinese
+other inc mixed and chinese,Other inc Mixed and Chinese
+other (inc gypsy/traveller/irish traveller),Other (inc Gypsy/Traveller/Irish Traveller)
+other than white,Other than White
+other than white british,Other than White British
+not applicable,Not applicable
