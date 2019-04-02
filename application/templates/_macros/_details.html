@@ -3,11 +3,11 @@
   <details {%- if id %} id="{{id}}"{% endif %} class="govuk-details {%- if classes %} {{ classes }}{% endif %}" {%- for attribute, value in attributes.items() %} {{attribute}}="{{value}}"{% endfor %} {{- " open" if open }}>
   <summary class="govuk-details__summary">
     <span class="govuk-details__summary-text">
-      {{ summaryHtml | safe if summaryHtml else summaryText }}
+      {{ summaryHtml if summaryHtml else summaryText }}
     </span>
   </summary>
   <div class="govuk-details__text">
-    {{ html | safe if html else text }}
+    {{ html if html else text }}
   </div>
 </details>
 {% endmacro %}
