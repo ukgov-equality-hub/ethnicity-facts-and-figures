@@ -75,13 +75,17 @@ main#main-content {
     max-width: 590px;
     line-height: 30px;
     text-decoration: none;
-    //font-weight: bold;
     color: govuk-colour("blue");
   }
 
   /* Words highlighted within title */
   .gs-title b {
-    @include govuk-font(19);
+    @include govuk-font(24, $weight: "bold");
+    height: auto;
+    max-width: 590px;
+    line-height: 30px;
+    text-decoration: none;
+    color: govuk-colour("blue");
   }
 
   /* URL at the top of each search result */
@@ -95,7 +99,7 @@ main#main-content {
     max-width: 590px;
 
     & b {
-      @include govuk-font(16);
+      @include govuk-font(16, $weight: "bold");
     }
   }
 
@@ -109,4 +113,7 @@ main#main-content {
     font-size: 16px;
   }
 
+  .gcsc-more-maybe-branding-root {
+    visibility: none;
+  }
 }
