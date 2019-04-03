@@ -751,15 +751,6 @@ def test_previous_version_adds_noindex_for_robots(test_app_client, logged_in_adm
 
 
 class TestMeasurePage:
-    """
-    This class includes a set of tests that check download links for source data of a measure page.
-    Unfortunately, without a refactor of how dimensions are passed into the measure page template, we aren't
-    able to test how the static site renders these links. The static site builder passes in a specially-formatted
-    set of dimensions that aren't available in 'static-mode style requests' to the CMS.
-
-    Tech improvement ticket: https://trello.com/c/U4rMSk0w/70
-    """
-
     @pytest.mark.parametrize(
         "static_mode, expected_url",
         (
