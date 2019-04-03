@@ -57,7 +57,7 @@
                   <meta itemprop="encodingFormat" content="text/csv">
                   <meta itemprop="contentSize" content="{{ file.size|filesize }}">
                   <meta itemprop="name" content="{{ file.title | striptags }}">
-                  <a class="govuk-link" itemprop="contentUrl" href="{{ measure_version_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
+                  <a class="govuk-body govuk-link" itemprop="contentUrl" href="{{ measure_version_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
                         {{ file.title }}
                         {{ " - Spreadsheet " if file.extension() == "csv" }}
                         {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
@@ -66,7 +66,7 @@
                         {{ file.size|filesize }}
                   </a>
                   {% if file.description %}
-                    <p>{{ file.description }}</p>
+                    <p class="govuk-body">{{ file.description }}</p>
                   {% else %}
                     <br />
                   {% endif %}
