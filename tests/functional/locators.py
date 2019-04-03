@@ -61,19 +61,19 @@ class EditMeasureLocators:
         return (By.ID, "lowest_level_of_geography_id-%s" % str(index_value))
 
     @staticmethod
-    def frequency_radio_button(index_value):
+    def frequency_radio_button(index_value, data_source_index=1):
         # index_value should be in the range 0 to 11 - (as per `frequency_of_release` table per 2018-11-19)
-        return (By.ID, "data-source-1-frequency_of_release_id-%s" % str(index_value))
+        return (By.ID, "data-source-%s-frequency_of_release_id-%s" % (data_source_index, str(index_value)))
 
     @staticmethod
-    def type_of_data_checkbox(index_value):
+    def type_of_data_checkbox(index_value, data_source_index=1):
         # index_value should be in the range 0 to 1 - (as per application.cms.models.TypeOfData per 2018-11-19)
-        return (By.ID, "data-source-1-type_of_data-%s" % str(index_value))
+        return (By.ID, "data-source-%s-type_of_data-%s" % (data_source_index, str(index_value)))
 
     @staticmethod
-    def type_of_statistic_radio_button(index_value):
+    def type_of_statistic_radio_button(index_value, data_source_index=1):
         # index_value should be in the range 0 to 4 - (as per `type_of_statistic` table per 2018-11-19)
-        return (By.ID, "data-source-1-type_of_statistic_id-%s" % str(index_value))
+        return (By.ID, "data-source-%s-type_of_statistic_id-%s" % (data_source_index, str(index_value)))
 
     STATUS_LABEL = (By.ID, "status")
     LOWEST_LEVEL_OF_GEOGRAPHY_RADIO = (By.XPATH, "//*[@type='radio']")
@@ -88,6 +88,7 @@ class EditMeasureLocators:
 
     PREVIEW_LINK = (By.NAME, "preview")
     ADD_DIMENSION_LINK = (By.LINK_TEXT, "Add dimension")
+    ADD_SOURCE_DATA_LINK = (By.LINK_TEXT, "Add source data")
 
     PUBLISHED_AT_DATE_PICKER = (By.NAME, "published_at")
     PUBLISHED_LABEL = (By.NAME, "published")
@@ -103,13 +104,19 @@ class EditMeasureLocators:
     NEED_TO_KNOW_TEXTAREA = (By.NAME, "need_to_know")
     ETHNICITY_DEFINITION_DETAIL_TEXTAREA = (By.NAME, "ethnicity_definition_detail")
     ETHNICITY_SUMMARY_DETAIL_TEXTAREA = (By.NAME, "ethnicity_definition_summary")
-    DATA_SOURCE_TITLE_TEXTAREA = (By.NAME, "data-source-1-title")
-    DATA_SOURCE_SOURCE_URL_INPUT = (By.NAME, "data-source-1-source_url")
-    DATA_SOURCE_PUBLISHER_ID_INPUT = (By.ID, "data-source-1-publisher_id")
-    DATA_SOURCE_PUBLICATION_DATE_INPUT = (By.NAME, "data-source-1-publication_date")
-    FREQUENCY_INPUT = (By.NAME, "data-source-1-frequency_of_release_id")
+    DATA_SOURCE_1_TITLE_TEXTAREA = (By.NAME, "data-source-1-title")
+    DATA_SOURCE_1_SOURCE_URL_INPUT = (By.NAME, "data-source-1-source_url")
+    DATA_SOURCE_1_PUBLISHER_ID_INPUT = (By.ID, "data-source-1-publisher_id")
+    DATA_SOURCE_1_PUBLICATION_DATE_INPUT = (By.NAME, "data-source-1-publication_date")
+    DATA_SOURCE_1_FREQUENCY_INPUT = (By.NAME, "data-source-1-frequency_of_release_id")
+    DATA_SOURCE_1_PURPOSE_TEXTAREA = (By.NAME, "data-source-1-purpose")
+    DATA_SOURCE_2_TITLE_TEXTAREA = (By.NAME, "data-source-2-title")
+    DATA_SOURCE_2_SOURCE_URL_INPUT = (By.NAME, "data-source-2-source_url")
+    DATA_SOURCE_2_PUBLISHER_ID_INPUT = (By.ID, "data-source-2-publisher_id")
+    DATA_SOURCE_2_PUBLICATION_DATE_INPUT = (By.NAME, "data-source-2-publication_date")
+    DATA_SOURCE_2_FREQUENCY_INPUT = (By.NAME, "data-source-2-frequency_of_release_id")
+    DATA_SOURCE_2_PURPOSE_TEXTAREA = (By.NAME, "data-source-2-purpose")
     RELATED_PUBLICATIONS_TEXTAREA = (By.NAME, "related_publications")
-    DATA_SOURCE_PURPOSE_TEXTAREA = (By.NAME, "data-source-1-purpose")
     METHODOLOGY_TEXTAREA = (By.NAME, "methodology")
     DATA_TYPE_INPUT = (By.NAME, "data_type")
     SUPPRESSION_RULES_TEXTAREA = (By.NAME, "suppression_rules")
@@ -136,6 +143,13 @@ class DimensionPageLocators:
     UPDATE_BUTTON = (By.NAME, "update")
     CREATE_CHART = (By.ID, "create_chart")
     CREATE_TABLE = (By.ID, "create_table")
+
+
+class SourceDataPageLocators:
+    FILE_UPLOAD_INPUT = (By.NAME, "upload")
+    TITLE_INPUT = (By.NAME, "title")
+    DESCRIPTION_TEXTAREA = (By.NAME, "description")
+    SAVE_BUTTON = (By.NAME, "save")
 
 
 class ChartBuilderPageLocators:

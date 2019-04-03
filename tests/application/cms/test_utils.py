@@ -5,8 +5,8 @@ import pytest
 from wtforms.validators import DataRequired
 
 from application.cms.forms import DataSourceForm
-from application.cms.form_fields import RDUStringField
-from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data
+from application.form_fields import RDUStringField
+from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data, ErrorSummaryMessage
 from tests.models import MeasureVersionFactory
 
 
@@ -47,7 +47,22 @@ class TestGetErrorSummaryDetails:
 
         assert get_error_summary_data(title="Form validation failed", forms=[form]) == {
             "title": "Form validation failed",
-            "errors": [{"href": "#field-label", "field": "field", "text": "invalid field"}],
+            "errors": [ErrorSummaryMessage(href="#field-label", field="field", text="invalid field")],
+        }
+
+    def test_get_error_summary_data_appends_extra_non_form_errors(self):
+        form = self.FormForTest()
+        form.validate()
+        additional_error_message = ErrorSummaryMessage(href="#other-label", field="other-field", text="bad field")
+
+        assert get_error_summary_data(
+            title="Form validation failed", forms=[form], extra_non_form_errors=[additional_error_message]
+        ) == {
+            "title": "Form validation failed",
+            "errors": [
+                ErrorSummaryMessage(href="#field-label", field="field", text="invalid field"),
+                ErrorSummaryMessage(href="#other-label", field="other-field", text="bad field"),
+            ],
         }
 
     def test_base_template_renders_error_summary(self):

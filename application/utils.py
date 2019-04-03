@@ -241,3 +241,7 @@ class TimedExecution:
             self.log(f"EXIT: {self.description} ({execution_time}s elapsed)")
 
         return execution_time
+
+
+def cleanup_filename(filename):
+    return slugify(filename)

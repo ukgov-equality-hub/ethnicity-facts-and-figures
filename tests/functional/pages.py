@@ -1,3 +1,4 @@
+import os
 import random
 import time
 
@@ -27,6 +28,7 @@ from tests.functional.locators import (
     ChartBuilderPageLocators,
     TableBuilderPageLocators,
     TopicPageLocators,
+    SourceDataPageLocators,
 )
 
 
@@ -408,6 +410,11 @@ class MeasureEditPage(BasePage):
         self.scroll_to(element)
         element.click()
 
+    def click_add_source_data(self):
+        element = self.wait_for_invisible_element(EditMeasureLocators.ADD_SOURCE_DATA_LINK)
+        self.scroll_to(element)
+        element.click()
+
     def click_preview(self):
         element = self.wait_for_element(EditMeasureLocators.PREVIEW_LINK)
         self.scroll_and_click(element)
@@ -471,16 +478,16 @@ class MeasureEditPage(BasePage):
         self.select_checkbox_or_radio(element)
 
     def set_primary_title(self, value):
-        self.set_text_field(EditMeasureLocators.DATA_SOURCE_TITLE_TEXTAREA, value)
+        self.set_text_field(EditMeasureLocators.DATA_SOURCE_1_TITLE_TEXTAREA, value)
 
     def set_description(self, value):
         self.set_text_field(EditMeasureLocators.DESCRIPTION_TEXTAREA, value)
 
     def set_primary_publisher(self, value):
-        self.set_auto_complete_field(EditMeasureLocators.DATA_SOURCE_PUBLISHER_ID_INPUT, value)
+        self.set_auto_complete_field(EditMeasureLocators.DATA_SOURCE_1_PUBLISHER_ID_INPUT, value)
 
     def set_primary_url(self, value):
-        self.set_text_field(EditMeasureLocators.DATA_SOURCE_SOURCE_URL_INPUT, value)
+        self.set_text_field(EditMeasureLocators.DATA_SOURCE_1_SOURCE_URL_INPUT, value)
 
     def set_last_update(self, value):
         self.set_text_field(EditMeasureLocators.LAST_UPDATE_INPUT, value)
@@ -504,13 +511,40 @@ class MeasureEditPage(BasePage):
         element = self.driver.find_element(locator[0], locator[1])
         self.select_checkbox_or_radio(element)
 
-    def set_primary_source_type_of_data(self, data_id):
+    def set_primary_source_type_of_data(self):
         locator = EditMeasureLocators.type_of_data_checkbox(0)
         element = self.driver.find_element(locator[0], locator[1])
         self.select_checkbox_or_radio(element)
 
-    def set_purpose(self, value):
-        self.set_text_field(EditMeasureLocators.DATA_SOURCE_PURPOSE_TEXTAREA, value)
+    def set_primary_data_source_purpose(self, value):
+        self.set_text_field(EditMeasureLocators.DATA_SOURCE_1_PURPOSE_TEXTAREA, value)
+
+    def set_secondary_title(self, value):
+        self.set_text_field(EditMeasureLocators.DATA_SOURCE_2_TITLE_TEXTAREA, value)
+
+    def set_secondary_publisher(self, value):
+        self.set_auto_complete_field(EditMeasureLocators.DATA_SOURCE_2_PUBLISHER_ID_INPUT, value)
+
+    def set_secondary_url(self, value):
+        self.set_text_field(EditMeasureLocators.DATA_SOURCE_2_SOURCE_URL_INPUT, value)
+
+    def set_secondary_data_source_purpose(self, value):
+        self.set_text_field(EditMeasureLocators.DATA_SOURCE_2_PURPOSE_TEXTAREA, value)
+
+    def set_secondary_frequency(self):
+        locator = EditMeasureLocators.frequency_radio_button(0, data_source_index=2)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.scroll_and_click(element)
+
+    def set_secondary_type_of_statistic(self):
+        locator = EditMeasureLocators.type_of_statistic_radio_button(0, data_source_index=2)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.select_checkbox_or_radio(element)
+
+    def set_secondary_source_type_of_data(self):
+        locator = EditMeasureLocators.type_of_data_checkbox(0, data_source_index=2)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.select_checkbox_or_radio(element)
 
     def set_methodology(self, value):
         self.set_text_field(EditMeasureLocators.METHODOLOGY_TEXTAREA, value)
@@ -538,9 +572,18 @@ class MeasureEditPage(BasePage):
         self.set_things_you_need_to_know(measure_version.need_to_know)
         self.set_what_the_data_measures(measure_version.measure_summary)
         self.set_ethnicity_categories(measure_version.ethnicity_definition_summary)
-        self.set_purpose(data_source.purpose)
-        self.set_primary_source_type_of_data(0)
+        self.set_primary_data_source_purpose(data_source.purpose)
+        self.set_primary_source_type_of_data()
         self.set_methodology(measure_version.methodology)
+
+    def fill_secondary_data_source(self, data_source):
+        self.set_secondary_title(value=data_source.title)
+        self.set_secondary_publisher(value=f"{data_source.publisher.name}\n")
+        self.set_secondary_url(value=data_source.source_url)
+        self.set_secondary_frequency()
+        self.set_secondary_type_of_statistic()
+        self.set_secondary_data_source_purpose(data_source.purpose)
+        self.set_secondary_source_type_of_data()
 
     def fill_measure_page_minor_edit_fields(self, measure_version):
         self.set_update_corrects_data_mistake(measure_version.update_corrects_data_mistake)
@@ -617,6 +660,36 @@ class DimensionEditPage(BasePage):
         element = self.wait_for_element(DimensionPageLocators.SUMMARY_TEXTAREA)
         element.clear()
         element.send_keys(summary)
+
+
+class AddSourceDataPage(BasePage):
+    def __init__(self, driver):
+        super().__init__(driver=driver, base_url=driver.current_url)
+
+    def set_title(self, title):
+        element = self.wait_for_element(SourceDataPageLocators.TITLE_INPUT)
+        element.clear()
+        element.send_keys(title)
+
+    def set_description(self, value):
+        element = self.wait_for_element(SourceDataPageLocators.DESCRIPTION_TEXTAREA)
+        element.clear()
+        element.send_keys(value)
+
+    def set_upload_file(self):
+        element = self.wait_for_element(SourceDataPageLocators.FILE_UPLOAD_INPUT)
+        element.clear()
+        file_abs_path = os.path.abspath("./tests/test_data/csv_with_no_quotes.csv")
+        element.send_keys(file_abs_path)
+
+    def click_save(self):
+        element = self.wait_for_element(SourceDataPageLocators.SAVE_BUTTON)
+        self.scroll_and_click(element)
+
+    def fill_source_data_page(self, upload):
+        self.set_upload_file()
+        self.set_title(upload.title)
+        self.set_description(upload.description)
 
 
 class MeasurePreviewPage(BasePage):

@@ -3,14 +3,18 @@ This module extends a number of WTForm fields and widgets to provide custom inte
 elements. We don't explicitly define HTML in this module; instead, we hook into templated fragments representing
 the elements in the `application/templates/forms/` directory.
 """
-
+import ast
+import os
+import re
 from enum import Enum
+
 from functools import partial
 
 
 from flask import render_template
 from markupsafe import Markup
 from wtforms.fields import SelectMultipleField, RadioField, StringField
+from wtforms.validators import ValidationError
 from wtforms.widgets import HTMLString, html_params
 
 
@@ -34,10 +38,46 @@ def _coerce_string_none_to_python_none(value):
     return None if value == "None" else value
 
 
-def _strip_whitespace(value):
+def _strip_whitespace_basic(value):
+    """Strip whitespace from the start and end of `value`"""
     if value is not None and hasattr(value, "strip"):
         return value.strip()
     return value
+
+
+def _strip_whitespace_extended(value):
+    """Strip whitespace from the start and end of `value`, as well as from the start of each line in `value`. We use
+    this so that our markdown renderer doesn't find any 'code blocks' which would spit out <pre><code></code></pre>,
+    and instead just returns normal paragraphs."""
+    if value is not None and hasattr(value, "strip"):
+        value = value.strip()
+
+        text_lines = value.split("\n")
+        for i, text_line in enumerate(text_lines):
+            text_lines[i] = text_line.lstrip()
+        value = "\n".join(text_lines)
+
+    return value
+
+
+def is_whitelisted_or_government_email(email):
+    email = email.lower()
+
+    email_whitelist = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "[]"))
+    if email in email_whitelist:
+        return True
+
+    valid_domains = [r"gov\.uk|nhs\.net"]
+    email_regex = r"[\.|@]({})$".format("|".join(valid_domains))
+
+    return bool(re.search(email_regex, email))
+
+
+class ValidPublisherEmailAddress:
+    def __call__(self, form, field):
+        message = "Enter a government email address"
+        if not is_whitelisted_or_government_email(field.data.lower()):
+            raise ValidationError(message)
 
 
 class _FormFieldTemplateRenderer:
@@ -87,6 +127,10 @@ class _RDUPasswordInput(_RDUTextInput):
     input_type = "password"
 
 
+class _RDUEmailInput(_RDUTextInput):
+    input_type = "email"
+
+
 class _RDUTextAreaInput(_RDUTextInput):
     def __call__(self, field, class_="", diffs=None, disabled=False, rows=10, cols=100, **kwargs):
         if rows:
@@ -133,7 +177,16 @@ class _FormGroup(_FormFieldTemplateRenderer):
         self.other_field = None
 
     def __call__(
-        self, field, class_="", fieldset_class="", legend_class="", field_class="", diffs=None, disabled=False, **kwargs
+        self,
+        field,
+        class_="",
+        fieldset_class="",
+        legend_class="",
+        field_class="",
+        diffs=None,
+        disabled=False,
+        inline=False,
+        **kwargs,
     ):
         subfields = [subfield for subfield in field]
 
@@ -151,6 +204,7 @@ class _FormGroup(_FormFieldTemplateRenderer):
                 "legend_class": legend_class,
                 "field_class": field_class,
                 "field_type": self.field_type.value,
+                "inline": inline,
             },
             field_params={**kwargs},
         )
@@ -205,27 +259,23 @@ class RDUStringField(StringField):
     widget = _RDUTextInput()
 
     def __init__(
-        self,
-        label=None,
-        validators=None,
-        hint=None,
-        extended_hint=None,
-        strip_whitespace=False,
-        character_count_limit=None,
-        **kwargs,
+        self, label=None, validators=None, hint=None, extended_hint=None, character_count_limit=None, **kwargs
     ):
+        kwargs["filters"] = kwargs.get("filters", [])
+
         # Automatically coalesce `None` values to blank strings
         # If we get null values from the database, we don't want to render these as 'None' strings in form fields.
-        kwargs["filters"] = kwargs.get("filters", [])
-        if _coerce_none_to_blank_string not in kwargs["filters"]:
-            kwargs["filters"].append(_coerce_none_to_blank_string)
+        kwargs["filters"].append(_coerce_none_to_blank_string)
 
-        if strip_whitespace and _strip_whitespace not in kwargs["filters"]:
-            kwargs["filters"].append(_strip_whitespace)
-        elif not strip_whitespace and _strip_whitespace in kwargs["filters"]:
-            kwargs["filters"].remove(_strip_whitespace)
+        # Strip whitespace depending on the field type
+        if self.__class__ is RDUStringField or self.__class__ is RDUURLField:
+            kwargs["filters"].append(_strip_whitespace_basic)
+
+        elif self.__class__ is RDUTextAreaField:
+            kwargs["filters"].append(_strip_whitespace_extended)
 
         super().__init__(label, validators, **kwargs)
+
         self.hint = hint
         self.character_count_limit = character_count_limit
         self.extended_hint = Markup(render_template(f"forms/extended_hints/{extended_hint}")) if extended_hint else None
@@ -246,6 +296,10 @@ class RDUTextAreaField(RDUStringField):
 
 class RDUPasswordField(RDUStringField):
     widget = _RDUPasswordInput()
+
+
+class RDUEmailField(RDUStringField):
+    widget = _RDUEmailInput()
 
 
 class RDUURLField(RDUStringField):

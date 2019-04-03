@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 
-from application.cms.form_fields import RDUStringField, RDUPasswordField
+from application.form_fields import RDUStringField, RDUPasswordField
 
 
 class ForgotPasswordForm(FlaskForm):

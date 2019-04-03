@@ -21,6 +21,7 @@ from application.cms.exceptions import (
     UploadNotFoundException,
 )
 from application.utils import get_token_age, create_guid
+from application.utils import cleanup_filename
 
 publish_status = bidict(
     REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4, UNPUBLISH=5, UNPUBLISHED=6
@@ -616,6 +617,24 @@ class Dimension(db.Model):
         else:
             return "Manually selected"
 
+    @property
+    def static_file_name(self):
+        if self.title:
+            filename = "%s.csv" % cleanup_filename(self.title)
+        else:
+            filename = "%s.csv" % self.guid
+
+        return filename
+
+    @property
+    def static_table_file_name(self):
+        if self.title:
+            table_filename = "%s-table.csv" % cleanup_filename(self.title)
+        else:
+            table_filename = "%s-table.csv" % self.guid
+
+        return table_filename
+
     def set_updated_at(self):
         """
         This updates the model’s updated_at timestamp to the current time, using the
@@ -679,17 +698,15 @@ class Dimension(db.Model):
         return {
             "guid": self.guid,
             "title": self.title,
-            "measure": self.measure_version.measure.id,
             "time_period": self.time_period,
             "summary": self.summary,
-            "chart": self.dimension_chart.chart_object if self.dimension_chart else None,
-            "chart_settings_and_source_data": self.dimension_chart.settings_and_source_data
-            if self.dimension_chart
-            else None,
-            "table": self.dimension_table.table_object if self.dimension_table else None,
-            "table_settings_and_source_data": self.dimension_table.settings_and_source_data
-            if self.dimension_table
-            else None,
+            "position": self.position,
+            "measure_id": self.measure_version.measure.id,
+            "measure_version_id": self.measure_version.id,
+            "dimension_chart": self.dimension_chart.to_dict() if self.dimension_chart else None,
+            "dimension_table": self.dimension_table.to_dict() if self.dimension_table else None,
+            "static_file_name": self.static_file_name,
+            "static_table_file_name": self.static_table_file_name,
         }
 
     def copy(self):
@@ -860,8 +877,6 @@ class ChartAndTableMixin(object):
 
     settings_and_source_data = db.Column(JSON)
 
-    title = db.Column(db.String(255))
-
     @declared_attr
     def classification(cls):
         return db.relationship("Classification")
@@ -894,6 +909,15 @@ class ChartAndTableMixin(object):
             f"includes_unknown:{self.includes_unknown}"
         )
 
+    def to_dict(self):
+        return {
+            "classification_id": self.classification_id,
+            "includes_parents": self.includes_parents,
+            "includes_all": self.includes_all,
+            "includes_unknown": self.includes_unknown,
+            "settings_and_source_data": self.settings_and_source_data,
+        }
+
 
 class Chart(db.Model, ChartAndTableMixin):
     # metadata
@@ -905,6 +929,9 @@ class Chart(db.Model, ChartAndTableMixin):
     # relationships
     dimension = db.relationship("Dimension", back_populates="dimension_chart", uselist=False)
 
+    def to_dict(self):
+        return {**super().to_dict(), "chart_object": self.chart_object}
+
 
 class Table(db.Model, ChartAndTableMixin):
     # metadata
@@ -915,6 +942,9 @@ class Table(db.Model, ChartAndTableMixin):
 
     # relationships
     dimension = db.relationship("Dimension", back_populates="dimension_table", uselist=False)
+
+    def to_dict(self):
+        return {**super().to_dict(), "table_object": self.table_object}
 
 
 class Organisation(db.Model):

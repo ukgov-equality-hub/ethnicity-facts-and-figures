@@ -68,7 +68,7 @@ Code,Classification short name,Classification long name,Standard,Display,Parent,
 12A,Well-being survey - 12,"Bangladeshi, Chinese, Indian, Pakistani, Asian other, Black, Mixed, White British, White other, Other, Arab, Gypsy/Traveller/Irish Traveller",Arab,Arab,Arab,1001,TRUE
 12A,Well-being survey - 12,"Bangladeshi, Chinese, Indian, Pakistani, Asian other, Black, Mixed, White British, White other, Other, Arab, Gypsy/Traveller/Irish Traveller",White Gypsy/Traveller,White Gypsy/Traveller,White Gypsy/Traveller,4100,TRUE
 12A,Well-being survey - 12,"Bangladeshi, Chinese, Indian, Pakistani, Asian other, Black, Mixed, White British, White other, Other, Arab, Gypsy/Traveller/Irish Traveller",Gypsy/Roma,White Gypsy/Traveller,White Gypsy/Traveller,4100,
-12A,Well-being survey - 12,"Bangladeshi, Chinese, Indian, Pakistani, Asian other, Black, Mixed, White British, White other, Other, Arab, Gypsy/Traveller/Irish Traveller",Irish traveller,White Gypsy/Traveller,White Gypsy/Traveller,4100,
+12A,Well-being survey - 12,"Bangladeshi, Chinese, Indian, Pakistani, Asian other, Black, Mixed, White British, White other, Other, Arab, Gypsy/Traveller/Irish Traveller",Irish Traveller,White Gypsy/Traveller,White Gypsy/Traveller,4100,
 12A,Well-being survey - 12,"Bangladeshi, Chinese, Indian, Pakistani, Asian other, Black, Mixed, White British, White other, Other, Arab, Gypsy/Traveller/Irish Traveller",Any other,Other,Other,9000,
 12A,Well-being survey - 12,"Bangladeshi, Chinese, Indian, Pakistani, Asian other, Black, Mixed, White British, White other, Other, Arab, Gypsy/Traveller/Irish Traveller",Unknown,Unknown,Unknown,9980,
 12A,Well-being survey - 12,"Bangladeshi, Chinese, Indian, Pakistani, Asian other, Black, Mixed, White British, White other, Other, Arab, Gypsy/Traveller/Irish Traveller",Unclassified,Unclassified,Unclassified,9990,
@@ -189,7 +189,7 @@ Code,Classification short name,Classification long name,Standard,Display,Parent,
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,White British,White British,White,4100,TRUE
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,White Irish,White Irish,White,4200,TRUE
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Gypsy/Roma,Gypsy/Roma,White,4310,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Irish traveller,Irish traveller,White,4330,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Irish Traveller,Irish Traveller,White,4330,TRUE
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,White other,White other,White,4900,TRUE
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Any other,Other,Other,9900,TRUE
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,All,All,All,0,
