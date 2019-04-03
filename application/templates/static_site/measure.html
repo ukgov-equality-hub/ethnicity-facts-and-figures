@@ -88,8 +88,8 @@
     </div>
   </div>
 
-  {% if dimensions|length > 0 %}
-    {{ previousAndNextNavigation(next_title=dimensions[0].title,next_link=url_for('static_site.measure_version_dimension',
+  {% if measure_version.dimensions.count() > 0 %}
+    {{ previousAndNextNavigation(next_title=measure_version.dimensions[0].title,next_link=url_for('static_site.measure_version_dimension',
           topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest',dimension_number=1)) }}
   {% endif %}
 {% endblock %}
