@@ -24,12 +24,19 @@ from application.cms.exceptions import (
     UploadAlreadyExists,
     PageUnEditable,
 )
-from application.cms.forms import DimensionForm, DimensionRequiredForm, MeasureVersionForm, NewVersionForm, UploadForm
+from application.cms.forms import (
+    DimensionForm,
+    DimensionRequiredForm,
+    MeasureVersionForm,
+    NewUploadForm,
+    NewVersionForm,
+    UploadForm,
+)
 from application.cms.models import NewVersionType
 from application.cms.models import publish_status, Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
-from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data
+from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data, ErrorSummaryMessage
 from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
@@ -366,9 +373,8 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    form = UploadForm()
     if request.method == "POST":
-        form = UploadForm(CombinedMultiDict((request.files, request.form)))
+        form = NewUploadForm(CombinedMultiDict((request.files, request.form)))
         if form.validate():
             file_data = form.upload.data
             try:
@@ -405,6 +411,8 @@ def create_upload(topic_slug, subtopic_slug, measure_slug, version):
                     version=measure_version.version,
                 )
             )
+    else:
+        form = NewUploadForm()
 
     context = {
         "form": form,
@@ -456,11 +464,15 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             data_source_2_form_to_validate.validate() if any(data_source_2_form_to_validate.data.values()) else True
         )
 
+        # Measure versions should have a data file uploaded before sending to review
+        data_file_uploaded = len(measure_version.uploads.all()) > 0
+
         if (
             not measure_version_form_validated
             or invalid_dimensions
             or not data_source_form_validated
             or not data_source_2_form_validated
+            or not data_file_uploaded
         ):
             # don't need to show user page has been saved when
             # required field validation failed.
@@ -480,14 +492,24 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             copy_form_errors(from_form=data_source_form_to_validate, to_form=data_source_form)
             copy_form_errors(from_form=data_source_2_form_to_validate, to_form=data_source_2_form)
 
+            non_form_error_messages = []
+            data_not_uploaded_error = dimensions_not_complete_error = False
             if invalid_dimensions:
+                dimensions_not_complete_error = True
                 for invalid_dimension in invalid_dimensions:
-                    message = (
-                        "Cannot submit for review "
-                        '<a href="./%s/edit?validate=true">%s</a> dimension is not complete.'
-                        % (invalid_dimension.guid, invalid_dimension.title)
+                    non_form_error_messages.append(
+                        ErrorSummaryMessage(
+                            field=invalid_dimension.title,
+                            text="This dimension is not complete.",
+                            href=f"./{invalid_dimension.guid}/edit?validate=true",
+                        )
                     )
-                    flash(message, "dimension-error")
+
+            if not data_file_uploaded:
+                data_not_uploaded_error = True
+                non_form_error_messages.append(
+                    ErrorSummaryMessage(field="Data", text="Source data must be uploaded.", href="#source-data")
+                )
 
             current_status = measure_version.status
             available_actions = measure_version.available_actions()
@@ -511,10 +533,13 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 "error_summary": get_error_summary_data(
                     title="Cannot submit for review.",
                     forms=[measure_version_form, data_source_form, data_source_2_form],
+                    extra_non_form_errors=non_form_error_messages,
                 ),
+                "data_not_uploaded_error": data_not_uploaded_error,
+                "dimensions_not_complete_error": dimensions_not_complete_error,
             }
 
-            return render_template("cms/edit_measure_version.html", **context)
+            return render_template("cms/edit_measure_version.html", **context), 400
 
     message = page_service.move_measure_version_to_next_state(measure_version, updated_by=current_user.email)
     current_app.logger.info(message)
@@ -739,7 +764,7 @@ def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid,
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
+    topic, subtopic, measure, measure_version, dimension = page_service.get_measure_version_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
@@ -749,8 +774,7 @@ def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
-        dimension_dict=dimension_object.to_dict(),
-        dimension_chart=dimension_object.dimension_chart,
+        dimension=dimension,
     )
 
 
@@ -765,7 +789,7 @@ def __get_classification_finder_classifications():
 @user_has_access
 @user_can(UPDATE_MEASURE)
 def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_guid):
-    topic, subtopic, measure, measure_version, dimension_object = page_service.get_measure_version_hierarchy(
+    topic, subtopic, measure, measure_version, dimension = page_service.get_measure_version_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version, dimension_guid=dimension_guid
     )
 
@@ -775,8 +799,7 @@ def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
-        dimension_dict=dimension_object.to_dict(),
-        dimension_table=dimension_object.dimension_table,
+        dimension=dimension,
     )
 
 

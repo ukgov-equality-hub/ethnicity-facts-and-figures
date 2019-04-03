@@ -782,6 +782,8 @@ $(document).ready(function () {
 
         showHideCustomEthnicityPanel()
 
+        $('#chart_title').val(settings.chartFormat.chart_title);
+
         switch (settings.type) {
             case 'line_graph':
                 var columnValue = settings.chartOptions.x_axis_column;

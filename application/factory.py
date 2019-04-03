@@ -26,6 +26,7 @@ from application.cms.filters import (
     format_status,
     index_of_last_initial_zero,
     yesno,
+    models_to_dicts,
 )
 from application.cms.dimension_service import dimension_service
 from application.cms.models import TESTING_SPACE_SLUG
@@ -141,6 +142,7 @@ def create_app(config_object):
     app.add_template_filter(format_iso8601_date)
     app.add_template_filter(index_of_last_initial_zero)
     app.add_template_filter(yesno)
+    app.add_template_filter(models_to_dicts)
 
     # There is a CSS caching problem in chrome
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 10

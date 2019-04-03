@@ -161,7 +161,7 @@ def stub_measure_data():
         "measure_summary": "Unemployment measure summary",
         "estimation": "X people are unemployed",
         "need_to_know": "Need to know this",
-        "summary": "Unemployment Summary\n * This is a summary bullet",
+        "summary": "Unemployment Summary\n* This is a summary bullet",
         "qmi_url": "http://www.quality-street.gov.uk",
         "time_covered": "4 months",
         "methodology": "how we measure unemployment",

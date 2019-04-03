@@ -58,3 +58,9 @@ def yesno(state):
         return "no"
 
     return state
+
+
+def models_to_dicts(items):
+    """Call `.to_dict()` on each item of a list; useful for converting a list of model instances into a list of
+    dictionaries suitable for e.g. converting to JSON."""
+    return [item.to_dict() for item in items]

@@ -128,7 +128,7 @@ def test_add_chart_to_dimension():
     dimension = measure_version.dimensions[0]
     chart = {"chart_is_just_a": "dictionary"}
 
-    dimension_service.update_dimension(measure_version.dimensions[0], {"chart": chart, "chart_title": "chart title"})
+    dimension_service.update_dimension(measure_version.dimensions[0], {"chart": chart})
 
     assert dimension.guid == "abc123"
     assert dimension.dimension_chart.chart_object == chart
@@ -139,7 +139,7 @@ def test_add_table_to_dimension():
     dimension = measure_version.dimensions[0]
     table = {"table_is_just_a": "dictionary"}
 
-    dimension_service.update_dimension(dimension, {"table": table, "table_title": "table title"})
+    dimension_service.update_dimension(dimension, {"table": table})
 
     assert dimension.guid == "abc123"
     assert dimension.dimension_table.table_object == table
@@ -158,7 +158,6 @@ def test_adding_table_with_data_matching_an_ethnicity_classification(two_classif
         {
             "use_custom": False,
             "table": {"title": "My table title"},
-            "table_title": "My table title",
             "table_settings_and_source_data": {"tableOptions": {}},
             "classification_code": "5A",
             "ethnicity_values": ["All", "Asian", "Black", "Mixed", "White", "Other", "Unknown"],
@@ -190,7 +189,6 @@ def test_adding_chart_with_data_matching_an_ethnicity_classification(two_classif
         {
             "use_custom": False,
             "chart": {"title": "My chart title"},
-            "chart_title": "My chart title",
             "chart_settings_and_source_data": {"chartOptions": {}},
             "classification_code": "5A",
             "ethnicity_values": ["All", "Asian", "Black", "Mixed", "White", "Other", "Unknown"],
@@ -210,6 +208,7 @@ def test_adding_chart_with_data_matching_an_ethnicity_classification(two_classif
 
 
 def test_adding_table_with_custom_data_classification(two_classifications_2A_5A):
+
     # Given an existing dimension with no associated table
     dimension = dimension_service.create_dimension(
         MeasureVersionFactory(), title="test-dimension", time_period="time_period", summary="summary"
@@ -221,7 +220,6 @@ def test_adding_table_with_custom_data_classification(two_classifications_2A_5A)
         {
             "use_custom": True,
             "table": {"title": "My table title"},
-            "table_title": "My table title",
             "table_settings_and_source_data": {"tableOptions": {}},
             "classification_code": "2A",
             "has_parents": True,
@@ -268,7 +266,6 @@ def test_adding_chart_with_custom_data_classification(two_classifications_2A_5A)
         {
             "use_custom": True,
             "chart": {"title": "My chart title"},
-            "chart_title": "My chart title",
             "chart_settings_and_source_data": {"chartOptions": {}},
             "classification_code": "2A",
             "has_parents": True,
@@ -329,7 +326,6 @@ def test_adding_table_with_custom_data_and_existing_more_detailed_chart(two_clas
         {
             "use_custom": True,
             "table": {"title": "My table title"},
-            "table_title": "My table title",
             "table_settings_and_source_data": {"tableOptions": {}},
             "classification_code": "2A",
             "has_parents": True,
@@ -390,7 +386,6 @@ def test_adding_table_with_custom_data_and_existing_less_detailed_chart(two_clas
         {
             "use_custom": True,
             "table": {"title": "My table title"},
-            "table_title": "My table title",
             "table_settings_and_source_data": {"tableOptions": {}},
             "classification_code": "5A",
             "has_parents": False,

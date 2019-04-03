@@ -36,7 +36,7 @@
     <div class="column-two-thirds">
 
       <h2 class="govuk-heading-m">Overview</h2>
-      <p>
+      <p class="govuk-body">
         The main facts and figures show that:
       </p>
         {% if measure_version.summary %}
@@ -92,5 +92,4 @@
     {{ previousAndNextNavigation(next_title=dimensions[0].title,next_link=url_for('static_site.measure_version_dimension',
           topic_slug=topic_slug,subtopic_slug=subtopic_slug,measure_slug=measure_version.measure.slug,version='latest',dimension_number=1)) }}
   {% endif %}
-
 {% endblock %}

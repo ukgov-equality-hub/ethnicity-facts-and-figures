@@ -412,6 +412,30 @@ class TestPageService:
         assert new_link.includes_all is True
         assert new_link.includes_unknown is True
 
+    def test_create_new_minor_version_duplicates_uploads(self):
+        user = UserFactory(user_type=TypeOfUser.RDU_USER)
+        measure_version = MeasureVersionFactory(latest=True)
+        assert measure_version.uploads.count() == 1
+        original_upload = measure_version.uploads[0]
+
+        new_version = page_service.create_measure_version(measure_version, NewVersionType.MINOR_UPDATE, user=user)
+
+        assert new_version.uploads.count() == 1
+        new_upload = new_version.uploads[0]
+        assert new_upload.guid != original_upload.guid
+        assert new_upload.file_name == original_upload.file_name
+        assert new_upload.title == original_upload.title
+        assert new_upload.description == original_upload.description
+
+    def test_create_new_major_version_does_not_duplicate_uploads(self):
+        user = UserFactory(user_type=TypeOfUser.RDU_USER)
+        measure_version = MeasureVersionFactory(latest=True)
+
+        new_version = page_service.create_measure_version(measure_version, NewVersionType.MAJOR_UPDATE, user=user)
+
+        assert measure_version.uploads.count() == 1
+        assert new_version.uploads.count() == 0
+
     def test_create_copy_of_page(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         measure_version = MeasureVersionFactory(latest=True, measure__slug="slug")

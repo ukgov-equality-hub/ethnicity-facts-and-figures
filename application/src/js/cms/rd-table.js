@@ -194,23 +194,6 @@ function appendGroupTableHeader(table_html, tableObject) {
 // ---------------------------------------------------------------------------
 // OTHER
 // ---------------------------------------------------------------------------
-
-function appendTableTitle(table_html, tableObject) {
-    if (tableObject.header && tableObject.header !== '') {
-        return table_html + "<div class='table-title heading-small'>" + tableObject.header + "</div>";
-    } else {
-        return table_html;
-    }
-}
-
-function appendTableSubtitle(table_html, tableObject) {
-    if (tableObject.subtitle && tableObject.subtitle !== '') {
-        return table_html + "<div class='table-subtitle'>" + tableObject.subtitle + "</div>";
-    } else {
-        return table_html;
-    }
-}
-
 function insertTableFooter(table_html, tableObject) {
     if (tableObject.footer && tableObject.footer !== '') {
         return table_html + "<div class='table-footer'>" + tableObject.footer + "</div>";

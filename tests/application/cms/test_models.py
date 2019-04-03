@@ -13,6 +13,9 @@ from tests.models import (
     MeasureVersionWithDimensionFactory,
     ClassificationFactory,
     EthnicityFactory,
+    DimensionFactory,
+    TableFactory,
+    ChartFactory,
 )
 
 
@@ -587,6 +590,46 @@ class TestDimensionModel:
         assert Chart.query.get(dimension_chart_id) is None
         assert DimensionClassification.query.filter_by(dimension_guid=dimension_guid).all() == []
 
+    def test_to_dict(self):
+        dimension = DimensionFactory.build(
+            guid="dimension-guid",
+            title="My dimension",
+            time_period="2010/11",
+            summary="My dimension summary",
+            position=1,
+        )
+        MeasureVersionFactory(id=123, measure__id=456, dimensions=[dimension])
+
+        assert dimension.to_dict() == {
+            "guid": "dimension-guid",
+            "title": "My dimension",
+            "time_period": "2010/11",
+            "summary": "My dimension summary",
+            "position": 1,
+            "measure_id": 456,
+            "measure_version_id": 123,
+            "dimension_chart": dimension.dimension_chart.to_dict(),
+            "dimension_table": dimension.dimension_table.to_dict(),
+            "static_file_name": "my-dimension.csv",
+            "static_table_file_name": "my-dimension-table.csv",
+        }
+
+    def test_file_names(self):
+        dimension = DimensionFactory.build(
+            guid="dimension-guid",
+            title="My dimension",
+            time_period="2010/11",
+            summary="My dimension summary",
+            position=1,
+        )
+
+        assert dimension.static_file_name == "my-dimension.csv"
+        assert dimension.static_table_file_name == "my-dimension-table.csv"
+
+        dimension.title = None
+        assert dimension.static_file_name == "dimension-guid.csv"
+        assert dimension.static_table_file_name == "dimension-guid-table.csv"
+
 
 class TestMeasureVersionModel:
     def test_publish_to_internal_review(self):
@@ -847,3 +890,43 @@ class TestMeasureVersionModel:
         measure_version = MeasureVersionFactory(description=None, summary="This is an intro.")
 
         assert measure_version.social_description is None
+
+
+class TestChartModel:
+    def test_to_dict(self):
+        chart = ChartFactory.build(
+            includes_parents=False,
+            includes_all=True,
+            includes_unknown=True,
+            settings_and_source_data={},
+            chart_object={"chart": "object"},
+        )
+
+        assert chart.to_dict() == {
+            "classification_id": chart.classification.id,
+            "includes_parents": False,
+            "includes_all": True,
+            "includes_unknown": True,
+            "settings_and_source_data": {},
+            "chart_object": {"chart": "object"},
+        }
+
+
+class TestTableModel:
+    def test_to_dict(self):
+        table = TableFactory.build(
+            includes_parents=False,
+            includes_all=True,
+            includes_unknown=True,
+            settings_and_source_data={},
+            table_object={"table": "object"},
+        )
+
+        assert table.to_dict() == {
+            "classification_id": table.classification.id,
+            "includes_parents": False,
+            "includes_all": True,
+            "includes_unknown": True,
+            "settings_and_source_data": {},
+            "table_object": {"table": "object"},
+        }

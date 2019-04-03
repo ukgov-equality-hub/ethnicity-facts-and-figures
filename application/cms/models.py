@@ -21,6 +21,7 @@ from application.cms.exceptions import (
     UploadNotFoundException,
 )
 from application.utils import get_token_age, create_guid
+from application.utils import cleanup_filename
 
 publish_status = bidict(
     REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4, UNPUBLISH=5, UNPUBLISHED=6
@@ -146,11 +147,19 @@ class DataSource(db.Model, CopyableModel):
     __tablename__ = "data_source"
     __table_args__ = (
         ForeignKeyConstraint(
-            ["type_of_statistic_id"], ["type_of_statistic.id"], name="data_source_type_of_statistic_id_fkey"
+            ["type_of_statistic_id"],
+            ["type_of_statistic.id"],
+            name="data_source_type_of_statistic_id_fkey",
+            ondelete="restrict",
         ),
-        ForeignKeyConstraint(["publisher_id"], ["organisation.id"], name="data_source_publisher_id_fkey"),
         ForeignKeyConstraint(
-            ["frequency_of_release_id"], ["frequency_of_release.id"], name="data_source_frequency_of_release_id_fkey"
+            ["publisher_id"], ["organisation.id"], name="data_source_publisher_id_fkey", ondelete="restrict"
+        ),
+        ForeignKeyConstraint(
+            ["frequency_of_release_id"],
+            ["frequency_of_release.id"],
+            name="data_source_frequency_of_release_id_fkey",
+            ondelete="restrict",
         ),
     )
 
@@ -188,8 +197,10 @@ class DataSourceInMeasureVersion(db.Model):
     # metadata
     __tablename__ = "data_source_in_measure_version"
     __table_args__ = (
-        ForeignKeyConstraint(["data_source_id"], ["data_source.id"], name="data_source_in_page_data_source_id_fkey"),
-        ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"]),
+        ForeignKeyConstraint(
+            ["data_source_id"], ["data_source.id"], name="data_source_in_page_data_source_id_fkey", ondelete="restrict"
+        ),
+        ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"], ondelete="cascade"),
     )
 
     data_source_id = db.Column(db.Integer, primary_key=True)
@@ -198,8 +209,8 @@ class DataSourceInMeasureVersion(db.Model):
 
 user_measure = db.Table(
     "user_measure",
-    db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
-    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id"), primary_key=True),
+    db.Column("user_id", db.Integer, db.ForeignKey("users.id", ondelete="cascade"), primary_key=True),
+    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id", ondelete="cascade"), primary_key=True),
 )
 
 
@@ -215,7 +226,10 @@ class MeasureVersion(db.Model, CopyableModel):
 
     # metadata
     __tablename__ = "measure_version"
-    __table_args__ = (ForeignKeyConstraint(["measure_id"], ["measure.id"]), UniqueConstraint("measure_id", "version"))
+    __table_args__ = (
+        ForeignKeyConstraint(["measure_id"], ["measure.id"], ondelete="cascade"),
+        UniqueConstraint("measure_id", "version"),
+    )
 
     def __eq__(self, other):
         return self.id == other.id
@@ -277,7 +291,7 @@ class MeasureVersion(db.Model, CopyableModel):
 
     # lowest_level_of_geography is not displayed on the public site but is used for geographic dashboard
     lowest_level_of_geography_id = db.Column(
-        db.String(255), ForeignKey("lowest_level_of_geography.name"), nullable=True
+        db.String(255), ForeignKey("lowest_level_of_geography.name", ondelete="restrict"), nullable=True
     )
 
     # Methodology section
@@ -554,7 +568,7 @@ class MeasureVersion(db.Model, CopyableModel):
 class Dimension(db.Model):
     # metadata
     __tablename__ = "dimension"
-    __table_args__ = (ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"]), {})
+    __table_args__ = (ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"], ondelete="cascade"), {})
 
     # This is a database expression to get the current timestamp in UTC.
     # Possibly specific to PostgreSQL:
@@ -615,6 +629,24 @@ class Dimension(db.Model):
             return "Chart"
         else:
             return "Manually selected"
+
+    @property
+    def static_file_name(self):
+        if self.title:
+            filename = "%s.csv" % cleanup_filename(self.title)
+        else:
+            filename = "%s.csv" % self.guid
+
+        return filename
+
+    @property
+    def static_table_file_name(self):
+        if self.title:
+            table_filename = "%s-table.csv" % cleanup_filename(self.title)
+        else:
+            table_filename = "%s-table.csv" % self.guid
+
+        return table_filename
 
     def set_updated_at(self):
         """
@@ -679,17 +711,15 @@ class Dimension(db.Model):
         return {
             "guid": self.guid,
             "title": self.title,
-            "measure": self.measure_version.measure.id,
             "time_period": self.time_period,
             "summary": self.summary,
-            "chart": self.dimension_chart.chart_object if self.dimension_chart else None,
-            "chart_settings_and_source_data": self.dimension_chart.settings_and_source_data
-            if self.dimension_chart
-            else None,
-            "table": self.dimension_table.table_object if self.dimension_table else None,
-            "table_settings_and_source_data": self.dimension_table.settings_and_source_data
-            if self.dimension_table
-            else None,
+            "position": self.position,
+            "measure_id": self.measure_version.measure.id,
+            "measure_version_id": self.measure_version.id,
+            "dimension_chart": self.dimension_chart.to_dict() if self.dimension_chart else None,
+            "dimension_table": self.dimension_table.to_dict() if self.dimension_table else None,
+            "static_file_name": self.static_file_name,
+            "static_table_file_name": self.static_table_file_name,
         }
 
     def copy(self):
@@ -736,7 +766,7 @@ class Dimension(db.Model):
 class Upload(db.Model, CopyableModel):
     # metadata
     __tablename__ = "upload"
-    __table_args__ = (ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"]), {})
+    __table_args__ = (ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"], ondelete="cascade"), {})
 
     # columns
     guid = db.Column(db.String(255), primary_key=True)
@@ -832,8 +862,8 @@ class DimensionClassification(db.Model):
     # metadata
     __tablename__ = "dimension_categorisation"
     __table_args__ = (
-        ForeignKeyConstraint(["dimension_guid"], ["dimension.guid"]),
-        ForeignKeyConstraint(["classification_id"], ["classification.id"]),
+        ForeignKeyConstraint(["dimension_guid"], ["dimension.guid"], ondelete="cascade"),
+        ForeignKeyConstraint(["classification_id"], ["classification.id"], ondelete="restrict"),
         {},
     )
 
@@ -859,8 +889,6 @@ class ChartAndTableMixin(object):
     includes_unknown = db.Column(db.Boolean, nullable=True)
 
     settings_and_source_data = db.Column(JSON)
-
-    title = db.Column(db.String(255))
 
     @declared_attr
     def classification(cls):
@@ -894,6 +922,15 @@ class ChartAndTableMixin(object):
             f"includes_unknown:{self.includes_unknown}"
         )
 
+    def to_dict(self):
+        return {
+            "classification_id": self.classification_id,
+            "includes_parents": self.includes_parents,
+            "includes_all": self.includes_all,
+            "includes_unknown": self.includes_unknown,
+            "settings_and_source_data": self.settings_and_source_data,
+        }
+
 
 class Chart(db.Model, ChartAndTableMixin):
     # metadata
@@ -905,6 +942,9 @@ class Chart(db.Model, ChartAndTableMixin):
     # relationships
     dimension = db.relationship("Dimension", back_populates="dimension_chart", uselist=False)
 
+    def to_dict(self):
+        return {**super().to_dict(), "chart_object": self.chart_object}
+
 
 class Table(db.Model, ChartAndTableMixin):
     # metadata
@@ -915,6 +955,9 @@ class Table(db.Model, ChartAndTableMixin):
 
     # relationships
     dimension = db.relationship("Dimension", back_populates="dimension_table", uselist=False)
+
+    def to_dict(self):
+        return {**super().to_dict(), "table_object": self.table_object}
 
 
 class Organisation(db.Model):
@@ -1002,8 +1045,8 @@ class Subtopic(db.Model):
 
 subtopic_measure = db.Table(
     "subtopic_measure",
-    db.Column("subtopic_id", db.Integer, db.ForeignKey("subtopic.id"), primary_key=True),
-    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id"), primary_key=True),
+    db.Column("subtopic_id", db.Integer, db.ForeignKey("subtopic.id", ondelete="restrict"), primary_key=True),
+    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id", ondelete="cascade"), primary_key=True),
 )
 
 
