@@ -845,6 +845,56 @@ class TestMeasurePage:
         assert len(data_links) == 1
         assert data_links[0].attrs["href"] == expected_url
 
+    def test_later_version_shows_links_to_earlier_versions(self, test_app_client, logged_in_admin_user):
+        # GIVEN a page with a later published version
+        measure = MeasureFactory()
+        # Published version 1.0
+        measure_1_0 = MeasureVersionFactory(
+            measure=measure, status="APPROVED", latest=False, version="1.0", published_at=datetime.datetime(2018, 3, 29)
+        )
+        # Published version 1.1
+        measure_1_1 = MeasureVersionFactory(
+            measure=measure, status="APPROVED", latest=False, version="1.1", published_at=datetime.datetime(2019, 3, 29)
+        )
+        # Latest published version 2.0
+        measure_2_0 = MeasureVersionFactory(measure=measure, status="APPROVED", latest=True, version="2.0")
+
+        measure_1_0_url = url_for(
+            "static_site.measure_version",
+            topic_slug=measure_1_0.measure.subtopic.topic.slug,
+            subtopic_slug=measure_1_0.measure.subtopic.slug,
+            measure_slug=measure_1_0.measure.slug,
+            version=measure_1_0.version,
+        )
+        measure_1_1_url = url_for(
+            "static_site.measure_version",
+            topic_slug=measure_1_1.measure.subtopic.topic.slug,
+            subtopic_slug=measure_1_1.measure.subtopic.slug,
+            measure_slug=measure_1_1.measure.slug,
+            version=measure_1_1.version,
+        )
+        measure_2_0_url = url_for(
+            "static_site.measure_version",
+            topic_slug=measure_2_0.measure.subtopic.topic.slug,
+            subtopic_slug=measure_2_0.measure.subtopic.slug,
+            measure_slug=measure_2_0.measure.slug,
+            version=measure_2_0.version,
+        )
+
+        # WHEN we get the latest measure page
+        resp = test_app_client.get(measure_2_0_url)
+
+        # THEN it should contain a link to the latest minor version of the earlier published version
+        assert resp.status_code == 200
+        page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+        measure_1_1_links = page.find_all("a", attrs={"href": measure_1_1_url})
+        assert len(measure_1_1_links) == 1
+        assert measure_1_1_links[0].text == "29 March 2019"
+
+        # AND should not contain a link to the superseded earlier version
+        measure_1_0_links = page.find_all("a", attrs={"href": measure_1_0_url})
+        assert len(measure_1_0_links) == 0
+
 
 class TestCorrections:
     def setup(self):
