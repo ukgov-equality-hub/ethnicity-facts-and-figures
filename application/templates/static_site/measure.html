@@ -677,7 +677,7 @@
               Previous {{ "editions" if version_count > 1 else "edition" }}:
 
               <ol class="govuk-list">
-                {% for page_version in versions %}
+                {% for page_version in measure_version.previous_major_versions %}
                     <li>
                         <a class="govuk-link" href="{{ url_for('static_site.measure_version',
                             topic_slug=topic_slug,
