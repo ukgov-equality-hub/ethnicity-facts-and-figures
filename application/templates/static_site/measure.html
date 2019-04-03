@@ -141,7 +141,7 @@
 
       <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
       <ol class="govuk-list eff-toc govuk-!-margin-bottom-9">
-        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#intro"><span class="eff-toc__number">1. </span><span class="eff-toc__content">Overview</span></a></li>
+        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#overview-heading"><span class="eff-toc__number">1. </span><span class="eff-toc__content">Overview</span></a></li>
 
 
         {% if measure_version.dimensions %}
@@ -154,9 +154,9 @@
         {% endif %}
 
 
-        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#methodology"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 2 }}. </span><span class="eff-toc__content">Methodology</span></a></li>
-        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#data-sources"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 3 }}. </span><span class="eff-toc__content">Data sources</span></a></li>
-        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#download-the-data"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 4 }}. </span><span class="eff-toc__content">Download the data</span></a></li>
+        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#mv-{{ measure_version.id }}-methodology"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 2 }}. </span><span class="eff-toc__content">Methodology</span></a></li>
+        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#data-sources-heading"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 3 }}. </span><span class="eff-toc__content">Data sources</span></a></li>
+        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#download-the-data-heading"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 4 }}. </span><span class="eff-toc__content">Download the data</span></a></li>
 
       </ol>
     </div>
@@ -227,7 +227,7 @@
   <div class="grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      <h2 class="govuk-heading-l">1. Overview</h2>
+      <h2 class="govuk-heading-l" id="overview-heading">1. Overview</h2>
       <p>
       <p class="govuk-body">
         The main facts and figures show that:
