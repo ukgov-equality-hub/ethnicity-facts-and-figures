@@ -51,7 +51,7 @@ derived from the GOV.UK Design System: https://design-system.service.gov.uk/styl
                 * flashMessages
                     * Renders flash messages for the page, retrieving them from `get_flashed_messages` exposed by Flask.
                 * errorSummary
-                    * Renders an error summary for any forms on the page, populated from the `error_summary` variable.
+                    * Renders an error summary for any forms on the page, populated from the `errors` variable.
         * mainAttributes
             * A hook into additional attributes for the `main` element.
         * content

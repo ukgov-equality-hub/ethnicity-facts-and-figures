@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
-{% from "_shared/_page_title.html" import page_title %}
 
 {% set breadcrumbs =
   [
@@ -11,7 +10,7 @@
 {% set form_disabled = not (measure_version.status == "DRAFT" or new) %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
-{% block pageTitle %}{{ page_title("Edit source data", error=(form.errors|length > 0) ) }}{% endblock %}
+{% block pageTitle %}Edit source data{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">

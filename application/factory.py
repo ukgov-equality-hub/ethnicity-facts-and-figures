@@ -33,6 +33,7 @@ from application.cms.models import TESTING_SPACE_SLUG
 from application.cms.page_service import page_service
 from application.cms.scanner_service import scanner_service
 from application.cms.upload_service import upload_service
+from application.cms.utils import get_form_errors
 from application.dashboard.trello_service import trello_service
 
 from application.static_site.filters import (
@@ -193,6 +194,7 @@ def create_app(config_object):
             TESTING_SPACE_SLUG=TESTING_SPACE_SLUG,
             get_content_security_policy=get_content_security_policy,
             current_timestamp=datetime.datetime.now().isoformat(),
+            get_form_errors=get_form_errors,
         )
 
     return app
