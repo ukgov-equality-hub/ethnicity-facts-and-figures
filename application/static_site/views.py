@@ -41,11 +41,7 @@ def ethnicity_in_the_uk():
 @static_site_blueprint.route("/ethnicity-in-the-uk/<page_name>")
 @login_required
 def ethnicity_in_the_uk_page(page_name):
-    ETHNICITY_IN_THE_UK_PAGES = [
-        "ethnic-groups-and-data-collected",
-        "ethnic-groups-by-sexual-identity",
-        "ethnicity-and-type-of-family-or-household",
-    ]
+    ETHNICITY_IN_THE_UK_PAGES = ["ethnic-groups-and-data-collected", "ethnic-groups-by-sexual-identity"]
     if page_name in ETHNICITY_IN_THE_UK_PAGES:
         f = page_name.replace("-", "_")
         return render_template("static_site/static_pages/ethnicity_in_the_uk/%s.html" % f)
