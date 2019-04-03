@@ -1,9 +1,6 @@
 {% extends "static_site/export/_base_export.html" %}
 
-{% block pageTitle %}{{ measure_version.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
-{% block mainElementDefinition %}<main id="content" class="main" itemscope itemtype="http://schema.org/NewsArticle">{% endblock %}
-{% block socialTitle %}{{ measure_version.title }}{% endblock %}
-
+{% block pageTitle %}Export - {{ measure_version.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block content %}
 
     {% set version = 'latest' if measure_version.has_no_later_published_versions() else measure_version.version %}
