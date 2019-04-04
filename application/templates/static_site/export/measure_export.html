@@ -335,7 +335,7 @@
                 </div>
 
                 <div id="dimension-{{ loop.index }}-chart">
-                    <p class="govuk-heading-s govuk-!-margin-bottom-1">Chart</p>
+                    <p class="govuk-heading-s govuk-!-margin-bottom-1">Chart title</p>
                     <p class="govuk-body">
                     {% if dimension.dimension_chart and dimension.dimension_chart.chart_object %}
                         {{ dimension.dimension_chart.chart_object.title.text or field_empty_string }}
@@ -346,7 +346,7 @@
                 </div>
 
                 <div id="dimension-{{ loop.index }}-table">
-                    <p class="govuk-heading-s govuk-!-margin-bottom-1">Table</p>
+                    <p class="govuk-heading-s govuk-!-margin-bottom-1">Table title</p>
                     <p class="govuk-body">
                     {% if dimension.dimension_table and dimension.dimension_table.table_object %}
                         {{ dimension.dimension_table.table_object.header or field_empty_string }}
