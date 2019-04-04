@@ -74,4 +74,4 @@ def models_to_dicts(items):
 # This is used in the "Export" page to preserve line breaks in saved text area data to make any Markdown
 # (e.g. bullet points) copy-and-pasteable from the exported version back into the form fields
 def html_line_breaks(string):
-    return Markup(bleach.clean(string).replace("\n", "<br />")) if string else ""
+    return Markup(bleach.clean(string).replace("\n", "<br />") if string else "")
