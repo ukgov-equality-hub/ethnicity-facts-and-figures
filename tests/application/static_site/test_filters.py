@@ -1,6 +1,7 @@
 import pytest
 
 from application.static_site.filters import render_markdown
+from application.static_site.filters import html_params
 
 
 class TestRenderMarkdown:
@@ -20,3 +21,28 @@ class TestRenderMarkdown:
     )
     def test_html_is_escaped(self, input_text, expected_output):
         assert render_markdown(input_text) == expected_output
+
+
+class TestHtmlParams:
+    """
+    html_params is a helper filter which converts a Python dictionary into
+    HTML attributes for output.
+    """
+
+    def test_params_are_converted_into_ordered_html_attributes(self):
+        output = html_params({"value": "Test", "aria-controls": "blah"})
+        assert output == 'aria-controls="blah" value="Test"'
+
+    def test_boolean_params_are_converted_into_boolean_attributes(self):
+        assert html_params({"disabled": True}) == "disabled"
+
+    def test_double_quotes_are_escaped(self):
+        assert html_params({"value": 'Escape "me"'}) == 'value="Escape &quot;me&quot;"'
+
+    def test_ampersand_is_escaped(self):
+        output = html_params({"href": "/?a&b"})
+        assert output == 'href="/?a&amp;b"'
+
+    def test_less_than_and_greater_than_is_escaped(self):
+        output = html_params({"query": "a < b > c"})
+        assert output == 'query="a &lt; b &gt; c"'

@@ -1,12 +1,15 @@
-<details class="govuk-details govuk-!-margin-bottom-4">
-  <summary class="govuk-details__summary">
-    <span class="govuk-details__summary-text">Examples</span>
-  </summary>
-  <div class="govuk-details__text">
-    <ul class="govuk-list govuk-list--bullet">
-      <li>related pages on the ethnicity facts and figures website</li>
-      <li>related data</li>
-      <li>analysis of the data that users won’t find through the link to data source</li>
-    </ul>
-  </div>
-</details>
+{% from "_macros/_details.html" import govukDetails %}
+
+{% set html %}
+  <ul class="govuk-list govuk-list--bullet">
+    <li>related pages on the ethnicity facts and figures website</li>
+    <li>related data</li>
+    <li>analysis of the data that users won’t find through the link to data source</li>
+  </ul>
+{% endset %}
+
+{{ govukDetails(
+  summaryText="Example",
+  html=html,
+  classes="govuk-!-margin-bottom-4"
+) }}

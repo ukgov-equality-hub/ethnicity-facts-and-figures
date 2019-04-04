@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_shared/_status_banner_macro.html" import status_banner %}
+{% from "_macros/_details.html" import govukDetails %}
 
 {% set breadcrumbs =
   [
@@ -182,45 +183,60 @@
             </div>
         {% endif %}
 
-
       {% if measure_version.need_to_know %}
-      <details class="govuk-details govuk-!-margin-bottom-0" data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Things you need to know" class="normalize">
-        <summary class="govuk-details__summary">
-          <span id="things-you-need-to-know" class="govuk-details__summary-text">
-            Things you need to know
-          </span>
-        </summary>
-        <div class="govuk-details__text">
-            {{ measure_version.need_to_know | render_markdown  }}
-        </div>
-      </details>
+
+        {{ govukDetails(
+          summaryText="Things you need to know",
+          html=measure_version.need_to_know | render_markdown,
+          classes="govuk-!-margin-bottom-0",
+          id="things-you-need-to-know",
+          attributes={
+            "data-on":"click",
+            "data-event-category":"Disclosure",
+            "data-event-action":"Opened",
+            "data-event-label":"Things you need to know"
+          }
+        ) }}
+
       {% endif %}
 
       {% if measure_version.measure_summary %}
-      <details class="govuk-details govuk-!-margin-bottom-0" data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="What the data measures" class="normalize">
-        <summary class="govuk-details__summary">
-          <span id="what-the-data-measures" class="govuk-details__summary-text">
-            What the data measures
-          </span>
-        </summary>
-        <div class="govuk-details__text" itemprop="description">
-            {{ measure_version.measure_summary | render_markdown  }}
-        </div>
-      </details>
+
+        {{ govukDetails(
+          summaryText="What the data measures",
+          html=measure_version.measure_summary | render_markdown,
+          classes="govuk-!-margin-bottom-0",
+          id="what-the-data-measures",
+          attributes={
+            "data-on":"click",
+            "data-event-category":"Disclosure",
+            "data-event-action":"Opened",
+            "data-event-label":"What the data measures"
+          }
+        ) }}
+
       {% endif %}
 
       {% if measure_version.ethnicity_definition_summary %}
-      <details class="govuk-details" data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="The ethnic categories used in this data" class="normalize">
-        <summary class="govuk-details__summary">
-          <span id="the-ethnic-categories-used-in-this-data" class="govuk-details__summary-text">
-            The ethnic categories used in this data
-          </span>
-        </summary>
-        <div class="govuk-details__text">
-            {{ measure_version.ethnicity_definition_summary | render_markdown  }}
+
+        {% set ethnicCategoriesHTML %}
+          {{ measure_version.ethnicity_definition_summary | render_markdown }}
           <p class="govuk-body"><a class="govuk-link" href="{{ url_for('static_site.ethnicity_in_the_uk') }}">Ethnic groups and how data on ethnicity is collected</a></p>
-        </div>
-      </details>
+        {% endset %}
+
+
+        {{ govukDetails(
+          summaryText="The ethnic categories used in this data",
+          html=ethnicCategoriesHTML,
+          id="the-ethnic-categories-used-in-this-data",
+          attributes={
+            "data-on":"click",
+            "data-event-category":"Disclosure",
+            "data-event-action":"Opened",
+            "data-event-label":"The ethnic categories used in this data"
+          }
+        ) }}
+
       {% endif %}
     </div>
   </div>
