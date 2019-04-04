@@ -1,6 +1,6 @@
 {% extends "static_site/export/_base_export.html" %}
 {% set version = 'latest' if measure_version.has_no_later_published_versions() else measure_version.version %}
-{% set field_empty_string = '[...]' %}
+{% set field_empty_string = '[blank]' %}
 
 {% block pageTitle %}Export - {{ measure_version.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block content %}
