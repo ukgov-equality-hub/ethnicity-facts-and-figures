@@ -45,6 +45,7 @@ from application.static_site.filters import (
     join_enum_display_names,
     slugify_value,
     format_iso8601_date,
+    html_params,
 )
 
 
@@ -140,6 +141,7 @@ def create_app(config_object):
     app.add_template_filter(slugify_value)
     app.add_template_filter(format_iso8601_date)
     app.add_template_filter(index_of_last_initial_zero)
+    app.add_template_filter(html_params)
     app.add_template_filter(yesno)
 
     # There is a CSS caching problem in chrome

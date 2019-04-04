@@ -8,6 +8,7 @@ from hurry.filesize import size, alternative
 from slugify import slugify
 
 from application.cms.markdown import markdown
+from wtforms.widgets import html_params as wtforms_html_params
 
 
 def render_markdown(string):
@@ -126,3 +127,7 @@ def format_iso8601_date(date):
     if date is None:
         return ""
     return date.strftime("%Y-%m-%d")
+
+
+def html_params(dict):
+    return wtforms_html_params(**dict)
