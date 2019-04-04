@@ -276,7 +276,7 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
     )
     assert_strings_match_ignoring_whitespace(
         page.find("div", attrs={"id": "suppression_and_disclosure"}).text,
-        "Suppression rules and disclosure control Suppression and disclosure",
+        "Suppression rules and disclosure control (optional) Suppression and disclosure",
     )
     assert_strings_match_ignoring_whitespace(
         page.find("div", attrs={"id": "data-source-1-source-url"}).text, "Link to data source http://dwp.gov.uk"
@@ -300,7 +300,7 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
     )
     assert_strings_match_ignoring_whitespace(
         page.find("div", attrs={"id": "data-source-1-note_on_corrections_or_updates"}).text,
-        "Corrections or updates Note on corrections or updates",
+        "Corrections or updates (optional) Note on corrections or updates",
     )
     assert_strings_match_ignoring_whitespace(
         page.find("div", attrs={"id": "data-source-1-frequency_of_release_id"}).text,
