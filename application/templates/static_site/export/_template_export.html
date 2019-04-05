@@ -8,12 +8,9 @@
     <!--[if IE 8]><link href="/static/stylesheets/fonts-ie8.css?0.19.2" media="all" rel="stylesheet" /><![endif]-->
     <!--[if lt IE 9]><script src="/static/javascripts/ie.js?0.19.2"></script><![endif]-->
 
-    <link rel="shortcut icon" href="/static/images/favicon.ico?0.19.2" type="image/x-icon" />
-    <link rel="mask-icon" href="/static/images/gov.uk_logotype_crown.svg?0.19.2" color="#0b0c0c" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/static/images/apple-touch-icon-152x152.png?0.19.2" />
-    <link rel="apple-touch-icon" sizes="120x120" href="/static/images/apple-touch-icon-120x120.png?0.19.2" />
-    <link rel="apple-touch-icon" sizes="76x76" href="/static/images/apple-touch-icon-76x76.png?0.19.2" />
-    <link rel="apple-touch-icon" href="/static/images/apple-touch-icon-60x60.png?0.19.2" />
+  {% block headIcons %}
+    <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="/static/assets/images/favicon.ico" type="image/x-icon" />
+  {% endblock %}
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta property="og:type" content="article" />
