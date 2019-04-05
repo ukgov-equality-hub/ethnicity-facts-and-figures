@@ -115,13 +115,11 @@ def measure_version_markdown(topic_slug, subtopic_slug, measure_slug, version):
         if measure_version.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html")
 
-    dimensions = [dimension.to_dict() for dimension in measure_version.dimensions]
     return render_template(
         "static_site/export/measure_export.html",
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
         measure_version=measure_version,
-        dimensions=dimensions,
     )
 
 

@@ -24,6 +24,7 @@ from application.cms.filters import (
     format_friendly_short_date,
     format_friendly_short_date_with_year,
     format_status,
+    html_line_breaks,
     index_of_last_initial_zero,
     yesno,
     models_to_dicts,
@@ -146,6 +147,7 @@ def create_app(config_object):
     app.add_template_filter(html_params)
     app.add_template_filter(yesno)
     app.add_template_filter(models_to_dicts)
+    app.add_template_filter(html_line_breaks)
 
     # There is a CSS caching problem in chrome
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 10

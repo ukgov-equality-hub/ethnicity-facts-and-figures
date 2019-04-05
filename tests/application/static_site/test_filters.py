@@ -1,5 +1,6 @@
 import pytest
 
+from application.cms.filters import html_line_breaks
 from application.static_site.filters import render_markdown
 from application.static_site.filters import html_params
 
@@ -46,3 +47,19 @@ class TestHtmlParams:
     def test_less_than_and_greater_than_is_escaped(self):
         output = html_params({"query": "a < b > c"})
         assert output == 'query="a &lt; b &gt; c"'
+
+
+class TestHtmlLineBreaks:
+    @pytest.mark.parametrize(
+        "input_text, expected_output",
+        (("hello", "hello"), ("* blah\n* rhubarb\n* waffle", "* blah<br />* rhubarb<br />* waffle")),
+    )
+    def test_line_breaks_become_br_tags(self, input_text, expected_output):
+        assert html_line_breaks(input_text) == expected_output
+
+    @pytest.mark.parametrize(
+        "input_text, expected_output",
+        (("* blah<script>alert(1);</script>\n* waffle", "* blah&lt;script&gt;alert(1);&lt;/script&gt;<br />* waffle"),),
+    )
+    def test_other_html_is_escaped(self, input_text, expected_output):
+        assert html_line_breaks(input_text) == expected_output
