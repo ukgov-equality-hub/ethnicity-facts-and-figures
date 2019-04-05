@@ -80,3 +80,10 @@ class TestMeasureVersionForm:
             assert (
                 field.data is not None and field.data is not ""
             ), f"{field.name} should be populated from the measure version"
+
+    def test_reference_field_not_populated_with_none(self):
+        measure_version = MeasureVersionFactory.create(measure__reference=None)
+
+        form = MeasureVersionForm(is_minor_update=False, sending_to_review=True, obj=measure_version)
+
+        assert form.internal_reference.data == "", "Measure reference None should convert to empty string in the form"

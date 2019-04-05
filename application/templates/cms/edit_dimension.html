@@ -1,6 +1,5 @@
 {% extends "cms/create_dimension.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
-{% from "_shared/_page_title.html" import page_title %}
 
 {% set breadcrumbs =
   [
@@ -10,7 +9,7 @@
 %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
-{% block pageTitle %}{{ page_title("Edit dimension", error=(form.errors|length > 0) )}}{% endblock %}
+{% block pageTitle %}Edit dimension{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -61,7 +60,7 @@
                             {% if dimension.dimension_table and dimension.dimension_table.table_object is not none and dimension.dimension_table.table_object != '""' %}
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__header" scope="row">Table</td>
-                                    <td class="govuk-table__cell">{{ dimension.dimension_table.title }}</td>
+                                    <td class="govuk-table__cell">{{ dimension.dimension_table.table_object.header }}</td>
                                     <td class="govuk-table__cell"><a class="govuk-link" id="edit_table"
                                            href="{{ url_for('cms.create_table', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
                                         {% if 'UPDATE' in  measure_version.available_actions() %}edit{% else %}

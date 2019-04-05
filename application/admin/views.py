@@ -10,6 +10,7 @@ from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTE
 from application.cms.models import user_measure
 from application.cms.page_service import page_service
 from application.utils import create_and_send_activation_email, user_can
+from application.cms.utils import get_form_errors
 
 
 @admin_blueprint.route("")
@@ -102,7 +103,8 @@ def add_user():
         db.session.commit()
         create_and_send_activation_email(form.email.data, current_app)
         return redirect(url_for("admin.users"))
-    return render_template("admin/add_user.html", form=form)
+
+    return render_template("admin/add_user.html", form=form, errors=get_form_errors(forms=[form]))
 
 
 @admin_blueprint.route("/users/<int:user_id>/resend-account-activation-email")

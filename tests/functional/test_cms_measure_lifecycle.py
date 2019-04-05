@@ -10,7 +10,7 @@ from tests.functional.utils import (
     driver_login,
 )
 from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory
-from tests.functional.pages import MeasureCreateVersionPage
+from tests.functional.pages import MeasureCreateVersionPage, AddSourceDataPage
 
 """
 
@@ -112,7 +112,7 @@ def test_create_a_measure_as_editor(driver, live_server, government_departments,
     measure_edit_page.click_save_and_send_to_review()
 
     # THEN we get validation errors (corrections radio+edit summary)
-    assert "Cannot submit for review" in driver.page_source
+    assert "There is a problem" in driver.page_source
 
     # WHEN we fill in the required data
     measure_edit_page.fill_measure_page_minor_edit_fields(sample_measure_version)
@@ -138,15 +138,23 @@ def test_create_a_measure_as_editor(driver, live_server, government_departments,
     measure_edit_page.click_save_and_send_to_review()
 
     # THEN we get validation errors (edit summary)
-    assert "Cannot submit for review" in driver.page_source
+    assert "There is a problem" in driver.page_source
 
-    # WHEN we provide an edit summary and approve the major edit
+    # WHEN we add an upload file
+    measure_edit_page.click_add_source_data()
+    add_source_data_page = AddSourceDataPage(driver)
+    add_source_data_page.fill_source_data_page(sample_measure_version.uploads[0])
+    add_source_data_page.click_save()
+
+    # AND provide an edit summary
     measure_edit_page.fill_measure_page_major_edit_fields(sample_measure_version)
+
+    # AND approve the major edit
     measure_edit_page.click_save_and_send_to_review()
     measure_edit_page.click_department_review()
     measure_edit_page.click_approved()
 
-    # AND the status should be published
+    # THEN the status should be published
     assert measure_edit_page.get_status() == EXPECTED_STATUSES["published"]
 
     measure_edit_page.log_out()

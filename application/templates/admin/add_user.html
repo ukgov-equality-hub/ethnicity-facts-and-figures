@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
-{% from "_shared/_page_title.html" import page_title %}
 {% from "cms/forms.html" import render_field %}
 
 {% set breadcrumbs =
@@ -11,21 +10,19 @@
   ]
 %}
 
-{% block pageTitle %}{{ page_title("Add user", error=(form.errors|length) > 0) }}{% endblock %}
+{% block pageTitle %}Add user{% endblock %}
 {% block bodyClasses %}rd_cms{% endblock %}
 
 {% block content %}
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
+            <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl no-breadcrumb">
                     Add user
                 </h1>
-                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">Add user</h2>
                 <form action="{{ url_for('admin.add_user') }}" method="POST">
                     {{ form.csrf_token }}
-                    {{ render_field(form.email) }}
-
-                    {{ form.user_type(legend_class="govuk-!-font-weight-bold", fieldset_class="inline") }}
+                    {{ form.email() }}
+                    {{ form.user_type() }}
 
                     <button type="submit" class="govuk-button" name="add">Add user</button>
                 </form>

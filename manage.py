@@ -14,7 +14,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
-from application.admin.forms import is_gov_email
+from application.admin.forms import AddUserForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES
 from application.cms.classification_service import classification_service
 from application.cms.models import MeasureVersion
@@ -45,7 +45,8 @@ user_datastore = SQLAlchemyUserDatastore(db, User, None)
 @manager.option("--email", dest="email")
 @manager.option("--user-type", dest="user_type", default="RDU_USER")
 def create_local_user_account(email, user_type):
-    if is_gov_email(email):
+    form = AddUserForm(email=email, user_type=user_type)
+    if form.email.validate(form):
         user = user_datastore.find_user(email=email)
         if user:
             print("User %s already exists" % email)
@@ -460,7 +461,80 @@ def delete_guid_based_uploads():
             app.file_service.system.delete(key_using_guid)
 
 
-# TODO: END
+@manager.command
+def delete_all_measures_except_two_per_subtopic():
+    """Delete a large proportion of records from our database by dropping all except the first two measures in each
+    subtopic, and all of the records associated with those dropped measures. This is used to keep our review app
+    databases under 10k rows, which is (as of 2019-04-01) the limit on Heroku."""
+    from application.utils import TimedExecution
+    from application.cms.models import (
+        Subtopic,
+        Measure,
+        DataSource,
+        DataSourceInMeasureVersion,
+        MeasureVersion,
+        Dimension,
+        Chart,
+        Table,
+    )
+
+    environment = os.environ.get("ENVIRONMENT", "PRODUCTION")
+    if environment.upper().startswith("PROD"):
+        print("It looks like you are running this in production or some unknown environment.")
+        print("Do not run this command in this environment as it deletes data")
+        sys.exit(-1)
+
+    with TimedExecution("Delete 3rd measure and onward in each subtopic"):
+        try:
+            measure_ids_to_save = []
+
+            subtopics = Subtopic.query.all()
+            for subtopic in subtopics:
+                measure_ids_to_save.extend(m.id for m in subtopic.measures[:2])
+
+            measure_version_ids_to_delete = (
+                db.session.query(MeasureVersion.id).filter(~MeasureVersion.measure_id.in_(measure_ids_to_save)).all()
+            )
+
+            data_source_ids_to_delete = (
+                db.session.query(DataSourceInMeasureVersion.data_source_id)
+                .filter(DataSourceInMeasureVersion.measure_version_id.in_(measure_version_ids_to_delete))
+                .all()
+            )
+
+            dimension_guids_to_delete = (
+                db.session.query(Dimension.guid)
+                .filter(Dimension.measure_version_id.in_(measure_version_ids_to_delete))
+                .all()
+            )
+            chart_ids_to_delete = (
+                db.session.query(Dimension.chart_id)
+                .filter(Dimension.measure_version_id.in_(measure_version_ids_to_delete))
+                .all()
+            )
+            table_ids_to_delete = (
+                db.session.query(Dimension.table_id)
+                .filter(Dimension.measure_version_id.in_(measure_version_ids_to_delete))
+                .all()
+            )
+
+            db.session.query(DataSourceInMeasureVersion).filter(
+                DataSourceInMeasureVersion.data_source_id.in_(data_source_ids_to_delete)
+            ).delete(synchronize_session=False)
+            db.session.query(DataSource).filter(DataSource.id.in_(data_source_ids_to_delete)).delete(
+                synchronize_session=False
+            )
+            db.session.query(Dimension).filter(Dimension.guid.in_(dimension_guids_to_delete)).delete(
+                synchronize_session=False
+            )
+            db.session.query(Chart).filter(Chart.id.in_(chart_ids_to_delete)).delete(synchronize_session=False)
+            db.session.query(Table).filter(Table.id.in_(table_ids_to_delete)).delete(synchronize_session=False)
+            db.session.query(Measure).filter(~Measure.id.in_(measure_ids_to_save)).delete(synchronize_session=False)
+
+        except Exception as e:
+            print(e)
+
+    db.session.commit()
 
 
 if __name__ == "__main__":

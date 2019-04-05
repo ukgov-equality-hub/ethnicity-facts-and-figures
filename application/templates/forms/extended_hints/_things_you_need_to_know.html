@@ -1,8 +1,6 @@
-<details class="govuk-details govuk-!-margin-bottom-4">
-  <summary class="govuk-details__summary">
-    <span class="govuk-details__summary-text">What to include</span>
-  </summary>
-  <div class="govuk-details__text">
+{% from "_macros/_details.html" import govukDetails %}
+
+{% set html %}
   <p class="govuk-body">Explain:</p>
   <ul class="govuk-list govuk-list--bullet">
     <li>small sample sizes</li>
@@ -10,5 +8,10 @@
     <li>changes in the way the data was collected</li>
     <li>the percentage of data where ethnicity wasn’t known or collected and whether it was used in your calculations.</li>
   </ul>
-  </div>
-</details>
+{% endset %}
+
+{{ govukDetails(
+  summaryText="What to include",
+  html=html,
+  classes="govuk-!-margin-bottom-4"
+) }}

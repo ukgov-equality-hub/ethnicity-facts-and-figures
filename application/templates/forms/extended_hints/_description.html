@@ -1,8 +1,7 @@
-<details class="govuk-details govuk-!-margin-bottom-4">
-    <summary class="govuk-details__summary">
-        <span class="govuk-details__summary-text">Example</span>
-    </summary>
-    <blockquote class="govuk-details__text">
-        <p>As at 31 March 2018, 93.4% of police officers were White, and 6.6% came from all other ethnic groups.</p>
-    </blockquote>
-</details>
+{% from "_macros/_details.html" import govukDetails %}
+
+{{ govukDetails(
+  summaryText="Example",
+  text="As at 31 March 2018, 93.4% of police officers were White, and 6.6% came from all other ethnic groups.",
+  classes="govuk-!-margin-bottom-4"
+) }}

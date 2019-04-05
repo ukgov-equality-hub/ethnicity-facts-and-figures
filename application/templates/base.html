@@ -5,38 +5,36 @@
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">
 <head>
+  <!-- Page built at {{ current_timestamp }} -->
+
   <meta charset="utf-8" />
-  <title>{% block pageTitle %}GOV.UK - The best place to find government services and information{% endblock %}</title>
+  <title>{% if errors %}Error: {% endif %}{% block pageTitle %}GOV.UK - The best place to find government services and information{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b0c0c" />
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="/static/assets/images/favicon.ico" type="image/x-icon" />
-  <link rel="mask-icon" href="/static/assets/images/govuk-mask-icon.svg" color="#0b0c0c">
-  <link rel="apple-touch-icon" sizes="180x180" href="/static/assets/images/govuk-apple-touch-icon-180x180.png">
-  <link rel="apple-touch-icon" sizes="167x167" href="/static/assets/images/govuk-apple-touch-icon-167x167.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="/static/assets/images/govuk-apple-touch-icon-152x152.png">
-  <link rel="apple-touch-icon" href="/static/assets/images/govuk-apple-touch-icon.png">
+  {% block headIcons %}
+    <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="/static/assets/images/favicon.ico" type="image/x-icon" />
+    <link rel="mask-icon" href="/static/assets/images/govuk-mask-icon.svg" color="#0b0c0c">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/assets/images/govuk-apple-touch-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/static/assets/images/govuk-apple-touch-icon-167x167.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/assets/images/govuk-apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" href="/static/assets/images/govuk-apple-touch-icon.png">
+  {% endblock %}
 
   <!--[if !IE 8]><!-->
     <link href="/static/stylesheets/{{ 'application.css' | version_filter }}" rel="stylesheet" />
   <!--<![endif]-->
 
 
-    {% block headIcons %}
-    <link rel="shortcut icon" href="/static/images/favicon.ico?0.19.2" type="image/x-icon" />
-    <link rel="mask-icon" href="/static/images/gov.uk_logotype_crown.svg?0.19.2" color="#0b0c0c" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/static/images/apple-touch-icon-152x152.png?0.19.2" />
-    <link rel="apple-touch-icon" sizes="120x120" href="/static/images/apple-touch-icon-120x120.png?0.19.2" />
-    <link rel="apple-touch-icon" sizes="76x76" href="/static/images/apple-touch-icon-76x76.png?0.19.2" />
-    <link rel="apple-touch-icon" href="/static/images/apple-touch-icon-60x60.png?0.19.2" />
-    {% endblock %}
+
+
 
     {% block socialMetadata %}
       <meta property="og:type" content="{% block socialType %}article{% endblock %}" />
       <meta property="og:title" content="{% block socialTitle %}{% endblock %}" />
-      <meta property="og:image" content="{% block socialImage %}{{ config.RDU_SITE | strip_trailing_slash }}/static/images/opengraph-image.png{% endblock %}" />
+      <meta property="og:image" content="{% block socialImage %}{{ config.RDU_SITE | strip_trailing_slash }}/static/assets/images/govuk-opengraph-image.png{% endblock %}" />
       <meta property="og:description" content="{% block socialDescription %}{% endblock %}" />
 
       {% block twitterMetadata %}

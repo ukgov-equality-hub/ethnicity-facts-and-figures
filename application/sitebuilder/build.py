@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import glob
+
 import os
 import shutil
 import subprocess
@@ -8,7 +9,6 @@ from uuid import uuid4
 
 from flask import current_app, render_template
 from git import Repo
-from slugify import slugify
 
 from application.cms.upload_service import upload_service
 from application.data.dimensions import DimensionObjectBuilder
@@ -176,16 +176,13 @@ def write_measure_versions(measure, build_dir, local_build=False):
         )
         os.makedirs(slug, exist_ok=True)
 
-        dimensions = process_dimensions(measure_version, slug)
+        process_dimensions(measure_version, slug)
+
         content = render_template(
             "static_site/measure.html",
             topic_slug=measure.subtopic.topic.slug,
             subtopic_slug=measure.subtopic.slug,
             measure_version=measure_version,
-            dimensions=dimensions,
-            versions=measure_version.previous_major_versions,
-            first_published_date=measure_version.first_published_date,
-            edit_history=measure_version.previous_minor_versions,
         )
 
         file_path = os.path.join(slug, "index.html")
@@ -215,14 +212,10 @@ def write_measure_version_downloads(measure_version, slug):
 
 
 def process_dimensions(measure_version, slug):
-
     if measure_version.dimensions:
         download_dir = os.path.join(slug, "downloads")
         os.makedirs(download_dir, exist_ok=True)
-    else:
-        return
 
-    dimensions = []
     for dimension in measure_version.dimensions:
 
         if (
@@ -236,36 +229,21 @@ def process_dimensions(measure_version, slug):
         dimension_obj = DimensionObjectBuilder.build(dimension)
         output = write_dimension_csv(dimension=dimension_obj)
 
-        if dimension.title:
-            filename = "%s.csv" % cleanup_filename(dimension.title)
-            table_filename = "%s-table.csv" % cleanup_filename(dimension.title)
-        else:
-            filename = "%s.csv" % dimension.guid
-            table_filename = "%s-table.csv" % dimension.guid
-
         try:
-            file_path = os.path.join(download_dir, filename)
+            file_path = os.path.join(download_dir, dimension.static_file_name)
             with open(file_path, "w") as dimension_file:
                 dimension_file.write(output)
+
         except Exception as e:
             print(f"Could not write file path {file_path}")
             print(e)
 
-        d_as_dict = dimension.to_dict()
-        d_as_dict["static_file_name"] = filename
-
         if dimension.dimension_table and dimension.dimension_table.table_object:
             table_output = write_dimension_tabular_csv(dimension=dimension_obj)
 
-            table_file_path = os.path.join(download_dir, table_filename)
+            table_file_path = os.path.join(download_dir, dimension.static_table_file_name)
             with open(table_file_path, "w") as dimension_file:
                 dimension_file.write(table_output)
-
-            d_as_dict["static_table_file_name"] = table_filename
-
-        dimensions.append(d_as_dict)
-
-    return dimensions
 
 
 def unpublish_pages(build_dir):
@@ -507,10 +485,6 @@ def create_versioned_assets(build_dir):
 def write_html(file_path, content):
     with open(file_path, "w") as out_file:
         out_file.write(content)
-
-
-def cleanup_filename(filename):
-    return slugify(filename)
 
 
 def get_static_dir():

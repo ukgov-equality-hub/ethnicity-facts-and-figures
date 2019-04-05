@@ -92,7 +92,7 @@ def test_admin_user_cannot_setup_account_for_user_with_non_gov_uk_email(test_app
     resp = test_app_client.post(url_for("admin.add_user"), data=user_details, follow_redirects=True)
 
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.find("span", class_="error-message").string == "Enter a government email address"
+    assert "Enter a government email address" in page.find("div", class_="govuk-error-summary").text
     assert not User.query.filter_by(email="invited_user@notgovemail.com").first()
 
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")

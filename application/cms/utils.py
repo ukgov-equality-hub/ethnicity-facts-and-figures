@@ -1,9 +1,16 @@
+from dataclasses import dataclass
 from functools import partial
-
+from typing import List
 
 from flask import current_app
 
 from application.cms.forms import DataSourceForm
+
+
+@dataclass
+class ErrorSummaryMessage:
+    text: str
+    href: str
 
 
 def copy_form_errors(from_form, to_form):
@@ -14,22 +21,24 @@ def copy_form_errors(from_form, to_form):
         setattr(to_form, key, field)
 
 
-def get_error_summary_data(title="Please see below errors:", forms=None):
-    if not any(form.errors for form in forms):
-        return {}
+def get_form_errors(forms=None, extra_non_form_errors=None):
+    errors: List[ErrorSummaryMessage] = []
 
     if not forms:
         forms = []
 
-    error_summary_data = {"title": title, "errors": []}
+    if not any(form.errors for form in forms) and not extra_non_form_errors:
+        return errors
+
     for form in forms:
         for field_name, error_message in form.errors.items():
             form_field = getattr(form, field_name)
-            error_summary_data["errors"].append(
-                {"href": f"#{form_field.id}-label", "field": form_field.label.text, "text": error_message[0]}
-            )
+            errors.append(ErrorSummaryMessage(text=error_message[0], href=f"#{form_field.id}-label"))
 
-    return error_summary_data
+    if extra_non_form_errors:
+        errors.extend(extra_non_form_errors)
+
+    return errors
 
 
 def get_data_source_forms(request, measure_version, sending_to_review=False):
