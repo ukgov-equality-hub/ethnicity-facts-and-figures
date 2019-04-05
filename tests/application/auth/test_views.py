@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 
 from application.auth.models import TypeOfUser
 from tests.models import UserFactory
+from tests.utils import page_displays_error_matching_message
 
 
 @pytest.mark.parametrize(
@@ -73,6 +74,28 @@ def test_successfully_logged_in_user_goes_to_main_page(test_app_client):
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.h1.string.strip() == "Ethnicity facts and figures"
+
+
+def test_login_with_bad_credentials_shows_errors(test_app_client):
+    rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, password="password123", active=True)
+
+    # Wrong username
+    response = test_app_client.post(
+        url_for("security.login"),
+        data={"email": "bad@email.address.gov.uk", "password": rdu_user.password},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert page_displays_error_matching_message(response, "Check your email address")
+    assert page_displays_error_matching_message(response, "Check your password")
+
+    # Wrong password
+    response = test_app_client.post(
+        url_for("security.login"), data={"email": rdu_user.email, "password": "wrong-password"}, follow_redirects=True
+    )
+    assert response.status_code == 200
+    assert page_displays_error_matching_message(response, "Check your email address")
+    assert page_displays_error_matching_message(response, "Check your password")
 
 
 def test_unsuccessful_login_returns_to_login_page(test_app_client):

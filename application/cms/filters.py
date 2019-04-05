@@ -1,3 +1,8 @@
+import bleach
+
+from flask import Markup
+
+
 def format_approve_button(s):
     messages = {
         "INTERNAL_REVIEW": "Save &amp; Send to review",
@@ -64,3 +69,9 @@ def models_to_dicts(items):
     """Call `.to_dict()` on each item of a list; useful for converting a list of model instances into a list of
     dictionaries suitable for e.g. converting to JSON."""
     return [item.to_dict() for item in items]
+
+
+# This is used in the "Export" page to preserve line breaks in saved text area data to make any Markdown
+# (e.g. bullet points) copy-and-pasteable from the exported version back into the form fields
+def html_line_breaks(string):
+    return Markup(bleach.clean(string).replace("\n", "<br />") if string else "")
