@@ -416,7 +416,7 @@ def test_measure_page_social_sharing(
     expected_social_attributes_and_values = {
         "og:type": "article",
         "og:title": "Test Measure Page",
-        "og:image": app.config["RDU_SITE"] + "/static/images/opengraph-image.png",
+        "og:image": app.config["RDU_SITE"] + "/static/assets/images/govuk-opengraph-image.png",
         "og:description": expected_social_description,
     }
     for attribute, value in expected_social_attributes_and_values.items():
