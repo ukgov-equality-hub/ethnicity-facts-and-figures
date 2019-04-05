@@ -26,7 +26,11 @@ SortableTable.prototype.setupOptions = function(options) {
 
 SortableTable.prototype.createHeadingButtons = function() {
 
-  var header_rows = this.table.querySelectorAll('thead tr')
+  if (this.header_table) {
+    var header_rows = this.header_table.querySelectorAll('thead tr')
+  } else {
+    var header_rows = this.table.querySelectorAll('thead tr')
+  }
 
   for (var j = 0; j < header_rows.length; j++) {
 
@@ -39,28 +43,6 @@ SortableTable.prototype.createHeadingButtons = function() {
             this.createHeadingButton(heading, i);
         }
     }
-
-  };
-
-  if (this.header_table) {
-
-    var header_rows = this.header_table.querySelectorAll('thead tr')
-
-    for (var j = 0; j < header_rows.length; j++) {
-
-
-      var headings = header_rows[j].querySelectorAll('th')
-      var heading;
-
-      for(var i = 0; i < headings.length; i++) {
-          heading = headings[i];
-          if(heading.getAttribute('aria-sort')) {
-              this.createHeadingButton(heading, i);
-          }
-      }
-
-
-    };
 
 
   }
