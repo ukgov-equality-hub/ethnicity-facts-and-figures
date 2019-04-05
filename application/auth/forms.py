@@ -23,7 +23,7 @@ class LoginForm(FlaskSecurityLoginForm):
         # account, which Flask-Security does by default. `user` attribute is only set if the initial validators pass,
         # i.e. both fields have data.
         if result is False and hasattr(self, "user"):
-            if not self.user or not self.user.password or not verify_password(self.password.data, self.user):
+            if not self.user or not self.user.password or not verify_password(self.password.data, self.user.password):
                 self.email.errors = ["Check your email address"]
                 self.password.errors = ["Check your password"]
 
