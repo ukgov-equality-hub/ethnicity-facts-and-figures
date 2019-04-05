@@ -24,9 +24,9 @@
 
         <tr class="govuk-table__row">
           <th class="govuk-table__header eff-table__header--border-bottom-0 eff-table__header--border-right"> </th>
-          {% for group_column in dimension_dict.table.group_columns %}
+          {% for group_column in dimension.dimension_table.table_object.group_columns %}
               {% if group_column %}
-                  <th colspan="{{ dimension_dict.table.columns|length }}" class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--border-bottom-0 eff-table__header--padding-top-0 {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
+                  <th colspan="{{ dimension.dimension_table.table_object.columns|length }}" class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--border-bottom-0 eff-table__header--padding-top-0 {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
               {% endif %}
           {% endfor %}
         </tr>
@@ -76,8 +76,8 @@
             {% endfor %}
           {% endif %}
         {% else %}
-          {% for text in dimension.table.columns %}
-          <th aria-sort="none" class="govuk-table__header eff-table__cell--padding-left eff-table__header--dense">
+          {% for text in dimension.dimension_table.table_object.columns %}
+          <th aria-sort="none" class="govuk-table__header govuk-table__header--numeric eff-table__cell--padding-left eff-table__header--dense">
             {{ text|safe }}
           </th>
           {% endfor %}
