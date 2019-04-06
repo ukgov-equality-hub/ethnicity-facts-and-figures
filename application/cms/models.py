@@ -967,8 +967,8 @@ class Organisation(db.Model):
     # columns
     id = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.String(255), nullable=False)
-    other_names = db.Column(ARRAY(db.String), default=[])
-    abbreviations = db.Column(ARRAY(db.String), default=[])
+    other_names = db.Column(ARRAY(db.String), default=[], nullable=False)
+    abbreviations = db.Column(ARRAY(db.String), default=[], nullable=False)
     organisation_type = db.Column(db.Enum(TypeOfOrganisation, name="type_of_organisation_types"), nullable=False)
 
     # relationships
