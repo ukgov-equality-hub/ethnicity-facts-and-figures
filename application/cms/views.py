@@ -37,7 +37,6 @@ from application.cms.models import publish_status, Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.utils import copy_form_errors, get_data_source_forms, get_form_errors, ErrorSummaryMessage
-from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
 
@@ -940,8 +939,7 @@ def get_valid_classifications():
     request_data = request.json["data"]
     valid_classifications_data = current_app.classification_finder.find_classifications(request_data)
 
-    return_data = Builder2FrontendConverter(valid_classifications_data).convert_to_builder2_format()
-    return json.dumps({"presets": return_data}), 200
+    return json.dumps({"classifications": valid_classifications_data}), 200
 
 
 @cms_blueprint.route("/set-dimension-order", methods=["POST"])
