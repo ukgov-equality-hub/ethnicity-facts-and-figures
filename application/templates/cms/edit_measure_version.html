@@ -62,7 +62,8 @@
             <div class="actions right">
 
 
-                {% if measure_version.status == 'APPROVED' and measure_version.latest and current_user.can(CREATE_VERSION) %}
+
+                {% if measure_version.status == 'APPROVED' and current_user.can(CREATE_VERSION) %}
                     <a class="govuk-button" href="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
                         Update
                     </a>
