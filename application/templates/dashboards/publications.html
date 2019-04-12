@@ -51,17 +51,17 @@
         <table class="govuk-table measures-by-week">
             <thead class="govuk-table__head eff-table__head--reversed">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header eff-table__header--dense">Week beginning</th>
-                    <th class="govuk-table__header eff-table__header--dense">Measures</th>
-                    <th class="govuk-table__header eff-table__header--dense">Updates</th>
+                    <th class="govuk-table__header">Week beginning</th>
+                    <th class="govuk-table__header">Measures</th>
+                    <th class="govuk-table__header">Updates</th>
                 </tr>
             </thead>
             {% for week in data.weeks %}
                 <tbody class="govuk-table__body collapsed">
                   <tr class="govuk-table__row week header week {% if not week['publications'] and not week['major_updates'] %}empty{% endif %}">
-                    <th class="govuk-table__header eff-table__header--dense">{{ week['week'] | format_friendly_date }}</th>
-                    <td class="govuk-table__cell eff-table__cell--dense">{{ week['publications'] | count }}</td>
-                    <td class="govuk-table__cell eff-table__cell--dense">{{ week['major_updates'] | count }}</td>
+                    <th class="govuk-table__header">{{ week['week'] | format_friendly_date }}</th>
+                    <td class="govuk-table__cell">{{ week['publications'] | count }}</td>
+                    <td class="govuk-table__cell">{{ week['major_updates'] | count }}</td>
                   </tr>
                   {% if week['publications'] or week['major_updates'] %}
                       <tr class="govuk-table__row measure-titles">
