@@ -12,7 +12,7 @@
 {% macro render_value_circles(values, x_scale, y_scale, graph_height, colour="#2B8CC4", start_index=0) %}
   {% set start_index_scaled = (start_index * x_scale) %}
   {% for value in values[start_index:] %}
-    <circle cx="{{ (loop.index0 * x_scale) + start_index_scaled + 0.5 }}" cy="{{ graph_height - (value * y_scale) }}" r="4" fill="{{ colour }}" />
+    <circle cx="{{ (loop.index0 * x_scale) + start_index_scaled + 0.5 }}" cy="{{ graph_height - (value * y_scale) }}" r="3" fill="{{ colour }}" />
   {% endfor %}
 {% endmacro %}
 
