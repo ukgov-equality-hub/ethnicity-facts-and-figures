@@ -508,7 +508,7 @@ class PageService(Service):
     def mark_measure_versions_unpublished(measure_versions):
         for measure_version in measure_versions:
             measure_version.published = False
-            measure_version.unpublished_at = datetime.datetime.now()
+            measure_version.unpublished_at = datetime.utcnow()
             measure_version.status = "UNPUBLISHED"
 
             # TODO: Don't unset this (need to update logic around whether published or not)
