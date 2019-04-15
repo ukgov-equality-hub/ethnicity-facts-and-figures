@@ -482,7 +482,7 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             )
 
             # If the page was saved before sending to review form's db_version_id will be out of sync, so update it
-            measure_version_form.db_version_id.data = measure_version.db_version_id
+            measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
 
             data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=measure_version)
 
