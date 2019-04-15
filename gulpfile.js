@@ -145,5 +145,5 @@ gulp.task('make', gulp.parallel('copy-govuk-frontend-assets', 'copy-static', 'ma
 gulp.task('default', gulp.series('make'));
 
 gulp.task('watch', function () {
-  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], gulp.series('make'));
+  gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss', './gulpfile.js'], gulp.series('make'));
 });

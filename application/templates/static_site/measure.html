@@ -307,11 +307,7 @@
                   {% endif %}
 
                     {% if chart_and_downloadable %}
-                        <p class="chart-download">
-                            <a class="govuk-link download-png" href="#" data-on="click" data-event-category="Image downloaded" data-event-action="Image of the chart" data-event-label="{{ dimension.dimension_chart.chart_object.title.text }}" class="download-png"
-                               id="download-{{ dimension.guid }}" data-title="{{ dimension.dimension_chart.chart_object.title.text }}">
-                                Download chart (PNG)
-                            </a>
+                        <p class="chart-download chart-download-link-container" data-chart-guid="{{ dimension.guid }}" data-chart-title="{{ dimension.dimension_chart.chart_object.title.text }}">
                         </p>
                     {% endif %}
                 </div>
@@ -746,6 +742,24 @@
     for (var i=0, chart_div; chart_div = chart_divs[i]; i++) {
         chart_div.classList.remove('hidden');
     };
+
+    if ($() && typeof($().highcharts) === 'function') {
+        var chartDownloadLinkContainers = document.getElementsByClassName('chart-download-link-container');
+        for (var i = 0, chartDownloadLinkContainer; chartDownloadLinkContainer = chartDownloadLinkContainers[i]; i++) {
+            var link = document.createElement('a');
+            link.id = 'download-' + chartDownloadLinkContainer.getAttribute('data-chart-guid');
+            link.href = '#';
+            link.className = 'govuk-link download-png';
+            link.setAttribute('data-on', 'click');
+            link.setAttribute('data-event-category', 'Image downloaded');
+            link.setAttribute('data-event-action', "Image of the chart");
+            link.setAttribute('data-event-label', chartDownloadLinkContainer.getAttribute('data-chart-title'));
+            link.setAttribute('data-title', chartDownloadLinkContainer.getAttribute('data-chart-title'));
+            link.text = 'Download chart (PNG)';
+            chartDownloadLinkContainer.appendChild(link);
+        }
+        ;
+    }
 
     $('.download-png').click(function(evt){
         var dimensionGuid = $(evt.currentTarget).attr('id').replace('download-', ''),
