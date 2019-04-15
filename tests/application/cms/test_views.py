@@ -22,7 +22,7 @@ from tests.models import (
     MeasureVersionWithDimensionFactory,
     UserFactory,
 )
-from tests.utils import multidict_from_measure_version_and_kwargs
+from tests.utils import multidict_from_measure_version_and_kwargs, page_displays_error_matching_message
 
 
 class TestGetCreateMeasurePage:
@@ -765,6 +765,52 @@ def test_db_version_id_gets_incremented_after_an_update(test_app_client, logged_
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert page.find("input", {"id": "db_version_id"}).attrs["value"] == "2"
     assert measure_version.title == "this is the update"
+
+
+def test_edit_measure_page_updated_with_latest_db_version_id_when_posting_a_conflicting_update(
+    db_session, test_app_client, logged_in_rdu_user
+):
+    measure_version: MeasureVersion = MeasureVersionFactory(status="DRAFT", title="initial title", version="2.0")
+    assert measure_version.db_version_id == 1
+
+    response = test_app_client.get(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert page.find("input", {"id": "db_version_id"}).attrs["value"] == "1"
+
+    measure_version.title = "new title"
+    db_session.session.commit()
+    assert measure_version.db_version_id == 2
+
+    data = multidict_from_measure_version_and_kwargs(measure_version, db_version_id="1", title="try new title")
+    response = test_app_client.post(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        ),
+        data=data,
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert page.find("input", {"id": "db_version_id"}).attrs["value"] == "2"
+    assert measure_version.title == "new title"
+    assert page_displays_error_matching_message(
+        response, message=f"has been updated by {measure_version.last_updated_by}"
+    )
 
 
 def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(test_app_client, logged_in_dept_user):
