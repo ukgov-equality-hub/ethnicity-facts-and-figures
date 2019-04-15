@@ -9,8 +9,8 @@
     - otherwise set the current_settings from file, paste data into the data panel and run the On new data routine below
 
     On new data (changing data in the data panel area and clicking OK) **handleNewData()**
-    - use an AJAX call to the /get-valid-presets-for-data endpoint to add extra values **buildDataWithPreset()**
-    - populate the chart builder dropdowns with correct values **populateChartOptions(), populateEthnicityPresets()**
+    - use an AJAX call to the /get-valid-classifications-for-data endpoint to add extra values **buildDataWithClassifications()**
+    - populate the chart builder dropdowns with correct values **populateChartOptions(), populateEthnicityClassifications()**
     - if any settings currently exist apply as many as are still relevant **setupChartbuilderWithSettings()**
 
     On settings changes
@@ -25,7 +25,7 @@
  */
 
 // The main working data variables
-var presets = [];
+var classifications = [];
 var chart_data = null;
 
 // Variables that needs to be maintained when the user makes changes to the text data
@@ -103,9 +103,9 @@ $(document).ready(function () {
                 // upon heavy lifting complete
 
                 // populate the ethnicity presets from the response
-                presets = response['presets'];
-                populateEthnicityPresets(presets);
-                showHideCustomEthnicityPanel()
+                classifications = response['classifications'];
+                populateEthnicityClassifications(classifications);
+                showHideCustomEthnicityPanel();
 
                 // show the presets (step 2) and chart type (step 3) section
                 document.getElementById('ethnicity_settings_section').classList.remove('hidden')
@@ -189,15 +189,15 @@ $(document).ready(function () {
         }
     }
 
-    function populateEthnicityPresets(presets) {
+    function populateEthnicityClassifications(classifications) {
         var html = '';
-        for (var p in presets) {
-            var preset_name = presets[p]['preset']['name'];
-            var preset_id = presets[p]['preset']['id'];
-            if (p === 0) {
-                html = html + '<option value="' + preset_id + '" selected>' + preset_name + '</option>';
+        for (var c in classifications) {
+            var classification_name = classifications[c]['classification']['name'];
+            var classification_id = classifications[c]['classification']['id'];
+            if (c === 0) {
+                html = html + '<option value="' + classification_id + '" selected>' + classification_name + '</option>';
             } else {
-                html = html + '<option value="' + preset_id + '" >' + preset_name + '</option>';
+                html = html + '<option value="' + classification_id + '" >' + classification_name + '</option>';
             }
         }
         document.getElementById('ethnicity_settings').innerHTML = html
@@ -336,7 +336,7 @@ $(document).ready(function () {
                 data: JSON.stringify({
                     'chartObject': chartObject,
                     'source': src,
-                    'classificationCode': getPresetCode(),
+                    'classificationCode': getClassificationCode(),
                     'customClassificationCode': getCustomClassificationCode(),
                     'customClassification': getCustomObject(),
                     'ethnicityValues': getEthnicityValues(chart_data)}),
@@ -355,7 +355,7 @@ $(document).ready(function () {
         return {
             'data': textToData(tabbedData),
             'type': chartType,
-            'preset': getPresetCode(),
+            'preset': getClassificationCode(),
             'custom': getCustomObject(),
             'chartOptions': getChartTypeOptions(chartType),
             'chartFormat': getChartFormat(),
@@ -421,7 +421,7 @@ $(document).ready(function () {
         }
     }
 
-    function getPresetCode() {
+    function getClassificationCode() {
         return $('#ethnicity_settings').val();
     }
 
@@ -453,9 +453,9 @@ $(document).ready(function () {
     function buildChartObject() {
         var chart_type = $('#chart_type_selector').val();
         var chartObject = null;
-        var preset = getPresetWithId($('#ethnicity_settings').val());
+        var classification = getClassificationById($('#ethnicity_settings').val());
         if (chart_type === 'bar_chart') {
-            chartObject = barchartObject(buildDataWithPreset(preset, chart_data, ['value']),
+            chartObject = barchartObject(buildDataWithClassifications(classification, chart_data, ['value']),
                 'Ethnicity',
                 '[None]',
                 'Ethnicity-parent',
@@ -466,7 +466,7 @@ $(document).ready(function () {
                 getNumberFormat());
         } else if (chart_type === 'line_graph') {
             var x_axis_column = $('#line__x-axis_column').val();
-            chartObject = linechartObject(buildDataWithPreset(preset, chart_data, ['value', x_axis_column]),
+            chartObject = linechartObject(buildDataWithClassifications(classification, chart_data, ['value', x_axis_column]),
                 x_axis_column,
                 'Ethnicity',
                 $('#chart_title').val(),
@@ -477,7 +477,7 @@ $(document).ready(function () {
         } else if (chart_type === 'grouped_bar_chart') {
             if ($('#grouped-bar__data_style').val() === 'ethnicity_as_group') {
                 var barColumn = $('#grouped-bar__bar_column').val();
-                chartObject = barchartObject(buildDataWithPreset(preset, chart_data, ['value', barColumn]),
+                chartObject = barchartObject(buildDataWithClassifications(classification, chart_data, ['value', barColumn]),
                     'Ethnicity',
                     barColumn,
                     '[None]',
@@ -488,7 +488,7 @@ $(document).ready(function () {
                     getNumberFormat());
             } else {
                 var groupColumn = $('#grouped-bar__groups_column').val();
-                chartObject = barchartObject(buildDataWithPreset(preset, chart_data, ['value', groupColumn]),
+                chartObject = barchartObject(buildDataWithClassifications(classification, chart_data, ['value', groupColumn]),
                     groupColumn,
                     'Ethnicity',
                     '[None]',
@@ -504,9 +504,9 @@ $(document).ready(function () {
                 var sectionOrder = $('#component__section_order').val();
                 var data = [];
                 if (sectionOrder && sectionOrder !== '[None]') {
-                    data = buildDataWithPreset(preset, chart_data, ['value', sectionColumn, sectionOrder])
+                    data = buildDataWithClassifications(classification, chart_data, ['value', sectionColumn, sectionOrder])
                 } else {
-                    data = buildDataWithPreset(preset, chart_data, ['value', sectionColumn])
+                    data = buildDataWithClassifications(classification, chart_data, ['value', sectionColumn])
                 }
                 chartObject = componentChartObject(data,
                     'Ethnicity',
@@ -522,11 +522,11 @@ $(document).ready(function () {
                 var groupOrder = $('#component__bar_order').val();
                 var data = [];
                 if (groupOrder && groupOrder !== '[None]') {
-                    data = buildDataWithPreset(preset, chart_data, ['value', groupColumn, groupOrder])
+                    data = buildDataWithClassifications(classification, chart_data, ['value', groupColumn, groupOrder])
                 } else {
-                    data = buildDataWithPreset(preset, chart_data, ['value', groupColumn])
+                    data = buildDataWithClassifications(classification, chart_data, ['value', groupColumn])
                 }
-                chartObject = componentChartObject(buildDataWithPreset(preset, chart_data, ['value', groupColumn]),
+                chartObject = componentChartObject(buildDataWithClassifications(classification, chart_data, ['value', groupColumn]),
                     groupColumn,
                     'Ethnicity',
                     $('#chart_title').val(),
@@ -542,9 +542,9 @@ $(document).ready(function () {
                 var panelOrder = $('#panel-bar__panel_order').val();
                 var data = [];
                 if (panelOrder && panelOrder !== '[None]') {
-                    data = buildDataWithPreset(preset, chart_data, ['value', panelColumn, panelOrder])
+                    data = buildDataWithClassifications(classification, chart_data, ['value', panelColumn, panelOrder])
                 } else {
-                    data = buildDataWithPreset(preset, chart_data, ['value', panelColumn])
+                    data = buildDataWithClassifications(classification, chart_data, ['value', panelColumn])
                 }
                 chartObject = panelBarchartObject(data,
                     'Ethnicity',
@@ -560,9 +560,9 @@ $(document).ready(function () {
                 var panelBarOrder = $('#panel-bar__bar_order').val();
                 var data = [];
                 if (panelBarColumn && panelBarOrder !== '[None]') {
-                    data = buildDataWithPreset(preset, chart_data, ['value', panelBarColumn, panelBarOrder])
+                    data = buildDataWithClassifications(classification, chart_data, ['value', panelBarColumn, panelBarOrder])
                 } else {
-                    data = buildDataWithPreset(preset, chart_data, ['value', panelBarColumn])
+                    data = buildDataWithClassifications(classification, chart_data, ['value', panelBarColumn])
                 }
                 chartObject = panelBarchartObject(data,
                     panelBarColumn,
@@ -576,7 +576,7 @@ $(document).ready(function () {
             }
         } else if (chart_type === 'panel_line_chart') {
             var panel_x_axis_column = $('#panel-line__x-axis_column').val();
-            var data = buildDataWithPreset(preset, chart_data, ['value', panel_x_axis_column]);
+            var data = buildDataWithClassifications(classification, chart_data, ['value', panel_x_axis_column]);
             chartObject = panelLinechartObject(data,
                 panel_x_axis_column,
                 'Ethnicity',
@@ -589,7 +589,7 @@ $(document).ready(function () {
         return chartObject;
     }
 
-    function buildDataWithPreset(preset, data, columns) {
+    function buildDataWithClassifications(classification, data, columns) {
         var rows = [['Ethnicity', 'Ethnicity-parent', 'Ethnicity-order'].concat(columns)];
 
         var body = _.clone(data);
@@ -602,9 +602,9 @@ $(document).ready(function () {
             return lowHeaders.indexOf(lowCol);
         });
 
-        for (var r in preset['data']) {
-            var item = preset['data'][r];
-            var row = [item['preset'], item['parent'], item['order']];
+        for (var r in classification['data']) {
+            var item = classification['data'][r];
+            var row = [item['display_value'], item['parent'], item['order']];
             row = row.concat(_.map(indices, function (index) {
                 return index === -1 ? '' : body[r][index]
             }));
@@ -614,10 +614,10 @@ $(document).ready(function () {
         return rows;
     }
 
-    function getPresetWithId(preset_id) {
-        for (p in presets) {
-            if (presets[p].preset.id === preset_id) {
-                return presets[p];
+    function getClassificationById(classification_id) {
+        for (c in classifications) {
+            if (classifications[c].classification.id === classification_id) {
+                return classifications[c];
             }
         }
         return null;
@@ -656,8 +656,8 @@ $(document).ready(function () {
         }
     }
 
-    function selectPreset(preset) {
-        $('#ethnicity_settings').val(preset);
+    function selectClassification(classification) {
+        $('#ethnicity_settings').val(classification);
     }
 
     function selectCustomValues(customObject) {
@@ -774,7 +774,7 @@ $(document).ready(function () {
         $('#chart_type_selector').val(settings.type);
         selectChartType(settings.type);
         if (settings.preset) {
-            selectPreset(settings.preset);
+            selectClassification(settings.preset);
         }
         if (settings.custom) {
             selectCustomValues(settings.custom)

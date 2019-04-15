@@ -8,8 +8,8 @@
     - otherwise set the current_settings from file, paste data into the data panel and run the On new data routine below
 
     On new data (changing data in the data panel area and clicking OK) **handleNewData()**
-    - use an AJAX call to the /get-valid-presets-for-data endpoint to add extra values **buildDataWithPreset()**
-    - populate the table builder dropdowns with correct values **populateTableOptions(), populateEthnicityPresets()**
+    - use an AJAX call to the /get-valid-classifications-for-data endpoint to add extra values **buildDataWithClassifications()**
+    - populate the table builder dropdowns with correct values **populateTableOptions(), populateEthnicityClassifications()**
     - if any settings currently exist apply as many as are still relevant **setupTablebuilderWithSettings()**
 
     On settings changes
@@ -25,7 +25,7 @@
  */
 
 // The main working data variables
-var presets = [];
+var classifications = [];
 var table_data = null;
 
 // Variables that needs to be maintained when the user makes changes to the text data
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var headers = table_data[0];
         populateTableOptions(headers);
 
-        // call the backend to do the presets heavy lifting
+        // call the backend to do the classifications heavy lifting
         var ethnicity_data = getEthnicityValues(table_data);
         $.ajax({
             type: "post",
@@ -135,12 +135,12 @@ document.addEventListener('DOMContentLoaded', function() {
             success: function (response) {
                 // upon heavy lifting complete
 
-                // populate the ethnicity presets from the response
-                presets = response['presets'];
-                populateEthnicityPresets(presets);
+                // populate the ethnicity classifications from the response
+                classifications = response['classifications'];
+                populateEthnicityClassifications(classifications);
                 showHideCustomEthnicityPanel()
 
-                // show the presets (step 2) and table type (step 3) section
+                // show the classifications (step 2) and table type (step 3) section
                 document.getElementById('ethnicity_settings_section').classList.remove('hidden')
 
                 if (getIsSimpleData(table_data)) {
@@ -202,18 +202,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function populateEthnicityPresets(presets) {
+    function populateEthnicityClassifications(classifications) {
         var html = '';
-        for (var p in presets) {
-            var preset_name = presets[p]['preset']['name'];
-            var preset_id = presets[p]['preset']['id'];
-            if (p === 0) {
-                html = html + '<option value="' + preset_id + '" selected>' + preset_name + '</option>';
+        for (var c in classifications) {
+            var classification_name = classifications[c]['classification']['name'];
+            var classification_id = classifications[c]['classification']['id'];
+            if (c === 0) {
+                html = html + '<option value="' + classification_id + '" selected>' + classification_name + '</option>';
             } else {
-                html = html + '<option value="' + preset_id + '" >' + preset_name + '</option>';
+                html = html + '<option value="' + classification_id + '" >' + classification_name + '</option>';
             }
         }
-        $('#ethnicity_settings').html(html);
+        document.getElementById('ethnicity_settings').innerHTML = html
     }
 
     function strippedHeaders(headers) {
@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data: JSON.stringify({
                     'tableObject': tableObject,
                     'source': src,
-                    'classificationCode': getPresetCode(),
+                    'classificationCode': getClassificationCode(),
                     'customClassificationCode': getCustomClassificationCode(),
                     'customClassification': getCustomObject(),
                     'ethnicityValues': getEthnicityValues(table_data)
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var tabbedData = $("#data_text_area").val();
         return {
             'data': textToData(tabbedData),
-            'preset': getPresetCode(),
+            'preset': getClassificationCode(),
             'custom': getCustomObject(),
             'tableOptions': getTableTypeOptions(),
             'tableValues': getTableValues(),
@@ -414,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function getPresetCode() {
+    function getClassificationCode() {
         return $('#ethnicity_settings').val();
     }
 
@@ -497,9 +497,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function innerBuildTableObject() {
         var tableObject = null;
-        var preset = getPresetWithId($('#ethnicity_settings').val());
+        var classification = getClassificationById($('#ethnicity_settings').val());
         if (getIsSimpleData(table_data)) {
-            tableObject = buildTableObject(buildDataWithPreset(preset, table_data, buildTableColumns()),
+            tableObject = buildTableObject(buildDataWithClassifications(classification, table_data, buildTableColumns()),
                 $('#table_title').val(),
                 '',
                 '',
@@ -514,7 +514,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             if ($('#complex-table__data-style').val() === 'ethnicity_as_row') {
                 var all_table_columns = buildTableColumns().concat(buildEthnicityByRowColumns());
-                tableObject = buildTableObject(buildDataWithPreset(preset, table_data, all_table_columns),
+                tableObject = buildTableObject(buildDataWithClassifications(classification, table_data, all_table_columns),
                     $('#table_title').val(),
                     '',
                     '',
@@ -528,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     $('#ethnicity-as-row__column-order').val());
             } else {
                 var all_table_columns = buildTableColumns().concat(buildEthnicityByColumnColumns());
-                tableObject = buildTableObject(buildDataWithPreset(preset, table_data, all_table_columns),
+                tableObject = buildTableObject(buildDataWithClassifications(classification, table_data, all_table_columns),
                     $('#table_title').val(),
                     '',
                     '',
@@ -545,7 +545,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return tableObject;
     }
 
-    function buildDataWithPreset(preset, data, columns) {
+    function buildDataWithClassifications(classification, data, columns) {
         var rows = [['Ethnicity', 'Ethnicity-parent', 'Ethnicity-order'].concat(columns)];
 
         var body = _.clone(data);
@@ -558,9 +558,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return lowHeaders.indexOf(lowCol);
         });
 
-        for (var r in preset['data']) {
-            var item = preset['data'][r];
-            var row = [item['preset'], item['parent'], item['order']];
+        for (var r in classification['data']) {
+            var item = classification['data'][r];
+            var row = [item['display_value'], item['parent'], item['order']];
             row = row.concat(_.map(indices, function (index) {
                 return index === -1 ? '' : body[r][index]
             }));
@@ -570,10 +570,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return rows;
     }
 
-    function getPresetWithId(preset_id) {
-        for (p in presets) {
-            if (presets[p].preset.id === preset_id) {
-                return presets[p];
+    function getClassificationById(classification_id) {
+        for (c in classifications) {
+            if (classifications[c].classification.id === classification_id) {
+                return classifications[c];
             }
         }
         return null;
@@ -590,8 +590,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     $('#custom_classification__selector').change(preview);
 
-    function selectPreset(preset) {
-        $('#ethnicity_settings').val(preset);
+    function selectClassification(classification) {
+        $('#ethnicity_settings').val(classification);
     }
 
     function selectCustomValues(customObject) {
@@ -716,7 +716,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function setupTablebuilderWithSettings(settings) {
         if (settings.preset) {
-            selectPreset(settings.preset);
+            selectClassification(settings.preset);
         }
         if (settings.custom) {
             selectCustomValues(settings.custom)
