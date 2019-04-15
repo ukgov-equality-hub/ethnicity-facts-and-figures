@@ -11,7 +11,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 
 from application.auth.models import TypeOfUser
 from application.cms.forms import MeasureVersionForm
-from application.cms.models import DataSource, TESTING_SPACE_SLUG
+from application.cms.models import DataSource, TESTING_SPACE_SLUG, MeasureVersion
 from application.cms.utils import get_data_source_forms
 from application.sitebuilder.models import Build
 from tests.models import (
@@ -22,6 +22,7 @@ from tests.models import (
     MeasureVersionWithDimensionFactory,
     UserFactory,
 )
+from tests.utils import multidict_from_measure_version_and_kwargs
 
 
 class TestGetCreateMeasurePage:
@@ -724,6 +725,45 @@ def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, logged_in
     assert (
         page.find("div", class_="eff-flash-message__body").get_text(strip=True) == 'Updated page "this is the update"'
     )
+    assert measure_version.title == "this is the update"
+
+
+@pytest.mark.parametrize("measure_version", ["1.0", "1.1", "2.0"])
+def test_db_version_id_gets_incremented_after_an_update(test_app_client, logged_in_rdu_user, measure_version):
+    measure_version: MeasureVersion = MeasureVersionFactory(
+        status="DRAFT", title="this will be updated", db_version_id=1, version=measure_version
+    )
+
+    response = test_app_client.get(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert page.find("input", {"id": "db_version_id"}).attrs["value"] == "1"
+
+    data = multidict_from_measure_version_and_kwargs(measure_version, title="this is the update")
+    response = test_app_client.post(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        ),
+        data=data,
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert page.find("input", {"id": "db_version_id"}).attrs["value"] == "2"
     assert measure_version.title == "this is the update"
 
 

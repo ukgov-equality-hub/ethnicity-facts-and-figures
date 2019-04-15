@@ -1,4 +1,6 @@
 from lxml import html
+from werkzeug.datastructures import ImmutableMultiDict
+
 from application.cms.models import MeasureVersion
 
 
@@ -30,3 +32,26 @@ def page_displays_error_matching_message(response, message: str) -> bool:
     )
 
     return True if error_summary else False
+
+
+def multidict_from_measure_version_and_kwargs(measure_version: MeasureVersion, **kwargs) -> ImmutableMultiDict:
+    return ImmutableMultiDict(
+        {
+            "title": measure_version.title,
+            "measure_summary": measure_version.measure_summary,
+            "summary": measure_version.summary,
+            "lowest_level_of_geography": measure_version.lowest_level_of_geography_id,
+            "area_covered": [area_covered.name for area_covered in measure_version.area_covered],
+            "time_covered": measure_version.time_covered,
+            "need_to_know": measure_version.need_to_know,
+            "ethnicity_definition_summary": measure_version.ethnicity_definition_summary,
+            "related_publications": measure_version.related_publications,
+            "methodology": measure_version.methodology,
+            "suppression_and_disclosure": measure_version.suppression_and_disclosure,
+            "estimation": measure_version.estimation,
+            "qmi_url": measure_version.qmi_url,
+            "further_technical_information": measure_version.further_technical_information,
+            "db_version_id": measure_version.db_version_id,
+            **kwargs,
+        }
+    )
