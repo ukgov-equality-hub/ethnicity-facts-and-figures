@@ -263,7 +263,6 @@ class MeasureVersion(db.Model, CopyableModel):
     updated_at = db.Column(db.DateTime)  # timestamp when page updated
     last_updated_by = db.Column(db.String(255))  # email address of user who made the most recent update
 
-    published = db.Column(db.BOOLEAN, default=False)  # set to True when a measure version is published
     published_at = db.Column(db.Date, nullable=True)  # date - set automatically when a measure version is published
     published_by = db.Column(db.String(255))  # email address of user who published the measure version
 
@@ -1078,7 +1077,7 @@ class Measure(db.Model):
 
     @property
     def has_published_version(self):
-        return any(version.published for version in self.versions)
+        return any((version.status == "APPROVED" and version.published_at is not None) for version in self.versions)
 
     @property
     def latest_version(self):
@@ -1088,7 +1087,9 @@ class Measure(db.Model):
     @property
     def latest_published_version(self):
         """Return the latest _published_ version of a measure."""
-        published_versions = [version for version in self.versions if version.published]
+        published_versions = [
+            version for version in self.versions if (version.status == "APPROVED" and version.published_at is not None)
+        ]
         if published_versions:
             return max(published_versions, key=lambda version: (version.major(), version.minor()))
 

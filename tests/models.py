@@ -239,10 +239,11 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = MeasureVersion
         sqlalchemy_session_persistence = "flush"
-        exclude = {"_creator", "_publisher", "_unpublished", "_unpublisher", "_is_major_version"}
+        exclude = {"_creator", "_published", "_publisher", "_unpublished", "_unpublisher", "_is_major_version"}
 
     # Underscored attributes are helpers that assist in the creation of a valid (business-logic-wise) measure version.
     _creator = factory.SubFactory(UserFactory)
+    _published = factory.LazyAttribute(lambda o: o.status == "APPROVED")
     _publisher = factory.SubFactory(UserFactory)
     _unpublished = factory.LazyAttribute(lambda o: o.status == "UNPUBLISHED")
     _unpublisher = factory.Maybe("_unpublished", yes_declaration=factory.SubFactory(UserFactory))
@@ -264,9 +265,8 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     created_by = factory.SelfAttribute("_creator.email")
     updated_at = factory.Faker("past_date", start_date="-7d")
     last_updated_by = factory.SelfAttribute("_creator.email")
-    published = factory.LazyAttribute(lambda o: True if o.status == "APPROVED" else False)
-    published_at = factory.Maybe("published", yes_declaration=factory.Faker("past_date", start_date="-7d"))
-    published_by = factory.Maybe("published", yes_declaration=factory.SelfAttribute("_publisher.email"))
+    published_at = factory.Maybe("_published", yes_declaration=factory.Faker("past_date", start_date="-7d"))
+    published_by = factory.Maybe("_published", yes_declaration=factory.SelfAttribute("_publisher.email"))
     unpublished_at = factory.Maybe("_unpublished", yes_declaration=Faker().past_date(start_date="-7d"))
     unpublished_by = factory.Maybe("_unpublished", yes_declaration=factory.SelfAttribute("_unpublisher.email"))
 

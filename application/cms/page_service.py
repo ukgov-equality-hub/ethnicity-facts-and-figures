@@ -291,7 +291,6 @@ class PageService(Service):
         new_version.created_by = user.email
         new_version.created_at = datetime.utcnow()
         new_version.published_at = None
-        new_version.published = False
         new_version.internal_edit_summary = None
         new_version.external_edit_summary = None
         new_version.dimensions = [dimension.copy() for dimension in measure_version.dimensions]
@@ -438,7 +437,6 @@ class PageService(Service):
         if measure_version.published_at is None:
             measure_version.published_at = date.today()
 
-        measure_version.published = True
         measure_version.latest = True
         message = 'measure_version "{}" published on "{}"'.format(
             measure_version.id, measure_version.published_at.strftime("%Y-%m-%d")
@@ -503,7 +501,6 @@ class PageService(Service):
     @staticmethod
     def mark_measure_versions_unpublished(measure_versions):
         for measure_version in measure_versions:
-            measure_version.published = False
             measure_version.unpublished_at = datetime.utcnow()
             measure_version.status = "UNPUBLISHED"
 

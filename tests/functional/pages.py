@@ -1080,7 +1080,6 @@ class MinimalRandomMeasure:
         self.guid = "%s_%s" % (factory.word(), factory.random_int(1, 1000))
         self.version = "1.0"
         self.published_at = factory.date("%d%m%Y")
-        self.published = False
         self.title = " ".join(factory.words(1))
         self.measure_summary = factory.words(1)
         self.main_points = factory.words(1)

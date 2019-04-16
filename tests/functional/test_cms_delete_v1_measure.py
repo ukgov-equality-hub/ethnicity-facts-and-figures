@@ -16,7 +16,7 @@ THIS TEST CREATES THEN DELETES A MEASURE AT THE DRAFT 1.0 STAGE
 
 def test_delete_a_draft_1_0_measure(driver, live_server):
     rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, active=True)
-    measure_version = MeasureVersionFactory(status="APPROVED", published=True)
+    measure_version = MeasureVersionFactory(status="APPROVED")
 
     assert Measure.query.count() == 1
 
