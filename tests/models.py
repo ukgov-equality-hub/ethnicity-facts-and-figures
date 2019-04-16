@@ -269,7 +269,13 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     published_by = factory.Maybe("published", yes_declaration=factory.SelfAttribute("_publisher.email"))
     unpublished_at = factory.Maybe("_unpublished", yes_declaration=Faker().past_date(start_date="-7d"))
     unpublished_by = factory.Maybe("_unpublished", yes_declaration=factory.SelfAttribute("_unpublisher.email"))
-    db_version_id = factory.Sequence(lambda x: x)
+
+    # We probably don't want to fake this attribute, as it is tied into a system that SQLAlchemy manages for us,
+    # providing automatic version counting when UPDATE statements are issued against the row. If you try to set it
+    # to anything other than `1` when creating an instance through the factory, SQLAlchemy resets it to 1 anyway.
+    # So allowing it to be faked will probably be more confusing than useful.
+    # db_version_id = factory.Sequence(lambda x: x)
+
     title = factory.Faker("sentence", nb_words=6)
     summary = factory.Faker("sentence", nb_words=10)
     need_to_know = factory.Faker("paragraph", nb_sentences=3)
