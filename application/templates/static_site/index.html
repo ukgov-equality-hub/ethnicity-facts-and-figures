@@ -50,34 +50,44 @@
         </div>
     </div>
 
+    <ul class="govuk-list">
     {% for topic_batch in (topics|selectattr('has_published_measures') if static_mode else topics)|batch(3) %}
       <div class="govuk-grid-row topic-row">
           {% for topic in topic_batch %}
           <div class="govuk-grid-column-one-third topic">
-              <span class="govuk-heading-s govuk-!-margin-bottom-1">
+            <li>
+              <h3 class="govuk-heading-s govuk-!-margin-bottom-1">
                   <a class="govuk-link" href="{{ url_for('static_site.topic', topic_slug=topic.slug) }}">{{ topic.title }}{% if topic.has_published_measures == false %} (not published){% endif %}</a>
-              </span>
+              </h3>
               <p class="govuk-body">{{ topic.description }}</p>
+            </li>
           </div>
           {% endfor %}
       </div>
     {% endfor %}
+    </ul>
 
     <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6" />
 
     <h2 class="govuk-heading-m">Updates</h2>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
-            <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a class="govuk-link" href="{{ url_for('dashboards.whats_new') }}">New and updated pages</a></h3>
-            <p class="govuk-body">Recent updates to the website</p>
-        </div>
+    <ul class="govuk-list">
+      <div class="govuk-grid-row">
+        <li>
+          <div class="govuk-grid-column-one-third">
+              <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a class="govuk-link" href="{{ url_for('dashboards.whats_new') }}">New and updated pages</a></h3>
+              <p class="govuk-body">Recent updates to the website</p>
+          </div>
+        </li>
 
-        <div class="govuk-grid-column-one-third">
-            <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a class="govuk-link" href="{{ url_for('dashboards.planned_pages') }}">Planned pages</a></h3>
-            <p class="govuk-body">What’s being worked on and coming up next</p>
-        </div>
-    </div>
+        <li>
+          <div class="govuk-grid-column-one-third">
+              <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a class="govuk-link" href="{{ url_for('dashboards.planned_pages') }}">Planned pages</a></h3>
+              <p class="govuk-body">What’s being worked on and coming up next</p>
+          </div>
+        </li>
+      </div>
+    </ul>
 
     {% include 'static_site/_newsletter-sign-up.html' %}
 
