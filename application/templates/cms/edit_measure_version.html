@@ -64,9 +64,11 @@
 
 
                 {% if measure_version.status == 'APPROVED' and current_user.can(CREATE_VERSION) %}
-                    <a class="govuk-button" href="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
-                        Update
-                    </a>
+                    {% if measure_version.latest %}
+                        <a class="govuk-button" href="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
+                            Update
+                        </a>
+                    {% endif %}
                     {% if current_user.can(PUBLISH) %}
                         <button id="unpublish-measure" name="measure-action" value="unpublish-measure" class="govuk-button eff-button--destructive">Unpublish</button>
                     {% endif %}
