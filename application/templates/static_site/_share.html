@@ -1,7 +1,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6" />
-    <h4 class="govuk-heading-s">Share this page</h4>
+    <h2 class="govuk-heading-s">Share this page</h2>
     <div class="share">
 
       {% set encoded_url = (config.RDU_SITE.rstrip('/') + url_for('static_site.measure_version', topic_slug=measure_version.measure.subtopic.topic.slug, subtopic_slug=measure_version.measure.subtopic.slug, measure_slug=measure_version.measure.slug, version='latest')) | urlencode %}
