@@ -504,9 +504,6 @@ class PageService(Service):
             measure_version.unpublished_at = datetime.utcnow()
             measure_version.status = "UNPUBLISHED"
 
-            # TODO: Don't unset this (need to update logic around whether published or not)
-            measure_version.published_at = None
-
             db.session.commit()
 
     @staticmethod
