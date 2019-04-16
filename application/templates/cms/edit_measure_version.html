@@ -21,12 +21,8 @@
                 <span class="info">Version&nbsp;<b>{{ measure_version.version }}</b></span>
             </div>
             <div>
-                <span class="info" id="status">Status:&nbsp;<b>
-                    {% if measure_version.published == True and measure_version.status == "APPROVED" %}
-                        Published
-                    {% else %}
-                        {% if new %}DRAFT{% else %}{{ measure_version.status | format_status | safe }}{% endif %}
-                    {% endif %}</b>
+                <span class="info" id="status">
+                    Status:&nbsp;<b>{{ ("DRAFT" if new else measure_version.status) | format_status | safe }}</b>
                 </span>
                 {% if measure_version.status == 'DEPARTMENT_REVIEW' %}
                     <div id="review-url">
