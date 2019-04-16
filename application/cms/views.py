@@ -313,8 +313,13 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             diffs = _diff_updates(measure_version_form, measure_version)
             if diffs:
                 flash("Your update will overwrite the latest content. Resolve the conflicts below", "error")
+
+                # Need to manually update the `db_version_id`, otherwise when the form is re-submitted it will just
+                # throw the same error.
+                measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
             else:
                 flash("Your update will overwrite the latest content. Reload this page", "error")
+
         except PageUnEditable as e:
             current_app.logger.info(e)
             flash(str(e), "error")
@@ -482,7 +487,7 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             )
 
             # If the page was saved before sending to review form's db_version_id will be out of sync, so update it
-            measure_version_form.db_version_id.data = measure_version.db_version_id
+            measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
 
             data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=measure_version)
 

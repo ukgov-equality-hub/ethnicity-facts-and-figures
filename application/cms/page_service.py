@@ -359,15 +359,11 @@ class PageService(Service):
         if status is not None:
             measure_version.status = status
 
-        title = measure_version_form.data.pop("title").strip()
-        measure_version.title = title
         if measure_version.version == "1.0":
-            slug = slugify(title)
+            slug = slugify(measure_version_form.title.data)
 
             if slug != measure_version.measure.slug and self._new_slug_invalid(measure_version, slug):
-                message = (
-                    f"A page '{title}' with slug '{slug}' already exists under {measure_version.measure.subtopic.title}"
-                )
+                message = f"A page with slug '{slug}' already exists under {measure_version.measure.subtopic.title}"
                 raise PageExistsException(message)
             measure_version.measure.slug = slug
 

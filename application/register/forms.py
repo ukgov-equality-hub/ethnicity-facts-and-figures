@@ -1,11 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField
 from wtforms.validators import DataRequired, Length, EqualTo
+
+from application.form_fields import RDUPasswordField
 
 
 class SetPasswordForm(FlaskForm):
-
-    password = PasswordField(
+    password = RDUPasswordField(
         "Password",
         validators=[
             DataRequired(message="Please enter a password"),
@@ -13,7 +13,7 @@ class SetPasswordForm(FlaskForm):
         ],
     )
 
-    confirm_password = PasswordField(
+    confirm_password = RDUPasswordField(
         "Confirm password",
         validators=[
             DataRequired(message="Please confirm your new password"),

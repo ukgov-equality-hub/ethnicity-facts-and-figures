@@ -1,15 +1,21 @@
 from flask_security.forms import LoginForm as FlaskSecurityLoginForm, Required
 from flask_security.utils import verify_password
 from flask_wtf import FlaskForm
-from wtforms.fields.html5 import EmailField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Email
 
-from application.form_fields import RDUStringField, RDUPasswordField
+from application.form_fields import RDUStringField, RDUPasswordField, RDUEmailField, ValidPublisherEmailAddress
 
 
 class ForgotPasswordForm(FlaskForm):
-    email = EmailField("Email address", validators=[DataRequired()])
-    # TODO ? validation error if not gov.uk email?
+    email = RDUEmailField(
+        "Email address",
+        hint="Enter the email address you login with",
+        validators=[
+            DataRequired(message="Enter an email address"),
+            Email(message="Enter a valid email address"),
+            ValidPublisherEmailAddress(),
+        ],
+    )
 
 
 class LoginForm(FlaskSecurityLoginForm):
