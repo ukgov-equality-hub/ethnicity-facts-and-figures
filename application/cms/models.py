@@ -435,7 +435,7 @@ class MeasureVersion(db.Model, CopyableModel):
 
     def unpublish(self):
         unpublish_state = publish_status.inv[5]
-        message = 'Request to un-publish page "{}" - page will be removed from site'.format(self.title)
+        message = 'Request to unpublish page "{}" - page will be removed from site'.format(self.title)
         self.status = unpublish_state
         return message
 
