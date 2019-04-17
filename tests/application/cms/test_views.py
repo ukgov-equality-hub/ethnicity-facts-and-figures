@@ -174,7 +174,6 @@ def test_admin_user_can_publish_page_in_dept_review(test_app_client, logged_in_a
     assert measure_version.last_updated_by == logged_in_admin_user.email
     assert measure_version.published_by == logged_in_admin_user.email
     assert measure_version.published_at == datetime.date.today()
-    assert measure_version.published is True
     assert measure_version.latest is True
     mock_request_build.assert_called_once()
 

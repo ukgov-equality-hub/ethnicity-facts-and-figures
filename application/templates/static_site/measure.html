@@ -43,12 +43,8 @@
           <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure_version.version }}{% endif %}</b></span>
       </div>
       <div>
-          <span class="info" id="status">Status:&nbsp;<b>
-              {% if measure_version.published == True and measure_version.status == "APPROVED" %}
-                  Published
-              {% else %}
-                  {% if new %}DRAFT{% else %}{{ measure_version.status | format_status | safe }}{% endif %}
-              {% endif %}</b>
+          <span class="info" id="status">
+              Status:&nbsp;<b>{{ ("DRAFT" if new else measure_version.status) | format_status | safe }}</b>
           </span>
 
           {% if measure_version.measure.versions|length > 1 %}

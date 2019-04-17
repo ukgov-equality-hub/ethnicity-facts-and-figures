@@ -6,11 +6,11 @@ from tests.functional.pages import HomePage, LogInPage, MeasureCreatePage, Measu
 from tests.utils import get_page_with_title
 
 EXPECTED_STATUSES = {
-    "draft": "Status:  Draft",
-    "internal_review": "Status:  Internal review",
-    "department_review": "Status:  Department review",
-    "published": "Status:  Published",
-    "rejected": "Status:  Rejected",
+    "draft": "Status: Draft",
+    "internal_review": "Status: Internal review",
+    "department_review": "Status: Department review",
+    "published": "Status: Published",
+    "rejected": "Status: Rejected",
 }
 
 
