@@ -53,11 +53,11 @@ def do_it(application, build):
 
         local_build = application.config["LOCAL_BUILD"]
 
+        print("DEBUG do_it(): Unpublishing pages...")
+        pages_unpublished = unpublish_pages()
+
         print("DEBUG do_it(): Building from homepage...")
         build_homepage_and_topic_hierarchy(build_dir, config=application.config)
-
-        print("DEBUG do_it(): Unpublishing pages...")
-        pages_unpublished = unpublish_pages(build_dir)
 
         print("DEBUG do_it(): Building dashboards...")
         build_dashboards(build_dir)
@@ -246,21 +246,10 @@ def process_dimensions(measure_version, slug):
                 dimension_file.write(table_output)
 
 
-def unpublish_pages(build_dir):
+def unpublish_pages():
     from application.cms.page_service import page_service
 
     measure_versions_to_unpublish = page_service.get_measure_versions_to_unpublish()
-    for measure_version in measure_versions_to_unpublish:
-        if measure_version.get_previous_version() is None:
-            page_dir = os.path.join(
-                build_dir,
-                measure_version.measure.subtopic.topic.slug,
-                measure_version.measure.subtopic.slug,
-                measure_version.measure.slug,
-                "latest",
-            )
-            if os.path.exists(page_dir):
-                shutil.rmtree(page_dir, ignore_errors=True)
 
     page_service.mark_measure_versions_unpublished(measure_versions_to_unpublish)
     return measure_versions_to_unpublish
