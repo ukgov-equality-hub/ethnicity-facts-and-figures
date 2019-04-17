@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from typing import Iterable, Tuple, List
 
+from flask import request
 from slugify import slugify
 from sqlalchemy import func, desc
 from sqlalchemy.orm import joinedload
@@ -337,7 +338,9 @@ class PageService(Service):
         # Possibly temporary to work out issue with data deletions
         message = "EDIT MEASURE: Current state of measure_version: %s" % measure_version.to_dict()
         self.logger.info(message)
-        message = "EDIT MEASURE: Data posted to update measure_version: %s" % measure_version_form.data
+        message = "EDIT MEASURE: Request data: %s" % request.form
+        self.logger.info(message)
+        message = "EDIT MEASURE: WTForm data to update measure version: %s" % measure_version_form.data
         self.logger.info(message)
 
         subtopic_id_from_form = kwargs.get("subtopic_id")
