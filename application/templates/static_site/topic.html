@@ -7,6 +7,7 @@
 %}
 
 {% block pageTitle %}{{ topic.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block metaDescription %}{{ topic.meta_description | render_markdown | striptags }}{% endblock %}
 {% block socialTitle %}{{ topic.title }}{% endblock %}
 {% block googleAnalytics %}ga('set','contentGroup1','Topic');{% endblock %}
 
