@@ -1009,6 +1009,7 @@ class Topic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(64), nullable=False)
     title = db.Column(db.String(255), nullable=False)
+    short_title = db.Column(db.String(255), nullable=True)
     description = db.Column(db.Text, nullable=True)  # a sentence below topic heading on homepage
     additional_description = db.Column(db.TEXT, nullable=True)  # short paragraph displayed on topic page
 
