@@ -14,6 +14,8 @@
 {% block pageTitle %}{{ measure_version.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
 {% block socialTitle %}{{ measure_version.title }}{% endblock %}
 {% block socialDescription %}{{ measure_version.social_description | render_markdown | striptags }}{% endblock %}
+{% block metaDescription %}{{ measure_version.social_description | render_markdown | striptags }}{% endblock %}
+
 {% block googleAnalytics %}ga('set','contentGroup1','Measure');{% endblock %}
 
 {% set version = 'latest' if measure_version.has_no_later_published_versions() else measure_version.version %}
