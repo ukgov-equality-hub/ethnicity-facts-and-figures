@@ -548,8 +548,7 @@ def test_homepage_topics_display_in_rows_with_three_columns(
         assert len(topic_rows[i].select(".topic")) == row_counts[i]
 
     for i in range(number_of_topics):
-        assert page.select('.topic a')[i].text.strip() == f"Testing #{i}"
-
+        assert page.select(".topic a")[i].text.strip() == f"Testing #{i}"
 
 
 @pytest.mark.parametrize(

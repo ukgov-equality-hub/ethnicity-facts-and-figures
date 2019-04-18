@@ -16,7 +16,7 @@ from tests.models import (
     DimensionFactory,
     TableFactory,
     ChartFactory,
-    TopicFactory
+    TopicFactory,
 )
 
 
@@ -932,8 +932,8 @@ class TestTableModel:
             "table_object": {"table": "object"},
         }
 
-class TestTopicModel:
 
+class TestTopicModel:
     def test_topic_with_short_title(self):
         topic = TopicFactory.build(title="Long title", short_title="Short title")
         assert topic.short_title_or_title == "Short title"
