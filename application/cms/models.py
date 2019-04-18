@@ -1020,6 +1020,13 @@ class Topic(db.Model):
     def has_published_measures(self):
         return any(subtopic.has_published_measures for subtopic in self.subtopics)
 
+    @property
+    def short_title_or_title(self):
+        if self.short_title:
+            return self.short_title
+        else:
+            return self.title
+
 
 class Subtopic(db.Model):
     # metadata
