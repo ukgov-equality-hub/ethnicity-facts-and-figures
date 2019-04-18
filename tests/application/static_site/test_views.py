@@ -556,9 +556,7 @@ def test_homepage_only_shows_topics_with_published_measures_for_site_type(
     measure_published, static_mode, topic_should_be_visible, test_app_client, logged_in_rdu_user
 ):
     MeasureVersionFactory(
-        status="APPROVED" if measure_published else "DRAFT",
-        published=measure_published,
-        measure__subtopics__topic__title="Test topic page",
+        status="APPROVED" if measure_published else "DRAFT", measure__subtopics__topic__title="Test topic page"
     )
 
     resp = test_app_client.get(url_for("static_site.index", static_mode=static_mode))
@@ -578,7 +576,6 @@ def test_topic_page_only_shows_subtopics_with_published_measures_for_static_site
 ):
     MeasureVersionFactory(
         status="APPROVED" if measure_published else "DRAFT",
-        published=measure_published,
         measure__subtopics__topic__slug="test-topic",
         measure__subtopics__topic__title="Test topic page",
         measure__subtopics__title="Test subtopic page",
@@ -601,7 +598,6 @@ def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_d
 ):
     MeasureVersionFactory(
         status="APPROVED" if measure_published else "DRAFT",
-        published=measure_published,
         measure__shared_with=[logged_in_dept_user] if measure_shared else [],
         measure__subtopics__topic__slug="test-topic",
         measure__subtopics__topic__title="Test topic page",

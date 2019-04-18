@@ -349,7 +349,6 @@ class TestPageService:
         assert new_version.internal_edit_summary is None
         assert new_version.external_edit_summary is None
         assert new_version.published_at is None
-        assert new_version.published is False
         assert user.email == new_version.created_by
         assert new_version.latest is True
 
@@ -364,7 +363,6 @@ class TestPageService:
         assert next_version.internal_edit_summary is None
         assert next_version.external_edit_summary is None
         assert next_version.published_at is None
-        assert next_version.published is False
         assert user.email == new_version.created_by
         assert next_version.latest is True
 
@@ -451,7 +449,6 @@ class TestPageService:
         assert first_copy.internal_edit_summary is None
         assert first_copy.external_edit_summary is None
         assert first_copy.published_at is None
-        assert not first_copy.published
         assert first_copy.created_by == user.email
         assert first_copy.latest
 
@@ -462,7 +459,6 @@ class TestPageService:
         assert second_copy.internal_edit_summary is None
         assert second_copy.external_edit_summary is None
         assert second_copy.published_at is None
-        assert not second_copy.published
         assert user.email == first_copy.created_by
         assert second_copy.latest
 

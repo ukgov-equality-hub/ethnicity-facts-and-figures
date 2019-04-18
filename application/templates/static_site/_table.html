@@ -20,10 +20,9 @@
     <thead class="govuk-table__head">
 
       {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length > 1) %}
-        {% set total_cells = (dimension.dimension_table.table_object.columns|length * (dimension.dimension_table.table_object.group_columns|length)) + 1 %}
 
         <tr class="govuk-table__row">
-          <th class="govuk-table__header eff-table__header--border-bottom-0 eff-table__header--border-right"> </th>
+          <td class="govuk-table__header eff-table__header--border-bottom-0 eff-table__header--border-right"> </td>
           {% for group_column in dimension.dimension_table.table_object.group_columns %}
               {% if group_column %}
                   <th colspan="{{ dimension.dimension_table.table_object.columns|length }}" class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--border-bottom-0 eff-table__header--padding-top-0 {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
@@ -31,8 +30,6 @@
           {% endfor %}
         </tr>
 
-      {% else %}
-      {% set total_cells = (dimension.dimension_table.table_object.columns|length + 1) %}
       {% endif %}
 
 
@@ -118,8 +115,6 @@
                 {% set sort_value = data.sort_values[loop.index0] %}
               {% endif %}
             {% endif %}
-
-            {% set width = 100 /(loop.length + 1) %}
 
             {% if loop.first %}
               {% set data_order = data.order if data.order else row_loop.index0 %}

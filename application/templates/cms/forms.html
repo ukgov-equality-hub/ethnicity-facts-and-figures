@@ -1,31 +1,3 @@
-{% macro render_field(field, disabled=False, label_class=None, class="", hint=None, diffs={}) -%}
-  {# Deprecated - use a custom RDU form field (e.g. RDUTextField) and render directly with `{{ form.field }}` in a jinja template #}
-
-    {% if label_class %}
-        {{ field.label(class=label_class) }}
-    {% else %}
-        {{ field.label }}
-    {% endif %}
-
-    {% if field.errors %}
-        <span class="error-message">{{ field.errors[0] }}</span>
-        {{ field(class="error " + class) }}
-        {% if diffs %}
-            <p>Your update to "{{ field.label.text }}" is highlighted green
-                and possible deletions are highlighted red. If these changes are fine,
-                save the page, otherwise edit the copy above and then save.</p>
-            <div class="differences">
-                {{ diffs[field.name] | render_markdown }}
-            </div>
-        {% endif %}
-    {% else %}
-        {% if hint %}
-            <span class="govuk-hint">{{ hint }}</span>
-        {% endif %}
-        {{ field(disabled=disabled, class=class) }}
-    {% endif %}
-{%- endmacro %}
-
 {% macro render_department_select(label,
                                   form_field,
                                   current_selected_id,

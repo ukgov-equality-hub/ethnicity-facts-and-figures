@@ -1,15 +1,20 @@
 {% extends "base.html" %}
 
-{% set breadcrumbs = 
+{% from "_macros/_accordion.html" import govukAccordion %}
+
+{% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
     {"url": url_for('static_site.ethnicity_in_the_uk'), "text": "Ethnicity in the UK"},
   ]
 %}
 
-{% block pageTitle %}Ethnic groups and how data on ethnicity is collected - GOV.UK{% endblock %}
-{% block socialTitle %}Ethnic groups and how data on ethnicity is collected{% endblock %}
+{% block pageTitle %}List of ethnic groups - GOV.UK{% endblock %}
+{% block socialTitle %}List of ethnic groups{% endblock %}
 {% block googleAnalytics %}ga('set','contentGroup1','Ethnicity in the UK');{% endblock %}
+
+{% block socialDescription %}There are 18 ethnic groups recommended for use by government in England and Wales. Find out how the ethnic groups were chosen, and see how the groups differ in Scotland and Northern Ireland.{% endblock %}
+
 
 {% block headEnd %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnic-groups-and-data-collected') }}">{% endblock %}
 
@@ -18,78 +23,262 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-l">
-        Ethnicity categories and the 2011 census
+        List of ethnic groups
       </h1>
 
-      <p class="govuk-body">An ethnic group question was first included in the England and Wales census in 1991, to help organisations and government monitor equal opportunities and anti-discrimination policies.</p>
-      <p class="govuk-body">In 2007, the Office of National Statistics (ONS) held a public consultation to update the 16 categories used in the 2001 Census. An overwhelming majority of the people who responded supported the inclusion of an ethnic category question, and for the 2011 Census, ONS implemented a standardised list of 18 ethnic categories (below).</p>
-      <p class="govuk-body">ONS's <a class="govuk-link" href="https://www.ons.gov.uk/file?uri=/census/2011census/howourcensusworks/howweplannedthe2011census/questionnairedevelopment/finalisingthe2011questionnaire/final-recommended-questions-2011-ethnic-group_tcm77-183998.pdf">final recommendations</a> give a detailed explanation of how the categories were tested and why they were chosen.</p>
+      <p class="govuk-body">In England and Wales, there are 18 ethnic groups recommended for use by government when they ask for someone’s ethnicity. These are grouped into 5 broad ethnic groups, each with an ‘Any other’ option where respondents can write in their ethnicity using their own words.</p>
 
-      <h2 class="govuk-heading-m">The 2011 census: 18 standardised ethnic categories</h2>
-      <p class="govuk-body">For the 2011 Census, respondents were asked, 'Choose one option that best describes your ethnic group or background' and invited to tick one of the boxes in the list below. There are 5 broad categories, with a number of subcategories, making a total of 18 choices. Options 4, 8, 13, 16 and 18 allow respondents to write in their own description of their ethnic group.</p>
+      <p class="govuk-body">The recommended ethnic groups are:</p>
 
-	    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">White</h3>
-	    <ul class="govuk-list">
-		    <li>1. English / Welsh / Scottish / Northern Irish / British</li>
-		    <li>2. Irish</li>
-		    <li>3. Gypsy or Irish Traveller</li>
-		    <li>4. Any other White background, please describe</li>
-	    </ul>
+      <h2 class="govuk-heading-s govuk-!-margin-bottom-1">White</h2>
 
-	    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Mixed / Multiple ethnic groups</h3>
-	    <ul class="govuk-list">
-		    <li>5. White and Black Caribbean </li>
-		    <li>6. White and Black African</li>
-		    <li>7. White and Asian </li>
-		    <li>8. Any other Mixed / Multiple ethnic background, please describe </li>
-	    </ul>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>English / Welsh / Scottish / Northern Irish / British</li>
+        <li>Irish</li>
+        <li>Gypsy or Irish Traveller</li>
+        <li>Any other White background</li>
+      </ul>
 
-	    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Asian / Asian British</h3>
-	    <ul class="govuk-list">
-		    <li>9. Indian</li>
-		    <li>10. Pakistani</li>
-		    <li>11. Bangladeshi</li>
-		    <li>12. Chinese</li>
-		    <li>13. Any other Asian background, please describe</li>
-	    </ul>
+      <h2 class="govuk-heading-s govuk-!-margin-bottom-1">Mixed / Multiple ethnic groups</h2>
 
-	    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Black / African / Caribbean / Black British</h3>
-	    <ul class="govuk-list">
-		    <li>14. African </li>
-		    <li>15. Caribbean</li>
-		    <li>16. Any other Black / African / Caribbean background, please describe</li>
-	    </ul>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>White and Black Caribbean</li>
+        <li>White and Black African</li>
+        <li>White and Asian</li>
+        <li>Any other Mixed / Multiple ethnic background</li>
+      </ul>
 
-	    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Other ethnic group </h3>
-	    <ul class="govuk-list">
-		    <li>17. Arab </li>
-		    <li>18. Any other ethnic group, please describe</li>
-	    </ul>
+      <h2 class="govuk-heading-s govuk-!-margin-bottom-1">Asian / Asian British</h2>
 
-	    <h2 class="govuk-heading-m">Ethnic category order</h2>
-	    <p class="govuk-body">The categories are ordered by population size, with one exception.</p>
-	    <p class="govuk-body">The Mixed/Multiple ethnic group category is placed second, after White, because ONS found that respondents often missed it if it was at the bottom of the list. </p>
-	    <p class="govuk-body">After testing, ONS concluded: 'Although some respondents with complex identities continued to find the ethnic group question difficult to answer, the terminology "Mixed/Multiple ethnic groups" was generally considered to be clear and acceptable'.</p>
-	    <p class="govuk-body">For each broad category (White, Mixed/Multiple, Asian, Black, Other) respondents are also given the opportunity to write in their own description of their ethnicity. In testing, this option was used, for example, by Polish, South African, Australian, Italian and Spanish respondents.</p>
-	    <p class="govuk-body">Overall, ONS found that the write-in spaces were used effectively by respondents who felt the tick-boxes did not accurately reflect their ethnic group.</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Indian</li>
+        <li>Pakistani</li>
+        <li>Bangladeshi</li>
+        <li>Chinese</li>
+        <li>Any other Asian background</li>
+      </ul>
 
-	    <h2 class="govuk-heading-m">Other approaches to ethnic classification</h2>
-	    <p class="govuk-body">Although ONS has established the standardised 18 categories outlined above, not all departments and organisations use them. This can be for a variety of reasons.</p>
-	    <p class="govuk-body">For example, the development of government policy on a particular issue may mean a department is looking for information about some ethnic sub-categories, but not others.</p>
-	    <p class="govuk-body">In other cases, although the data is collected at the level of the 18 detailed ethnic categories, the sample size (number of people surveyed) for each group is small. This data is then grouped at the level of the 5 broad categories, to provide a more reliable result.</p>
-	    <p class="govuk-body">Some organisations may have chosen not to update surveys that were developed using the 2001 census categories, so that meaningful comparisons can still be made across a period of years.</p>
-	    <p class="govuk-body">Where data is 'disclosive', meaning that the sample size is so small that an individual could be identified if it’s published, the figures are excluded from the results.</p>
-	    <p class="govuk-body">At the same time, when publishing data, government departments must give as much detail as they can. For this reason, and those outlined above, the categories published can be a combination of broad and detailed groups: for example, White, Mixed, Indian, Pakistani, Bangladeshi, Chinese, Other Asian, and Black.</p>
-	    <p class="govuk-body">Some departments are only able to provide a 'binary' classification, which divides ethnicities in one of two ways:</p>
-	    <ul class="govuk-list govuk-list--bullet">
-		    <li>White British and Other: White British people compared with all other groups (including White ethnic minorities and all other ethnic minorities)</li>
-		    <li>White and Other: White ethnic groups (including White British and White ethnic minorities) compared with all other ethnic minorities</li>
-	    </ul>
+      <h2 class="govuk-heading-s govuk-!-margin-bottom-1">Black / African / Caribbean / Black British</h2>
 
-	    <h2 class="govuk-heading-m">Data reliability</h2>
-	    <p class="govuk-body">Some approaches to ethnic classification can affect the reliability of the statistics in question.</p>
-	    <p class="govuk-body">Combining categories in any of the ways described above results in a loss of detail and makes it more difficult to compare results from different sets of statistics.</p>
-	    <p class="govuk-body">Sometimes the figures are drawn from administrative systems which were not designed with statistical analysis in mind, resulting in badly classified data.</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>African</li>
+        <li>Caribbean</li>
+        <li>Any other Black / African / Caribbean background</li>
+      </ul>
+
+      <h2 class="govuk-heading-s govuk-!-margin-bottom-1">Other ethnic group</h2>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Arab</li>
+        <li>Any other ethnic group</li>
+      </ul>
+
+      <p class="govuk-body">In Wales, the first option in the White broad category is changed so that Welsh appears first in the list, followed by English, Scottish, Northern Irish and British. </p>
+
+
+      <p class="govuk-body">See statistics on the <a class="govuk-link" href="/british-population/national-and-regional-populations/population-of-england-and-wales/latest">population of England and Wales</a> broken down by ethnicity.</p>
+
+      {% set how_the_groups_were_chosen_html %}
+
+      <p class="govuk-body">The Office for National Statistics (ONS) runs the Census of England and Wales every 10 years. They decide which ethnic groups to include in consultation with:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>users of Census data (like government departments, local authorities, and the National Health Service)</li>
+          <li>people completing the Census, and the interest groups that represent them</li>
+        </ul>
+
+        <p class="govuk-body">It is recognised that these ethnic groups do not represent how all people identify. People are encouraged to write in their ethnicity using their own words if they don’t identify with any groups in the list. </p>
+
+        <p class="govuk-body">There has been an ethnicity question in the Census since 1991. It has been updated at every new Census since then. There are separate questions in the Census about <a class="govuk-link" href="https://www.ons.gov.uk/peoplepopulationandcommunity/culturalidentity/ethnicity/articles/ethnicityandnationalidentityinenglandandwales/2012-12-11#national-identity-in-england-and-wales">national identity</a> and <a class="govuk-link" href="https://www.ons.gov.uk/peoplepopulationandcommunity/culturalidentity/religion">religion</a>.</p>
+
+        <p class="govuk-body">You can read more about:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>the <a class="govuk-link" href="https://www.ons.gov.uk/file?uri=/census/2011census/howourcensusworks/howweplannedthe2011census/questionnairedevelopment/finalisingthe2011questionnaire/final-recommended-questions-2011-ethnic-group_tcm77-183998.pdf">research and testing</a> (PDF) that went into the 2011 Census ethnicity question
+          <li>the <a class="govuk-link" href="https://www.ons.gov.uk/census/censustransformationprogramme/questiondevelopment/2021censustopicresearchupdatedecember2018#ethnic-group">2021 Census consultation</a>, which considers adding Roma, Sikh, Jewish and Somali ethnic groups</li>
+          <li><a class="govuk-link" href="https://www.gov.uk/government/publications/the-2021-census-of-population-and-housing-in-england-and-wales">recommendations for the 2021 Census</a></li>
+          <li><a class="govuk-link" href="https://history.blog.gov.uk/2019/03/07/50-years-of-collecting-ethnicity-data/">how ethnicity data collection has changed over the last 50 years</a></li>
+        </ul>
+      {% endset %}
+
+      {% set exceptions_html %}
+
+        <p class="govuk-body">The Government Statistical Service’s (GSS) <a class="govuk-link" href="https://gss.civilservice.gov.uk/guidances/harmonisation/0-harmonised-principles/ethnicity">harmonised principles for ethnicity</a> recommends that the 18 official ethnic groups are used whenever government carries out social surveys or collects  administrative data.</p>
+
+        <p class="govuk-body">A single, standardised list makes it easier to analyse ethnicity data wherever it is collected.</p>
+
+        <p class="govuk-body">However, in practice, not all departments and organisations use the standardised list. For example, because:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>they need data on some ethnic groups, but not others</li>
+          <li>they want their data to be consistent with data they’ve collected previously, which uses different ethnic groups</li>
+          <li>the low number of people surveyed in some ethnic groups means data has to be combined to make it more reliable, or to protect individual identities</li>
+        </ul>
+
+        <p class="govuk-body">The <a class="govuk-link" href="https://www.ethnicity-facts-figures.service.gov.uk/dashboards/ethnicity-classifications">dashboard of ethnic categories</a> shows that around 20 different ethnicity classifications are used on Ethnicity facts and figures.</p>
+
+      {% endset %}
+
+      {% set scotland_and_northern_ireland_html %}
+
+        <p class="govuk-body">The Censuses in Scotland and Northern Ireland have differences in the ordering of the ethnic groups as well as the groups themselves.
+
+        <h3 class="govuk-heading-s">Northern Ireland</h3>
+
+        <p class="govuk-body">The ethnicity question in the <a class="govuk-link" href="https://www.nisra.gov.uk/publications/2011-census-questionnaires">2011 Census in Northern Ireland</a> asked respondents to choose from the following 11 ethnic groups:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>White</li>
+          <li>Chinese</li>
+          <li>Irish Traveller</li>
+          <li>Indian</li>
+          <li>Pakistani</li>
+          <li>Bangladeshi</li>
+          <li>Black Caribbean</li>
+          <li>Black African</li>
+          <li>Black Other</li>
+          <li>Mixed ethnic group</li>
+          <li>Any other ethnic group</li>
+        </ul>
+
+        <p class="govuk-body">The <a class="govuk-link" href="https://gss.civilservice.gov.uk/guidances/harmonisation/0-harmonised-principles/ethnicity/#northern-ireland-input-">GSS harmonised principle for ethnicity in Northern Ireland</a> proposes almost the same standardised ethnic categories as the 2011 Census of England and Wales. However, there are 2 White ethnic groups instead of 4:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>White</li>
+          <li>Irish Traveller</li>
+        </ul>
+
+        <h3 class="govuk-heading-s">Scotland</h3>
+
+        <p class="govuk-body">The <a class="govuk-link" href="https://www.scotlandscensus.gov.uk/variables-classification/ethnic-group">ethnicity question in the 2011 Census in Scotland</a> asked respondents to choose from the following 19 ethnic groups:</p>
+
+        <p class="govuk-body">White</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>White Scottish</li>
+          <li>Other White British</li>
+          <li>White Irish</li>
+          <li>Gypsy / Traveller</li>
+          <li>White Polish</li>
+          <li>Other</li>
+        </ul>
+
+        <p class="govuk-body">Mixed or multiple ethnic group</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>Any mixed or multiple ethnic groups</li>
+        </ul>
+
+        <p class="govuk-body">Asian, Asian Scottish or Asian British</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>Pakistani, Pakistani Scottish or Pakistani British</li>
+          <li>Indian, Indian Scottish or Indian British</li>
+          <li>Bangladeshi, Bangladeshi Scottish or Bangladeshi British</li>
+          <li>Chinese, Chinese Scottish or Chinese British</li>
+          <li>Other</li>
+        </ul>
+
+        <p class="govuk-body">African</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>African, African Scottish or African British</li>
+          <li>Other</li>
+        </ul>
+
+        <p class="govuk-body">Caribbean or Black</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>Caribbean, Caribbean Scottish or Caribbean British</li>
+          <li>Black, Black Scottish or Black British</li>
+          <li>Other</li>
+        </ul>
+
+        <p class="govuk-body">Other ethnic group</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>Arab, Arab Scottish or Arab British</li>
+          <li>Other</li>
+        </ul>
+
+        <p class="govuk-body">These are the same groups as those in the <a class="govuk-link" href="https://gss.civilservice.gov.uk/guidances/harmonisation/0-harmonised-principles/ethnicity/#scotland-input-">GSS harmonised principle for ethnicity in Scotland</a>.</p>
+
+      {% endset %}
+
+      {% set combining_data_html %}
+
+        <p class="govuk-body">If you need to combine data that uses different ethnic classifications – for example from the different Censuses in the UK – you can aggregate some groups using either the GSS harmonised categories for either:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li><a class="govuk-link" href="https://gss.civilservice.gov.uk/guidances/harmonisation/0-harmonised-principles/ethnicity/#great-britain-output-">England, Wales and Scotland</a></li>
+          <li><a class="govuk-link" href="https://gss.civilservice.gov.uk/guidances/harmonisation/0-harmonised-principles/ethnicity/#united-kingdom-output-">England, Wales, Scotland and Northern Ireland</a>
+        </li>
+
+      {% endset %}
+
+
+      {{ govukAccordion(
+        id="ethnic-groups-accordion",
+        items=[
+          {
+            "heading": {
+              "text": "How the groups were chosen"
+            },
+            "content": {
+              "html": how_the_groups_were_chosen_html
+            },
+            "section_header_attributes":{
+              "data-on":"click",
+              "data-event-category":"Accordion",
+              "data-event-action":"Section opened",
+              "data-event-label":"How the groups were chosen"
+            }
+          },
+          {
+            "heading": {
+              "text": "Exceptions"
+            },
+            "content": {
+              "html": exceptions_html
+            },
+            "section_header_attributes":{
+              "data-on":"click",
+              "data-event-category":"Accordion",
+              "data-event-action":"Section opened",
+              "data-event-label":"Exceptions"
+            }
+          },
+          {
+            "heading": {
+              "text": "Scotland and Northern Ireland"
+            },
+            "content": {
+              "html": scotland_and_northern_ireland_html
+            },
+            "section_header_attributes":{
+              "data-on":"click",
+              "data-event-category":"Accordion",
+              "data-event-action":"Section opened",
+              "data-event-label":"Scotland and Northern Ireland"
+            }
+          },
+          {
+            "heading": {
+              "text": "Combining data"
+            },
+            "content": {
+              "html": combining_data_html
+            },
+            "section_header_attributes":{
+              "data-on":"click",
+              "data-event-category":"Accordion",
+              "data-event-action":"Section opened",
+              "data-event-label":"Combining data"
+            }
+          }
+        ]
+      ) }}
+
     </div>
  </div>
 {% endblock %}

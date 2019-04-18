@@ -1,9 +1,11 @@
 from flask_wtf import FlaskForm
 from flask import abort
 from markupsafe import Markup
-from wtforms import StringField, TextAreaField, FileField, HiddenField
+from wtforms import StringField, TextAreaField, FileField, IntegerField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length, StopValidation, InputRequired
+
+from wtforms.widgets import HiddenInput
 
 from application.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
 from application.cms.models import (
@@ -159,7 +161,7 @@ class MeasureVersionForm(FlaskForm):
                 field.errors[:] = []
                 raise StopValidation()
 
-    db_version_id = HiddenField()
+    db_version_id = IntegerField(widget=HiddenInput())
     title = RDUStringField(
         label="Title",
         validators=[DataRequired(message="Enter a page title"), Length(max=255)],

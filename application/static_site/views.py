@@ -76,7 +76,10 @@ def topic(topic_slug):
     # Departmental users should not be able to see unpublished measures that have not been explicitly shared with them.
     def user_can_see_measure(measure):
         if (
-            any(measure_version.published for measure_version in measure.versions)
+            any(
+                (measure_version.status == "APPROVED" and measure_version.published_at is not None)
+                for measure_version in measure.versions
+            )
             or current_user in measure.shared_with
             or not current_user.is_departmental_user()
         ):

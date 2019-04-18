@@ -22,7 +22,7 @@ from tests.models import MeasureVersionFactory, UserFactory
 
 def test_can_build_charts(driver, app, live_server):
     rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER, active=True)
-    published_measure_version = MeasureVersionFactory(status="APPROVED", published=True)
+    published_measure_version = MeasureVersionFactory(status="APPROVED")
 
     chart_builder_page = construct_test_chart_builder_page(driver, live_server, published_measure_version, rdu_user)
 

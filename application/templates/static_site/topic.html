@@ -39,7 +39,7 @@
                                             <span class="govuk-accordion__section-button" id="accordion-{{ subtopic.slug }}">{{- subtopic.title -}}{% if subtopic.has_published_measures == false %} (not published){% endif %}</span>
                                         </h2>
                                     </div>
-                                    <div class="govuk-accordion__section-content {% if not static_mode %} govuk-!-padding-bottom-4{% endif %}">
+                                    <div id="accordion-{{ topic.slug }}-content-{{ loop.index }}" class="govuk-accordion__section-content {% if not static_mode %} govuk-!-padding-bottom-4{% endif %}">
                                         {% if not static_mode %}
                                             {% if current_user.is_authenticated and current_user.can(CREATE_MEASURE) %}
                                                 <a href="{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}" class="govuk-button">Create a new page</a>

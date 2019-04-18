@@ -21,12 +21,8 @@
                 <span class="info">Version&nbsp;<b>{{ measure_version.version }}</b></span>
             </div>
             <div>
-                <span class="info" id="status">Status:&nbsp;<b>
-                    {% if measure_version.published == True and measure_version.status == "APPROVED" %}
-                        Published
-                    {% else %}
-                        {% if new %}DRAFT{% else %}{{ measure_version.status | format_status | safe }}{% endif %}
-                    {% endif %}</b>
+                <span class="info" id="status">
+                    Status:&nbsp;<b>{{ ("DRAFT" if new else measure_version.status) | format_status | safe }}</b>
                 </span>
                 {% if measure_version.status == 'DEPARTMENT_REVIEW' %}
                     <div id="review-url">
@@ -61,57 +57,59 @@
             </div>
             <div class="actions right">
 
+            {% if measure_version.status == 'APPROVED' and measure_version.latest and current_user.can(CREATE_VERSION)%}
+                <a class="govuk-button" href="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
+                    Update
+                </a>
+            {% endif %}
 
-                {% if measure_version.status == 'APPROVED' and measure_version.latest and current_user.can(CREATE_VERSION) %}
-                    <a class="govuk-button" href="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
-                        Update
-                    </a>
-                    {% if current_user.can(PUBLISH) %}
-                        <button id="unpublish-measure" name="measure-action" value="unpublish-measure" class="govuk-button eff-button--destructive">Unpublish</button>
+            {% if measure_version.status == 'APPROVED' and current_user.can(PUBLISH) %}
+                <button id="unpublish-measure" name="measure-action" value="unpublish-measure" class="govuk-button eff-button--destructive">Unpublish</button>
+            {% endif %}
+
+            {% if measure_version.status == 'APPROVED' and not measure_version.latest %}
+
+                {%  set latest = measure.latest_version %}
+                <div class="other-versions">
+
+                      {% if latest.status == 'DRAFT' or latest.status == 'INTERNAL_REVIEW' or latest.status == 'DEPARTMENT_REVIEW' %}
+                        <a href="{{ url_for('cms.edit_measure_version',
+                                            topic_slug=topic.slug,
+                                            subtopic_slug=subtopic.slug,
+                                            measure_slug=measure.slug,
+                                            version=latest.version) }}" class="govuk-link">Version {{ latest.version }}</a> of this page is in {{ latest.status | format_status | safe }}
                     {% endif %}
 
-                {%  elif measure_version.status == 'APPROVED' and not measure_version.latest%}
+                </div>
+            {% endif %}
 
-                    {%  set latest = measure.latest_version %}
-                    <div class="other-versions">
+            {%  if measure_version.status == 'DRAFT' or new %}
+                 <button class="govuk-button" type="submit" name="save">Save</button>
+            {% endif %}
 
-                          {% if latest.status == 'DRAFT' or latest.status == 'INTERNAL_REVIEW' or latest.status == 'DEPARTMENT_REVIEW' %}
-                            <a href="{{ url_for('cms.edit_measure_version',
-                                                topic_slug=topic.slug,
-                                                subtopic_slug=subtopic.slug,
-                                                measure_slug=measure.slug,
-                                                version=latest.version) }}" class="govuk-link">Version {{ latest.version }}</a> of this page is in {{ latest.status | format_status | safe }}
-                        {% endif %}
+            {% if "REJECT" in available_actions %}
+                <button id="reject-measure" name="measure-action" value="reject-measure" class="govuk-button eff-button--destructive">Reject</button>
+            {% endif %}
 
-                    </div>
+            {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
+                <button id="send-back-to-draft" name="measure-action" value="send-back-to-draft" class="govuk-button">Send back to draft</button>
+            {%  endif %}
 
-                {%  elif measure_version.status == 'DRAFT' or new %}
-                     <button class="govuk-button" type="submit" name="save">Save</button>
+            {% if  "APPROVE" in available_actions %}
+                {% if status == 'DRAFT' %}
+                    <button type="submit" class="govuk-button {% if next_approval_state == 'INTERNAL_REVIEW' %}eff-button--neutral{%endif %}" name="save-and-review" id="save-and-review">
+                        {{ next_approval_state | format_approve_button | safe }}
+                    </button>
+                {% elif next_approval_state == 'DEPARTMENT_REVIEW' %}
+                    <button class="govuk-button" id="send-to-department-review" name="measure-action" value="send-to-department-review">
+                        {{ next_approval_state | format_approve_button | safe }}
+                    </button>
+                {% elif next_approval_state == 'APPROVED' and current_user.can(PUBLISH) %}
+                    <button class="govuk-button" id="send-to-approved" name="measure-action" value="send-to-approved">
+                        {{ next_approval_state | format_approve_button | safe }}
+                    </button>
                 {% endif %}
-
-                {% if "REJECT" in available_actions %}
-                    <button id="reject-measure" name="measure-action" value="reject-measure" class="govuk-button eff-button--destructive">Reject</button>
-                {% endif %}
-
-                {% if status == 'REJECTED' or status == 'UNPUBLISHED' %}
-                    <button id="send-back-to-draft" name="measure-action" value="send-back-to-draft" class="govuk-button">Send back to draft</button>
-                {%  endif %}
-
-                {% if  "APPROVE" in available_actions %}
-                    {% if status == 'DRAFT' %}
-                        <button type="submit" class="govuk-button {% if next_approval_state == 'INTERNAL_REVIEW' %}eff-button--neutral{%endif %}" name="save-and-review" id="save-and-review">
-                            {{ next_approval_state | format_approve_button | safe }}
-                        </button>
-                    {% elif next_approval_state == 'DEPARTMENT_REVIEW' %}
-                        <button class="govuk-button" id="send-to-department-review" name="measure-action" value="send-to-department-review">
-                            {{ next_approval_state | format_approve_button | safe }}
-                        </button>
-                    {% elif next_approval_state == 'APPROVED' and current_user.can(PUBLISH) %}
-                        <button class="govuk-button" id="send-to-approved" name="measure-action" value="send-to-approved">
-                            {{ next_approval_state | format_approve_button | safe }}
-                        </button>
-                    {% endif %}
-                {% endif %}
+            {% endif %}
 
             </div>
         {% endcall %}

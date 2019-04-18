@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from typing import Iterable, Tuple, List
 
+from flask import request
 from slugify import slugify
 from sqlalchemy import func, desc
 from sqlalchemy.orm import joinedload
@@ -291,7 +292,6 @@ class PageService(Service):
         new_version.created_by = user.email
         new_version.created_at = datetime.utcnow()
         new_version.published_at = None
-        new_version.published = False
         new_version.internal_edit_summary = None
         new_version.external_edit_summary = None
         new_version.dimensions = [dimension.copy() for dimension in measure_version.dimensions]
@@ -338,7 +338,9 @@ class PageService(Service):
         # Possibly temporary to work out issue with data deletions
         message = "EDIT MEASURE: Current state of measure_version: %s" % measure_version.to_dict()
         self.logger.info(message)
-        message = "EDIT MEASURE: Data posted to update measure_version: %s" % measure_version_form.data
+        message = "EDIT MEASURE: Request data: %s" % request.form
+        self.logger.info(message)
+        message = "EDIT MEASURE: WTForm data to update measure version: %s" % measure_version_form.data
         self.logger.info(message)
 
         subtopic_id_from_form = kwargs.get("subtopic_id")
@@ -359,15 +361,11 @@ class PageService(Service):
         if status is not None:
             measure_version.status = status
 
-        title = measure_version_form.data.pop("title").strip()
-        measure_version.title = title
         if measure_version.version == "1.0":
-            slug = slugify(title)
+            slug = slugify(measure_version_form.title.data)
 
             if slug != measure_version.measure.slug and self._new_slug_invalid(measure_version, slug):
-                message = (
-                    f"A page '{title}' with slug '{slug}' already exists under {measure_version.measure.subtopic.title}"
-                )
+                message = f"A page with slug '{slug}' already exists under {measure_version.measure.subtopic.title}"
                 raise PageExistsException(message)
             measure_version.measure.slug = slug
 
@@ -442,7 +440,6 @@ class PageService(Service):
         if measure_version.published_at is None:
             measure_version.published_at = date.today()
 
-        measure_version.published = True
         measure_version.latest = True
         message = 'measure_version "{}" published on "{}"'.format(
             measure_version.id, measure_version.published_at.strftime("%Y-%m-%d")
@@ -507,12 +504,8 @@ class PageService(Service):
     @staticmethod
     def mark_measure_versions_unpublished(measure_versions):
         for measure_version in measure_versions:
-            measure_version.published = False
-            measure_version.unpublished_at = datetime.datetime.now()
+            measure_version.unpublished_at = datetime.utcnow()
             measure_version.status = "UNPUBLISHED"
-
-            # TODO: Don't unset this (need to update logic around whether published or not)
-            measure_version.published_at = None
 
             db.session.commit()
 

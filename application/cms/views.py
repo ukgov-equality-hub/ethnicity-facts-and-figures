@@ -37,7 +37,6 @@ from application.cms.models import publish_status, Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.utils import copy_form_errors, get_data_source_forms, get_form_errors, ErrorSummaryMessage
-from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
 
@@ -314,8 +313,13 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             diffs = _diff_updates(measure_version_form, measure_version)
             if diffs:
                 flash("Your update will overwrite the latest content. Resolve the conflicts below", "error")
+
+                # Need to manually update the `db_version_id`, otherwise when the form is re-submitted it will just
+                # throw the same error.
+                measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
             else:
                 flash("Your update will overwrite the latest content. Reload this page", "error")
+
         except PageUnEditable as e:
             current_app.logger.info(e)
             flash(str(e), "error")
@@ -483,7 +487,7 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             )
 
             # If the page was saved before sending to review form's db_version_id will be out of sync, so update it
-            measure_version_form.db_version_id.data = measure_version.db_version_id
+            measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
 
             data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=measure_version)
 
@@ -940,8 +944,7 @@ def get_valid_classifications():
     request_data = request.json["data"]
     valid_classifications_data = current_app.classification_finder.find_classifications(request_data)
 
-    return_data = Builder2FrontendConverter(valid_classifications_data).convert_to_builder2_format()
-    return json.dumps({"presets": return_data}), 200
+    return json.dumps({"classifications": valid_classifications_data}), 200
 
 
 @cms_blueprint.route("/set-dimension-order", methods=["POST"])
