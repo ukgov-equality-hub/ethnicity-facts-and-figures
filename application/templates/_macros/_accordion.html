@@ -8,7 +8,7 @@
     {% for item in items %}
 
       <div class="govuk-accordion__section {% if item.expanded %}govuk-accordion__section--expanded{% endif %}">
-        <div class="govuk-accordion__section-header">
+        <div class="govuk-accordion__section-header"  {% if item.section_header_attributes%}{{ item.section_header_attributes | html_params | safe }}{% endif %}>
           <h{{ headingLevel }} class="govuk-accordion__section-heading">
             <span class="govuk-accordion__section-button" id="{{ id }}-heading-{{ loop.index }}">
               {{ item.heading.html | safe if item.heading.html else item.heading.text }}
