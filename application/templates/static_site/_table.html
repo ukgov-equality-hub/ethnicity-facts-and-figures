@@ -22,7 +22,7 @@
       {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length > 1) %}
 
         <tr class="govuk-table__row">
-          <th class="govuk-table__header first eff-table__header--border-right"> </th>
+          <td class="govuk-table__header first eff-table__header--border-right"> </td>
           {% for group_column in dimension.dimension_table.table_object.group_columns %}
               {% if group_column %}
                   <th colspan="{{ dimension.dimension_table.table_object.columns|length }}" class="govuk-table__header eff-table__cell--padding-left {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
