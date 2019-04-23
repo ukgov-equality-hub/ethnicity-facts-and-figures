@@ -1011,6 +1011,7 @@ class Topic(db.Model):
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)  # a sentence below topic heading on homepage
     additional_description = db.Column(db.TEXT, nullable=True)  # short paragraph displayed on topic page
+    meta_description = db.Column(db.TEXT, nullable=True)  # sentence or two for search engines and social sharing
 
     # relationships
     subtopics = db.relationship("Subtopic", back_populates="topic", order_by="asc(Subtopic.position)")

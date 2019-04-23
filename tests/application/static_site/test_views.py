@@ -631,6 +631,19 @@ def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
     assert bool(page(string=re.compile("Test subtopic page"))) is empty_subtopic_should_be_visible
 
 
+def test_topic_meta_description(test_app_client, logged_in_rdu_user):
+    TopicFactory(slug="test-topic", meta_description="I'm a description sentence for search engines.")
+
+    resp = test_app_client.get(url_for("static_site.topic", topic_slug="test-topic"))
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    assert resp.status_code == 200
+
+    meta_description = page.findAll("meta", property="description")
+    assert len(meta_description) == 1, f"Missing meta description on topic page"
+    assert meta_description[0].get("content") == "I'm a description sentence for search engines."
+
+
 def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(
     test_app_client, logged_in_rdu_user
 ):
