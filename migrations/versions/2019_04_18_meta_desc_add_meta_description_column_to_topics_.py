@@ -2,7 +2,7 @@
 
 
 Revision ID: 2019_04_18_meta_desc
-Revises: 2019_04_16_drop_published_bool
+Revises: 2019_04_18_add_topic_short_title
 Create Date: 2019-04-18 13:56:13.692874
 
 """
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "2019_04_18_meta_desc"
-down_revision = "2019_04_16_drop_published_bool"
+down_revision = "2019_04_18_add_topic_short_title"
 branch_labels = None
 depends_on = None
 
