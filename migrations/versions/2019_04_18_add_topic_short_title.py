@@ -1,4 +1,4 @@
-"""empty message
+"""Add short title for topics
 
 Revision ID: 2019_04_18_add_topic_short_title
 Revises: 2019_04_16_drop_published_bool
