@@ -1022,10 +1022,7 @@ class Topic(db.Model):
 
     @property
     def short_title_or_title(self):
-        if self.short_title:
-            return self.short_title
-        else:
-            return self.title
+        return self.short_title or self.title
 
 
 class Subtopic(db.Model):
