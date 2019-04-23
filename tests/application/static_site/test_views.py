@@ -312,7 +312,7 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
 
 
 def test_view_topic_page(test_app_client, logged_in_rdu_user):
-    topic = TopicFactory(title="Test topic page")
+    topic = TopicFactory(title="Test topic page", short_title="Testing")
     resp = test_app_client.get(url_for("static_site.topic", topic_slug=topic.slug))
 
     assert resp.status_code == 200
@@ -532,7 +532,7 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     number_of_topics, row_counts, test_app_client, logged_in_rdu_user
 ):
     for i in range(number_of_topics):
-        topic = TopicFactory(slug=f"topic-{i}", title=f"Test topic page #{i}")
+        topic = TopicFactory(slug=f"topic-{i}", title=f"Test topic page #{i}", short_title=f"Testing #{i}")
         subtopic = SubtopicFactory(slug=f"subtopic-{i}", title=f"Test subtopic page #{i}", topic=topic)
         measure = MeasureFactory(slug=f"measure-{i}", subtopics=[subtopic])
         MeasureVersionFactory(status="APPROVED", title=f"Test measure page #{i}", version="1.0", measure=measure)
@@ -546,6 +546,9 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     assert len(topic_rows) == len(row_counts)
     for i, topic_row in enumerate(topic_rows):
         assert len(topic_rows[i].select(".topic")) == row_counts[i]
+
+    for i in range(number_of_topics):
+        assert page.select(".topic a")[i].text.strip() == f"Testing #{i}"
 
 
 @pytest.mark.parametrize(
