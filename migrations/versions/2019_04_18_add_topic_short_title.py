@@ -1,6 +1,6 @@
 """empty message
 
-Revision ID: c0dc0cf68e07
+Revision ID: 2019_04_18_add_topic_short_title
 Revises: 2019_04_16_drop_published_bool
 Create Date: 2019-04-18 15:23:51.211497
 
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'add_topic_short_title'
+revision = '2019_04_18_add_topic_short_title'
 down_revision = '2019_04_16_drop_published_bool'
 branch_labels = None
 depends_on = None
