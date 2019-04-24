@@ -32,6 +32,16 @@ def index():
     )
 
 
+@static_site_blueprint.route("/ethnicity-in-the-uk/<page_name>")
+@login_required
+def ethnicity_in_the_uk_page(page_name):
+    if page_name.lower() in {"ethnic-groups-by-sexual-identity"}:
+        f = page_name.replace("-", "_")
+        return render_template("static_site/static_pages/ethnicity_in_the_uk/%s.html" % f)
+    else:
+        abort(404)
+
+
 @static_site_blueprint.route("/ethnic-groups")
 @login_required
 def ethnic_groups():
