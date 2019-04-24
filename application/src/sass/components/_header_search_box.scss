@@ -27,6 +27,7 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
   position: relative;
   background: #fff;
   overflow: hidden;
+  margin-bottom: 13px; /* This is to match the spacing above. */
 
   @media (max-width: 769px) {
     @include govuk-responsive-margin(3, 'bottom')
