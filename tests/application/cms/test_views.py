@@ -978,3 +978,72 @@ def test_view_measure_version_by_measure_version_id_404_if_no_measure_version(te
     response = test_app_client.get(url_for("cms.view_measure_version_by_measure_version_id", measure_version_id=456))
 
     assert response.status_code == 404
+
+
+class _TestVisualisationBuilder:
+    ROUTE_NAME = None
+
+    def builder_url(self, measure_version):
+        if not self.ROUTE_NAME:
+            raise NotImplementedError
+
+        return url_for(
+            self.ROUTE_NAME,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+            dimension_guid=measure_version.dimensions[0].guid,
+        )
+
+    def test_custom_classification_select_populates_with_known_classification(
+        self, test_app_client, logged_in_rdu_user
+    ):
+        measure_version = MeasureVersionWithDimensionFactory(version="1.0")
+        response = test_app_client.get(self.builder_url(measure_version))
+
+        assert response.status_code == 200
+        page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+        classification_select = page.find("select", {"id": "custom_classification__selector"})
+        classification_options = classification_select.find_all("option")
+        assert len(classification_options) == 29
+        assert {option.get_text(strip=True) for option in classification_options} == {
+            "4 - Asian, Black, White, Other inc Mixed",
+            "4 - Black, Mixed, White, Other inc Asian",
+            "5 - Asian, Black, White British, White other, Other inc Mixed",
+            "6 - Asian, Black African, Black Caribbean, Black other, White, Other",
+            "6 - Asian, Black African, Black Caribbean, Black other, White, Other - Aggregates",
+            "6 - Asian, Black, Mixed, White British, White other, Other",
+            "6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",
+            "6 - Indian, Pakistani and Bangladeshi, Black, Mixed, White, Other",
+            "7 - Asian, Black, Chinese, Mixed, White British, White other, Other",
+            "7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",
+            "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",
+            "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White "
+            "British, White other, Other - Aggregates",
+            "APS detailed - 13",
+            "APS detailed - 13 - Aggregates",
+            "Annual population survey - 9",
+            "DfE - 18+1",
+            "DfE - 6+1",
+            "Family resources survey - 10",
+            "Longitudinal education outcomes - 10",
+            "Longitudinal education outcomes - 10 - Aggregates",
+            "Not applicable",
+            "ONS 2001 - 16+1",
+            "ONS 2001 - 5+1",
+            "ONS 2011 - 18+1",
+            "ONS 2011 - 5+1",
+            "Please select",
+            "Well-being survey - 12",
+            "White British and Other",
+            "White and Other",
+        }  # TODO: Fix to use definitions/lookups from `test_data: https://trello.com/c/fwYpIWkD
+
+
+class TestChartBuilder(_TestVisualisationBuilder):
+    ROUTE_NAME = "cms.create_chart"
+
+
+class TestTableBuilder(_TestVisualisationBuilder):
+    ROUTE_NAME = "cms.create_table"
