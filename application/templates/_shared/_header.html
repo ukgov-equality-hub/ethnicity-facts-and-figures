@@ -18,9 +18,6 @@
         <span itemprop="name"><a class="govuk-header__link govuk-header__link--service-name" itemprop="url" href="{{ (config.RDU_SITE | strip_trailing_slash) if static_mode else '' }}{{ url_for('static_site.index') }}" id="proposition-name">
           Ethnicity facts and figures
         </a></span>
-        <ul id="navigation" class="govuk-header__navigation" aria-label="Top Level Navigation">
-          <li class="govuk-header__navigation-item"><a href="{{ url_for('static_site.background') }}" class="govuk-header__link">Background</a></li>
-        </ul>
       </nav>
     </div>
     <div class="govuk-header__content eff-header--one-third">
