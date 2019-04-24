@@ -5,7 +5,6 @@
 {% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
-    {"url": url_for('static_site.ethnicity_in_the_uk'), "text": "Ethnicity in the UK"},
   ]
 %}
 
@@ -14,9 +13,6 @@
 {% block googleAnalytics %}ga('set','contentGroup1','Ethnicity in the UK');{% endblock %}
 
 {% block socialDescription %}There are 18 ethnic groups recommended for use by government in England and Wales. Find out how the ethnic groups were chosen, and see how the groups differ in Scotland and Northern Ireland.{% endblock %}
-
-
-{% block headEnd %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.ethnicity_in_the_uk_page', page_name='ethnic-groups-and-data-collected') }}">{% endblock %}
 
 
 {% block content %}
