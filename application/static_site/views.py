@@ -32,12 +32,6 @@ def index():
     )
 
 
-@static_site_blueprint.route("/ethnicity-in-the-uk")
-@login_required
-def ethnicity_in_the_uk():
-    return render_template("static_site/static_pages/ethnicity_in_the_uk.html")
-
-
 @static_site_blueprint.route("/ethnicity-in-the-uk/<page_name>")
 @login_required
 def ethnicity_in_the_uk_page(page_name):
