@@ -1009,8 +1009,10 @@ class Topic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(64), nullable=False)
     title = db.Column(db.String(255), nullable=False)
+    short_title = db.Column(db.String(255), nullable=True)
     description = db.Column(db.Text, nullable=True)  # a sentence below topic heading on homepage
     additional_description = db.Column(db.TEXT, nullable=True)  # short paragraph displayed on topic page
+    meta_description = db.Column(db.TEXT, nullable=True)  # sentence or two for search engines and social sharing
 
     # relationships
     subtopics = db.relationship("Subtopic", back_populates="topic", order_by="asc(Subtopic.position)")
@@ -1018,6 +1020,10 @@ class Topic(db.Model):
     @property
     def has_published_measures(self):
         return any(subtopic.has_published_measures for subtopic in self.subtopics)
+
+    @property
+    def short_title_or_title(self):
+        return self.short_title or self.title
 
 
 class Subtopic(db.Model):

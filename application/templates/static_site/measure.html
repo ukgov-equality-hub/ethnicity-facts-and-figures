@@ -215,15 +215,9 @@
 
       {% if measure_version.ethnicity_definition_summary %}
 
-        {% set ethnicCategoriesHTML %}
-          {{ measure_version.ethnicity_definition_summary | render_markdown }}
-          <p class="govuk-body"><a class="govuk-link" href="{{ url_for('static_site.ethnicity_in_the_uk') }}">Ethnic groups and how data on ethnicity is collected</a></p>
-        {% endset %}
-
-
         {{ govukDetails(
           summaryText="The ethnic categories used in this data",
-          html=ethnicCategoriesHTML,
+          html=measure_version.ethnicity_definition_summary | render_markdown,
           id="the-ethnic-categories-used-in-this-data",
           attributes={
             "data-on":"click",

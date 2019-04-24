@@ -172,6 +172,7 @@ class TopicFactory(factory.alchemy.SQLAlchemyModelFactory):
     id = factory.Sequence(lambda x: x)
     slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
     title = factory.Faker("sentence", nb_words=6)
+    short_title = None
     description = factory.Faker("paragraph", nb_sentences=3)
     additional_description = factory.Faker("paragraph", nb_sentences=5)
 

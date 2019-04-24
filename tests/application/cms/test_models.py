@@ -16,6 +16,7 @@ from tests.models import (
     DimensionFactory,
     TableFactory,
     ChartFactory,
+    TopicFactory,
 )
 
 
@@ -930,3 +931,13 @@ class TestTableModel:
             "settings_and_source_data": {},
             "table_object": {"table": "object"},
         }
+
+
+class TestTopicModel:
+    def test_topic_with_short_title(self):
+        topic = TopicFactory.build(title="Long title", short_title="Short title")
+        assert topic.short_title_or_title == "Short title"
+
+    def test_topic_with_no_short_title(self):
+        topic = TopicFactory.build(title="Long title", short_title=None)
+        assert topic.short_title_or_title == "Long title"

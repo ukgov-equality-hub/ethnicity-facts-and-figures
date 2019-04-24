@@ -57,7 +57,7 @@
           <div class="govuk-grid-column-one-third topic">
             <li>
               <h3 class="govuk-heading-s govuk-!-margin-bottom-1">
-                  <a class="govuk-link" href="{{ url_for('static_site.topic', topic_slug=topic.slug) }}">{{ topic.title }}{% if topic.has_published_measures == false %} (not published){% endif %}</a>
+                  <a class="govuk-link" href="{{ url_for('static_site.topic', topic_slug=topic.slug) }}">{{ topic.short_title_or_title }}{% if topic.has_published_measures == false %} (not published){% endif %}</a>
               </h3>
               <p class="govuk-body">{{ topic.description }}</p>
             </li>
