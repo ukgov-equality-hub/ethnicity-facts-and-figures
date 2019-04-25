@@ -119,7 +119,9 @@
             {% if loop.first %}
               {% set data_order = data.order if data.order else row_loop.index0 %}
               {% set row_scope = 'rowgroup' if data.relationships and data.relationships.is_parent else 'row' %}
-              <th class="govuk-table__header eff-table__header--border-right eff-table__header--dense" data-sort-value="{{ data_order }}" scope="{{ row_scope }}">{{ data.category }}</th>
+
+              {% set th_class = 'eff-table__header--child' if dimension.dimension_table.table_object.parent_child and not data.relationships.is_parent else '' %}
+              <th class="govuk-table__header eff-table__header--border-right eff-table__header--dense {{ th_class }}" data-sort-value="{{ data_order }}" scope="{{ row_scope }}">{{ data.category }}</th>
             {% endif %}
 
             {# We only want the 'eff-table-__header-border-right' class on the last column within each group #}
