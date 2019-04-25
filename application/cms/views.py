@@ -774,6 +774,7 @@ def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         measure=measure,
         measure_version=measure_version,
         dimension=dimension,
+        classification_options=__get_classification_finder_classifications(),
     )
 
 
@@ -799,6 +800,7 @@ def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         measure=measure,
         measure_version=measure_version,
         dimension=dimension,
+        classification_options=__get_classification_finder_classifications(),
     )
 
 
