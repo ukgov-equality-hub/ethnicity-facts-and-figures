@@ -25,7 +25,11 @@ if these steps are carried out of order it is possible for a redirect a user to 
 def _build_routing_rules_xml(redirects):
     root = Element("RoutingRules")
 
-    for r in redirects:
+    # Sort so that more specific redirects (i.e. with the most path fragments) are emitted first. Redirects with the
+    # same number of path fragments are sorted alphabetically.
+    # This prevents a more generic redirect rule, e.g. on `ethnicity-in-the-uk`, breaking the redirect
+    # of a more specific rule, e.g. `ethnicity-in-the-uk/ethnic-groups-and-data-collected`.
+    for r in sorted(redirects, key=lambda x: (-len(x.from_uri.split("/")), x.from_uri)):
         routing_rule = SubElement(root, "RoutingRule")
 
         condition = SubElement(routing_rule, "Condition")
