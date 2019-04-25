@@ -77,6 +77,11 @@
   vertical-align: top;
 }
 
+/* Indent the table header and make it non-bold
+ *
+ * This is useful where there is a parent-child relationship
+ * between rows (eg broad and specific ethnic groups).
+ */
 .eff-table__header--child {
   @include govuk-typography-weight-regular();
   padding-left: 10px;
