@@ -37,3 +37,23 @@ def test_delete_redirect(test_app_client, logged_in_rdu_user):
     # AND output does contain redirect michigan to main
     assert "<KeyPrefixEquals>%s</KeyPrefixEquals" % "michigan" in xml_string
     assert "<ReplaceKeyPrefixWith>%s</ReplaceKeyPrefixWith" % "maine" in xml_string
+
+
+def test_redirect_ordering_sorts_by_most_path_fragments_then_alphabetical(test_app_client, logged_in_rdu_user):
+    # GIVEN a database with redirects in it
+    add_redirect_rule(from_uri="generic", to_uri="new")
+    add_redirect_rule(from_uri="generic/specific", to_uri="specific")
+    add_redirect_rule(from_uri="lots/of/path/fragments", to_uri="blah")
+    add_redirect_rule(from_uri="alphabetic/test", to_uri="specific")
+
+    resp = test_app_client.get(url_for("redirects.index"))
+    assert resp.status_code == 200
+    xml_string = str(resp.data)
+
+    # THEN the redirects are ordered with most path fragments first, and alphabetically within those groups.
+    assert (
+        xml_string.index("<KeyPrefixEquals>lots/of/path/fragments</KeyPrefixEquals>")
+        < xml_string.index("<KeyPrefixEquals>alphabetic/test</KeyPrefixEquals>")
+        < xml_string.index("<KeyPrefixEquals>generic/specific</KeyPrefixEquals>")
+        < xml_string.index("<KeyPrefixEquals>generic</KeyPrefixEquals>")
+    )
