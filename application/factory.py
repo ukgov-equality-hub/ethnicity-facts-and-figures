@@ -4,6 +4,7 @@ import re
 import sys
 import logging
 
+from jinja2 import StrictUndefined
 from jinja2.ext import do as jinja_do
 
 from flask import Flask, render_template, request, send_from_directory
@@ -122,6 +123,9 @@ def create_app(config_object):
 
     register_errorhandlers(app)
     app.after_request(harden_app)
+
+    # Make sure all variables referenced in templates are explicitly defined
+    app.jinja_env.undefined = StrictUndefined
 
     # Render jinja templates with less whitespace; applies to both CMS and static build
     app.jinja_env.trim_blocks = True
