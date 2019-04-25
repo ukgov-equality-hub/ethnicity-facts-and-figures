@@ -33,7 +33,7 @@ from application.cms.forms import (
     NewVersionForm,
     UploadForm,
 )
-from application.cms.models import NewVersionType
+from application.cms.models import NewVersionType, MeasureVersion, Measure
 from application.cms.models import Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
@@ -99,12 +99,14 @@ def create_measure(topic_slug, subtopic_slug):
         data_source_2_form=data_source_2_form,
         topic=topic,
         subtopic=subtopic,
-        measure={},
-        measure_version={},
+        measure=Measure(),
+        measure_version=MeasureVersion(),
         new=True,
         organisations_by_type=Organisation.select_options_by_type(),
         topics=page_service.get_topics(include_testing_space=True),
         errors=get_form_errors(forms=(form, data_source_form, data_source_2_form)),
+        data_not_uploaded_error=False,
+        dimensions_not_complete_error=False,
     )
 
 
@@ -354,6 +356,9 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "organisations_by_type": Organisation.select_options_by_type(),
         "topics": page_service.get_topics(include_testing_space=True),
         "errors": get_form_errors(forms=[measure_version_form, data_source_form, data_source_2_form]),
+        "new": False,
+        "data_not_uploaded_error": False,
+        "dimensions_not_complete_error": False,
     }
 
     return render_template("cms/edit_measure_version.html", **context)
@@ -519,6 +524,7 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 ),
                 "data_not_uploaded_error": data_not_uploaded_error,
                 "dimensions_not_complete_error": dimensions_not_complete_error,
+                "new": False,
             }
 
             return render_template("cms/edit_measure_version.html", **context), 400

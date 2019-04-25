@@ -7,7 +7,7 @@
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
     {"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_version.measure.subtopic.topic.title},
   ]
-  if not preview else
+  if preview | default(true) else
   none
 %}
 
@@ -37,14 +37,14 @@
                           version=version) }}"/>
 
 
-  {% if not static_mode and not preview %}
+  {% if not static_mode and (preview is undefined or not preview) %}
     {% call status_banner(sticky=False) %}
       <div class="left">
-          <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure_version.version }}{% endif %}</b></span>
+          <span class="info">Version&nbsp;<b>{{ measure_version.version }}</b></span>
       </div>
       <div>
           <span class="info" id="status">
-              Status:&nbsp;<b>{{ ("DRAFT" if new else measure_version.status) | format_status | safe }}</b>
+              Status:&nbsp;<b>{{ measure_version.status | format_status | safe }}</b>
           </span>
 
           {% if measure_version.measure.versions|length > 1 %}
@@ -569,9 +569,9 @@
                   <meta itemprop="name" content="{{ file.title | striptags }}">
                   <a class="govuk-link govuk-!-font-size-19" itemprop="contentUrl" href="{{ measure_version_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
                         {{ file.title }}
-                        {{ " - Spreadsheet " if file.extension() == "csv" }}
-                        {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
-                        {{ " - Open Document Format " if file.extension() == "odf" }}
+                        {{ " - Spreadsheet " if file.extension() == "csv" else "" }}
+                        {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" else "" }}
+                        {{ " - Open Document Format " if file.extension() == "odf" else "" }}
                         ({{ file.extension() }})
                         {{ file.size|filesize }}
                   </a>

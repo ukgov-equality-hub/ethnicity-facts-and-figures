@@ -9,7 +9,7 @@
           <div>
             <span><a class="govuk-link" href="https://www.ethnicity-facts-figures.service.gov.uk">Live website</a></span>
 
-            {% if not current_user.is_anonymous and not preview %}
+            {% if not current_user.is_anonymous and (preview is undefined or not preview) %}
               <span><a class="govuk-link" href="{{ url_for('static_site.topic', topic_slug=TESTING_SPACE_SLUG) }}">Testing space</a></span>
 
               {% if current_user.is_authenticated and current_user.can(MANAGE_USERS) %}

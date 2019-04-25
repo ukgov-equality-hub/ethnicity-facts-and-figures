@@ -8,16 +8,17 @@
     {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
   ]
 %}
-{% set form_disabled = not (measure_version.status == "DRAFT" or new) %}
+{% set form_disabled = false if (new is defined and new) else measure_version.status != 'DRAFT' %}
 
-{% block pageTitle %}{{ measure_version.title }}{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
+{% block pageTitle %}{{ measure_version.title | default('Create a measure', true) }}{% endblock %}
 
 {% block content %}
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}{% else %}{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}{% endif %}">
         {{ form.csrf_token }}
         {% call status_banner() %}
             <div class="left">
-                <span class="info">Version&nbsp;<b>{{ measure_version.version }}</b></span>
+                <span class="info">Version&nbsp;<b>{{ '1.0' if new else measure_version.version }}</b></span>
             </div>
             <div>
                 <span class="info" id="status">
@@ -82,7 +83,7 @@
                 </div>
             {% endif %}
 
-            {%  if measure_version.status == 'DRAFT' or new %}
+            {%  if new or measure_version.status == 'DRAFT' %}
                  <button class="govuk-button" type="submit" name="save">Save</button>
             {% endif %}
 
@@ -128,7 +129,7 @@
                     <div class="govuk-form-group">
                         <label class="govuk-label" for="subtopic">Topic</label>
                         <select id="subtopic" name="subtopic" class="govuk-select sub-topic"
-                                {% if form_disabled or (measure_version and measure_version.version != '1.0') or new %}disabled{% endif %}>
+                                {% if form_disabled or new or (measure_version and measure_version.version != '1.0') %}disabled{% endif %}>
                             {% for topic in topics %}
                                 <optgroup label="{{ topic.title }}">
                                     {% for st in topic.subtopics %}

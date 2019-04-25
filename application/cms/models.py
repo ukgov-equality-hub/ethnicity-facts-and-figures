@@ -401,7 +401,7 @@ class MeasureVersion(db.Model, CopyableModel):
 
     @property
     def available_actions(self):
-        if self.measure.subtopic.topic.slug == TESTING_SPACE_SLUG:
+        if self.measure and self.measure.subtopic.topic.slug == TESTING_SPACE_SLUG:
             return ["UPDATE"]
 
         if self.status == "DRAFT":
