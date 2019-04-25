@@ -26,6 +26,7 @@ class Config:
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
     WTF_CSRF_ENABLED = True
     SESSION_COOKIE_SECURE = True
+    STATIC_MODE = False
 
     GITHUB_ACCESS_TOKEN = os.environ["GITHUB_ACCESS_TOKEN"]
     HTML_CONTENT_REPO = os.environ.get("HTML_CONTENT_REPO", "rd_html_dev")

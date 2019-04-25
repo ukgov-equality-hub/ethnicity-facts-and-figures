@@ -51,6 +51,7 @@ from application.static_site.filters import (
     format_iso8601_date,
     html_params,
 )
+from application.utils import get_bool
 
 
 def create_app(config_object):
@@ -203,6 +204,7 @@ def create_app(config_object):
             get_content_security_policy=get_content_security_policy,
             current_timestamp=datetime.datetime.now().isoformat(),
             get_form_errors=get_form_errors,
+            static_mode=get_bool(request.args.get("static_mode", app.config["STATIC_MODE"])),
         )
 
     return app

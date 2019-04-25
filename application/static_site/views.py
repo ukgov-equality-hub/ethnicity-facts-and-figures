@@ -1,4 +1,5 @@
 import os
+
 from tempfile import NamedTemporaryFile
 
 from botocore.exceptions import ClientError
@@ -13,7 +14,6 @@ from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
 from application.utils import (
-    get_bool,
     get_csv_data_for_download,
     write_dimension_csv,
     write_dimension_tabular_csv,
@@ -25,11 +25,7 @@ from application.utils import cleanup_filename
 @static_site_blueprint.route("")
 @login_required
 def index():
-    return render_template(
-        "static_site/index.html",
-        topics=page_service.get_topics(include_testing_space=False),
-        static_mode=get_bool(request.args.get("static_mode", False)),
-    )
+    return render_template("static_site/index.html", topics=page_service.get_topics(include_testing_space=False))
 
 
 @static_site_blueprint.route("/ethnicity-in-the-uk/<page_name>")
@@ -92,11 +88,7 @@ def topic(topic_slug):
     }
 
     return render_template(
-        "static_site/topic.html",
-        topic=topic,
-        subtopics=subtopics,
-        measures_by_subtopic=measures_by_subtopic,
-        static_mode=get_bool(request.args.get("static_mode", False)),
+        "static_site/topic.html", topic=topic, subtopics=subtopics, measures_by_subtopic=measures_by_subtopic
     )
 
 
@@ -151,11 +143,7 @@ def measure_version(topic_slug, subtopic_slug, measure_slug, version):
         abort(404)
 
     return render_template(
-        "static_site/measure.html",
-        topic_slug=topic_slug,
-        subtopic_slug=subtopic_slug,
-        measure_version=measure_version,
-        static_mode=get_bool(request.args.get("static_mode", False)),
+        "static_site/measure.html", topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_version=measure_version
     )
 
 
