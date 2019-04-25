@@ -77,6 +77,11 @@
   vertical-align: top;
 }
 
+.eff-table__header--child {
+  @include govuk-typography-weight-regular();
+  padding-left: 10px;
+}
+
 
 /* Styles to keep measure page tables constrained to a fixed height */
 
