@@ -432,12 +432,12 @@
 
           <div class="govuk-accordion__section-content" id="data-sources-content" aria-labelledby="data-sources-heading">
             <div itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
+            {% if measure_version.primary_data_source %}
             <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Source</h3>
             <p class="govuk-body" itemprop="name"><a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.title }}" itemprop="url">
                 {{ measure_version.primary_data_source.title }}</a>
             </p>
 
-            {% if measure_version.primary_data_source %}
               {% if measure_version.primary_data_source.type_of_data %}
               <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of data</h3>
               <p class="govuk-body">{{ measure_version.primary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
