@@ -52,21 +52,6 @@
         {%  endfor %}
       {%  endfor %}
     {%  endfor %}
-
-    {% for page in pages %}
-        <tr class="govuk-table__row">
-        <td class="govuk-table__cell eff-table__cell--align-top">{{ page.topic }}</td>
-        <td class="govuk-table__cell eff-table__cell--align-top">{{ page.subtopic }}</td>
-        <td class="govuk-table__cell eff-table__cell--align-top">
-          <a class="govuk-link" href="{{ page.measure_url }}">{{ page.measure }}</a>
-            {% for dimension in page.dimensions %}
-                <ul class="dimensions">
-                   <li><a class="govuk-link" href="{{ page.measure_url }}#{{ dimension.dimension|slugify_value }}">… {{ dimension.short_title }}</a></li>
-                </ul>
-            {%  endfor %}
-        </td>
-      </tr>
-    {%  endfor %}
     </tbody>
   </table>
 
