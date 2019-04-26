@@ -35,7 +35,6 @@
 
     <tbody class="govuk-table__body">
       {% for ethnicity_classification in ethnicity_classifications %}
-          {% set has_broad_group = ethnicity_classification.parent_values|length > 0 %}
             <tr class="govuk-table__row">
               <th class="govuk-table__cell eff-table__cell--dense govuk-!-font-weight-regular"><a class="govuk-link" href="/dashboards/ethnicity-classifications/{{ ethnicity_classification.id }}">{{ ethnicity_classification.title }}</a></th>
               <td class="govuk-table__cell  eff-table__cell--dense govuk-table__cell--numeric">{{ ethnicity_classification.measure_count }}</td>
