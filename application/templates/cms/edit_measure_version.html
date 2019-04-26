@@ -360,64 +360,64 @@
                     }
                 })
             }
+
+            function moveDimensionUp(event) {
+                event.preventDefault();
+                var row = $(event.currentTarget).parents('tr:first');
+                if (row.prev().length > 0) {
+                    row.insertBefore(row.prev());
+                    syncDimensionOrder();
+                }
+            }
+
+            function moveDimensionDown(event) {
+                event.preventDefault();
+                var row = $(event.currentTarget).parents('tr:last');
+                if (row.next().length > 0) {
+                    row.insertAfter(row.next());
+                    syncDimensionOrder();
+                }
+            }
+
+            function syncDimensionOrder() {
+                var rows = $('tr.eff-movable'),
+                    dimensions = [],
+                    guid;
+
+                $(rows).each(function (index, row) {
+                    guid = $(row).data('dimension-guid');
+                    dimensions.push({"index": index, "guid": guid});
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ url_for('cms.set_dimension_order') }}",
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({"dimensions": dimensions}),
+                    success: function (data) {
+                        console.log('Set order for dimensions:', dimensions);
+                    },
+                    error: function (data) {
+                        console.log('Error setting order for dimensions:', dimensions);
+                    }
+                });
+            }
+
+            function getPreviewUrl(event) {
+                event.preventDefault();
+                $.ajax({
+                    type: 'GET',
+                    url: "{{ url_for('review.get_new_review_url', id=measure_version.id)}}",
+                    success: function (data) {
+                        $('#review-url').html(data);
+                        initialiseCopy();
+                    },
+                    error: function(data) {
+                        $('#review-url').html('<span class="warning">Error trying to generate new preview url</span>');
+                    }
+                })
+            }
         {%  endif %}
-
-        function moveDimensionUp(event) {
-            event.preventDefault();
-            var row = $(event.currentTarget).parents('tr:first');
-            if (row.prev().length > 0) {
-                row.insertBefore(row.prev());
-                syncDimensionOrder();
-            }
-        }
-
-        function moveDimensionDown(event) {
-            event.preventDefault();
-            var row = $(event.currentTarget).parents('tr:last');
-            if (row.next().length > 0) {
-                row.insertAfter(row.next());
-                syncDimensionOrder();
-            }
-        }
-
-        function syncDimensionOrder() {
-            var rows = $('tr.eff-movable'),
-                dimensions = [],
-                guid;
-
-            $(rows).each(function (index, row) {
-                guid = $(row).data('dimension-guid');
-                dimensions.push({"index": index, "guid": guid});
-            });
-            $.ajax({
-                type: 'POST',
-                url: "{{ url_for('cms.set_dimension_order') }}",
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify({"dimensions": dimensions}),
-                success: function (data) {
-                    console.log('Set order for dimensions:', dimensions);
-                },
-                error: function (data) {
-                    console.log('Error setting order for dimensions:', dimensions);
-                }
-            });
-        }
-
-        function getPreviewUrl(event) {
-            event.preventDefault();
-            $.ajax({
-                type: 'GET',
-                url: "{{ url_for('review.get_new_review_url', id=measure_version.id)}}",
-                success: function (data) {
-                    $('#review-url').html(data);
-                    initialiseCopy();
-                },
-                error: function(data) {
-                    $('#review-url').html('<span class="warning">Error trying to generate new preview url</span>');
-                }
-            })
-        }
 
         function copyToClipboard(event) {
             event.preventDefault();
