@@ -32,10 +32,9 @@
                             {{ form.upload(class="govuk-file-upload") }}
                         {% endif %}
                         </div>
+                        {{ form.title() }}
 
-                        {{ form.title(disabled=form_disabled) }}
-
-                        {{ form.description(disabled=form_disabled, rows='7',cols='100') }}
+                        {{ form.description(rows='7',cols='100') }}
 
                     {% endblock fields %}
                      <button type="submit" class="govuk-button" name="save">Save</button>
