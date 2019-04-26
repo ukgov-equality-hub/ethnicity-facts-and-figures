@@ -16,24 +16,30 @@
     <div class="table-container-inner">
 
       <div class="table-container">
-    <table class="govuk-table eff-table--dense measure-data {{ 'grouped' if dimension.dimension_table.table_object.type == 'grouped' }} {{ 'grouped-rows no-sort' if dimension.dimension_table.table_object.parent_child }}">
+    <table class="govuk-table govuk-!-margin-bottom-0">
     <thead class="govuk-table__head">
 
       {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length > 1) %}
 
         <tr class="govuk-table__row">
-          <td class="govuk-table__header first eff-table__header--border-right"> </td>
+          <td class="govuk-table__header eff-table__header--border-bottom-0 eff-table__header--border-right"> </td>
           {% for group_column in dimension.dimension_table.table_object.group_columns %}
               {% if group_column %}
-                  <th colspan="{{ dimension.dimension_table.table_object.columns|length }}" class="govuk-table__header eff-table__cell--padding-left {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
+                  <th colspan="{{ dimension.dimension_table.table_object.columns|length }}" class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--border-bottom-0 eff-table__header--padding-top-0 {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
               {% endif %}
           {% endfor %}
         </tr>
 
       {% endif %}
 
+
+      {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length == 1) %}
+        {% set th_class = "eff-table__header--border-bottom-0 eff-table__header--align-top eff-table__header--padding-top-0" %}
+      {% endif %}
+
       <tr>
-        <th class="govuk-table__header first eff-table__header--border-right eff-table__cell--padding-left" aria-sort="none">
+        <th class="govuk-table__header eff-table__header--border-right eff-table__header--dense eff-table__header--align-top eff-table__header--padding-top-0
+         {{ th_class }}" aria-sort="none">
             {% if dimension.dimension_table.table_object.category_caption %}
                 {{ dimension.dimension_table.table_object.category_caption }}
             {% else %}
@@ -50,7 +56,7 @@
                 {% set th_class = "eff-table__header--border-right" if (loop.index != loop.length) %}
 
                 {% if group_column %}
-                    <th class="govuk-table__header eff-table__cell--padding-left {{th_class}}" aria-sort="none"> {{ group}} {{ group_column|safe }}</th>
+                    <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--border-bottom-0  eff-table__header--padding-top-0 {{th_class}}" aria-sort="none"> {{ group}} {{ group_column|safe }}</th>
                 {% endif %}
             {% endfor %}
 
@@ -61,14 +67,14 @@
                 {% if group_column %}
                     {% for column in dimension.dimension_table.table_object.columns %}
                       {% set th_class = "eff-table__header--border-right" if loop.last and (group_loop.index != group_loop.length) %}
-                      <th class="govuk-table__header eff-table__cell--padding-left {{ th_class }}" aria-sort="none">{{ column }}</th>
+                      <th class="govuk-table__header govuk-table__header--numeric govuk-!-font-weight-regular eff-table__header--dense eff-table__header--align-top eff-table__header--padding-top-0 eff-table__cell--padding-left {{ th_class }}" aria-sort="none">{{ column }}</th>
                     {% endfor %}
                 {% endif %}
             {% endfor %}
           {% endif %}
         {% else %}
           {% for text in dimension.dimension_table.table_object.columns %}
-          <th aria-sort="none" class="govuk-table__header eff-table__cell--padding-left">
+          <th aria-sort="none" class="govuk-table__header govuk-table__header--numeric eff-table__cell--padding-left eff-table__header--dense">
             {{ text|safe }}
           </th>
           {% endfor %}
@@ -80,12 +86,12 @@
         {% for heading in dimension.dimension_table.table_object.columns %}
           {% if heading != '' %}
             <tr class="govuk-table__row">
-              <td class="govuk-table__cell eff-table__cell--border-right eff-table__cell--padding-left"></td>
+              <td class="govuk-table__cell eff-table__cell--border-right "></td>
               {% for group_column in dimension.dimension_table.table_object.group_columns %}
                 {% set th_class = "eff-table__header--border-right" if (loop.index != loop.length) %}
 
                 {% if group_column %}
-                  <th class="govuk-table__header eff-table__cell--padding-left {{th_class}}"> {{ heading }}</th>
+                  <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--padding-top-0 {{th_class}}"> {{ heading }}</th>
                 {% endif %}
               {% endfor %}
             </tr>
@@ -113,13 +119,15 @@
             {% if loop.first %}
               {% set data_order = data.order if data.order else row_loop.index0 %}
               {% set row_scope = 'rowgroup' if data.relationships and data.relationships.is_parent else 'row' %}
-              <th class="govuk-table__header eff-table__header--padding-left eff-table__header--border-right" data-sort-value="{{ data_order }}" scope="{{ row_scope }}">{{ data.category }}</th>
+
+              {% set th_class = 'eff-table__header--child' if dimension.dimension_table.table_object.parent_child and not data.relationships.is_parent else '' %}
+              <th class="govuk-table__header eff-table__header--border-right eff-table__header--dense {{ th_class }}" data-sort-value="{{ data_order }}" scope="{{ row_scope }}">{{ data.category }}</th>
             {% endif %}
 
             {# We only want the 'eff-table-__header-border-right' class on the last column within each group #}
             {% set td_class = "eff-table__header--border-right" if ((loop.index != loop.length) and (loop.index % (dimension.dimension_table.table_object.columns|length) == 0)) %}
 
-            <td data-sort-value="{{sort_value}}" class="govuk-table__cell eff-table__cell--padding-left {{ td_class }}">{{ value|value_filter|safe }}</td>
+            <td data-sort-value="{{sort_value}}" class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--padding-left eff-table__cell--dense {{ td_class }}">{{ value|value_filter|safe }}</td>
           {% endfor %}
         </tr>
 
@@ -134,7 +142,7 @@
 </div>
 <div class="table-footer">
 
-    <p class="missing-data-explanation govuk-body">
+    <p class="missing-data-explanation govuk-body govuk-!-margin-bottom-0">
         {% set table_data = dimension.dimension_table.table_object.data | flatten %}
 
         {% if "N/A" in table_data or "n/a" in table_data %}
