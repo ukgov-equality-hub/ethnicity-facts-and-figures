@@ -16,7 +16,7 @@
     <div class="table-container-inner">
 
       <div class="table-container">
-    <table class="govuk-table">
+    <table class="govuk-table govuk-!-margin-bottom-0">
     <thead class="govuk-table__head">
 
       {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length > 1) %}
@@ -142,7 +142,7 @@
 </div>
 <div class="table-footer">
 
-    <p class="missing-data-explanation govuk-body">
+    <p class="missing-data-explanation govuk-body govuk-!-margin-bottom-0">
         {% set table_data = dimension.dimension_table.table_object.data | flatten %}
 
         {% if "N/A" in table_data or "n/a" in table_data %}
