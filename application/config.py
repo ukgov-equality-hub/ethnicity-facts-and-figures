@@ -125,3 +125,8 @@ class TestConfig(DevConfig):
     ATTACHMENT_SCANNER_ENABLED = False
     ATTACHMENT_SCANNER_API_TOKEN = "fakeToken"
     ATTACHMENT_SCANNER_URL = "http://scanner-service"
+
+    # Prevent exception reporting under test as `AssertionError: Popped wrong request context.`
+    # While some report this don't work, it does seem to work for us.
+    # https://github.com/jarus/flask-testing/issues/21
+    PRESERVE_CONTEXT_ON_EXCEPTION = False
