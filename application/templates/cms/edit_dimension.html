@@ -28,7 +28,7 @@
                         {{ super() }}
                     {% endblock fields %}
 
-                    {% if 'UPDATE' in  measure_version.available_actions() %}
+                    {% if 'UPDATE' in  measure_version.available_actions %}
                     <button type="submit" class="govuk-button" name="update">
                         Update
                     </button>
@@ -45,10 +45,10 @@
                                     <td class="govuk-table__cell">{{ dimension.dimension_chart.chart_object.title.text }}</td>
                                     <td class="govuk-table__cell"><a class="govuk-link" id="edit_chart"
                                            href="{{ url_for('cms.create_chart', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
-                                        {% if 'UPDATE' in  measure_version.available_actions() %}edit{% else %}
+                                        {% if 'UPDATE' in  measure_version.available_actions %}edit{% else %}
                                             view{% endif %}</a></td>
                                     <td class="govuk-table__cell">
-                                    {% if 'UPDATE' in  measure_version.available_actions() %}
+                                    {% if 'UPDATE' in  measure_version.available_actions %}
                                         <form action="{{ url_for('cms.delete_chart', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}" method="post">
                                             {{ form.csrf_token }}
                                             <button id="delete_chart" class="eff-button--link">delete</button>
@@ -63,10 +63,10 @@
                                     <td class="govuk-table__cell">{{ dimension.dimension_table.table_object.header }}</td>
                                     <td class="govuk-table__cell"><a class="govuk-link" id="edit_table"
                                            href="{{ url_for('cms.create_table', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}">
-                                        {% if 'UPDATE' in  measure_version.available_actions() %}edit{% else %}
+                                        {% if 'UPDATE' in  measure_version.available_actions %}edit{% else %}
                                             view{% endif %}</a></td>
                                     <td class="govuk-table__cell">
-                                        {% if 'UPDATE' in  measure_version.available_actions() %}
+                                        {% if 'UPDATE' in  measure_version.available_actions %}
                                         <form action="{{ url_for('cms.delete_table', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}" method="post">
                                             {{ form.csrf_token }}
                                             <button id="delete_table" class="eff-button--link">delete</button>
@@ -77,7 +77,7 @@
                             {% endif %}
                           </tbody>
                         </table>
-                        {% if 'UPDATE' in  measure_version.available_actions() %}
+                        {% if 'UPDATE' in  measure_version.available_actions %}
 
                                 {% if not dimension.dimension_chart or (dimension.dimension_chart and (dimension.dimension_chart.chart_object is none or dimension.dimension_chart.chart_object == '""')) %}
                                 <p class="govuk-body">

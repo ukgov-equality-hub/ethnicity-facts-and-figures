@@ -1,5 +1,6 @@
 import json
 
+
 from flask import redirect, render_template, request, url_for, abort, flash, current_app, jsonify, session
 from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict
@@ -33,7 +34,7 @@ from application.cms.forms import (
     UploadForm,
 )
 from application.cms.models import NewVersionType
-from application.cms.models import publish_status, Organisation
+from application.cms.models import Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.utils import copy_form_errors, get_data_source_forms, get_form_errors, ErrorSummaryMessage
@@ -324,12 +325,6 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             current_app.logger.info(e)
             flash(str(e), "error")
 
-    current_status = measure_version.status
-    available_actions = measure_version.available_actions()
-    if "APPROVE" in available_actions:
-        numerical_status = measure_version.publish_status(numerical=True)
-        approval_state = publish_status.inv[(numerical_status + 1) % 6]
-
     if saved and "save-and-review" in request.form:
         return _send_to_review(
             topic_slug=measure_version.measure.subtopic.topic.slug,
@@ -355,9 +350,6 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "measure_version": measure_version,
         "data_source_form": data_source_form,
         "data_source_2_form": data_source_2_form,
-        "status": current_status,
-        "available_actions": available_actions,
-        "next_approval_state": approval_state if "APPROVE" in available_actions else None,
         "diffs": diffs,
         "organisations_by_type": Organisation.select_options_by_type(),
         "topics": page_service.get_topics(include_testing_space=True),
@@ -511,12 +503,6 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 data_not_uploaded_error = True
                 non_form_error_messages.append(ErrorSummaryMessage(text="Upload the source data", href="#source-data"))
 
-            current_status = measure_version.status
-            available_actions = measure_version.available_actions()
-            if "APPROVE" in available_actions:
-                numerical_status = measure_version.publish_status(numerical=True)
-                approval_state = publish_status.inv[numerical_status + 1]
-
             context = {
                 "form": measure_version_form,
                 "data_source_form": data_source_form,
@@ -525,9 +511,6 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 "subtopic": subtopic,
                 "measure": measure_version.measure,
                 "measure_version": measure_version,
-                "status": current_status,
-                "available_actions": available_actions,
-                "next_approval_state": approval_state if "APPROVE" in available_actions else None,
                 "organisations_by_type": Organisation.select_options_by_type(),
                 "topics": page_service.get_topics(include_testing_space=True),
                 "errors": get_form_errors(
