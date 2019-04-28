@@ -23,7 +23,7 @@
         <div class="govuk-grid-column-two-thirds">
           {% block measure_form %}
             <form method="POST" action="{{ url_for('cms.create_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version )}}">
-                {{ form.csrf_token }}
+                {{ form.csrf_token | default('') }}
                 {% block fields %}
 
                     {{ form.title(disabled=form_disabled) }}

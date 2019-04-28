@@ -15,7 +15,7 @@
 
 {% block content %}
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}{% else %}{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}{% endif %}">
-        {{ form.csrf_token }}
+        {{ form.csrf_token | default('') }}
         {% call status_banner() %}
             <div class="left">
                 <span class="info">Version&nbsp;<b>{{ '1.0' if new else measure_version.version }}</b></span>
@@ -236,7 +236,7 @@
                                         {% if 'UPDATE' in measure_version.available_actions %}edit{% else %}view{% endif %}</a></td>
                                 <td class="govuk-table__cell">{% if 'UPDATE' in measure_version.available_actions %}
                                     <form action="{{ url_for('cms.delete_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}" method="post">
-                                        {{ form.csrf_token }}
+                                        {{ form.csrf_token | default('') }}
                                         <button class="eff-button--link">delete</button>
                                     </form>
                                     {% endif %}
@@ -286,7 +286,7 @@
                                     <td class="govuk-table__cell">
                                         {% if 'UPDATE' in measure_version.available_actions %}
                                             <form action="{{ url_for('cms.delete_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}" method="post">
-                                                {{ form.csrf_token }}
+                                                {{ form.csrf_token | default('') }}
                                                 <button class="eff-button--link">delete</button>
                                             </form>
                                         {% endif %}
@@ -309,7 +309,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form id="measure-action-section__copy_measure_form-{{ measure_version.id }}" method="POST" action="{{ url_for('cms.copy_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
-                {{ form.csrf_token }}
+                {{ form.csrf_token | default('') }}
                 <button class="govuk-button copy-button" type="submit">Create a copy of this measure</button>
             </form>
         </div>

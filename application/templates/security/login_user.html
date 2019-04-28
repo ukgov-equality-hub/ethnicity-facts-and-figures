@@ -17,7 +17,7 @@ prefix does not get added there. #}
                 <h1 class="govuk-heading-xl">Login</h1>
 
                 <form action="{{ url_for('security.login') }}" method="post">
-                    {{ login_user_form.csrf_token }}
+                    {{ login_user_form.csrf_token | default('') }}
 
                     {{ login_user_form.email }}
 
