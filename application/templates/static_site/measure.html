@@ -319,7 +319,7 @@
                                    measure_slug=measure_version.measure.slug,
                                    version=version,
                                    filename=dimension.static_table_file_name) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.dimension_table.table_object.header}}"
-                                 download="{{ dimension.dimension_table.static_table_file_name }}">Download table data (CSV)</a>
+                                 download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
                           {% else %}
                               <a class="govuk-link" href="{{ url_for('static_site.dimension_file_table_download',
                                    topic_slug=topic_slug,
