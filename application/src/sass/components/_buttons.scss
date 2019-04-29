@@ -98,9 +98,9 @@ $eff-quiet-button-hover-colour: mix($black, $eff-quiet-button-colour, 15%);
 
 /* Link button
 
-   Use on buttons that should look like they're links
+   Use on buttons that should look like they're links,
+   except with no underline.
 */
-
 .eff-button--link {
   color: govuk-colour("blue");
   font-size: inherit;
@@ -111,4 +111,19 @@ $eff-quiet-button-hover-colour: mix($black, $eff-quiet-button-colour, 15%);
   background-color: transparent;
   box-shadow: none;
   cursor: pointer;
+}
+
+.eff-button--link:active {
+  color: govuk-colour("blue");
+}
+
+.eff-button--link:focus,
+.eff-button--link:focus:hover {
+  background-color: $govuk-focus-colour;
+  color: $govuk-focus-text-colour;
+}
+
+.eff-button--link:hover {
+  color: $govuk-link-hover-colour;
+  background-color: transparent;
 }
