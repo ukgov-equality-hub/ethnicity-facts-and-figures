@@ -28,6 +28,8 @@ SortableTable.prototype.createHeadingButtons = function() {
 
   var header_rows = this.table.querySelectorAll('thead tr')
 
+  var disabled_buttons = this.header_table ? true : false
+
   for (var j = 0; j < header_rows.length; j++) {
 
     var headings = header_rows[j].querySelectorAll('th')
@@ -36,7 +38,7 @@ SortableTable.prototype.createHeadingButtons = function() {
     for(var i = 0; i < headings.length; i++) {
         heading = headings[i];
         if(heading.getAttribute('aria-sort')) {
-            this.createHeadingButton(heading, i);
+            this.createHeadingButton(heading, i, disabled_buttons);
         }
     }
 
@@ -55,7 +57,7 @@ SortableTable.prototype.createHeadingButtons = function() {
       for(var i = 0; i < headings.length; i++) {
           heading = headings[i];
           if(heading.getAttribute('aria-sort')) {
-              this.createHeadingButton(heading, i);
+              this.createHeadingButton(heading, i, false);
           }
       }
 
@@ -66,7 +68,7 @@ SortableTable.prototype.createHeadingButtons = function() {
   }
 };
 
-SortableTable.prototype.createHeadingButton = function(heading, i) {
+SortableTable.prototype.createHeadingButton = function(heading, i, disabled) {
     var text = heading.textContent;
     var button = document.createElement('button')
     button.setAttribute('type', 'button')
@@ -82,6 +84,9 @@ SortableTable.prototype.createHeadingButton = function(heading, i) {
       button.setAttribute('data-event-label', text.trim())
     }
 
+    if (disabled) {
+      button.setAttribute('disabled', 'disabled')
+    }
 
     heading.appendChild(button);
 };
