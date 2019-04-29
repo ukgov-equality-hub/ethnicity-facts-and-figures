@@ -414,9 +414,7 @@ class PageService(Service):
         return message
 
     def send_measure_version_to_draft(self, measure_version: MeasureVersion):
-        available_actions = measure_version.available_actions()
-
-        if "RETURN_TO_DRAFT" in available_actions:
+        if "RETURN_TO_DRAFT" in measure_version.available_actions:
             numerical_status = measure_version.publish_status(numerical=True)
             measure_version.status = publish_status.inv[(numerical_status + 1) % 6]
             db.session.commit()

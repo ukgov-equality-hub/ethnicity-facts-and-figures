@@ -388,6 +388,18 @@ class MeasureVersion(db.Model, CopyableModel):
         else:
             return current_status
 
+    @property
+    def next_approval_state(self) -> Optional[str]:
+        """Returns the next state in the approval process, from ‘draft’ to ‘approved’. Once approved, returns `None`."""
+        approval_state = None
+
+        if "APPROVE" in self.available_actions:
+            numerical_status = self.publish_status(numerical=True)
+            approval_state = publish_status.inv[numerical_status + 1]
+
+        return approval_state
+
+    @property
     def available_actions(self):
         if self.measure.subtopic.topic.slug == TESTING_SPACE_SLUG:
             return ["UPDATE"]
