@@ -689,43 +689,43 @@ class TestMeasureVersionModel:
         measure_version = MeasureVersionFactory(status="DRAFT")
         expected_available_actions = ["APPROVE", "UPDATE"]
 
-        assert expected_available_actions == measure_version.available_actions()
+        assert expected_available_actions == measure_version.available_actions
 
     def test_available_actions_for_page_in_internal_review(self):
         measure_version = MeasureVersionFactory(status="INTERNAL_REVIEW")
         expected_available_actions = ["APPROVE", "REJECT"]
 
-        assert expected_available_actions == measure_version.available_actions()
+        assert expected_available_actions == measure_version.available_actions
 
     def test_available_actions_for_page_in_department_review(self):
         measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
         expected_available_actions = ["APPROVE", "REJECT"]
 
-        assert expected_available_actions == measure_version.available_actions()
+        assert expected_available_actions == measure_version.available_actions
 
     def test_available_actions_for_rejected_page(self):
         measure_version = MeasureVersionFactory(status="REJECTED")
         expected_available_actions = ["RETURN_TO_DRAFT"]
 
-        assert expected_available_actions == measure_version.available_actions()
+        assert expected_available_actions == measure_version.available_actions
 
     def test_available_actions_for_approved_page(self):
         measure_version = MeasureVersionFactory(status="APPROVED")
         expected_available_actions = ["UNPUBLISH"]
 
-        assert expected_available_actions == measure_version.available_actions()
+        assert expected_available_actions == measure_version.available_actions
 
     def test_no_available_actions_for_page_awaiting_unpublication(self):
         measure_version = MeasureVersionFactory(status="UNPUBLISH")
         expected_available_actions = []
 
-        assert expected_available_actions == measure_version.available_actions()
+        assert expected_available_actions == measure_version.available_actions
 
     def test_available_actions_for_unpublished(self):
         measure_version = MeasureVersionFactory(status="UNPUBLISHED")
         expected_available_actions = ["RETURN_TO_DRAFT"]
 
-        assert expected_available_actions == measure_version.available_actions()
+        assert expected_available_actions == measure_version.available_actions
 
     def test_page_sort_by_version(self):
 
