@@ -71,6 +71,7 @@ SortableTable.prototype.createHeadingButton = function(heading, i) {
     var button = document.createElement('button')
     button.setAttribute('type', 'button')
     button.setAttribute('data-index', i)
+    button.setAttribute('class', 'govuk-button eff-button--link eff-button--sort')
     button.textContent = text
     button.addEventListener('click', this.sortButtonClicked.bind(this))
     heading.textContent = '';
@@ -194,6 +195,9 @@ SortableTable.prototype.compareValues = function(valueA, valueB, sortDirection) 
 SortableTable.prototype.updateButtonState = function(button, direction) {
     button.parentElement.setAttribute('aria-sort', direction);
 
+    button.classList.remove('eff-button--sort')
+    button.classList.add('eff-button--sort-' + direction)
+
     if ('ga' in window) {
       var eventAction = (direction == 'ascending' ? 'Descending' : 'Ascending')
       button.setAttribute('data-event-action', eventAction)
@@ -213,12 +217,29 @@ SortableTable.prototype.removeButtonStates = function() {
       tableHeaders[i].setAttribute('aria-sort', 'none')
     };
 
+
+    var buttons = this.table.querySelectorAll('thead button')
+
+    for (var i = buttons.length - 1; i >= 0; i--) {
+      buttons[i].classList.remove('eff-button--sort-ascending')
+      buttons[i].classList.remove('eff-button--sort-descending')
+      buttons[i].classList.add('eff-button--sort')
+    };
+
     if (this.header_table) {
 
       var tableHeaders = this.header_table.querySelectorAll('thead th')
 
       for (var i = tableHeaders.length - 1; i >= 0; i--) {
         tableHeaders[i].setAttribute('aria-sort', 'none')
+      };
+
+      var buttons = this.header_table.querySelectorAll('thead button')
+
+      for (var i = buttons.length - 1; i >= 0; i--) {
+        buttons[i].classList.remove('eff-button--sort-ascending')
+        buttons[i].classList.remove('eff-button--sort-descending')
+        buttons[i].classList.add('eff-button--sort')
       };
 
 
