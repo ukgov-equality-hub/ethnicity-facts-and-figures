@@ -2,14 +2,14 @@
   "name": "publisher-for-ethnicity-facts-and-figures",
   "version": "1.0.0",
   "description": "Publisher for Ethnicity facts and figures",
-  "homepage": "https://github.com/racedisparityaudit/rd_cms",
+  "homepage": "https://github.com/racedisparityaudit/ethnicity-facts-and-figures-publisher",
   "author": {
     "name": "Race Disparity Unit",
     "email": "ethnicity@cabinetoffice.gov.uk",
     "website": "https://www.gov.uk/government/organisations/race-disparity-unit"
   },
   "license": "MIT",
-  "repository": "racedisparityaudit/rd_cms",
+  "repository": "racedisparityaudit/ethnicity-facts-and-figures-publisher",
   "engines": {
     "node": "~10.15.0",
     "npm": "~6.5.0"

@@ -22,7 +22,7 @@ class Config:
     LOG_LEVEL = logging.INFO
     ENVIRONMENT = os.environ.get("ENVIRONMENT", "PRODUCTION")
     SECRET_KEY = os.environ["SECRET_KEY"]
-    PROJECT_NAME = "rd_cms"
+    PROJECT_NAME = "ethnicity-facts-and-figures-publisher"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
     WTF_CSRF_ENABLED = True
     SESSION_COOKIE_SECURE = True
