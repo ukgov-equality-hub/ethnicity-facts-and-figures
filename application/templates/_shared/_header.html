@@ -24,7 +24,7 @@
       <a href="#search-form" class="eff-search__toggle js-header-toggle" aria-expanded="false">Search</a>
       <form id="search-form" class="eff-search__form" action="{{ config.GOOGLE_CUSTOM_SEARCH_ENDPOINT }}" method="get" role="search">
         <label for="site-search-text" class="eff-search__label" id="site-search-label">Search</label>
-        <input type="search" name="q" id="site-search-text" title="Search facts and figures" class="eff-search__input eff-search__input--text js-search-focus" value="{{ current_search_value | default('', true) }}">
+        <input type="search" name="q" id="site-search-text" title="Search facts and figures" class="eff-search__input eff-search__input--text js-search-focus" value="{{ current_search_value if current_search_value is defined and current_search_value else '' }}">
         <input id="search-form-cx" type="hidden" name="cx" value="{{ config.GOOGLE_CUSTOM_SEARCH_ID }}" class="eff-search__input">
         <input class="eff-search__input eff-search__input--submit" type="submit" value="Search">
       </form>

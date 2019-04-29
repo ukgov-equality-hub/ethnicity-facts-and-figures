@@ -9,14 +9,14 @@
 {{ field.label(id=field.id + '-label', class_='govuk-label') }}
 
 {% if field.hint or hint | default(false) %}
-  <span class="govuk-hint">{{ field.hint | default(hint, true) }}</span>
+  <span class="govuk-hint">{{ field.hint or hint }}</span>
 {% endif %}
 
 {% if field.errors %}
   <span class="govuk-error-message">{{ field.errors[0] }}</span>
 {% endif %}
 
-{{ field.extended_hint | default('', true) }}
+{{ field.extended_hint if field.extended_hint is defined and field.extended_hint else '' }}
 
 {% if textarea %}
   <textarea id="{{ id_ }}" name="{{ name }}" class="govuk-textarea {{ class_ }}{% if field.errors %} govuk-textarea--error{% endif %}{% if field.character_count_limit %} js-character-count{% endif %}" {{ field_params }}>{{ value or "" }}</textarea>

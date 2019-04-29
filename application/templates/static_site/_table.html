@@ -1,5 +1,5 @@
 
-{{ dimension.header | default('', true) }}
+{{ dimension.header if dimension.header is defined and dimension.header else '' }}
 {% if dimension.dimension_table.table_object.header %}
   <h3 class="govuk-heading-s">{{ dimension.dimension_table.table_object.header }}</h3>
 {% endif %}

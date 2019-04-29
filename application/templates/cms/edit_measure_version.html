@@ -11,7 +11,7 @@
 {% set form_disabled = false if (new is defined and new) else measure_version.status != 'DRAFT' %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
-{% block pageTitle %}{{ measure_version.title | default('Create a measure', true) }}{% endblock %}
+{% block pageTitle %}{{ measure_version.title if measure_version.title is defined and measure_version.title else "Create a measure" }}{% endblock %}
 
 {% block content %}
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}{% else %}{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}{% endif %}">
