@@ -1,8 +1,8 @@
 [![Heroku CI Status](https://ci-badges.herokuapp.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/master.svg)](https://dashboard.heroku.com/pipelines/84693d88-8bc1-4940-8f68-4111828a2278/tests)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-[![Coverage Status](https://coveralls.io/repos/github/racedisparityaudit/rd_cms/badge.svg?branch=master)](https://coveralls.io/github/racedisparityaudit/rd_cms?branch=master)
-[![Requirements Status](https://requires.io/github/racedisparityaudit/rd_cms/requirements.svg?branch=master)](https://requires.io/github/racedisparityaudit/rd_cms/requirements/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/racedisparityaudit/ethnicity-facts-and-figures-publisher/badge.svg?branch=master)](https://coveralls.io/github/racedisparityaudit/ethnicity-facts-and-figures-publisher?branch=master)
+[![Requirements Status](https://requires.io/github/racedisparityaudit/ethnicity-facts-and-figures-publisher/requirements.svg?branch=master)](https://requires.io/github/racedisparityaudit/ethnicity-facts-and-figures-publisher/requirements/?branch=master)
 
 # Publisher for Ethnicity facts and figures
 
