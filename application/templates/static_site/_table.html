@@ -56,7 +56,7 @@
                 {% set th_class = "eff-table__header--border-right" if (loop.index != loop.length) else "" %}
 
                 {% if group_column %}
-                    <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--border-bottom-0  eff-table__header--padding-top-0 {{th_class}}" aria-sort="none"> {{ group}} {{ group_column|safe }}</th>
+                    <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--border-bottom-0  eff-table__header--padding-top-0 {{th_class}}" aria-sort="none"> {{ group_column|safe }}</th>
                 {% endif %}
             {% endfor %}
 
