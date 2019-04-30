@@ -2,15 +2,15 @@
 
 {% set govukBaseClass = 'govuk-' + ('checkboxes' if field_type == 'checkbox' else 'radios') %}
 
-<div id="{{ id_ }}" name="{{ name }}" class="govuk-form-group{% if class_ %} {{ class_ }}{% endif %}{% if errors %} govuk-form-group--error{% endif %}">
+<div id="{{ id_ }}" name="{{ name }}" class="govuk-form-group{% if class_ %} {{ class_ }}{% endif %}{% if errors is defined and errors %} govuk-form-group--error{% endif %}">
   {% if fields|length == 1 %}
     {{ fields[0](disabled=disabled) }}
   {% else %}
   <fieldset class="govuk-fieldset{% if fieldset_class %} {{ fieldset_class }}{% endif %}">
     <legend id="{{ id_ + '-label'}}" class="govuk-fieldset__legend{% if legend_class %} {{ legend_class }}{% endif %}">
-      {{- field.label.text }} {% if errors %}<span class="govuk-error-message">{{ errors[0] }}</span>{% endif -%}
+      {{- field.label.text }} {% if errors is defined and errors %}<span class="govuk-error-message">{{ errors[0] }}</span>{% endif -%}
     </legend>
-    {% if field.hint or hint %}
+    {% if field.hint or hint | default(false) %}
     <span class="govuk-hint">{{ field.hint or hint }}</span>
     {% endif %}
       <div class="{{ govukBaseClass }}{% if inline %} {{ govukBaseClass }}--inline{% endif %}">

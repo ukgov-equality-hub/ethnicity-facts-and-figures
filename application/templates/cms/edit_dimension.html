@@ -22,7 +22,7 @@
             {% block measure_form %}
                 <form id="dimension_form" method="POST"
                       action="{{ url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}">
-                    {{ form.csrf_token }}
+                    {{ form.csrf_token | default('') }}
                     {% block fields %}
                         {{ super() }}
                     {% endblock fields %}
@@ -49,7 +49,7 @@
                                     <td class="govuk-table__cell">
                                     {% if 'UPDATE' in  measure_version.available_actions %}
                                         <form action="{{ url_for('cms.delete_chart', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}" method="post">
-                                            {{ form.csrf_token }}
+                                            {{ form.csrf_token | default('') }}
                                             <button id="delete_chart" class="eff-button--link">delete</button>
                                         </form>
                                     {% endif %}
@@ -67,7 +67,7 @@
                                     <td class="govuk-table__cell">
                                         {% if 'UPDATE' in  measure_version.available_actions %}
                                         <form action="{{ url_for('cms.delete_table', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, dimension_guid=dimension.guid) }}" method="post">
-                                            {{ form.csrf_token }}
+                                            {{ form.csrf_token | default('') }}
                                             <button id="delete_table" class="eff-button--link">delete</button>
                                         </form>
                                         {% endif %}

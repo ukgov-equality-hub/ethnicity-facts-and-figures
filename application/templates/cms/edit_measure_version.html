@@ -8,16 +8,17 @@
     {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
   ]
 %}
-{% set form_disabled = not (measure_version.status == "DRAFT" or new) %}
+{% set form_disabled = false if (new is defined and new) else measure_version.status != 'DRAFT' %}
 
-{% block pageTitle %}{{ measure_version.title }}{% endblock %}
+{% block bodyClasses %}rd_cms{% endblock %}
+{% block pageTitle %}{{ measure_version.title if measure_version.title is defined and measure_version.title else "Create a measure" }}{% endblock %}
 
 {% block content %}
     <form method="POST" action="{% if new %}{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}{% else %}{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}{% endif %}">
-        {{ form.csrf_token }}
+        {{ form.csrf_token | default('') }}
         {% call status_banner() %}
             <div class="left">
-                <span class="info">Version&nbsp;<b>{{ measure_version.version }}</b></span>
+                <span class="info">Version&nbsp;<b>{{ '1.0' if new else measure_version.version }}</b></span>
             </div>
             <div>
                 <span class="info" id="status">
@@ -82,7 +83,7 @@
                 </div>
             {% endif %}
 
-            {%  if measure_version.status == 'DRAFT' or new %}
+            {%  if new or measure_version.status == 'DRAFT' %}
                  <button class="govuk-button" type="submit" name="save">Save</button>
             {% endif %}
 
@@ -128,7 +129,7 @@
                     <div class="govuk-form-group">
                         <label class="govuk-label" for="subtopic">Topic</label>
                         <select id="subtopic" name="subtopic" class="govuk-select sub-topic"
-                                {% if form_disabled or (measure_version and measure_version.version != '1.0') or new %}disabled{% endif %}>
+                                {% if form_disabled or new or (measure_version and measure_version.version != '1.0') %}disabled{% endif %}>
                             {% for topic in topics %}
                                 <optgroup label="{{ topic.title }}">
                                     {% for st in topic.subtopics %}
@@ -235,7 +236,7 @@
                                         {% if 'UPDATE' in measure_version.available_actions %}edit{% else %}view{% endif %}</a></td>
                                 <td class="govuk-table__cell">{% if 'UPDATE' in measure_version.available_actions %}
                                     <form action="{{ url_for('cms.delete_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}" method="post">
-                                        {{ form.csrf_token }}
+                                        {{ form.csrf_token | default('') }}
                                         <button class="eff-button--link">delete</button>
                                     </form>
                                     {% endif %}
@@ -285,7 +286,7 @@
                                     <td class="govuk-table__cell">
                                         {% if 'UPDATE' in measure_version.available_actions %}
                                             <form action="{{ url_for('cms.delete_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}" method="post">
-                                                {{ form.csrf_token }}
+                                                {{ form.csrf_token | default('') }}
                                                 <button class="eff-button--link">delete</button>
                                             </form>
                                         {% endif %}
@@ -308,7 +309,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form id="measure-action-section__copy_measure_form-{{ measure_version.id }}" method="POST" action="{{ url_for('cms.copy_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
-                {{ form.csrf_token }}
+                {{ form.csrf_token | default('') }}
                 <button class="govuk-button copy-button" type="submit">Create a copy of this measure</button>
             </form>
         </div>
@@ -359,64 +360,64 @@
                     }
                 })
             }
+
+            function moveDimensionUp(event) {
+                event.preventDefault();
+                var row = $(event.currentTarget).parents('tr:first');
+                if (row.prev().length > 0) {
+                    row.insertBefore(row.prev());
+                    syncDimensionOrder();
+                }
+            }
+
+            function moveDimensionDown(event) {
+                event.preventDefault();
+                var row = $(event.currentTarget).parents('tr:last');
+                if (row.next().length > 0) {
+                    row.insertAfter(row.next());
+                    syncDimensionOrder();
+                }
+            }
+
+            function syncDimensionOrder() {
+                var rows = $('tr.eff-movable'),
+                    dimensions = [],
+                    guid;
+
+                $(rows).each(function (index, row) {
+                    guid = $(row).data('dimension-guid');
+                    dimensions.push({"index": index, "guid": guid});
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ url_for('cms.set_dimension_order') }}",
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({"dimensions": dimensions}),
+                    success: function (data) {
+                        console.log('Set order for dimensions:', dimensions);
+                    },
+                    error: function (data) {
+                        console.log('Error setting order for dimensions:', dimensions);
+                    }
+                });
+            }
+
+            function getPreviewUrl(event) {
+                event.preventDefault();
+                $.ajax({
+                    type: 'GET',
+                    url: "{{ url_for('review.get_new_review_url', id=measure_version.id)}}",
+                    success: function (data) {
+                        $('#review-url').html(data);
+                        initialiseCopy();
+                    },
+                    error: function(data) {
+                        $('#review-url').html('<span class="warning">Error trying to generate new preview url</span>');
+                    }
+                })
+            }
         {%  endif %}
-
-        function moveDimensionUp(event) {
-            event.preventDefault();
-            var row = $(event.currentTarget).parents('tr:first');
-            if (row.prev().length > 0) {
-                row.insertBefore(row.prev());
-                syncDimensionOrder();
-            }
-        }
-
-        function moveDimensionDown(event) {
-            event.preventDefault();
-            var row = $(event.currentTarget).parents('tr:last');
-            if (row.next().length > 0) {
-                row.insertAfter(row.next());
-                syncDimensionOrder();
-            }
-        }
-
-        function syncDimensionOrder() {
-            var rows = $('tr.eff-movable'),
-                dimensions = [],
-                guid;
-
-            $(rows).each(function (index, row) {
-                guid = $(row).data('dimension-guid');
-                dimensions.push({"index": index, "guid": guid});
-            });
-            $.ajax({
-                type: 'POST',
-                url: "{{ url_for('cms.set_dimension_order') }}",
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify({"dimensions": dimensions}),
-                success: function (data) {
-                    console.log('Set order for dimensions:', dimensions);
-                },
-                error: function (data) {
-                    console.log('Error setting order for dimensions:', dimensions);
-                }
-            });
-        }
-
-        function getPreviewUrl(event) {
-            event.preventDefault();
-            $.ajax({
-                type: 'GET',
-                url: "{{ url_for('review.get_new_review_url', id=measure_version.id)}}",
-                success: function (data) {
-                    $('#review-url').html(data);
-                    initialiseCopy();
-                },
-                error: function(data) {
-                    $('#review-url').html('<span class="warning">Error trying to generate new preview url</span>');
-                }
-            })
-        }
 
         function copyToClipboard(event) {
             event.preventDefault();

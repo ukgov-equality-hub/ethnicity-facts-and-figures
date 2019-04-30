@@ -7,7 +7,7 @@
     {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
     {"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_version.measure.subtopic.topic.title},
   ]
-  if not preview else
+  if preview | default(true) else
   none
 %}
 
@@ -37,14 +37,14 @@
                           version=version) }}"/>
 
 
-  {% if not static_mode and not preview %}
+  {% if not static_mode and (preview is undefined or not preview) %}
     {% call status_banner(sticky=False) %}
       <div class="left">
-          <span class="info">Version&nbsp;<b>{% if new %}1.0{% else %}{{ measure_version.version }}{% endif %}</b></span>
+          <span class="info">Version&nbsp;<b>{{ measure_version.version }}</b></span>
       </div>
       <div>
           <span class="info" id="status">
-              Status:&nbsp;<b>{{ ("DRAFT" if new else measure_version.status) | format_status | safe }}</b>
+              Status:&nbsp;<b>{{ measure_version.status | format_status | safe }}</b>
           </span>
 
           {% if measure_version.measure.versions|length > 1 %}
@@ -235,8 +235,6 @@
       {% if measure_version.dimensions %}
           {% for dimension in measure_version.dimensions %}
 
-            {% set chart_and_downloadable = True if dimension.dimension_chart.chart_object and dimension.dimension_chart.chart_object.type not in ['panel_bar_chart', 'panel_line_chart'] else False %}
-
               <div class="govuk-grid-column-two-thirds">
                   <h2 class="govuk-heading-m" id="{{ dimension.title | slugify_value }}">{{ dimension.title }}</h2>
                   <div class="metadata">
@@ -266,6 +264,8 @@
               </div>
             </div>
 
+            {% if dimension.dimension_chart %}
+              {% set chart_and_downloadable = (dimension.dimension_chart.chart_object.type not in ['panel_bar_chart', 'panel_line_chart']) %}
               <div class="chart-and-footer hidden">
                 <div class="govuk-grid-row">
                   <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
@@ -303,15 +303,14 @@
                 </div>
               </div>
             </div>
+            {% endif %}
 
+            {% if dimension.dimension_table %}
             <div class="govuk-grid-row">
-              {% set tabular_download_viable = True if dimension.dimension_table.table_object else False %}
               <div class="govuk-grid-column-full"
                    style="{% if not dimension.dimension_table and not dimension.dimension_chart.chart_object %}display: none;{% endif %}">
-                  {% if dimension.dimension_table.table_object %}
                       {% include "static_site/_table.html" %}
 
-                      {% if tabular_download_viable %}
                       <p class="chart-download">
                           {% if static_mode %}
                               <a class="govuk-link" href="{{ url_for('static_site.measure_version_file_download', topic_slug=topic_slug,
@@ -319,7 +318,7 @@
                                    measure_slug=measure_version.measure.slug,
                                    version=version,
                                    filename=dimension.static_table_file_name) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.dimension_table.table_object.header}}"
-                                 download="{{ dimension.dimension_table.static_table_file_name }}">Download table data (CSV)</a>
+                                 download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
                           {% else %}
                               <a class="govuk-link" href="{{ url_for('static_site.dimension_file_table_download',
                                    topic_slug=topic_slug,
@@ -345,10 +344,10 @@
                                    dimension_guid=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.dimension_table.table_object.header}}">Source data (CSV)</a>
                           {% endif %}
                       </p>
-                    {% endif %}
-                  {% endif %}
               </div>
             </div>
+            {% endif %}
+
             <div class="govuk-grid-row">
               <div class="govuk-grid-column-two-thirds">
                   <h3 class="govuk-heading-s">Summary</h3>
@@ -432,12 +431,12 @@
 
           <div class="govuk-accordion__section-content" id="data-sources-content" aria-labelledby="data-sources-heading">
             <div itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
+            {% if measure_version.primary_data_source %}
             <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Source</h3>
             <p class="govuk-body" itemprop="name"><a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (Source Details section)" data-event-label="{{ measure_version.title }}" itemprop="url">
                 {{ measure_version.primary_data_source.title }}</a>
             </p>
 
-            {% if measure_version.primary_data_source %}
               {% if measure_version.primary_data_source.type_of_data %}
               <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of data</h3>
               <p class="govuk-body">{{ measure_version.primary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
@@ -461,7 +460,7 @@
               {% if measure_version.primary_data_source.frequency_of_release %}
                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publication frequency</h3>
                 {% if measure_version.primary_data_source.frequency_of_release.description == 'Other' %}
-                  <p class="govuk-body">{{ measure_version.primary_data_source.frequency_other }}</p>
+                  <p class="govuk-body">{{ measure_version.primary_data_source.frequency_of_release_other }}</p>
                 {% else %}
                   <p class="govuk-body">{{ measure_version.primary_data_source.frequency_of_release.description }}</p>
                 {% endif %}
@@ -569,9 +568,9 @@
                   <meta itemprop="name" content="{{ file.title | striptags }}">
                   <a class="govuk-link govuk-!-font-size-19" itemprop="contentUrl" href="{{ measure_version_data_url }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Source data" data-event-label="{{ file.title }}">
                         {{ file.title }}
-                        {{ " - Spreadsheet " if file.extension() == "csv" }}
-                        {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" }}
-                        {{ " - Open Document Format " if file.extension() == "odf" }}
+                        {{ " - Spreadsheet " if file.extension() == "csv" else "" }}
+                        {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" else "" }}
+                        {{ " - Open Document Format " if file.extension() == "odf" else "" }}
                         ({{ file.extension() }})
                         {{ file.size|filesize }}
                   </a>

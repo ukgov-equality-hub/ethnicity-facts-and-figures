@@ -27,7 +27,7 @@
             </p>
             <form method="POST"
                   action="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
-                {{ form.csrf_token }}
+                {{ form.csrf_token | default('') }}
                 {{ form.version_type }}
                 <button class="govuk-button">Create new version in draft</button>
             </form>

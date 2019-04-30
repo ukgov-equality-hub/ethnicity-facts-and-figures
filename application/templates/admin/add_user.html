@@ -18,7 +18,7 @@
                     Add user
                 </h1>
                 <form action="{{ url_for('admin.add_user') }}" method="POST">
-                    {{ form.csrf_token }}
+                    {{ form.csrf_token | default('') }}
                     {{ form.email() }}
                     {{ form.user_type() }}
 

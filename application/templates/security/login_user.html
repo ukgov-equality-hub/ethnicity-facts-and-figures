@@ -8,7 +8,7 @@ this template receives, so can't make sure it's rendered with the `errors` varia
 is added in the base template, the {% set errors %} above isn't in scope when the base template is rendered, so the
 prefix does not get added there. #}
 
-{% block pageTitle %}{% if errors %}Error: {% endif %}Login{% endblock %}
+{% block pageTitle %}{% if errors is defined and errors %}Error: {% endif %}Login{% endblock %}
 {% block nav_home %}active{% endblock %}
 
 {% block content %}
@@ -17,7 +17,7 @@ prefix does not get added there. #}
                 <h1 class="govuk-heading-xl">Login</h1>
 
                 <form action="{{ url_for('security.login') }}" method="post">
-                    {{ login_user_form.csrf_token }}
+                    {{ login_user_form.csrf_token | default('') }}
 
                     {{ login_user_form.email }}
 
