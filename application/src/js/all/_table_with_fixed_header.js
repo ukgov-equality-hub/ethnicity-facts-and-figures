@@ -19,6 +19,8 @@ function TableWithFixedHeader(outerTableElement) {
         var fixedTableHeader = tableHeader.cloneNode(true)
         fixedTableHeader.classList.add('fixed')
 
+        tableHeader.classList.add('eff-table__head--transparent')
+
         fixedTable = document.createElement('table')
         fixedTable.setAttribute('class', tableElement.getAttribute('class') + ' fixed')
         fixedTable.classList.remove('fixed-headers')
