@@ -3,12 +3,16 @@
   https://github.com/alphagov/govuk-frontend/blob/master/src/components/error-summary
 #}
 
-{% if errors is defined and errors %}
+{% if (errors is defined and errors) or (errors_preamble is defined and errors_preamble) %}
 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
   <h2 class="govuk-error-summary__title" id="error-summary-title">
     There is a problem
   </h2>
   <div class="govuk-error-summary__body">
+    {% if errors_preamble is defined and errors_preamble %}
+      <p>{{ errors_preamble }}</p>
+    {% endif %}
+    {% if errors is defined and errors %}
     <ul class="govuk-list govuk-error-summary__list">
       {% for error in errors %}
       <li>
@@ -16,6 +20,7 @@
       </li>
       {% endfor %}
     </ul>
+    {% endif %}
   </div>
 </div>
 {% endif %}

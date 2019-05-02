@@ -286,6 +286,7 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         measure_version_form = MeasureVersionForm(is_minor_update=measure_version.is_minor_version())
 
     saved = False
+    errors_preamble = None
     if (
         measure_version_form.validate_on_submit()
         and data_source_form.validate_on_submit()
@@ -315,13 +316,13 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             current_app.logger.error(e)
             diffs = _diff_updates(measure_version_form, measure_version)
             if diffs:
-                flash("Your update will overwrite the latest content. Resolve the conflicts below", "error")
+                errors_preamble = "Your update will overwrite the latest content. Resolve the conflicts below:"
 
                 # Need to manually update the `db_version_id`, otherwise when the form is re-submitted it will just
                 # throw the same error.
                 measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
             else:
-                flash("Your update will overwrite the latest content. Reload this page", "error")
+                errors_preamble = "Your update will overwrite the latest content. Reload this page."
 
         except PageUnEditable as e:
             current_app.logger.info(e)
@@ -355,6 +356,7 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "diffs": diffs,
         "organisations_by_type": Organisation.select_options_by_type(),
         "topics": page_service.get_topics(include_testing_space=True),
+        "errors_preamble": errors_preamble,
         "errors": get_form_errors(forms=[measure_version_form, data_source_form, data_source_2_form]),
         "new": False,
         "data_not_uploaded_error": False,
