@@ -18,18 +18,25 @@ function TableWithFixedHeader(outerTableElement) {
         tableHeader = tableElement.querySelector('thead')
 
         var fixedTableHeader = tableHeader.cloneNode(true)
-        var fixedTableCaption = tableCaption.cloneNode(true)
+        var fixedTableCaption;
+
+        if (tableCaption != null) {
+          fixedTableCaption = tableCaption.cloneNode(true)
+          tableCaption.classList.add('eff-table__caption--transparent')
+        }
 
         fixedTableHeader.classList.add('fixed')
         tableHeader.classList.add('eff-table__head--transparent')
-        tableCaption.classList.add('eff-table__caption--transparent')
 
         fixedTable = document.createElement('table')
 
         fixedTable.setAttribute('class', tableElement.getAttribute('class') + ' fixed')
         fixedTable.classList.remove('fixed-headers')
 
-        fixedTable.appendChild(fixedTableCaption)
+        if (fixedTableCaption != null) {
+          fixedTable.appendChild(fixedTableCaption)
+        }
+
         fixedTable.appendChild(fixedTableHeader)
 
         fixedTableContainer = document.createElement('div')
@@ -41,18 +48,27 @@ function TableWithFixedHeader(outerTableElement) {
         /* Update again after 200ms. Solves a few weird issues. */
         setTimeout(updatePositioning, 200)
 
+        /* Update again after 400ms. Solves a few weird issues. */
+        setTimeout(updatePositioning, 1000)
+
       }
     }
   }
 
   function updatePositioning() {
 
+    var captionHeight, height;
     var headerHeight = heightForElement(tableHeader);
-    var captionHeight = heightForElement(fixedTable.querySelector('caption'), true)
-    var combinedHeight = (parseFloat(headerHeight) + parseFloat(captionHeight)) + 'px'
 
-    tableElement.style.marginTop = '-' + combinedHeight;
-    innerTableElement.style.paddingTop = combinedHeight;
+    if (fixedTable.querySelector('caption') != undefined) {
+      captionHeight = heightForElement(fixedTable.querySelector('caption'))
+      height = (parseFloat(headerHeight) + parseFloat(captionHeight)) + 'px'
+    } else {
+      height = headerHeight
+    }
+
+    tableElement.style.marginTop = '-' + height;
+    innerTableElement.style.paddingTop = height;
 
     var mainTableHeaderCells = tableElement.querySelectorAll('thead th, thead td')
     var headerCells = fixedTable.querySelectorAll('thead th, thead td')
@@ -77,17 +93,12 @@ function TableWithFixedHeader(outerTableElement) {
 
   }
 
-  function heightForElement(element, includeMargin) {
+  function heightForElement(element) {
 
     var height;
 
     if (typeof window.getComputedStyle === "function") {
-      var styles = getComputedStyle(element);
-      height = styles.height
-
-      if (includeMargin === true) {
-        height = (parseFloat(height) + parseFloat(styles.marginTop) + parseFloat(styles.marginBottom)) + 'px';
-      }
+      height = getComputedStyle(element).height
     }
 
     if (!height || height == 'auto') {
