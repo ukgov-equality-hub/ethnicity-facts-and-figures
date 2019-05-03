@@ -170,57 +170,6 @@
     </div>
   {% endif %}
 
-  <!-- <div class="grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <div class="metadata">
-        <dl>
-          {% if measure_version.primary_data_source and measure_version.primary_data_source.publisher %}
-            <dt>Department:</dt>
-            <dd itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
-             <span itemprop="name">{{ measure_version.primary_data_source.publisher.name }}</span>
-            </dd>
-          {% endif %}
-
-          {%  if measure_version.first_published_date %}
-            <dt>Published:</dt>
-            <dd><time itemprop="datePublished" datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
-            </dd>
-          {%  endif %}
-
-          {% if measure_version.version != '1.0' and measure_version.published_at %}
-            <dt>Last updated:</dt>
-            <dd><time itemprop="dateModified" datetime="{{ measure_version.published_at | format_iso8601_date }}">{{ measure_version.published_at | format_friendly_date }}</time>, <a class="govuk-link" href="#history">see all updates</a>
-            </dd>
-          {% endif %}
-
-          {% if measure_version.primary_data_source %}
-          <dt>Source:</dt>
-          <dd>
-            <a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_version.primary_data_source.title }}">
-              {{ measure_version.primary_data_source.title }}
-            </a>
-          </dd>
-          {% endif %}
-
-          {% if measure_version.area_covered %}
-          <dt>Area covered:</dt>
-          <dd>
-            {{ measure_version.format_area_covered()  }}
-          </dd>
-          {% endif %}
-          {% if measure_version.time_covered %}
-          <dt>Time period:</dt>
-          <dd>
-            {{ measure_version.time_covered }}
-          </dd>
-          {% endif %}
-
-
-        </dl>
-      </div>
-    </div>
-  </div> -->
-
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
