@@ -364,14 +364,12 @@
             {% endif %}
 
             {% if measure_version.further_technical_information %}
-            <h3 class="govuk-heading-s">
-              Further technical information
-            </h3>
+              <h3 class="govuk-heading-s">
+                Further technical information
+              </h3>
 
-            <div class="govuk-body">{{ measure_version.further_technical_information | render_markdown }}</div>
+              {{ measure_version.further_technical_information | render_markdown }}
             {% endif %}
-          </div>
-        </div>
 
         <div itemscope itemtype="http://schema.org/Dataset">
           <meta itemprop="version" content=" {{ measure_version.version }}">
@@ -389,7 +387,6 @@
                 {{ measure_version.dimensions.all()|length + 3 }}. Data sources
             </h2>
 
-          <div>
             <div itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
             {% if measure_version.primary_data_source %}
             <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Source</h3>
@@ -432,7 +429,6 @@
               {% endif %}
             {% endif %}
 
-            </div>
             {% if measure_version.secondary_data_source %}
               <div class="secondary-source" itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Secondary source</h3>
@@ -484,12 +480,8 @@
 
             {% endif %}
 
-          </div>
 
-        </div>
 
-        <div>
-          <div>
             <h2 class="govuk-heading-m" id="download-the-data">
                 {{ measure_version.dimensions.all()|length + 4 }}. Download the data
             </h2>
@@ -548,10 +540,7 @@
             <meta itemprop="name" content="Ethnicity facts and figures">
             <meta itemprop="url" content="{{ url_for('static_site.index') }}">
           </div>
-        </div>
 
-      </div>
-    </div>
 
       <div class="eff-document-footer">
 
