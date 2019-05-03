@@ -1,19 +1,14 @@
 #!/usr/bin/env python
 
 
-import logging
-import pprint
 import sys
-
 import csv
-
-sys.path.insert(0, ".")
-
-from flask import Flask
 
 from application import db
 from application.factory import create_app
 from application.config import DevConfig
+
+sys.path.insert(0, ".")
 
 
 def _calculate_short_title(page_title, dimension_title):
@@ -34,7 +29,7 @@ def _calculate_short_title(page_title, dimension_title):
 app = create_app(DevConfig)
 with app.app_context():
 
-    sql = "select dimension.guid as dimension_id, measure_version.title as measure_title, dimension.title as dimension_title from dimension left join measure_version on dimension.measure_version_id = measure_version.id inner join latest_published_measure_versions on measure_version.id = latest_published_measure_versions.id order by measure_version.title, dimension.position"
+    sql = "select dimension.guid as dimension_id, measure_version.title as measure_title, dimension.title as dimension_title from dimension left join measure_version on dimension.measure_version_id = measure_version.id inner join latest_published_measure_versions on measure_version.id = latest_published_measure_versions.id order by measure_version.title, dimension.position" # noqa
 
     result = db.session.execute(sql)
     db.session.commit()
