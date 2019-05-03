@@ -6,12 +6,18 @@
       <div class="govuk-footer__section">
           <h2 class="govuk-footer__heading govuk-heading-m">Further information</h2>
           <ul class="govuk-footer__list govuk-footer__list--columns-2">
+
+              <li class="govuk-footer__list-item">
+                <a href="{{ url_for('static_site.background') }}" class="govuk-footer__link">Background</a>
+              </li>
+
+
               <li class="govuk-footer__list-item">
                   <a class="govuk-footer__link" href="https://www.gov.uk/government/publications/race-disparity-audit" data-on="click" data-event-category="Race Disparity Audit report" data-event-action="Link clicked">Race Disparity Audit report</a>
               </li>
 
               <li class="govuk-footer__list-item">
-                  <a class="govuk-footer__link" href="/static/statement-of-compliance.pdf" data-on="click" data-event-category="PDF downloaded" data-event-action="Statement of compliance">Statement of compliance (PDF)</a>
+                  <a class="govuk-footer__link" href="https://www.gov.uk/government/publications/statement-of-compliance-for-race-disparity-unit" data-on="click" data-event-category="Link clicked" data-event-action="Statement of compliance">Statement of compliance</a>
               </li>
               <li class="govuk-footer__list-item">
                   <a class="govuk-footer__link" href="https://guide.ethnicity-facts-figures.service.gov.uk">Style guide and templates</a>
@@ -21,6 +27,9 @@
                       <a class="govuk-footer__link" href="{{ url_for('dashboards.index').rstrip('/') }}">Dashboards</a>
                   </li>
               {% endif %}
+              <li class="govuk-footer__list-item">
+                  <a class="govuk-footer__link" href="{{ url_for('static_site.ethnic_groups').rstrip('/') }}">List of ethnic groups</a>
+              </li>
               <li class="govuk-footer__list-item">
                   <a class="govuk-footer__link" href="{{ url_for('static_site.privacy_policy').rstrip('/') }}">Privacy policy</a>
               </li>
@@ -58,6 +67,7 @@
     <div class="govuk-footer__meta-item">
       <a class="govuk-footer__link govuk-footer__copyright-logo" href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/">© Crown copyright</a>
     </div>
+  </div>
   </div>
 
 </footer>

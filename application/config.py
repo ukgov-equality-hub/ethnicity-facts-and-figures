@@ -22,10 +22,11 @@ class Config:
     LOG_LEVEL = logging.INFO
     ENVIRONMENT = os.environ.get("ENVIRONMENT", "PRODUCTION")
     SECRET_KEY = os.environ["SECRET_KEY"]
-    PROJECT_NAME = "rd_cms"
+    PROJECT_NAME = "ethnicity-facts-and-figures-publisher"
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
     WTF_CSRF_ENABLED = True
     SESSION_COOKIE_SECURE = True
+    STATIC_MODE = False
 
     GITHUB_ACCESS_TOKEN = os.environ["GITHUB_ACCESS_TOKEN"]
     HTML_CONTENT_REPO = os.environ.get("HTML_CONTENT_REPO", "rd_html_dev")
@@ -125,3 +126,8 @@ class TestConfig(DevConfig):
     ATTACHMENT_SCANNER_ENABLED = False
     ATTACHMENT_SCANNER_API_TOKEN = "fakeToken"
     ATTACHMENT_SCANNER_URL = "http://scanner-service"
+
+    # Prevent exception reporting under test as `AssertionError: Popped wrong request context.`
+    # While some report this don't work, it does seem to work for us.
+    # https://github.com/jarus/flask-testing/issues/21
+    PRESERVE_CONTEXT_ON_EXCEPTION = False

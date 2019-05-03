@@ -1,4 +1,5 @@
 import os
+
 from tempfile import NamedTemporaryFile
 
 from botocore.exceptions import ClientError
@@ -13,7 +14,6 @@ from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.static_site import static_site_blueprint
 from application.utils import (
-    get_bool,
     get_csv_data_for_download,
     write_dimension_csv,
     write_dimension_tabular_csv,
@@ -25,28 +25,23 @@ from application.utils import cleanup_filename
 @static_site_blueprint.route("")
 @login_required
 def index():
-    return render_template(
-        "static_site/index.html",
-        topics=page_service.get_topics(include_testing_space=False),
-        static_mode=get_bool(request.args.get("static_mode", False)),
-    )
-
-
-@static_site_blueprint.route("/ethnicity-in-the-uk")
-@login_required
-def ethnicity_in_the_uk():
-    return render_template("static_site/static_pages/ethnicity_in_the_uk.html")
+    return render_template("static_site/index.html", topics=page_service.get_topics(include_testing_space=False))
 
 
 @static_site_blueprint.route("/ethnicity-in-the-uk/<page_name>")
 @login_required
 def ethnicity_in_the_uk_page(page_name):
-    ETHNICITY_IN_THE_UK_PAGES = ["ethnic-groups-and-data-collected", "ethnic-groups-by-sexual-identity"]
-    if page_name in ETHNICITY_IN_THE_UK_PAGES:
+    if page_name.lower() in {"ethnic-groups-by-sexual-identity"}:
         f = page_name.replace("-", "_")
         return render_template("static_site/static_pages/ethnicity_in_the_uk/%s.html" % f)
     else:
         abort(404)
+
+
+@static_site_blueprint.route("/ethnic-groups")
+@login_required
+def ethnic_groups():
+    return render_template("static_site/static_pages/ethnic_groups.html")
 
 
 @static_site_blueprint.route("/background")
@@ -76,7 +71,10 @@ def topic(topic_slug):
     # Departmental users should not be able to see unpublished measures that have not been explicitly shared with them.
     def user_can_see_measure(measure):
         if (
-            any(measure_version.published for measure_version in measure.versions)
+            any(
+                (measure_version.status == "APPROVED" and measure_version.published_at is not None)
+                for measure_version in measure.versions
+            )
             or current_user in measure.shared_with
             or not current_user.is_departmental_user()
         ):
@@ -90,11 +88,7 @@ def topic(topic_slug):
     }
 
     return render_template(
-        "static_site/topic.html",
-        topic=topic,
-        subtopics=subtopics,
-        measures_by_subtopic=measures_by_subtopic,
-        static_mode=get_bool(request.args.get("static_mode", False)),
+        "static_site/topic.html", topic=topic, subtopics=subtopics, measures_by_subtopic=measures_by_subtopic
     )
 
 
@@ -115,13 +109,11 @@ def measure_version_markdown(topic_slug, subtopic_slug, measure_slug, version):
         if measure_version.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html")
 
-    dimensions = [dimension.to_dict() for dimension in measure_version.dimensions]
     return render_template(
         "static_site/export/measure_export.html",
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
         measure_version=measure_version,
-        dimensions=dimensions,
     )
 
 
@@ -151,11 +143,7 @@ def measure_version(topic_slug, subtopic_slug, measure_slug, version):
         abort(404)
 
     return render_template(
-        "static_site/measure.html",
-        topic_slug=topic_slug,
-        subtopic_slug=subtopic_slug,
-        measure_version=measure_version,
-        static_mode=get_bool(request.args.get("static_mode", False)),
+        "static_site/measure.html", topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_version=measure_version
     )
 
 

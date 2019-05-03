@@ -122,7 +122,7 @@ function isSimpleBarchart(column_name) {
 function barchartSingleObject(headerRow, dataRows, category_column, parent_column, order_column, chart_title, x_axis_label, y_axis_label, number_format) {
     var indices = getIndices(headerRow, category_column, null, parent_column, order_column);
 
-    var categories = uniqueCategories(dataRows, indices['category'], indices['order']);
+    var categories = uniqueCategories(dataRows, indices['category'], indices['order'])
     var values = _.map(categories, function(category) {
         return valueForCategory(dataRows, indices['category'], indices['value'], indices['parent'], category);
     });

@@ -11,7 +11,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 
 from application.auth.models import TypeOfUser
 from application.cms.forms import MeasureVersionForm
-from application.cms.models import DataSource, TESTING_SPACE_SLUG
+from application.cms.models import DataSource, TESTING_SPACE_SLUG, MeasureVersion
 from application.cms.utils import get_data_source_forms
 from application.sitebuilder.models import Build
 from tests.models import (
@@ -22,6 +22,7 @@ from tests.models import (
     MeasureVersionWithDimensionFactory,
     UserFactory,
 )
+from tests.utils import multidict_from_measure_version_and_kwargs, page_displays_error_matching_message
 
 
 class TestGetCreateMeasurePage:
@@ -108,7 +109,7 @@ def test_can_not_send_to_review_without_a_data_source_uploaded(test_app_client, 
     )
     assert response.status_code == 400
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert "Data Source data must be uploaded." in page.find("div", class_="govuk-error-summary").text
+    assert "Upload the source data" in page.find("div", class_="govuk-error-summary").text
 
 
 @pytest.mark.parametrize("cannot_reject_status", ("DRAFT", "APPROVED"))
@@ -173,7 +174,6 @@ def test_admin_user_can_publish_page_in_dept_review(test_app_client, logged_in_a
     assert measure_version.last_updated_by == logged_in_admin_user.email
     assert measure_version.published_by == logged_in_admin_user.email
     assert measure_version.published_at == datetime.date.today()
-    assert measure_version.published is True
     assert measure_version.latest is True
     mock_request_build.assert_called_once()
 
@@ -639,7 +639,7 @@ def test_dept_user_should_be_able_to_delete_upload_from_shared_page(test_app_cli
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert page.find("div", class_="eff-flash-message__body").get_text(strip=True) == "Deleted upload ‘upload title’"
-    assert len(measure_version.uploads.all()) == 0
+    assert len(measure_version.uploads) == 0
 
 
 def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
@@ -725,6 +725,91 @@ def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, logged_in
         page.find("div", class_="eff-flash-message__body").get_text(strip=True) == 'Updated page "this is the update"'
     )
     assert measure_version.title == "this is the update"
+
+
+@pytest.mark.parametrize("measure_version", ["1.0", "1.1", "2.0"])
+def test_db_version_id_gets_incremented_after_an_update(test_app_client, logged_in_rdu_user, measure_version):
+    measure_version: MeasureVersion = MeasureVersionFactory(
+        status="DRAFT", title="this will be updated", db_version_id=1, version=measure_version
+    )
+
+    response = test_app_client.get(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert page.find("input", {"id": "db_version_id"}).attrs["value"] == "1"
+
+    data = multidict_from_measure_version_and_kwargs(measure_version, title="this is the update")
+    response = test_app_client.post(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        ),
+        data=data,
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert page.find("input", {"id": "db_version_id"}).attrs["value"] == "2"
+    assert measure_version.title == "this is the update"
+
+
+def test_edit_measure_page_updated_with_latest_db_version_id_when_posting_a_conflicting_update(
+    db_session, test_app_client, logged_in_rdu_user
+):
+    measure_version: MeasureVersion = MeasureVersionFactory(status="DRAFT", title="initial title", version="2.0")
+    assert measure_version.db_version_id == 1
+
+    response = test_app_client.get(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert page.find("input", {"id": "db_version_id"}).attrs["value"] == "1"
+
+    measure_version.title = "new title"
+    db_session.session.commit()
+    assert measure_version.db_version_id == 2
+
+    data = multidict_from_measure_version_and_kwargs(measure_version, db_version_id="1", title="try new title")
+    response = test_app_client.post(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        ),
+        data=data,
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert page.find("input", {"id": "db_version_id"}).attrs["value"] == "2"
+    assert measure_version.title == "new title"
+    assert page_displays_error_matching_message(
+        response, message=f"has been updated by {measure_version.last_updated_by}"
+    )
 
 
 def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(test_app_client, logged_in_dept_user):
@@ -893,3 +978,72 @@ def test_view_measure_version_by_measure_version_id_404_if_no_measure_version(te
     response = test_app_client.get(url_for("cms.view_measure_version_by_measure_version_id", measure_version_id=456))
 
     assert response.status_code == 404
+
+
+class _TestVisualisationBuilder:
+    ROUTE_NAME = None
+
+    def builder_url(self, measure_version):
+        if not self.ROUTE_NAME:
+            raise NotImplementedError
+
+        return url_for(
+            self.ROUTE_NAME,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+            dimension_guid=measure_version.dimensions[0].guid,
+        )
+
+    def test_custom_classification_select_populates_with_known_classification(
+        self, test_app_client, logged_in_rdu_user
+    ):
+        measure_version = MeasureVersionWithDimensionFactory(version="1.0")
+        response = test_app_client.get(self.builder_url(measure_version))
+
+        assert response.status_code == 200
+        page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+        classification_select = page.find("select", {"id": "custom_classification__selector"})
+        classification_options = classification_select.find_all("option")
+        assert len(classification_options) == 29
+        assert {option.get_text(strip=True) for option in classification_options} == {
+            "4 - Asian, Black, White, Other inc Mixed",
+            "4 - Black, Mixed, White, Other inc Asian",
+            "5 - Asian, Black, White British, White other, Other inc Mixed",
+            "6 - Asian, Black African, Black Caribbean, Black other, White, Other",
+            "6 - Asian, Black African, Black Caribbean, Black other, White, Other - Aggregates",
+            "6 - Asian, Black, Mixed, White British, White other, Other",
+            "6 - Asian, Black, Mixed, White British, White other, Other - Aggregates",
+            "6 - Indian, Pakistani and Bangladeshi, Black, Mixed, White, Other",
+            "7 - Asian, Black, Chinese, Mixed, White British, White other, Other",
+            "7 - Asian, Black, Chinese, Mixed, White British, White other, Other - Aggregates",
+            "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White British, White other, Other",
+            "8 - Indian, Pakistani and Bangladeshi, Asian other, Black, Mixed, White "
+            "British, White other, Other - Aggregates",
+            "APS detailed - 13",
+            "APS detailed - 13 - Aggregates",
+            "Annual population survey - 9",
+            "DfE - 18+1",
+            "DfE - 6+1",
+            "Family resources survey - 10",
+            "Longitudinal education outcomes - 10",
+            "Longitudinal education outcomes - 10 - Aggregates",
+            "Not applicable",
+            "ONS 2001 - 16+1",
+            "ONS 2001 - 5+1",
+            "ONS 2011 - 18+1",
+            "ONS 2011 - 5+1",
+            "Please select",
+            "Well-being survey - 12",
+            "White British and Other",
+            "White and Other",
+        }  # TODO: Fix to use definitions/lookups from `test_data: https://trello.com/c/fwYpIWkD
+
+
+class TestChartBuilder(_TestVisualisationBuilder):
+    ROUTE_NAME = "cms.create_chart"
+
+
+class TestTableBuilder(_TestVisualisationBuilder):
+    ROUTE_NAME = "cms.create_table"

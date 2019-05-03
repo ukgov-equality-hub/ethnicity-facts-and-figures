@@ -9,7 +9,7 @@ class AddUserForm(FlaskForm):
         label="Email address",
         validators=[
             Length(min=5, max=255),
-            DataRequired(message="Can’t be empty"),
+            DataRequired(message="Enter an email address"),
             Email(message="Enter a valid email address"),
             ValidPublisherEmailAddress(),
         ],

@@ -147,11 +147,19 @@ class DataSource(db.Model, CopyableModel):
     __tablename__ = "data_source"
     __table_args__ = (
         ForeignKeyConstraint(
-            ["type_of_statistic_id"], ["type_of_statistic.id"], name="data_source_type_of_statistic_id_fkey"
+            ["type_of_statistic_id"],
+            ["type_of_statistic.id"],
+            name="data_source_type_of_statistic_id_fkey",
+            ondelete="restrict",
         ),
-        ForeignKeyConstraint(["publisher_id"], ["organisation.id"], name="data_source_publisher_id_fkey"),
         ForeignKeyConstraint(
-            ["frequency_of_release_id"], ["frequency_of_release.id"], name="data_source_frequency_of_release_id_fkey"
+            ["publisher_id"], ["organisation.id"], name="data_source_publisher_id_fkey", ondelete="restrict"
+        ),
+        ForeignKeyConstraint(
+            ["frequency_of_release_id"],
+            ["frequency_of_release.id"],
+            name="data_source_frequency_of_release_id_fkey",
+            ondelete="restrict",
         ),
     )
 
@@ -189,8 +197,10 @@ class DataSourceInMeasureVersion(db.Model):
     # metadata
     __tablename__ = "data_source_in_measure_version"
     __table_args__ = (
-        ForeignKeyConstraint(["data_source_id"], ["data_source.id"], name="data_source_in_page_data_source_id_fkey"),
-        ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"]),
+        ForeignKeyConstraint(
+            ["data_source_id"], ["data_source.id"], name="data_source_in_page_data_source_id_fkey", ondelete="restrict"
+        ),
+        ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"], ondelete="cascade"),
     )
 
     data_source_id = db.Column(db.Integer, primary_key=True)
@@ -199,8 +209,8 @@ class DataSourceInMeasureVersion(db.Model):
 
 user_measure = db.Table(
     "user_measure",
-    db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
-    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id"), primary_key=True),
+    db.Column("user_id", db.Integer, db.ForeignKey("users.id", ondelete="cascade"), primary_key=True),
+    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id", ondelete="cascade"), primary_key=True),
 )
 
 
@@ -216,7 +226,10 @@ class MeasureVersion(db.Model, CopyableModel):
 
     # metadata
     __tablename__ = "measure_version"
-    __table_args__ = (ForeignKeyConstraint(["measure_id"], ["measure.id"]), UniqueConstraint("measure_id", "version"))
+    __table_args__ = (
+        ForeignKeyConstraint(["measure_id"], ["measure.id"], ondelete="cascade"),
+        UniqueConstraint("measure_id", "version"),
+    )
 
     def __eq__(self, other):
         return self.id == other.id
@@ -250,7 +263,6 @@ class MeasureVersion(db.Model, CopyableModel):
     updated_at = db.Column(db.DateTime)  # timestamp when page updated
     last_updated_by = db.Column(db.String(255))  # email address of user who made the most recent update
 
-    published = db.Column(db.BOOLEAN, default=False)  # set to True when a measure version is published
     published_at = db.Column(db.Date, nullable=True)  # date - set automatically when a measure version is published
     published_by = db.Column(db.String(255))  # email address of user who published the measure version
 
@@ -278,7 +290,7 @@ class MeasureVersion(db.Model, CopyableModel):
 
     # lowest_level_of_geography is not displayed on the public site but is used for geographic dashboard
     lowest_level_of_geography_id = db.Column(
-        db.String(255), ForeignKey("lowest_level_of_geography.name"), nullable=True
+        db.String(255), ForeignKey("lowest_level_of_geography.name", ondelete="restrict"), nullable=True
     )
 
     # Methodology section
@@ -293,7 +305,7 @@ class MeasureVersion(db.Model, CopyableModel):
     # relationships
     measure = db.relationship("Measure", back_populates="versions")
     lowest_level_of_geography = db.relationship("LowestLevelOfGeography", back_populates="measure_versions")
-    uploads = db.relationship("Upload", back_populates="measure_version", lazy="dynamic", cascade="all, delete-orphan")
+    uploads = db.relationship("Upload", back_populates="measure_version", cascade="all, delete-orphan")
     dimensions = db.relationship(
         "Dimension",
         back_populates="measure_version",
@@ -376,8 +388,20 @@ class MeasureVersion(db.Model, CopyableModel):
         else:
             return current_status
 
+    @property
+    def next_approval_state(self) -> Optional[str]:
+        """Returns the next state in the approval process, from ‘draft’ to ‘approved’. Once approved, returns `None`."""
+        approval_state = None
+
+        if "APPROVE" in self.available_actions:
+            numerical_status = self.publish_status(numerical=True)
+            approval_state = publish_status.inv[numerical_status + 1]
+
+        return approval_state
+
+    @property
     def available_actions(self):
-        if self.measure.subtopic.topic.slug == TESTING_SPACE_SLUG:
+        if self.measure and self.measure.subtopic.topic.slug == TESTING_SPACE_SLUG:
             return ["UPDATE"]
 
         if self.status == "DRAFT":
@@ -423,7 +447,7 @@ class MeasureVersion(db.Model, CopyableModel):
 
     def unpublish(self):
         unpublish_state = publish_status.inv[5]
-        message = 'Request to un-publish page "{}" - page will be removed from site'.format(self.title)
+        message = 'Request to unpublish page "{}" - page will be removed from site'.format(self.title)
         self.status = unpublish_state
         return message
 
@@ -555,7 +579,7 @@ class MeasureVersion(db.Model, CopyableModel):
 class Dimension(db.Model):
     # metadata
     __tablename__ = "dimension"
-    __table_args__ = (ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"]), {})
+    __table_args__ = (ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"], ondelete="cascade"), {})
 
     # This is a database expression to get the current timestamp in UTC.
     # Possibly specific to PostgreSQL:
@@ -753,7 +777,7 @@ class Dimension(db.Model):
 class Upload(db.Model, CopyableModel):
     # metadata
     __tablename__ = "upload"
-    __table_args__ = (ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"]), {})
+    __table_args__ = (ForeignKeyConstraint(["measure_version_id"], ["measure_version.id"], ondelete="cascade"), {})
 
     # columns
     guid = db.Column(db.String(255), primary_key=True)
@@ -849,8 +873,8 @@ class DimensionClassification(db.Model):
     # metadata
     __tablename__ = "dimension_categorisation"
     __table_args__ = (
-        ForeignKeyConstraint(["dimension_guid"], ["dimension.guid"]),
-        ForeignKeyConstraint(["classification_id"], ["classification.id"]),
+        ForeignKeyConstraint(["dimension_guid"], ["dimension.guid"], ondelete="cascade"),
+        ForeignKeyConstraint(["classification_id"], ["classification.id"], ondelete="restrict"),
         {},
     )
 
@@ -954,8 +978,8 @@ class Organisation(db.Model):
     # columns
     id = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.String(255), nullable=False)
-    other_names = db.Column(ARRAY(db.String), default=[])
-    abbreviations = db.Column(ARRAY(db.String), default=[])
+    other_names = db.Column(ARRAY(db.String), default=[], nullable=False)
+    abbreviations = db.Column(ARRAY(db.String), default=[], nullable=False)
     organisation_type = db.Column(db.Enum(TypeOfOrganisation, name="type_of_organisation_types"), nullable=False)
 
     # relationships
@@ -997,8 +1021,10 @@ class Topic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(64), nullable=False)
     title = db.Column(db.String(255), nullable=False)
+    short_title = db.Column(db.String(255), nullable=True)
     description = db.Column(db.Text, nullable=True)  # a sentence below topic heading on homepage
     additional_description = db.Column(db.TEXT, nullable=True)  # short paragraph displayed on topic page
+    meta_description = db.Column(db.TEXT, nullable=True)  # sentence or two for search engines and social sharing
 
     # relationships
     subtopics = db.relationship("Subtopic", back_populates="topic", order_by="asc(Subtopic.position)")
@@ -1006,6 +1032,10 @@ class Topic(db.Model):
     @property
     def has_published_measures(self):
         return any(subtopic.has_published_measures for subtopic in self.subtopics)
+
+    @property
+    def short_title_or_title(self):
+        return self.short_title or self.title
 
 
 class Subtopic(db.Model):
@@ -1032,8 +1062,8 @@ class Subtopic(db.Model):
 
 subtopic_measure = db.Table(
     "subtopic_measure",
-    db.Column("subtopic_id", db.Integer, db.ForeignKey("subtopic.id"), primary_key=True),
-    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id"), primary_key=True),
+    db.Column("subtopic_id", db.Integer, db.ForeignKey("subtopic.id", ondelete="restrict"), primary_key=True),
+    db.Column("measure_id", db.Integer, db.ForeignKey("measure.id", ondelete="cascade"), primary_key=True),
 )
 
 
@@ -1065,7 +1095,7 @@ class Measure(db.Model):
 
     @property
     def has_published_version(self):
-        return any(version.published for version in self.versions)
+        return any((version.status == "APPROVED" and version.published_at is not None) for version in self.versions)
 
     @property
     def latest_version(self):
@@ -1075,7 +1105,9 @@ class Measure(db.Model):
     @property
     def latest_published_version(self):
         """Return the latest _published_ version of a measure."""
-        published_versions = [version for version in self.versions if version.published]
+        published_versions = [
+            version for version in self.versions if (version.status == "APPROVED" and version.published_at is not None)
+        ]
         if published_versions:
             return max(published_versions, key=lambda version: (version.major(), version.minor()))
 

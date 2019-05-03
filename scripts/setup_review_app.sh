@@ -23,3 +23,9 @@ display_result $? 1 "Copy over db from dev/master"
 
 ./manage.py db upgrade
 display_result $? 1 "Apply migrations including any in review app PR"
+
+./manage.py delete_all_measures_except_two_per_subtopic
+display_result $? 1 "Drop all but first two measures in each subtopic from database so rowcount < heroku limit of 10k"
+
+./manage.py refresh_materialized_views
+display_result $? 1 "Refresh materialized views"

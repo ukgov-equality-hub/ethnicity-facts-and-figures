@@ -349,7 +349,6 @@ class TestPageService:
         assert new_version.internal_edit_summary is None
         assert new_version.external_edit_summary is None
         assert new_version.published_at is None
-        assert new_version.published is False
         assert user.email == new_version.created_by
         assert new_version.latest is True
 
@@ -364,7 +363,6 @@ class TestPageService:
         assert next_version.internal_edit_summary is None
         assert next_version.external_edit_summary is None
         assert next_version.published_at is None
-        assert next_version.published is False
         assert user.email == new_version.created_by
         assert next_version.latest is True
 
@@ -415,12 +413,12 @@ class TestPageService:
     def test_create_new_minor_version_duplicates_uploads(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
         measure_version = MeasureVersionFactory(latest=True)
-        assert measure_version.uploads.count() == 1
+        assert len(measure_version.uploads) == 1
         original_upload = measure_version.uploads[0]
 
         new_version = page_service.create_measure_version(measure_version, NewVersionType.MINOR_UPDATE, user=user)
 
-        assert new_version.uploads.count() == 1
+        assert len(new_version.uploads) == 1
         new_upload = new_version.uploads[0]
         assert new_upload.guid != original_upload.guid
         assert new_upload.file_name == original_upload.file_name
@@ -433,8 +431,8 @@ class TestPageService:
 
         new_version = page_service.create_measure_version(measure_version, NewVersionType.MAJOR_UPDATE, user=user)
 
-        assert measure_version.uploads.count() == 1
-        assert new_version.uploads.count() == 0
+        assert len(measure_version.uploads) == 1
+        assert len(new_version.uploads) == 0
 
     def test_create_copy_of_page(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
@@ -451,7 +449,6 @@ class TestPageService:
         assert first_copy.internal_edit_summary is None
         assert first_copy.external_edit_summary is None
         assert first_copy.published_at is None
-        assert not first_copy.published
         assert first_copy.created_by == user.email
         assert first_copy.latest
 
@@ -462,7 +459,6 @@ class TestPageService:
         assert second_copy.internal_edit_summary is None
         assert second_copy.external_edit_summary is None
         assert second_copy.published_at is None
-        assert not second_copy.published
         assert user.email == first_copy.created_by
         assert second_copy.latest
 

@@ -1,24 +1,15 @@
 {% extends "base.html" %}
 
 {% set breadcrumbs = none %}
+{% set errors = get_form_errors(forms=[login_user_form, ]) %}
 
-{% block pageTitle %}Login{% endblock %}
+{# We have to manually add the `Error: ` prefix to the pageTitle here as we don't have control over the context that
+this template receives, so can't make sure it's rendered with the `errors` variable from the start. Because `Error: `
+is added in the base template, the {% set errors %} above isn't in scope when the base template is rendered, so the
+prefix does not get added there. #}
+
+{% block pageTitle %}{% if errors is defined and errors %}Error: {% endif %}Login{% endblock %}
 {% block nav_home %}active{% endblock %}
-{% block bodyClasses %}rd_cms{% endblock %}
-
-{% block flashMessages %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            {% if login_user_form.errors %}
-                <div class="govuk-error-summary govuk-!-margin-bottom-0 govuk-!-padding-bottom-0">
-                    <div class="govuk-error-summary__body">
-                        <p>Make sure you've entered the right email address and password. If you've forgotten your password you can reset it by clicking 'Forgotten password'</p>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-{% endblock %}
 
 {% block content %}
         <div class="govuk-grid-row">
@@ -26,7 +17,7 @@
                 <h1 class="govuk-heading-xl">Login</h1>
 
                 <form action="{{ url_for('security.login') }}" method="post">
-                    {{ login_user_form.csrf_token }}
+                    {{ login_user_form.csrf_token | default('') }}
 
                     {{ login_user_form.email }}
 

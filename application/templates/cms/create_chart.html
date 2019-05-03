@@ -11,8 +11,6 @@
   ]
 %}
 
-{% block bodyClasses %}rd_cms{% endblock %}
-
 {% block headEnd %}
   {{ super() }}
   <script>
@@ -33,7 +31,7 @@
 #}
         <div id="data-panel" class="data-panel {% if settings_and_source_data %}hidden{% endif %}">
             <div class="govuk-grid-column-full">
-                <h2 class="govuk-heading-m no-top-border eff-numbered-sections__item">Data</h2>
+                <h2 class="govuk-heading-m no-top-border eff-numbered-sections__item"><label for="data_text_area">Data</label></h2>
 
                 <div class="govuk-hint">
                     <p class="govuk-hint">Copy and paste your data here. You should:</p>
@@ -139,7 +137,7 @@
                     Ethnicity must be one of the two
                 #}
                 <div id="grouped_bar_chart_options" class="chart-builder-section chart-option-group hidden">
-                    <h2 class="govuk-heading-m eff-numbered-sections__item">Grouped bar chart options</h2>
+                    <h2 class="govuk-heading-m eff-numbered-sections__item"><label for="grouped-bar__data_style">Grouped bar chart options</label></h2>
                     <p class="govuk-body">Use ethnicity for sub-groups if your data only includes 2 ethnic groups (for example, White and Other).</p>
                     <form>
                         {#
@@ -186,7 +184,7 @@
                     Ethnicity must be one of the two
                 #}
                 <div id="panel_bar_chart_options" class="chart-builder-section chart-option-group hidden">
-                    <h2 class="govuk-heading-m eff-numbered-sections__item">Panel chart options</h2>
+                    <h2 class="govuk-heading-m eff-numbered-sections__item"><label for="panel-bar__data_style">Panel chart options</label></h2>
                     <p class="govuk-body">Most of the time you should use ethnicity for bars.</p>
                     <p class="govuk-body">Only use ethnicity for panels if you’re comparing outcomes within an ethnic group, rather than between groups.</p>
                     <p class="govuk-body">Don’t have more than 16 panels or 10 bars within a panel.</p>
@@ -284,7 +282,7 @@
                     Ethnicity must be one of the two
                 #}
                 <div id="component_chart_options" class="chart-builder-section chart-option-group hidden">
-                    <h2 class="govuk-heading-m eff-numbered-sections__item">Component chart options</h2>
+                    <h2 class="govuk-heading-m eff-numbered-sections__item"><label for="component__data_style">Component chart options</label></h2>
                     <form>
                         <div class="govuk-form-group">
                         {#
@@ -396,7 +394,7 @@
                     </div>
                 </div>
                 <div id="preview_container">
-                    <h2 class="govuk-heading-m eff-numbered-sections__item">Chart title</h2>
+                    <h2 class="govuk-heading-m eff-numbered-sections__item"><label for="chart_title">Chart title</label></h2>
                     <div class="chart-builder-section">
                       <span class="govuk-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
                       {% include 'forms/extended_hints/_chart_and_table_title.html' %}
@@ -407,7 +405,7 @@
                     <h2 class="govuk-heading-m eff-numbered-sections__item">Preview</h2>
                     <div id="container" class="chart-container"></div>
 
-                    {% if 'UPDATE' in measure_version.available_actions() %}
+                    {% if 'UPDATE' in measure_version.available_actions %}
                     <br>
                     <div id="save_section" class="chart-builder-section hidden">
                         <div class="govuk-!-padding-left-8">

@@ -4,21 +4,14 @@
  * and should be used in addition to those classes.
  */
 
-
-.eff-table__header--dense {
-  @include govuk-font(16, $weight: bold);
-}
-
-.eff-table__header--numeric--dense {
-  @include govuk-font(16, $weight: bold, $tabular: true);
-}
-
+/* Dense header and table cells
+ *
+ * This is for use with tables that contain a lot of data.
+ * It sets a smaller than usual font size.
+ */
+.eff-table__header--dense,
 .eff-table__cell--dense {
-  @include govuk-font(16);
-}
-
-.eff-table__cell--numeric--dense {
-  @include govuk-font(16, $tabular: true);
+  @include govuk-typography-responsive(16);
 }
 
 
@@ -33,17 +26,28 @@
   padding-right: 10px;
 }
 
+/* Removes the border beneath the heading or cell */
+.eff-table__header--border-bottom-0,
+.eff-table__cell--border-bottom-0 {
+  border-bottom-width: 0;
+}
 
-/* Cells with reduced padding on the left
+
+/* Cells with no padding on the left
  *
- * This reduces the padding on the left from 20px to 10px.
- * Useful if there's a border on the left hand side.
+ * This removes the padding on the left
+ * Useful for the first cells in the first column, to save space.
  */
 .eff-table__header--padding-left,
 .eff-table__cell--padding-left {
   padding-left: 10px;
 }
 
+
+/* Removes the padding in a header cell */
+.eff-table__header--padding-top-0 {
+  padding-top: 0px;
+}
 
 
 .eff-table__head--reversed .govuk-table__header {
@@ -57,13 +61,31 @@
 }
 
 
-/* Table header cells with a fixed width of80px
+/* Table header cells with a fixed width of 80px
  *
  */
 .eff-table__header--width-80 {
   width: 80px;
 }
 
+
+/* Set text to vertically align to the top of the cell
+ *
+ */
+.eff-table__header--align-top,
+.eff-table__cell--align-top {
+  vertical-align: top;
+}
+
+/* Indent the table header and make it non-bold
+ *
+ * This is useful where there is a parent-child relationship
+ * between rows (eg broad and specific ethnic groups).
+ */
+.eff-table__header--child {
+  @include govuk-typography-weight-regular();
+  padding-left: 10px;
+}
 
 
 /* Styles to keep measure page tables constrained to a fixed height */
@@ -119,214 +141,6 @@
 .fixed-headers .table-container {
   max-height: 400px;
   overflow-y: scroll;
-}
-
-.table-container table {
-  width: auto;
-}
-
-
-
-table.measure-data {
-  border-collapse: collapse;
-  width: 100%;
-  margin-bottom: 0px;
-
-  td, th {
-    font-size: 16px;
-    padding-left: 5px;
-    padding-right: 5px;
-    vertical-align: top;
-    font-family: $govuk-font-family-tabular;
-  }
-
-  th.line, td.line {
-    border-right: 1px solid $govuk-border-colour;
-    padding-right: 10px;
-  }
-
-  td {
-    text-align: right;
-  }
-
-  thead th {
-    padding-top: 0;
-    text-align: right;
-  }
-
-  thead th:first-child {
-    text-align: left;
-  }
-
-  thead th {
-    font-weight: normal;
-  }
-
-  thead tr:first-child th,
-  thead tr th:first-child {
-    font-weight: bold;
-  }
-
-
-  th:first-child {
-    padding-left: 0;
-    border-right-width: 1px;
-    border-right-style: solid;
-    border-right-color: $govuk-border-colour;
-  }
-
-  th:last-of-type,
-  td:last-of-type {
-    padding-right: 10px;
-  }
-
-  /* grouped tables (columns) */
-
-  &.grouped {
-
-    thead {
-
-      tr {
-        &:first-child {
-
-          td,th {
-            border-bottom-width: 0;
-          }
-
-          td {
-            font-weight: bold;
-          }
-        }
-      }
-
-      th {
-        border-bottom: 1px solid $govuk-border-colour;
-
-        &:first-child {
-          text-align: left;
-        }
-      }
-    }
-    tbody {
-      th {
-        border-right: 1px solid $govuk-border-colour;
-        padding-right: 5px;
-      }
-
-    }
-
-  }
-
-  /* grouped tables (rows) */
-
-  &.grouped-rows tbody th {
-    font-weight: normal;
-    padding-left: 10px;
-  }
-
-  &.grouped-rows tbody th[scope="rowgroup"] {
-    font-weight: bold;
-    padding-left: 0;
-  }
-
-    &.last {
-      padding-right: 5px;
-    }
-
-    &:focus {
-      outline-width: 0;
-    }
-
-    &.sorting_asc, &.sorting_desc {
-      position: relative;
-
-      button {
-        outline-width: 0;
-        font-weight: bold;
-
-        &:first-child {
-          &:after {
-            display: inline-block;
-            border-left: 3px solid transparent;
-            border-right: 3px solid transparent;
-            content: '';
-          }
-        }
-
-        &:after {
-          position: absolute;
-          border-left: 3px solid transparent;
-          border-right: 3px solid transparent;
-          border-top: 6px solid govuk-colour("blue");
-          content: '';
-          margin-left: 2px;
-          margin-top: 8px;
-        }
-      }
-    }
-
-    &.sorting_desc {
-      button {
-        &:after {
-          border-top: 0px solid transparent;
-          border-bottom: 6px solid govuk-colour("blue");
-        }
-      }
-    }
-
-  .border-bottom {
-    border-bottom: 1px solid $govuk-border-colour;
-  }
-
-  thead {
-    tr {
-      font-weight: normal;
-
-      td {
-        &.first {
-          text-align: left;
-        }
-      }
-
-      &.top {
-        td {
-          border-bottom: 0px transparent solid;
-          font-weight: bold;
-          text-align: left;
-          padding-left: 5px;
-        }
-      }
-    }
-  }
-
-  .right-border {
-      border-right: 1px solid $govuk-border-colour;
-      padding-right: 5px;
-    }
-
-  tbody {
-    td {
-      border-bottom: 1px solid $govuk-border-colour;
-    }
-  }
-
-  .breakdown-controller {
-    color: $govuk-link-colour;
-    &:hover {
-      color: $govuk-link-hover-colour;
-      cursor: pointer;
-    }
-  }
-
-  .not-bold {
-    font-weight: 400 !important;
-  }
-
-  .breakdown {
-    td {
-    padding-left: 20px;
-    }
-  }
 }
 
 .chart-footer {
@@ -457,13 +271,6 @@ table.measure-data {
 
 }
 
-/* Fixed with numeric columns
- *
- * TODO: replace with width override classes?
- */
-table.numeric {
-  width: 100px;
-}
 
 /* Use on <th> for fixing column widths */
 table .column-width-40 {
@@ -476,17 +283,4 @@ table .column-width-30 {
 
 table .column-width-15 {
     width: 15%;
-}
-
-.eff-table__list--inset {
-  padding-inline-start: 40px;
-}
-
-.eff-table__list--dense {
-  @include govuk-font(16);
-  @include govuk-responsive-margin(0, $direction: "bottom");
-}
-
-.eff-table__cell--align-top {
-  vertical-align: top;
 }

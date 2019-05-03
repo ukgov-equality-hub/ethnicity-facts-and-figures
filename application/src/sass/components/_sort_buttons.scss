@@ -1,63 +1,63 @@
-/* Sort buttons
+/* Sort button modifiers
  *
- * TODO: convert to BEM naming conventions.
-*/
-[aria-sort] button,
-[aria-sort] button:hover,
-[aria-sort] button:focus {
-  background-color: transparent;
-  border-width: 0;
-  -webkit-box-shadow: 0 0 0 0;
-  -moz-box-shadow: 0 0 0 0;
-  box-shadow: 0 0 0 0;
-  color: #005ea5;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  padding: 0 10px 0 0;
+ * These are used for indicating that a button can be used to re-order
+ * a table by a particular column, in either ascending or descending order.
+ *
+ * The modifier classes should be added alongside the base component class
+ * from the GOV.UK Design System of `govuk-button`
+ *
+ * When un-sorted (`eff-button--sort`), the button includes both up and down
+ * arrows on the right, as an affordance to indicate what the button does.
+ *
+ * When sorted in a particular direction (`eff-button--sort-ascending` or `eff-button--sort-descending`(, a single (larger) up or down arrow is shown.
+ *
+ * This modifier can also be used alongside the `eff-button--link` modifier, in
+ * order to style the button to look more like a link than a button.
+ */
+.eff-button--sort,
+.eff-button--sort-ascending,
+.eff-button--sort-descending {
   position: relative;
-  text-align: inherit;
-  font-size: 1em;
+  padding: 0 10px 0 0;
 }
 
-[aria-sort]:first-child button {
-  right: auto;
-}
-
-[aria-sort] button:before {
-  content: " \25bc";
+.eff-button--sort:before,
+.eff-button--sort:active:before {
+  content: " \25bc"; /* ▼ */
   position: absolute;
   right: -2px;
-  top: 8px;
+  top: 9px;
   font-size: 0.5em;
+  text-align: right;
 }
 
-[aria-sort] button:after {
-  content: " \25b2";
+.eff-button--sort:after,
+.eff-button--sort:active:after {
+  content: " \25b2"; /* ▲ */
   position: absolute;
   right: -2px;
-  top: 1px;
+  top: 0px;
   font-size: 0.5em;
+  text-align: right;
 }
 
-  [aria-sort="ascending"] button:before,
-  [aria-sort="descending"] button:before {
-    content: none;
-  }
+.eff-button--sort-ascending:before,
+.eff-button--sort-descending:before {
+  content: none;
+}
 
-  [aria-sort="ascending"] button:after {
-    content: " \25b2";
-    font-size: .7em;
-    position: absolute;
-    right: -2px;
-    top: 2px;
-  }
+.eff-button--sort-ascending:after {
+  content: " \25b2"; /* ▲ */
+  font-size: .7em;
+  position: absolute;
+  right: -2px;
+  top: 2px;
+}
 
-  [aria-sort="descending"] button:after {
-    content: " \25bc";
-    font-size: .7em;
-    position: absolute;
-    right: -2px;
-    top: 2px;
-  }
+.eff-button--sort-descending:after {
+  content: " \25bc"; /* ▼ */
+  font-size: .7em;
+  position: absolute;
+  right: -2px;
+  top: 2px;
+}

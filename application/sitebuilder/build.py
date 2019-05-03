@@ -34,6 +34,9 @@ def make_new_build_dir(application, build=None):
 
 def do_it(application, build):
     with application.app_context():
+        # Build the pages in static mode
+        application.config["STATIC_MODE"] = True
+
         print("DEBUG: do_it()")
         build_dir = make_new_build_dir(application, build=build)
 
@@ -45,19 +48,13 @@ def do_it(application, build):
         print("DEBUG do_it(): Creating versioned assets...")
         create_versioned_assets(build_dir)
 
-        # Inject static_mode=True into all Jinja render_template calls so that pages are automatically rendered in the
-        # correct mode.
-        @application.context_processor
-        def enforce_static_mode():
-            return dict(static_mode=True)
-
         local_build = application.config["LOCAL_BUILD"]
+
+        print("DEBUG do_it(): Unpublishing pages...")
+        pages_unpublished = unpublish_pages()
 
         print("DEBUG do_it(): Building from homepage...")
         build_homepage_and_topic_hierarchy(build_dir, config=application.config)
-
-        print("DEBUG do_it(): Unpublishing pages...")
-        pages_unpublished = unpublish_pages(build_dir)
 
         print("DEBUG do_it(): Building dashboards...")
         build_dashboards(build_dir)
@@ -88,13 +85,10 @@ def build_and_upload_error_pages(application):
     convoluted and confusing to integrate into the main site build.
     """
     with application.app_context():
-        build_dir = make_new_build_dir(application)
+        # Build the pages in static mode
+        application.config["STATIC_MODE"] = True
 
-        # Inject static_mode=True into all Jinja render_template calls so that pages are automatically rendered in the
-        # correct mode.
-        @application.context_processor
-        def enforce_static_mode():
-            return dict(static_mode=True)
+        build_dir = make_new_build_dir(application)
 
         local_build = application.config["LOCAL_BUILD"]
 
@@ -121,7 +115,7 @@ def build_homepage_and_topic_hierarchy(build_dir, config):
     from application.cms.page_service import page_service
 
     topics = page_service.get_topics(include_testing_space=False)
-    content = render_template("static_site/index.html", topics=topics, static_mode=True)
+    content = render_template("static_site/index.html", topics=topics)
 
     file_path = os.path.join(build_dir, "index.html")
     write_html(file_path, content)
@@ -149,11 +143,7 @@ def write_topic_html(topic, build_dir, config):
             subtopics.append(subtopic)
 
     content = render_template(
-        "static_site/topic.html",
-        topic=topic,
-        subtopics=subtopics,
-        measures_by_subtopic=measures_by_subtopic,
-        static_mode=True,
+        "static_site/topic.html", topic=topic, subtopics=subtopics, measures_by_subtopic=measures_by_subtopic
     )
 
     file_path = os.path.join(slug, "index.html")
@@ -246,21 +236,10 @@ def process_dimensions(measure_version, slug):
                 dimension_file.write(table_output)
 
 
-def unpublish_pages(build_dir):
+def unpublish_pages():
     from application.cms.page_service import page_service
 
     measure_versions_to_unpublish = page_service.get_measure_versions_to_unpublish()
-    for measure_version in measure_versions_to_unpublish:
-        if measure_version.get_previous_version() is None:
-            page_dir = os.path.join(
-                build_dir,
-                measure_version.measure.subtopic.topic.slug,
-                measure_version.measure.subtopic.slug,
-                measure_version.measure.slug,
-                "latest",
-            )
-            if os.path.exists(page_dir):
-                shutil.rmtree(page_dir, ignore_errors=True)
 
     page_service.mark_measure_versions_unpublished(measure_versions_to_unpublish)
     return measure_versions_to_unpublish

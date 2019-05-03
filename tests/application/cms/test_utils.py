@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired
 
 from application.cms.forms import DataSourceForm
 from application.form_fields import RDUStringField
-from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data, ErrorSummaryMessage
+from application.cms.utils import copy_form_errors, get_data_source_forms, get_form_errors, ErrorSummaryMessage
 from tests.models import MeasureVersionFactory
 
 
@@ -41,29 +41,21 @@ class TestGetErrorSummaryDetails:
     class FormForTest(FlaskForm):
         field = RDUStringField(label="field", validators=[DataRequired("invalid field")])
 
-    def test_get_error_summary_data_return_value(self):
+    def test_get_errors_return_value(self):
         form = self.FormForTest()
         form.validate()
 
-        assert get_error_summary_data(title="Form validation failed", forms=[form]) == {
-            "title": "Form validation failed",
-            "errors": [ErrorSummaryMessage(href="#field-label", field="field", text="invalid field")],
-        }
+        assert get_form_errors(forms=[form]) == [ErrorSummaryMessage(href="#field-label", text="invalid field")]
 
-    def test_get_error_summary_data_appends_extra_non_form_errors(self):
+    def test_get_errors_appends_extra_non_form_errors(self):
         form = self.FormForTest()
         form.validate()
-        additional_error_message = ErrorSummaryMessage(href="#other-label", field="other-field", text="bad field")
+        additional_error_message = ErrorSummaryMessage(href="#other-label", text="bad field")
 
-        assert get_error_summary_data(
-            title="Form validation failed", forms=[form], extra_non_form_errors=[additional_error_message]
-        ) == {
-            "title": "Form validation failed",
-            "errors": [
-                ErrorSummaryMessage(href="#field-label", field="field", text="invalid field"),
-                ErrorSummaryMessage(href="#other-label", field="other-field", text="bad field"),
-            ],
-        }
+        assert get_form_errors(forms=[form], extra_non_form_errors=[additional_error_message]) == [
+            ErrorSummaryMessage(href="#field-label", text="invalid field"),
+            ErrorSummaryMessage(href="#other-label", text="bad field"),
+        ]
 
     def test_base_template_renders_error_summary(self):
         form = self.FormForTest()
@@ -73,9 +65,7 @@ class TestGetErrorSummaryDetails:
         doc = html.fromstring(rendered_html)
         assert not doc.xpath("//*[contains(@class, 'govuk-error-summary')]")
 
-        rendered_html = render_template(
-            "base.html", error_summary=get_error_summary_data(title="Form validation failed", forms=[form])
-        )
+        rendered_html = render_template("base.html", errors=get_form_errors(forms=[form]))
         doc = html.fromstring(rendered_html)
         assert doc.xpath("//*[contains(@class, 'govuk-error-summary')]")
 

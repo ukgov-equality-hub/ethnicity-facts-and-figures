@@ -17,6 +17,7 @@ from tests.models import (
     MeasureVersionWithDimensionFactory,
     UserFactory,
 )
+from tests.utils import assert_strings_match_ignoring_whitespace
 
 
 def test_homepage_includes_mailing_list_sign_up(test_app_client, logged_in_rdu_user, app):
@@ -216,7 +217,7 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
         type_of_data=[TypeOfData.SURVEY],
         type_of_statistic__external="National",
         frequency_of_release__description="Quarterly",
-        purpose="Purpose of data source",
+        purpose="There is no purpose",
     )
     measure_version = MeasureVersionFactory(
         status="DRAFT",
@@ -228,7 +229,7 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
         measure_summary="Unemployment measure summary",
         ethnicity_definition_summary="This is a summary of ethnicity definitions",
         methodology="how we measure unemployment",
-        suppression_and_disclosure="Suppression rules and disclosure control",
+        suppression_and_disclosure="Suppression and disclosure",
         data_sources=[data_source],
         measure__slug="test-measure-page-slug",
     )
@@ -245,94 +246,73 @@ def test_view_export_page(test_app_client, logged_in_rdu_user):
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    assert page.h1.text.strip() == "Title: Test Measure Page"
 
-    metadata = page.find("div", class_="metadata")
-    assert metadata.find("div", attrs={"id": "department"}).text.strip() == "Department"
-    assert metadata.find("div", attrs={"id": "area-covered"}).text.strip() == "Areas covered"
-    assert metadata.find("div", attrs={"id": "lowest-level-of-geography"}).text.strip() == "Geographic breakdown"
-    assert metadata.find("div", attrs={"id": "time-period"}).text.strip() == "Time period covered"
-
-    assert metadata.find("div", attrs={"id": "department-name"}).text.strip() == "Department for Work and Pensions"
-    assert metadata.find("div", attrs={"id": "area-covered-value"}).text.strip() == "England"
-    assert metadata.find("div", attrs={"id": "lowest-level-of-geography-value"}).text.strip() == "UK"
-    assert metadata.find("div", attrs={"id": "time-period-value"}).text.strip() == "4 months"
-
-    things_to_know = page.find("div", attrs={"id": "things-you-need-to-know"})
-    assert things_to_know.text.strip() == "Need to know this"
-
-    what_measured = page.find("div", attrs={"id": "what-the-data-measures"})
-    assert what_measured.text.strip() == "Unemployment measure summary"
-
-    categories_used = page.find("div", attrs={"id": "ethnic-categories-used-in-this-data"})
-    assert categories_used.text.strip() == "This is a summary of ethnicity definitions"
-
-    methodology = page.find("div", attrs={"id": "methodology"})
-    assert methodology.text.strip() == "how we measure unemployment"
-
-    suppression_and_disclosure = page.find("div", attrs={"id": "suppression-and-disclosure"})
-    assert suppression_and_disclosure.text.strip() == "Suppression rules and disclosure control"
-
-    data_source_details = page.find("h2", attrs={"id": "data-sources"})
-    assert data_source_details.text.strip() == "Data sources"
-
-    primary_source = page.find("div", attrs={"id": "primary-source-title"})
-    assert primary_source.text.strip() == "Title of data source"
-
-    primary_source_value = page.find("div", attrs={"id": "primary-source-name"})
-    assert primary_source_value.text.strip() == "DWP Stats"
-
-    type_of_data = page.find("div", attrs={"id": "type-of-data"})
-    assert type_of_data.text.strip() == "Type of data"
-
-    type_of_data_value = page.find("div", attrs={"id": "type-of-data-value"})
-    assert type_of_data_value.text.strip() == "Survey data"
-
-    type_of_statistic = page.find("div", attrs={"id": "type-of-statistic"})
-    assert type_of_statistic.text.strip() == "Type of statistic"
-
-    type_of_statistic_value = page.find("div", attrs={"id": "type-of-statistic-value"})
-    assert type_of_statistic_value.text.strip() == "National"
-
-    publisher = page.find("div", attrs={"id": "publisher"})
-    assert publisher.text.strip() == "Source data published by"
-
-    publisher_value = page.find("div", attrs={"id": "publisher-value"})
-    assert publisher_value.text.strip() == "Department for Work and Pensions"
-
-    source_url = page.find("div", attrs={"id": "source-url"})
-    assert source_url.text.strip() == "Link to data source"
-
-    source_url_value = page.find("div", attrs={"id": "source-url-value"})
-    assert source_url_value.text.strip() == "http://dwp.gov.uk"
-
-    publication_release = page.find("div", attrs={"id": "publication-release-date"})
-    assert publication_release.text.strip() == "Source data publication date"
-
-    publication_release_value = page.find("div", attrs={"id": "publication-release-date-value"})
-    assert publication_release_value.text.strip() == "15th May 2017"
-
-    notes_on_corrections_or_updates = page.find("div", attrs={"id": "notes-on-corrections-or-update"})
-    assert notes_on_corrections_or_updates.text.strip() == "Corrections or updates"
-
-    notes_on_corrections_or_updates_value = page.find("div", attrs={"id": "notes-on-corrections-or-update-value"})
-    assert notes_on_corrections_or_updates_value.text.strip() == "Note on corrections or updates"
-
-    publication_frequency = page.find("div", attrs={"id": "publication-frequency"})
-    assert publication_frequency.text.strip() == "How often is the source data published?"
-
-    publication_frequency_value = page.find("div", attrs={"id": "publication-frequency-value"})
-    assert publication_frequency_value.text.strip() == "Quarterly"
-
-    purpose_of_data = page.find("div", attrs={"id": "purpose-of-data-source"})
-    assert purpose_of_data.text.strip() == "Purpose of data source"
-
-    purpose_of_data_value = page.find("div", attrs={"id": "purpose-of-data-source-value"})
-    assert purpose_of_data_value.text.strip() == "Purpose of data source"
+    assert page.h1.text.strip() == "Test Measure Page"
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "data-source-1-publisher_id"}).text,
+        "Source data published by Department for Work and Pensions",
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "area_covered"}).text, "Areas covered England"
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "lowest_level_of_geography_id"}).text, "Geographic breakdown UK"
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "time_covered"}).text, "Time period covered 4 months"
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "need_to_know"}).text, "Things you need to know Need to know this"
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "measure_summary"}).text, "What the data measures Unemployment measure summary"
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "ethnicity_definition_summary"}).text,
+        "The ethnic categories used in this data This is a summary of ethnicity definitions",
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "methodology"}).text, "Methodology how we measure unemployment"
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "suppression_and_disclosure"}).text,
+        "Suppression rules and disclosure control (optional) Suppression and disclosure",
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "data-source-1-source-url"}).text, "Link to data source http://dwp.gov.uk"
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "data-source-1-title"}).text, "Title of data source DWP Stats"
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "data-source-1-type_of_data"}).text, "Type of data Survey data"
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "data-source-1-type_of_statistic_id"}).text, "Type of statistic National"
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "data-source-1-publisher_id"}).text,
+        "Source data published by Department for Work and Pensions",
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "data-source-1-publication_date"}).text,
+        "Source data publication date 15th May 2017",
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "data-source-1-note_on_corrections_or_updates"}).text,
+        "Corrections or updates (optional) Note on corrections or updates",
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "data-source-1-frequency_of_release_id"}).text,
+        "How often is the source data published? Quarterly",
+    )
+    assert_strings_match_ignoring_whitespace(
+        page.find("div", attrs={"id": "data-source-1-purpose"}).text, "Purpose of data source There is no purpose"
+    )
 
 
 def test_view_topic_page(test_app_client, logged_in_rdu_user):
-    topic = TopicFactory(title="Test topic page")
+    topic = TopicFactory(title="Test topic page", short_title="Testing")
     resp = test_app_client.get(url_for("static_site.topic", topic_slug=topic.slug))
 
     assert resp.status_code == 200
@@ -436,7 +416,7 @@ def test_measure_page_social_sharing(
     expected_social_attributes_and_values = {
         "og:type": "article",
         "og:title": "Test Measure Page",
-        "og:image": app.config["RDU_SITE"] + "/static/images/opengraph-image.png",
+        "og:image": app.config["RDU_SITE"] + "/static/assets/images/govuk-opengraph-image.png",
         "og:description": expected_social_description,
     }
     for attribute, value in expected_social_attributes_and_values.items():
@@ -510,16 +490,13 @@ def test_view_measure_page(test_app_client, logged_in_rdu_user):
     assert metadata_values[2].text.strip() == "England"
     assert metadata_values[3].text.strip() == "4 months"
 
-    things_to_know = page.find("span", attrs={"id": "things-you-need-to-know"})
-    assert things_to_know
+    things_to_know = page.select_one("#things-you-need-to-know summary")
     assert things_to_know.text.strip() == "Things you need to know"
 
-    what_measured = page.find("span", attrs={"id": "what-the-data-measures"})
-    assert what_measured
+    what_measured = page.select_one("#what-the-data-measures summary")
     assert what_measured.text.strip() == "What the data measures"
 
-    categories_used = page.find("span", attrs={"id": "the-ethnic-categories-used-in-this-data"})
-    assert categories_used
+    categories_used = page.select_one("#the-ethnic-categories-used-in-this-data summary")
     assert categories_used.text.strip() == "The ethnic categories used in this data"
 
     # methodology accordion
@@ -555,7 +532,7 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     number_of_topics, row_counts, test_app_client, logged_in_rdu_user
 ):
     for i in range(number_of_topics):
-        topic = TopicFactory(slug=f"topic-{i}", title=f"Test topic page #{i}")
+        topic = TopicFactory(slug=f"topic-{i}", title=f"Test topic page #{i}", short_title=f"Testing #{i}")
         subtopic = SubtopicFactory(slug=f"subtopic-{i}", title=f"Test subtopic page #{i}", topic=topic)
         measure = MeasureFactory(slug=f"measure-{i}", subtopics=[subtopic])
         MeasureVersionFactory(status="APPROVED", title=f"Test measure page #{i}", version="1.0", measure=measure)
@@ -570,6 +547,9 @@ def test_homepage_topics_display_in_rows_with_three_columns(
     for i, topic_row in enumerate(topic_rows):
         assert len(topic_rows[i].select(".topic")) == row_counts[i]
 
+    for i in range(number_of_topics):
+        assert page.select(".topic a")[i].text.strip() == f"Testing #{i}"
+
 
 @pytest.mark.parametrize(
     "measure_published, static_mode, topic_should_be_visible",
@@ -579,9 +559,7 @@ def test_homepage_only_shows_topics_with_published_measures_for_site_type(
     measure_published, static_mode, topic_should_be_visible, test_app_client, logged_in_rdu_user
 ):
     MeasureVersionFactory(
-        status="APPROVED" if measure_published else "DRAFT",
-        published=measure_published,
-        measure__subtopics__topic__title="Test topic page",
+        status="APPROVED" if measure_published else "DRAFT", measure__subtopics__topic__title="Test topic page"
     )
 
     resp = test_app_client.get(url_for("static_site.index", static_mode=static_mode))
@@ -601,7 +579,6 @@ def test_topic_page_only_shows_subtopics_with_published_measures_for_static_site
 ):
     MeasureVersionFactory(
         status="APPROVED" if measure_published else "DRAFT",
-        published=measure_published,
         measure__subtopics__topic__slug="test-topic",
         measure__subtopics__topic__title="Test topic page",
         measure__subtopics__title="Test subtopic page",
@@ -624,7 +601,6 @@ def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_d
 ):
     MeasureVersionFactory(
         status="APPROVED" if measure_published else "DRAFT",
-        published=measure_published,
         measure__shared_with=[logged_in_dept_user] if measure_shared else [],
         measure__subtopics__topic__slug="test-topic",
         measure__subtopics__topic__title="Test topic page",
@@ -656,6 +632,19 @@ def test_topic_page_only_shows_empty_subtopics_if_user_can_create_a_measure(
 
     assert resp.status_code == 200
     assert bool(page(string=re.compile("Test subtopic page"))) is empty_subtopic_should_be_visible
+
+
+def test_topic_meta_description(test_app_client, logged_in_rdu_user):
+    TopicFactory(slug="test-topic", meta_description="I'm a description sentence for search engines.")
+
+    resp = test_app_client.get(url_for("static_site.topic", topic_slug="test-topic"))
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+    assert resp.status_code == 200
+
+    meta_description = page.findAll("meta", property="description")
+    assert len(meta_description) == 1, f"Missing meta description on topic page"
+    assert meta_description[0].get("content") == "I'm a description sentence for search engines."
 
 
 def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(

@@ -11,8 +11,6 @@
   ]
 %}
 
-{% block bodyClasses %}rd_cms{% endblock %}
-
 {% block headEnd %}
   {{ super() }}
   <script>
@@ -34,7 +32,7 @@
         #}
         <div id="data-panel" class="data-panel {% if settings_and_source_data %}hidden{% endif %}">
             <div class="govuk-grid-column-full">
-                <h2 class="govuk-heading-m no-top-border eff-numbered-sections__item">Data</h2>
+                <h2 class="govuk-heading-m no-top-border eff-numbered-sections__item"><label for="data_text_area">Data</label></h2>
 
                 <div class="govuk-hint">
                     <p class="govuk-hint">Copy and paste your data here. You should:</p>
@@ -106,7 +104,7 @@
                     Ethnicity must be one of the two
                 #}
                 <div id="complex_table_options" class="chart-builder-section chart-option-group hidden">
-                    <h2 class="govuk-heading-m eff-numbered-sections__item">Table options</h2>
+                    <h2 class="govuk-heading-m eff-numbered-sections__item"><label for="complex-table__data-style">Table options</label></h2>
                     <form>
                         {#
                             Select style
@@ -261,7 +259,7 @@
                     </div>
                 </div>
                 <div id="preview_container">
-                    <h2 class="govuk-heading-m eff-numbered-sections__item">Table title</h2>
+                    <h2 class="govuk-heading-m eff-numbered-sections__item"><label for="table_title">Table title</label></h2>
                     <div class="chart-builder-section">
                       <span class="govuk-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
                       {% include 'forms/extended_hints/_chart_and_table_title.html' %}
@@ -274,7 +272,7 @@
                     </div>
                     <div id="container"></div>
 
-                    {% if 'UPDATE' in measure_version.available_actions() %}
+                    {% if 'UPDATE' in measure_version.available_actions %}
                     <br>
                     <div id="save_section" class="chart-builder-section" class="hidden">
                         <div>

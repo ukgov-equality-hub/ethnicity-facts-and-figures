@@ -1,6 +1,6 @@
 {
   "stack": "heroku-18",
-  "name": "rd_cms",
+  "name": "ethnicity-facts-and-figures-publisher",
   "description": "",
   "scripts": {
     "postdeploy": "./scripts/setup_review_app.sh"

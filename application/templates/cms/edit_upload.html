@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
-{% from "_shared/_page_title.html" import page_title %}
 
 {% set breadcrumbs =
   [
@@ -8,10 +7,9 @@
     {"url": url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version), "text": measure_version.title},
   ]
 %}
-{% set form_disabled = not (measure_version.status == "DRAFT" or new) %}
+{% set form_disabled = measure_version.status != 'DRAFT' %}
 
-{% block bodyClasses %}rd_cms{% endblock %}
-{% block pageTitle %}{{ page_title("Edit source data", error=(form.errors|length > 0) ) }}{% endblock %}
+{% block pageTitle %}Edit source data{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -29,7 +27,7 @@
                 </p>
                 <p class="govuk-body">To replace this file choose another file below</p>
                 <form method="POST" enctype="multipart/form-data" action="{{ url_for('cms.edit_upload',topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, upload_guid=upload.guid, version=measure_version.version)}}">
-                    {{ form.csrf_token }}
+                    {{ form.csrf_token | default('') }}
                     {% block fields %}
                         <div class="govuk-form-group">
                         {{ form.upload.label(class='govuk-label') }}
@@ -47,7 +45,7 @@
 
                     {% endblock fields %}
 
-                    {% if 'UPDATE' in measure_version.available_actions() %}
+                    {% if 'UPDATE' in measure_version.available_actions %}
                         <button type="submit" class="govuk-button" name="save">
                             Save
                         </button>

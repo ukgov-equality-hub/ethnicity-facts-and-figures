@@ -11,8 +11,6 @@
 
 {% block pageTitle %}Create new version - GOV.UK Ethnicity facts and figures{% endblock %}
 
-{% block bodyClasses %}rd_cms{% endblock %}
-
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
@@ -29,7 +27,7 @@
             </p>
             <form method="POST"
                   action="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
-                {{ form.csrf_token }}
+                {{ form.csrf_token | default('') }}
                 {{ form.version_type }}
                 <button class="govuk-button">Create new version in draft</button>
             </form>

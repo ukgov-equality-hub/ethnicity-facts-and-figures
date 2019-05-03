@@ -1,9 +1,11 @@
 from flask_wtf import FlaskForm
 from flask import abort
 from markupsafe import Markup
-from wtforms import StringField, TextAreaField, FileField, HiddenField
+from wtforms import StringField, TextAreaField, FileField, IntegerField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length, StopValidation, InputRequired
+
+from wtforms.widgets import HiddenInput
 
 from application.form_fields import RDUCheckboxField, RDURadioField, RDUStringField, RDUURLField, RDUTextAreaField
 from application.cms.models import (
@@ -82,18 +84,24 @@ class DataSourceForm(FlaskForm):
     title = RDUStringField(
         label="Title of data source",
         hint="For example, Crime and Policing Survey",
-        validators=[RequiredForReviewValidator(), Length(max=255)],
+        validators=[RequiredForReviewValidator(message="Enter a data source title"), Length(max=255)],
     )
 
-    type_of_data = RDUCheckboxField(label="Type of data", enum=TypeOfData, validators=[RequiredForReviewValidator()])
+    type_of_data = RDUCheckboxField(
+        label="Type of data",
+        enum=TypeOfData,
+        validators=[RequiredForReviewValidator(message="Select the type of data")],
+    )
     type_of_statistic_id = RDURadioField(
-        label="Type of statistic", coerce=int, validators=[RequiredForReviewValidator("Select one", else_optional=True)]
+        label="Type of statistic",
+        coerce=int,
+        validators=[RequiredForReviewValidator("Select the type of statistic", else_optional=True)],
     )
 
     publisher_id = RDUStringField(
         label="Source data published by",
         hint="For example, Ministry of Justice",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(message="Select a department or organisation")],
     )
     source_url = RDUURLField(
         label="Link to data source",
@@ -103,7 +111,7 @@ class DataSourceForm(FlaskForm):
             '<a href="https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017" '
             'target="_blank" class="govuk-link">View example</a> (this will open a new page).'
         ),
-        validators=[RequiredForReviewValidator(), Length(max=255)],
+        validators=[RequiredForReviewValidator(message="Enter a link to the data source"), Length(max=255)],
     )
 
     publication_date = RDUStringField(
@@ -121,14 +129,14 @@ class DataSourceForm(FlaskForm):
         coerce=int,
         validators=[
             FrequencyOfReleaseOtherRequiredValidator(),
-            RequiredForReviewValidator("Select one", else_optional=True),
+            RequiredForReviewValidator("Select the source data publication frequency", else_optional=True),
         ],
     )
 
     purpose = RDUTextAreaField(
         label="Purpose of data source",
         hint="Explain why this data’s been collected and how it will be used",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(message="Explain the purpose of the data source")],
     )
 
     def __init__(self, sending_to_review=False, *args, **kwargs):
@@ -153,10 +161,10 @@ class MeasureVersionForm(FlaskForm):
                 field.errors[:] = []
                 raise StopValidation()
 
-    db_version_id = HiddenField()
+    db_version_id = IntegerField(widget=HiddenInput())
     title = RDUStringField(
         label="Title",
-        validators=[DataRequired(), Length(max=255)],
+        validators=[DataRequired(message="Enter a page title"), Length(max=255)],
         hint="For example, ‘Self-harm by young people in custody’",
     )
     internal_reference = RDUStringField(
@@ -165,16 +173,18 @@ class MeasureVersionForm(FlaskForm):
     published_at = DateField(label="Publication date", format="%Y-%m-%d", validators=[Optional()])
     time_covered = RDUStringField(
         label="Time period covered",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(message="Enter the time period covered")],
         hint="For example, ‘2016 to 2017’, or ‘2014/15 to 2016/17’",
     )
 
-    area_covered = RDUCheckboxField(label="Areas covered", enum=UKCountry, validators=[RequiredForReviewValidator()])
+    area_covered = RDUCheckboxField(
+        label="Areas covered", enum=UKCountry, validators=[RequiredForReviewValidator(message="Enter the area covered")]
+    )
 
     lowest_level_of_geography_id = RDURadioField(
         label="Geographic breakdown",
         hint="Select the most detailed type of geographic breakdown available in the data",
-        validators=[RequiredForReviewValidator("Select one", else_optional=True)],
+        validators=[RequiredForReviewValidator(message="Select the geographic breakdown", else_optional=True)],
     )
     suppression_and_disclosure = RDUTextAreaField(
         label="Suppression rules and disclosure control (optional)",
@@ -187,14 +197,14 @@ class MeasureVersionForm(FlaskForm):
 
     summary = RDUTextAreaField(
         label="Main points",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(message="Enter the main points")],
         hint="Summarise the main findings and highlight any serious caveats in the quality of the data",
         extended_hint="_summary.html",
     )
 
     measure_summary = RDUTextAreaField(
         label="What the data measures",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(message="Explain what the data measures")],
         hint=(
             "Explain what the data is analysing, what’s included in categories labelled as ‘Other’ and define any "
             "terms users might not understand"
@@ -203,7 +213,7 @@ class MeasureVersionForm(FlaskForm):
 
     description = RDUTextAreaField(
         label="Description for search engines",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(message="Enter a description for search engines")],
         hint=(
             "Choose an up‐to‐date statistic that shows a key disparity or change over time. The figure should work as "
             "a stand-alone statement and end with a full stop."
@@ -214,14 +224,14 @@ class MeasureVersionForm(FlaskForm):
 
     need_to_know = RDUTextAreaField(
         label="Things you need to know",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(message="Explain what the reader needs to know to understand the data")],
         hint="Outline how the data was collected and explain any limitations",
         extended_hint="_things_you_need_to_know.html",
     )
 
     ethnicity_definition_summary = RDUTextAreaField(
         label="The ethnic categories used in this data",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(message="List the ethnic categories used in the data")],
         hint=Markup(
             "Say which ethnic groups are included in the data and why. "
             "For the most common ethnic categorisations, see the "
@@ -232,7 +242,7 @@ class MeasureVersionForm(FlaskForm):
 
     methodology = RDUTextAreaField(
         label="Methodology",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(message="Enter the data’s methodology")],
         hint="Explain your methods in clear, simple language",
         extended_hint="_methodology.html",
     )
@@ -250,12 +260,12 @@ class MeasureVersionForm(FlaskForm):
         coerce=lambda value: None if value is None else get_bool(value),
         validators=[
             NotRequiredForMajorVersions(),
-            RequiredForReviewValidator("This field is required", else_optional=True),
+            RequiredForReviewValidator("Confirm whether this is a correction", else_optional=True),
         ],
     )
     external_edit_summary = RDUTextAreaField(
         label="Changes to previous version",
-        validators=[RequiredForReviewValidator()],
+        validators=[RequiredForReviewValidator(message="Summarise changes to the previous version")],
         hint=(
             "If you’ve corrected the data, explain what’s changed and why. Otherwise, summarise what you’ve updated "
             "(for example, ‘Updated with the latest available data’)."
@@ -289,7 +299,7 @@ class MeasureVersionForm(FlaskForm):
         self.lowest_level_of_geography_id.choices = choices
 
         if kwargs.get("obj", None):
-            self.internal_reference.data = kwargs["obj"].measure.reference
+            self.internal_reference.data = kwargs["obj"].measure.reference or ""
 
     def error_items(self):
         return self.errors.items()
@@ -297,7 +307,9 @@ class MeasureVersionForm(FlaskForm):
 
 class DimensionForm(FlaskForm):
     title = RDUStringField(
-        label="Title", hint="For example, ‘Employment by ethnicity and gender’", validators=[DataRequired()]
+        label="Title",
+        hint="For example, ‘Employment by ethnicity and gender’",
+        validators=[DataRequired(message="Enter the dimension title")],
     )
     time_period = RDUStringField(label="Time period covered", hint="For example, ‘2015/16’")
     summary = RDUTextAreaField(label="Summary", extended_hint="_dimension_summary.html")
@@ -313,7 +325,11 @@ class UploadForm(FlaskForm):
 
     guid = StringField()
     upload = FileField(label="File in CSV format", validators=[])
-    title = RDUStringField(label="Title", hint="For example, ‘Household income data’", validators=[DataRequired()])
+    title = RDUStringField(
+        label="Title",
+        hint="For example, ‘Household income data’",
+        validators=[DataRequired(message="Enter the source data title")],
+    )
     description = RDUTextAreaField(
         hint=(
             Markup(
@@ -340,7 +356,10 @@ class DimensionRequiredForm(DimensionForm):
 
 
 class NewVersionForm(FlaskForm):
-    version_type = RDURadioField(label=Markup("<b>New version type:</b>"), validators=[DataRequired()])
+    version_type = RDURadioField(
+        label=Markup("<b>New version type:</b>"),
+        validators=[DataRequired(message="Select the type of new version you are creating")],
+    )
 
     def __init__(self, measure_version: MeasureVersion, *args, **kwargs):
         super(NewVersionForm, self).__init__(*args, **kwargs)

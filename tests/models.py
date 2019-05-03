@@ -172,6 +172,7 @@ class TopicFactory(factory.alchemy.SQLAlchemyModelFactory):
     id = factory.Sequence(lambda x: x)
     slug = factory.LazyFunction(lambda: "-".join(Faker().words(nb=3)))
     title = factory.Faker("sentence", nb_words=6)
+    short_title = None
     description = factory.Faker("paragraph", nb_sentences=3)
     additional_description = factory.Faker("paragraph", nb_sentences=5)
 
@@ -239,10 +240,11 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = MeasureVersion
         sqlalchemy_session_persistence = "flush"
-        exclude = {"_creator", "_publisher", "_unpublished", "_unpublisher", "_is_major_version"}
+        exclude = {"_creator", "_published", "_publisher", "_unpublished", "_unpublisher", "_is_major_version"}
 
     # Underscored attributes are helpers that assist in the creation of a valid (business-logic-wise) measure version.
     _creator = factory.SubFactory(UserFactory)
+    _published = factory.LazyAttribute(lambda o: o.status == "APPROVED")
     _publisher = factory.SubFactory(UserFactory)
     _unpublished = factory.LazyAttribute(lambda o: o.status == "UNPUBLISHED")
     _unpublisher = factory.Maybe("_unpublished", yes_declaration=factory.SubFactory(UserFactory))
@@ -264,12 +266,17 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     created_by = factory.SelfAttribute("_creator.email")
     updated_at = factory.Faker("past_date", start_date="-7d")
     last_updated_by = factory.SelfAttribute("_creator.email")
-    published = factory.LazyAttribute(lambda o: True if o.status == "APPROVED" else False)
-    published_at = factory.Maybe("published", yes_declaration=factory.Faker("past_date", start_date="-7d"))
-    published_by = factory.Maybe("published", yes_declaration=factory.SelfAttribute("_publisher.email"))
+    published_at = factory.Maybe("_published", yes_declaration=factory.Faker("past_date", start_date="-7d"))
+    published_by = factory.Maybe("_published", yes_declaration=factory.SelfAttribute("_publisher.email"))
     unpublished_at = factory.Maybe("_unpublished", yes_declaration=Faker().past_date(start_date="-7d"))
     unpublished_by = factory.Maybe("_unpublished", yes_declaration=factory.SelfAttribute("_unpublisher.email"))
-    db_version_id = factory.Sequence(lambda x: x)
+
+    # We probably don't want to fake this attribute, as it is tied into a system that SQLAlchemy manages for us,
+    # providing automatic version counting when UPDATE statements are issued against the row. If you try to set it
+    # to anything other than `1` when creating an instance through the factory, SQLAlchemy resets it to 1 anyway.
+    # So allowing it to be faked will probably be more confusing than useful.
+    # db_version_id = factory.Sequence(lambda x: x)
+
     title = factory.Faker("sentence", nb_words=6)
     summary = factory.Faker("sentence", nb_words=10)
     need_to_know = factory.Faker("paragraph", nb_sentences=3)

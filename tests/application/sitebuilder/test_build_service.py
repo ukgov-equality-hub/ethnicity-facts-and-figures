@@ -56,6 +56,8 @@ def test_static_site_build(db_session, single_use_app):
                                 s3_fs_patch.side_effect = UnexpectedMockInvocationException
                                 trello_service_patch.get_measure_cards.return_value = []
 
+                                from tests.test_data.chart_and_table import chart, simple_table
+
                                 # Including these three versioned pages ensures the build test exercises the logic to
                                 # build multiple page versions
                                 measure = MeasureFactory()
@@ -66,6 +68,8 @@ def test_static_site_build(db_session, single_use_app):
                                     latest=False,
                                     published_at=datetime.now().date(),
                                     version="1.0",
+                                    dimensions__dimension_chart=None,
+                                    dimensions__dimension_table__table_object=simple_table(),
                                 )
                                 # Latest published version
                                 MeasureVersionWithDimensionFactory(
@@ -74,16 +78,22 @@ def test_static_site_build(db_session, single_use_app):
                                     latest=False,
                                     published_at=datetime.now().date(),
                                     version="2.0",
+                                    dimensions__dimension_chart=None,
+                                    dimensions__dimension_table__table_object=simple_table(),
                                 )
                                 # Newer draft version
                                 MeasureVersionWithDimensionFactory(
-                                    measure=measure, status="DRAFT", published_at=None, latest=True, version="2.1"
+                                    measure=measure,
+                                    status="DRAFT",
+                                    published_at=None,
+                                    latest=True,
+                                    version="2.1",
+                                    dimensions__dimension_chart=None,
+                                    dimensions__dimension_table=None,
                                 )
 
                                 # Publish another page with dimension, chart and table to ensure there's an item for
                                 # each of the dashboard views
-                                from tests.test_data.chart_and_table import chart, simple_table
-
                                 MeasureVersionWithDimensionFactory(
                                     status="APPROVED",
                                     latest=True,

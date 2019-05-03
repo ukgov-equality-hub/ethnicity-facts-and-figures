@@ -1,5 +1,6 @@
 import json
 
+
 from flask import redirect, render_template, request, url_for, abort, flash, current_app, jsonify, session
 from flask_login import login_required, current_user
 from werkzeug.datastructures import CombinedMultiDict
@@ -32,12 +33,11 @@ from application.cms.forms import (
     NewVersionForm,
     UploadForm,
 )
-from application.cms.models import NewVersionType
-from application.cms.models import publish_status, Organisation
+from application.cms.models import NewVersionType, MeasureVersion, Measure
+from application.cms.models import Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
-from application.cms.utils import copy_form_errors, get_data_source_forms, get_error_summary_data, ErrorSummaryMessage
-from application.data.standardisers.ethnicity_classification_finder import Builder2FrontendConverter
+from application.cms.utils import copy_form_errors, get_data_source_forms, get_form_errors, ErrorSummaryMessage
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
 
@@ -99,11 +99,14 @@ def create_measure(topic_slug, subtopic_slug):
         data_source_2_form=data_source_2_form,
         topic=topic,
         subtopic=subtopic,
-        measure={},
-        measure_version={},
+        measure=Measure(),
+        measure_version=MeasureVersion(),
         new=True,
         organisations_by_type=Organisation.select_options_by_type(),
         topics=page_service.get_topics(include_testing_space=True),
+        errors=get_form_errors(forms=(form, data_source_form, data_source_2_form)),
+        data_not_uploaded_error=False,
+        dimensions_not_complete_error=False,
     )
 
 
@@ -313,17 +316,16 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             diffs = _diff_updates(measure_version_form, measure_version)
             if diffs:
                 flash("Your update will overwrite the latest content. Resolve the conflicts below", "error")
+
+                # Need to manually update the `db_version_id`, otherwise when the form is re-submitted it will just
+                # throw the same error.
+                measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
             else:
                 flash("Your update will overwrite the latest content. Reload this page", "error")
+
         except PageUnEditable as e:
             current_app.logger.info(e)
             flash(str(e), "error")
-
-    current_status = measure_version.status
-    available_actions = measure_version.available_actions()
-    if "APPROVE" in available_actions:
-        numerical_status = measure_version.publish_status(numerical=True)
-        approval_state = publish_status.inv[(numerical_status + 1) % 6]
 
     if saved and "save-and-review" in request.form:
         return _send_to_review(
@@ -350,15 +352,13 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "measure_version": measure_version,
         "data_source_form": data_source_form,
         "data_source_2_form": data_source_2_form,
-        "status": current_status,
-        "available_actions": available_actions,
-        "next_approval_state": approval_state if "APPROVE" in available_actions else None,
         "diffs": diffs,
         "organisations_by_type": Organisation.select_options_by_type(),
         "topics": page_service.get_topics(include_testing_space=True),
-        "error_summary": get_error_summary_data(
-            title="This page could not be saved.", forms=[measure_version_form, data_source_form, data_source_2_form]
-        ),
+        "errors": get_form_errors(forms=[measure_version_form, data_source_form, data_source_2_form]),
+        "new": False,
+        "data_not_uploaded_error": False,
+        "dimensions_not_complete_error": False,
     }
 
     return render_template("cms/edit_measure_version.html", **context)
@@ -465,7 +465,7 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
         )
 
         # Measure versions should have a data file uploaded before sending to review
-        data_file_uploaded = len(measure_version.uploads.all()) > 0
+        data_file_uploaded = len(measure_version.uploads) > 0
 
         if (
             not measure_version_form_validated
@@ -484,7 +484,7 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             )
 
             # If the page was saved before sending to review form's db_version_id will be out of sync, so update it
-            measure_version_form.db_version_id.data = measure_version.db_version_id
+            measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
 
             data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=measure_version)
 
@@ -499,23 +499,14 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 for invalid_dimension in invalid_dimensions:
                     non_form_error_messages.append(
                         ErrorSummaryMessage(
-                            field=invalid_dimension.title,
-                            text="This dimension is not complete.",
+                            text="Your dimension is missing a title. Enter a title.",
                             href=f"./{invalid_dimension.guid}/edit?validate=true",
                         )
                     )
 
             if not data_file_uploaded:
                 data_not_uploaded_error = True
-                non_form_error_messages.append(
-                    ErrorSummaryMessage(field="Data", text="Source data must be uploaded.", href="#source-data")
-                )
-
-            current_status = measure_version.status
-            available_actions = measure_version.available_actions()
-            if "APPROVE" in available_actions:
-                numerical_status = measure_version.publish_status(numerical=True)
-                approval_state = publish_status.inv[numerical_status + 1]
+                non_form_error_messages.append(ErrorSummaryMessage(text="Upload the source data", href="#source-data"))
 
             context = {
                 "form": measure_version_form,
@@ -525,18 +516,15 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 "subtopic": subtopic,
                 "measure": measure_version.measure,
                 "measure_version": measure_version,
-                "status": current_status,
-                "available_actions": available_actions,
-                "next_approval_state": approval_state if "APPROVE" in available_actions else None,
                 "organisations_by_type": Organisation.select_options_by_type(),
                 "topics": page_service.get_topics(include_testing_space=True),
-                "error_summary": get_error_summary_data(
-                    title="Cannot submit for review.",
+                "errors": get_form_errors(
                     forms=[measure_version_form, data_source_form, data_source_2_form],
                     extra_non_form_errors=non_form_error_messages,
                 ),
                 "data_not_uploaded_error": data_not_uploaded_error,
                 "dimensions_not_complete_error": dimensions_not_complete_error,
+                "new": False,
             }
 
             return render_template("cms/edit_measure_version.html", **context), 400
@@ -663,16 +651,12 @@ def _post_create_dimension(topic_slug, subtopic_slug, measure_slug, version):
                     messages=[{"message": "Dimension with code %s already exists" % form.data["title"]}],
                 )
             )
-    else:
-        flash("Please complete all fields in the form", "error")
-        return _get_create_dimension(topic_slug, subtopic_slug, measure_slug, version, form=form)
+
+    return _get_create_dimension(topic_slug, subtopic_slug, measure_slug, version, form=form)
 
 
 def _get_create_dimension(topic_slug, subtopic_slug, measure_slug, version, form=None):
-    if form is None:
-        context_form = DimensionForm()
-    else:
-        context_form = form
+    form = form if form is not None else DimensionForm()
 
     topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
         topic_slug, subtopic_slug, measure_slug, version
@@ -680,12 +664,13 @@ def _get_create_dimension(topic_slug, subtopic_slug, measure_slug, version, form
 
     return render_template(
         "cms/create_dimension.html",
-        form=context_form,
+        form=form,
         create=True,
         topic=topic,
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
+        errors=get_form_errors(forms=(form,)),
     )
 
 
@@ -740,6 +725,8 @@ def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid,
     if form is None:
         form = DimensionForm(obj=dimension_object)
 
+    errors = get_form_errors(forms=(form,))
+
     context = {
         "form": form,
         "topic": topic,
@@ -754,9 +741,10 @@ def _get_edit_dimension(topic_slug, subtopic_slug, measure_slug, dimension_guid,
         "includes_parents": dimension_classification.includes_parents if dimension_classification else None,
         "includes_unknown": dimension_classification.includes_unknown if dimension_classification else None,
         "classification_source": dimension_object.classification_source_string,
+        "errors": errors,
     }
 
-    return render_template("cms/edit_dimension.html", **context), 400 if form.errors else 200
+    return render_template("cms/edit_dimension.html", **context), 400 if errors else 200
 
 
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/<dimension_guid>/create-chart")
@@ -775,6 +763,7 @@ def create_chart(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         measure=measure,
         measure_version=measure_version,
         dimension=dimension,
+        classification_options=__get_classification_finder_classifications(),
     )
 
 
@@ -800,6 +789,7 @@ def create_table(topic_slug, subtopic_slug, measure_slug, version, dimension_gui
         measure=measure,
         measure_version=measure_version,
         dimension=dimension,
+        classification_options=__get_classification_finder_classifications(),
     )
 
 
@@ -945,8 +935,7 @@ def get_valid_classifications():
     request_data = request.json["data"]
     valid_classifications_data = current_app.classification_finder.find_classifications(request_data)
 
-    return_data = Builder2FrontendConverter(valid_classifications_data).convert_to_builder2_format()
-    return json.dumps({"presets": return_data}), 200
+    return json.dumps({"classifications": valid_classifications_data}), 200
 
 
 @cms_blueprint.route("/set-dimension-order", methods=["POST"])
@@ -1055,6 +1044,7 @@ def new_version(topic_slug, subtopic_slug, measure_slug, version):
         measure=measure,
         measure_version=measure_version,
         form=form,
+        errors=get_form_errors(forms=(form,)),
     )
 
 

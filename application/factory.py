@@ -4,6 +4,7 @@ import re
 import sys
 import logging
 
+from jinja2 import StrictUndefined
 from jinja2.ext import do as jinja_do
 
 from flask import Flask, render_template, request, send_from_directory
@@ -24,6 +25,7 @@ from application.cms.filters import (
     format_friendly_short_date,
     format_friendly_short_date_with_year,
     format_status,
+    html_line_breaks,
     index_of_last_initial_zero,
     yesno,
     models_to_dicts,
@@ -33,6 +35,7 @@ from application.cms.models import TESTING_SPACE_SLUG
 from application.cms.page_service import page_service
 from application.cms.scanner_service import scanner_service
 from application.cms.upload_service import upload_service
+from application.cms.utils import get_form_errors
 from application.dashboard.trello_service import trello_service
 
 from application.static_site.filters import (
@@ -46,7 +49,9 @@ from application.static_site.filters import (
     join_enum_display_names,
     slugify_value,
     format_iso8601_date,
+    html_params,
 )
+from application.utils import get_bool
 
 
 def create_app(config_object):
@@ -120,6 +125,9 @@ def create_app(config_object):
     register_errorhandlers(app)
     app.after_request(harden_app)
 
+    # Make sure all variables referenced in templates are explicitly defined
+    app.jinja_env.undefined = StrictUndefined
+
     # Render jinja templates with less whitespace; applies to both CMS and static build
     app.jinja_env.trim_blocks = True
     app.jinja_env.lstrip_blocks = True
@@ -141,8 +149,10 @@ def create_app(config_object):
     app.add_template_filter(slugify_value)
     app.add_template_filter(format_iso8601_date)
     app.add_template_filter(index_of_last_initial_zero)
+    app.add_template_filter(html_params)
     app.add_template_filter(yesno)
     app.add_template_filter(models_to_dicts)
+    app.add_template_filter(html_line_breaks)
 
     # There is a CSS caching problem in chrome
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 10
@@ -193,6 +203,8 @@ def create_app(config_object):
             TESTING_SPACE_SLUG=TESTING_SPACE_SLUG,
             get_content_security_policy=get_content_security_policy,
             current_timestamp=datetime.datetime.now().isoformat(),
+            get_form_errors=get_form_errors,
+            static_mode=get_bool(request.args.get("static_mode", app.config["STATIC_MODE"])),
         )
 
     return app
