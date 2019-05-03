@@ -100,7 +100,7 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-l govuk-!-margin-bottom-4  govuk-!-margin-top-2" itemprop="headline">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2" itemprop="headline">
         {{ measure_version.title }}
       </h1>
 
@@ -146,7 +146,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      <h2 class="govuk-heading-m" id="main-facts-figures">1. Main facts and figures</h2>
+      <h2 class="govuk-heading-l" id="main-facts-figures">1. Main facts and figures</h2>
 
         {% if measure_version.summary %}
             <div class="eff-summary--with-bullets-spaced-out">
@@ -211,7 +211,7 @@
           {% for dimension in measure_version.dimensions %}
 
               <div class="govuk-grid-column-two-thirds">
-                  <h2 class="govuk-heading-m govuk-!-margin-top-9" id="{{ dimension.title | slugify_value }}">{{ loop.index + 1}}. {{ dimension.title }}</h2>
+                  <h2 class="govuk-heading-l govuk-!-margin-top-9" id="{{ dimension.title | slugify_value }}">{{ loop.index + 1}}. {{ dimension.title }}</h2>
                   <div class="metadata">
                       <dl>
                           {% if measure_version.area_covered %}
@@ -336,7 +336,7 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m" id="methodology">
+            <h2 class="govuk-heading-l" id="methodology">
               {{ measure_version.dimensions.all()|length + 2 }}. Methodology
             </h2>
 
@@ -383,7 +383,7 @@
             <meta itemprop="url" content="https://www.gov.uk/government/organisations/race-disparity-unit">
           </div>
 
-            <h2 class="govuk-heading-m" id="data-sources">
+            <h2 class="govuk-heading-l" id="data-sources">
                 {{ measure_version.dimensions.all()|length + 3 }}. Data sources
             </h2>
 
@@ -482,7 +482,7 @@
 
 
 
-            <h2 class="govuk-heading-m" id="download-the-data">
+            <h2 class="govuk-heading-l" id="download-the-data">
                 {{ measure_version.dimensions.all()|length + 4 }}. Download the data
             </h2>
           </div>
