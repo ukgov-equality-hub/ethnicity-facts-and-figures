@@ -15,21 +15,21 @@
     "npm": "~6.5.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "mocha": "^5.2.0"
   },
   "dependencies": {
     "govuk-frontend": "^2.11.0",
-    "gulp": "^4.0.0",
+    "gulp": "^4.0.1",
     "gulp-concat": "^2.6.1",
     "gulp-if": "^2.0.2",
     "gulp-rev": "^8.1.1",
-    "gulp-sass": "^4.0.1",
-    "gulp-sourcemaps": "^2.6.4",
-    "gulp-uglify": "^3.0.1",
+    "gulp-sass": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-uglify": "^3.0.2",
     "gulp-watch": "^5.0.1",
     "pump": "^2.0.1",
-    "sass": "^1.10.3",
+    "sass": "^1.19.0",
     "yargs": "^10.1.2"
   },
   "scripts": {
