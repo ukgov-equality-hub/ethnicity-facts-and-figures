@@ -118,27 +118,27 @@
 
 
 
-  <div class="grid-row">
-    <div class="column-full">
-      <div style="background-color: #005ea5;" class="govuk-!-margin-top-7 govuk-!-padding-left-5 govuk-!-padding-right-5 govuk-!-padding-top-5 govuk-!-padding-bottom-5">
-        <h1 class="govuk-heading-xl govuk-!-margin-bottom-1  govuk-!-margin-top-7" itemprop="headline" style="color: white;">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <div class="">
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-4  govuk-!-margin-top-2" itemprop="headline">
           {{ measure_version.title }}
         </h1>
 
         {%  if measure_version.first_published_date %}
-          <p class="govuk-body" style="color: white;">Published <time itemprop="datePublished" datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
+          <p class="govuk-body">Published <time itemprop="datePublished" datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
           </p>
         {%  endif %}
 
       </div>
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
       <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
       <ol class="govuk-list eff-toc govuk-!-margin-bottom-9">
-        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#overview-heading"><span class="eff-toc__number">1. </span><span class="eff-toc__content">Overview</span></a></li>
+        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#overview-heading"><span class="eff-toc__number">1. </span><span class="eff-toc__content">Main facts and figures</span></a></li>
 
 
         {% if measure_version.dimensions %}
@@ -221,14 +221,12 @@
     </div>
   </div> -->
 
-  <div class="grid-row">
+  <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      <h2 class="govuk-heading-l" id="overview-heading">1. Overview</h2>
+      <h2 class="govuk-heading-m" id="overview-heading">1. Main facts and figures</h2>
       <p>
-      <p class="govuk-body">
-        The main facts and figures show that:
-      </p>
+
         {% if measure_version.summary %}
             <div class="eff-summary--with-bullets-spaced-out">
                 {{ measure_version.summary | render_markdown }}
@@ -417,13 +415,11 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <div class="govuk-accordion" data-module="accordion" id="mv-{{ measure_version.id }}">
-        <div class="govuk-accordion__section">
-          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Methodology" class="govuk-accordion__section-header">
-            <h2 id="methodology" class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button" id="mv-{{ measure_version.id }}-methodology">
-                {{ measure_version.dimensions.all()|length + 2 }}. Methodology
-              </span>
+      <div>
+        <div>
+          <div>
+            <h2 id="methodology">
+              {{ measure_version.dimensions.all()|length + 2 }}. Methodology
             </h2>
           </div>
 
@@ -585,8 +581,8 @@
 
         </div>
 
-        <div class="govuk-accordion__section">
-          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Download the data" class="govuk-accordion__section-header">
+        <div>
+          <div>
             <h2 id="download-the-data" class="govuk-accordion__section-heading">
               <span class="govuk-accordion__section-button" id="download-the-data-heading">
                 {{ measure_version.dimensions.all()|length + 4 }}. Download the data
@@ -594,7 +590,7 @@
             </h2>
           </div>
 
-          <div class="govuk-accordion__section-content downloads" aria-labelledby="download-the-data-heading">
+          <div>
             <div itemprop="license" itemscope itemtype="http://schema.org/CreativeWork">
               <meta itemprop="url" content="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">
               <meta itemprop="name" content="Open Government Licence">
