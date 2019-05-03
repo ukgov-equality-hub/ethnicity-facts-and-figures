@@ -117,7 +117,7 @@
         {% if measure_version.dimensions %}
           {% for dimension in measure_version.dimensions %}
 
-            <li><a class="govuk-link" href="#{{ dimension.title|slugify_value }}"><span class="eff-list__table-of-contents__number">{{ loop.index + 1 }}. </span><span class="eff-list__table-of-contents__content">{{ dimension.title|replace("Pupils achieving grade 5 or above in English and Maths GCSE b", "B")|replace("(FSM)", "")|replace("(SEN)", "") }}</span></a></li>
+            <li><a class="govuk-link" href="#{{ dimension.title|slugify_value }}"><span class="eff-list__table-of-contents__number">{{ loop.index + 1 }}. </span><span class="eff-list__table-of-contents__content">{{ dimension.title }}</span></a></li>
 
 
           {% endfor %}
