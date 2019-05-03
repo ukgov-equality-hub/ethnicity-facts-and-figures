@@ -1,0 +1,18 @@
+/* Table of Contents */
+
+.eff-list__table-of-contents li {
+  display: table-row;
+  @include govuk-typography-responsive(16);
+}
+
+.eff-list__table-of-contents li a {
+  text-decoration: none;
+}
+
+.eff-list__table-of-contents__number {
+  display: table-cell; width: 24px;
+}
+
+.eff-list__table-of-contents__content {
+  display: table-cell; padding-bottom: 5px;
+}

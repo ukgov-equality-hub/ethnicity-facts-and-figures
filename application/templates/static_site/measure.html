@@ -37,26 +37,6 @@
                           version=version) }}"/>
 
 
-  <style>
-    .eff-toc {}
-    .eff-toc li {display: table-row;}
-    .eff-toc li a {text-decoration: none;}
-    .eff-toc__number {display: table-cell; width: 24px;}
-    .eff-toc__content {display: table-cell; padding-bottom: 5px;}
-
-
-    .eff-summary-list--small { font-size: 16px; }
-
-    .eff-summary-list--small .govuk-summary-list__key,
-    .eff-summary-list--small .govuk-summary-list__value { padding-bottom: 0; padding-top: 0;}
-
-    .eff-summary-list--small .govuk-summary-list__key {
-      width: 150px;
-    }
-
-  </style>
-
-
   {% if not static_mode and (preview is undefined or not preview) %}
     {% call status_banner(sticky=False) %}
       <div class="left">
@@ -120,40 +100,38 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <div class="">
-        <h1 class="govuk-heading-l govuk-!-margin-bottom-4  govuk-!-margin-top-2" itemprop="headline">
-          {{ measure_version.title }}
-        </h1>
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-4  govuk-!-margin-top-2" itemprop="headline">
+        {{ measure_version.title }}
+      </h1>
 
-        {%  if measure_version.first_published_date %}
-          <p class="govuk-body">Published <time itemprop="datePublished" datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
-          </p>
-        {%  endif %}
+      {%  if measure_version.first_published_date %}
+        <p class="govuk-body">Published <time itemprop="datePublished" datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
+        </p>
+      {%  endif %}
 
-      </div>
     </div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
       <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
-      <ol class="govuk-list eff-toc govuk-!-margin-bottom-9">
-        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#overview-heading"><span class="eff-toc__number">1. </span><span class="eff-toc__content">Main facts and figures</span></a></li>
+      <ol class="govuk-list eff-list__table-of-contents govuk-!-margin-bottom-9">
+        <li><a class="govuk-link" href="#main-facts-figures"><span class="eff-list__table-of-contents__number">1. </span><span class="eff-list__table-of-contents__content">Main facts and figures</span></a></li>
 
 
         {% if measure_version.dimensions %}
           {% for dimension in measure_version.dimensions %}
 
-            <li class="govuk-!-font-size-16"><a class="govuk-link" href="#{{ dimension.title|slugify_value }}"><span class="eff-toc__number">{{ loop.index + 1 }}. </span><span class="eff-toc__content">{{ dimension.title|replace("Pupils achieving grade 5 or above in English and Maths GCSE b", "B")|replace("(FSM)", "")|replace("(SEN)", "") }}</span></a></li>
+            <li><a class="govuk-link" href="#{{ dimension.title|slugify_value }}"><span class="eff-list__table-of-contents__number">{{ loop.index + 1 }}. </span><span class="eff-list__table-of-contents__content">{{ dimension.title|replace("Pupils achieving grade 5 or above in English and Maths GCSE b", "B")|replace("(FSM)", "")|replace("(SEN)", "") }}</span></a></li>
 
 
           {% endfor %}
         {% endif %}
 
 
-        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#mv-{{ measure_version.id }}-methodology"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 2 }}. </span><span class="eff-toc__content">Methodology</span></a></li>
-        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#data-sources-heading"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 3 }}. </span><span class="eff-toc__content">Data sources</span></a></li>
-        <li class="govuk-!-font-size-16"><a class="govuk-link" href="#download-the-data-heading"><span class="eff-toc__number">{{ measure_version.dimensions.all()|length + 4 }}. </span><span class="eff-toc__content">Download the data</span></a></li>
+        <li><a class="govuk-link" href="#methodology"><span class="eff-list__table-of-contents__number">{{ measure_version.dimensions.all()|length + 2 }}. </span><span class="eff-list__table-of-contents__content">Methodology</span></a></li>
+        <li><a class="govuk-link" href="#data-sources"><span class="eff-list__table-of-contents__number">{{ measure_version.dimensions.all()|length + 3 }}. </span><span class="eff-list__table-of-contents__content">Data sources</span></a></li>
+        <li><a class="govuk-link" href="#download-the-data"><span class="eff-list__table-of-contents__number">{{ measure_version.dimensions.all()|length + 4 }}. </span><span class="eff-list__table-of-contents__content">Download the data</span></a></li>
 
       </ol>
     </div>
@@ -173,7 +151,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      <h2 class="govuk-heading-m" id="overview-heading">1. Main facts and figures</h2>
+      <h2 class="govuk-heading-m" id="main-facts-figures">1. Main facts and figures</h2>
       <p>
 
         {% if measure_version.summary %}
@@ -372,7 +350,7 @@
             </h2>
           </div>
 
-          <div class="govuk-accordion__section-content" aria-labelledby="mv-{{ measure_version.id }}-methodology">
+          <div>
 
             {% if measure_version.methodology %}
             <h3 class="govuk-heading-s">
@@ -397,14 +375,15 @@
             {% endif %}
 
             {% if measure_version.qmi_url %}
-              <a class="govuk-body govuk-link" href="{{ measure_version.qmi_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Quality and methodology information" data-event-label="{{ measure_version.title }}">Quality and methodology information</a>
+              <p class="govuk-body"><a class="govuk-link" href="{{ measure_version.qmi_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Quality and methodology information" data-event-label="{{ measure_version.title }}">Quality and methodology information</a></p>
             {% endif %}
 
             {% if measure_version.further_technical_information %}
             <h3 class="govuk-heading-s">
               Further technical information
             </h3>
-              {{ measure_version.further_technical_information | render_markdown }}
+
+            <div class="govuk-body">{{ measure_version.further_technical_information | render_markdown }}</div>
             {% endif %}
           </div>
         </div>
@@ -421,17 +400,11 @@
             <meta itemprop="url" content="https://www.gov.uk/government/organisations/race-disparity-unit">
           </div>
 
-        <div class="govuk-accordion__section">
-
-          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Data sources" class="govuk-accordion__section-header">
-            <h2 class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button" id="data-sources-heading">
+            <h2 class="govuk-heading-m" id="data-sources">
                 {{ measure_version.dimensions.all()|length + 3 }}. Data sources
-              </span>
             </h2>
-          </div>
 
-          <div class="govuk-accordion__section-content" id="data-sources-content" aria-labelledby="data-sources-heading">
+          <div>
             <div itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
             {% if measure_version.primary_data_source %}
             <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Source</h3>
@@ -532,10 +505,8 @@
 
         <div>
           <div>
-            <h2 id="download-the-data" class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button" id="download-the-data-heading">
+            <h2 class="govuk-heading-m" id="download-the-data">
                 {{ measure_version.dimensions.all()|length + 4 }}. Download the data
-              </span>
             </h2>
           </div>
 
@@ -594,7 +565,6 @@
           </div>
         </div>
 
-        </div>
       </div>
     </div>
 
