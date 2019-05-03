@@ -115,7 +115,7 @@
       </div>
     {% endcall %}
   {% endif %}
--->
+
 
 
   <div class="grid-row">
@@ -125,8 +125,8 @@
           {{ measure_version.title }}
         </h1>
 
-        {%  if first_published_date %}
-          <p class="govuk-body" style="color: white;">Published <time itemprop="datePublished" datetime="{{ first_published_date | format_iso8601_date }}">{{ first_published_date | format_friendly_date }}</time>
+        {%  if measure_version.first_published_date %}
+          <p class="govuk-body" style="color: white;">Published <time itemprop="datePublished" datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
           </p>
         {%  endif %}
 
