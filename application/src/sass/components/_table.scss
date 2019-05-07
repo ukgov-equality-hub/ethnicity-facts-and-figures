@@ -93,7 +93,7 @@
 
 /* Hide the main table header content (in case it peeks through
    when bouncing back from momentum scroll) */
-.table-container thead th, .table-container thead td {
+.eff-table__head--transparent, .eff-table__caption--transparent {
   opacity: 0;
   border-color: transparent;
 }
