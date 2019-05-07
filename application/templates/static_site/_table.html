@@ -1,8 +1,5 @@
 
 {{ dimension.header if dimension.header is defined and dimension.header else '' }}
-{% if dimension.dimension_table.table_object.header %}
-  <h3 class="govuk-heading-s">{{ dimension.dimension_table.table_object.header }}</h3>
-{% endif %}
 
 {% set missing_data_sort_order_values = {
   "N/A": -9999999,
@@ -17,6 +14,7 @@
 
       <div class="table-container">
     <table class="govuk-table govuk-!-margin-bottom-0">
+      <caption class="govuk-table__caption govuk-!-padding-bottom-3">{{ dimension.dimension_table.table_object.header }}</caption>
     <thead class="govuk-table__head">
 
       {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length > 1) %}
