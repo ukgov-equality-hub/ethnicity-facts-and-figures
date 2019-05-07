@@ -167,7 +167,7 @@ def pull_prod_data(default_user_password=None):
     upgrade()
 
     print("Refreshing materialized views...")
-    refresh_materialized_views()
+    drop_and_create_materialized_views()
 
     if os.environ.get("PROD_UPLOAD_BUCKET_NAME"):
         #  Copy upload files from production to the upload bucket for the current environment
