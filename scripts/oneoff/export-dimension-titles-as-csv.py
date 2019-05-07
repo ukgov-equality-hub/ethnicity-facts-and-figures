@@ -4,7 +4,7 @@
 import sys
 import csv
 
-sys.path.insert(0, ".") # noqa
+sys.path.insert(0, ".")  # noqa
 
 from application.config import DevConfig
 from application import db
@@ -15,7 +15,18 @@ from application.dashboard.data_helpers import _calculate_short_title
 app = create_app(DevConfig)
 with app.app_context():
 
-    sql = "select dimension.guid as dimension_id, measure_version.title as measure_title, dimension.title as dimension_title from dimension left join measure_version on dimension.measure_version_id = measure_version.id inner join latest_published_measure_versions on measure_version.id = latest_published_measure_versions.id order by measure_version.title, dimension.position"  # noqa
+    sql = """
+SELECT dimension.guid        AS dimension_id,
+       measure_version.title AS measure_title,
+       dimension.title       AS dimension_title
+FROM   dimension
+       LEFT JOIN measure_version
+              ON dimension.measure_version_id = measure_version.id
+       INNER JOIN latest_published_measure_versions
+               ON measure_version.id = latest_published_measure_versions.id
+ORDER  BY measure_version.title,
+          dimension.position
+"""
 
     result = db.session.execute(sql)
 
