@@ -4,11 +4,12 @@
 import sys
 import csv
 
+sys.path.insert(0, ".")
+
 from application import db
 from application.factory import create_app
 from application.config import DevConfig
 
-sys.path.insert(0, ".")
 
 
 def _calculate_short_title(page_title, dimension_title):
