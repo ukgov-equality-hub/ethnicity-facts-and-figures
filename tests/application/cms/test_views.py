@@ -808,7 +808,7 @@ def test_edit_measure_page_updated_with_latest_db_version_id_when_posting_a_conf
     assert page.find("input", {"id": "db_version_id"}).attrs["value"] == "2"
     assert measure_version.title == "new title"
     assert page_displays_error_matching_message(
-        response, message=f"has been updated by {measure_version.last_updated_by}"
+        response, message=f"‘Title’ has been updated by {measure_version.last_updated_by}"
     )
 
 
