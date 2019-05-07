@@ -6,11 +6,10 @@ import csv
 
 sys.path.insert(0, ".")
 
-from application import db
-from application.factory import create_app
-from application.config import DevConfig
-
-from application.dashboard.data_helpers import _calculate_short_title
+from application.config import DevConfig# noqa: E402
+from application import db  # noqa: E402
+from application.factory import create_app  # noqa: E402
+from application.dashboard.data_helpers import _calculate_short_title  # noqa: E402
 
 
 app = create_app(DevConfig)
