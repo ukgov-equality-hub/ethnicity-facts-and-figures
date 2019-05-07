@@ -73,20 +73,3 @@
 .previous-editions a:hover {
   color: #2b8cc4;
 }
-
-.eff-document-footer .change-notes li {
-  margin-bottom: 10px
-}
-
-.eff-document-footer .change-notes .timestamp {
-  display: block;
-  font-weight: bold;
-}
-
-.eff-document-footer__full_history_summary_text {
-  @include govuk-font(16);
-}
-
-.eff-document-footer__full_history_body .govuk-list {
-  @include govuk-font(16);
-}
