@@ -14,9 +14,7 @@
 
       <div class="table-container">
     <table class="govuk-table govuk-!-margin-bottom-0">
-    {% if dimension.dimension_table.table_object.header %}
       <caption class="govuk-table__caption govuk-!-padding-bottom-3">{{ dimension.dimension_table.table_object.header }}</caption>
-    {% endif %}
     <thead class="govuk-table__head">
 
       {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length > 1) %}
