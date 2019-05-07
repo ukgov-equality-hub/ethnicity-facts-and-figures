@@ -10,21 +10,7 @@ from application import db
 from application.factory import create_app
 from application.config import DevConfig
 
-
-
-def _calculate_short_title(page_title, dimension_title):
-    # Case 1 - try stripping the dimension title
-    low_title = dimension_title.lower()
-    if low_title.find(page_title.lower()) == 0:
-        return dimension_title[len(page_title) + 1 :]
-
-    # Case 2 - try cutting using the last by
-    by_pos = dimension_title.rfind("by")
-    if by_pos >= 0:
-        return dimension_title[by_pos:]
-
-    # Case else - just return the original
-    return dimension_title
+from application.dashboard.data_helpers import _calculate_short_title
 
 
 app = create_app(DevConfig)
