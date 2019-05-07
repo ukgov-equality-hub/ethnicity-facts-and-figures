@@ -621,36 +621,30 @@
 
             {% set fullPageHistoryHtml %}
               <ol class="govuk-list">
-              {% set current_edit_summary = measure_version.external_edit_summary %}
-              {% if measure_version.published_at %}
-                  {% set publish_date = measure_version.published_at|format_friendly_date %}
-              {% else %}
-                  {% set publish_date = 'TBC' %}
-              {% endif %}
-              <li>
-                  {% if measure_version.published_at %}
-                      <time datetime="{{ measure_version.published_at }}" class="timestamp">{{ measure_version.published_at|format_friendly_date }}</time>
-                  {% else %}
-                      <span class="timestamp">TBC</span>
-                  {% endif %}
-                  {% if current_edit_summary %}
-                      {{ current_edit_summary }}
-                  {% endif %}
-              </li>
-              {% for old_page_version in measure_version.previous_minor_versions %}
                 <li>
-                  <time datetime="{{ old_page_version.published_at }}" class="timestamp">{{ old_page_version.published_at|format_friendly_date }}</time>
-
-                  {% if (loop.index == loop|length) %}
-                    {% set edit_summary = old_page_version.external_edit_summary or "First published" %}
+                  {% if measure_version.published_at %}
+                    <time datetime="{{ measure_version.published_at }}" class="timestamp">{{ measure_version.published_at|format_friendly_date }}</time>
                   {% else %}
-                    {% set edit_summary = old_page_version.external_edit_summary or "Minor edit" %}
+                    <span class="timestamp">TBC</span>
                   {% endif %}
-                  {% if edit_summary %}
-                      {{ edit_summary }}
+                  {% if measure_version.external_edit_summary %}
+                    {{ measure_version.external_edit_summary }}
                   {% endif %}
                 </li>
-              {% endfor %}
+                {% for old_page_version in measure_version.previous_minor_versions %}
+                  <li>
+                    <time datetime="{{ old_page_version.published_at }}" class="timestamp">{{ old_page_version.published_at|format_friendly_date }}</time>
+
+                    {% if (loop.index == loop|length) %}
+                      {% set edit_summary = old_page_version.external_edit_summary or "First published" %}
+                    {% else %}
+                      {% set edit_summary = old_page_version.external_edit_summary or "Minor edit" %}
+                    {% endif %}
+                    {% if edit_summary %}
+                      {{ edit_summary }}
+                    {% endif %}
+                  </li>
+                {% endfor %}
               </ol>
             {% endset %}
 
