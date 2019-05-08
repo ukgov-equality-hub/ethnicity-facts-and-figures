@@ -3,8 +3,10 @@
 
 import sys
 import csv
+from argparse import ArgumentParser
 
 sys.path.insert(0, ".")  # noqa
+
 
 
 from datetime import datetime
@@ -13,13 +15,22 @@ from application.config import DevConfig
 from application import db
 from application.factory import create_app
 
+from application.auth.models import User
 from application.cms.models import Dimension
-from application.cms.models import NewVersionType
+from application.cms.models import Dimension
+from application.cms.page_service import PageService
 from application.utils import create_guid
 from sqlalchemy.orm.exc import NoResultFound
 
+
 app = create_app(DevConfig)
 with app.app_context():
+
+  ap = ArgumentParser()
+  ap.add_argument('email_address', help='email address for the user who will be attributed to updating the measure versions')
+  args = ap.parse_args()
+
+  user = User.query.filter_by(email=args.email_address).one()
 
   with open("dimension_titles.csv") as csv_file:
 
@@ -42,34 +53,8 @@ with app.app_context():
 
             if latest_measure_version.id == measure_version.id:
 
-                print("creating DRAFT for " + measure_version.title)
-
-                draft_measure_to_update = measure_version.copy()
-                draft_measure_to_update.version = measure_version.next_version_number_by_type(NewVersionType.MINOR_UPDATE)
-
-                draft_measure_to_update.status = "DRAFT"
-                draft_measure_to_update.created_at = datetime.utcnow()
-                draft_measure_to_update.published_at = None
-                draft_measure_to_update.internal_edit_summary = None
+                draft_measure_to_update = create_measure_version(measure_version, NewVersionType.MINOR_UPDATE, user)
                 draft_measure_to_update.external_edit_summary = "Updated dimension titles"
-
-                measure.versions.insert(0, draft_measure_to_update)
-
-                draft_measure_to_update.dimensions = [dimension.copy() for dimension in measure_version.dimensions]
-                draft_measure_to_update.data_sources = [data_source.copy() for data_source in measure_version.data_sources]
-                draft_measure_to_update.latest = True
-
-                draft_measure_to_update.uploads = []
-
-                for upload in measure_version.uploads:
-                    new_upload = upload.copy()
-                    new_upload.guid = create_guid(upload.file_name)
-                    draft_measure_to_update.uploads.append(new_upload)
-
-
-                db.session.add(draft_measure_to_update)
-                db.session.flush()
-
 
 
             else:
