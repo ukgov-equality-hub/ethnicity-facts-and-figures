@@ -40,7 +40,7 @@ with app.app_context():
 
             draft_measure_to_update = None
 
-            if (latest_measure_version.id == measure_version.id):
+            if latest_measure_version.id == measure_version.id:
 
                 print("creating DRAFT for " + measure_version.title)
 
