@@ -810,6 +810,11 @@ def test_edit_measure_page_updated_with_latest_db_version_id_when_posting_a_conf
     assert page_displays_error_matching_message(
         response, message=f"‘Title’ has been updated by {measure_version.last_updated_by}"
     )
+    assert len(page.findAll("div", class_="eff-diffs")) == 1
+    assert (
+        str(page.find("div", class_="eff-diffs"))
+        == '<div class="govuk-body eff-diffs">\n<p class="govuk-body"> <ins>try</ins> new title</p>\n</div>'
+    )
 
 
 def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(test_app_client, logged_in_dept_user):

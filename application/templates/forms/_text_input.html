@@ -24,10 +24,10 @@
   <input id="{{ id_ }}" name="{{ name }}" class="govuk-input {{ class_ }}{% if field.errors %} govuk-input--error{% endif %}" value="{{ value }}" {{ field_params }}>
 {% endif %}
 
-{% if not field.errors and diffs is defined and diffs and name in diffs %}
-  <p class="govuk-body">Your update to "{{ field.label.text }}" is highlighted green and possible deletions are highlighted red. If these changes are fine, save the page, otherwise edit the copy above and then save.</p>
-  <div class="govuk-body differences">
-      {{ diffs[name] | render_markdown }}
+{% if diffs is defined and diffs and name in diffs %}
+  <p class="govuk-body govuk-!-margin-top-4">Your update to "{{ field.label.text }}" is shown below, with detected additions and deletions emphasised. If these changes are fine, save the page, otherwise make further edits above and then save.</p>
+  <div class="govuk-body eff-diffs">
+      {{ diffs[name] }}
   </div>
 {% endif %}
 
