@@ -30,6 +30,7 @@ with app.app_context():
             line_count += 1
         else:
             dimension_guid = row[0]
+            new_dimension_title = row[3]
 
             dimension = Dimension.query.filter_by(guid=dimension_guid).one()
             measure_version = dimension.measure_version
@@ -83,10 +84,10 @@ with app.app_context():
                 try:
                     draft_dimension = Dimension.query.filter_by(measure_version_id=draft_measure_to_update.id, title=dimension.title).one()
 
-                    if draft_dimension.title != row[3]:
-                        print("Updating '" + draft_dimension.title + "' to '" + row[3])
+                    if draft_dimension.title != new_dimension_title:
+                        print("Updating '" + draft_dimension.title + "' to '" + new_dimension_title)
 
-                        draft_dimension.title = row[3]
+                        draft_dimension.title = new_dimension_title
                         db.session.add(draft_dimension)
                         db.session.commit()
 
