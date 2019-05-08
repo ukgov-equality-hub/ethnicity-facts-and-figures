@@ -74,9 +74,9 @@ with app.app_context():
 
                         draft_dimension.title = new_dimension_title
                         db.session.add(draft_dimension)
-                        db.session.commit()
 
                 except NoResultFound:
                     print("Can't find dimension for " + dimension.title)
 
+    db.session.commit()
 
