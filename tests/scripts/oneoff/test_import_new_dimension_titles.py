@@ -71,7 +71,7 @@ class TestImportNewDimensionTitles:
     @pytest.mark.parametrize(
         "new_version_state", ["REJECTED", "DRAFT", "INTERNAL_REVIEW", "DEPARTMENT_REVIEW", "UNPUBLISH", "UNPUBLISHED"]
     )
-    def test_script_ignores_measure_versions_where_a_new_version_already_exists(
+    def test_script_ignores_measure_versions_where_a_new_minor_version_already_exists(
         self, single_use_app, new_version_state
     ):
         user = UserFactory(user_type=TypeOfUser.ADMIN_USER, email="admin@eff.gov.uk")
@@ -108,6 +108,51 @@ class TestImportNewDimensionTitles:
 
         assert measure.versions[1].version == "1.0"
         assert measure.versions[1].dimensions[0].title == "my dimension"
+
+    @pytest.mark.parametrize(
+        "new_version_state",
+        ["REJECTED", "DRAFT", "INTERNAL_REVIEW", "DEPARTMENT_REVIEW", "APPROVED", "UNPUBLISH", "UNPUBLISHED"],
+    )
+    def test_script_creates_new_minor_version_where_new_major_version_exists(self, single_use_app, new_version_state):
+        user = UserFactory(user_type=TypeOfUser.ADMIN_USER, email="admin@eff.gov.uk")
+        mv_1_0 = MeasureVersionWithDimensionFactory(
+            status="APPROVED",
+            version="1.0",
+            title="my measure",
+            measure__id=1,
+            dimensions__guid="dimension-guid-1.0",
+            dimensions__title="my dimension",
+            uploads=[],
+        )
+        MeasureVersionWithDimensionFactory(
+            status=new_version_state,
+            version="2.0",
+            title="my measure",
+            external_edit_summary=None,
+            measure=mv_1_0.measure,
+            dimensions__guid="dimension-guid-1.1",
+            dimensions__title="my dimension",
+            uploads=[],
+        )
+        dimension_rows = [["dimension-guid-1.0", "my measure", "my dimension", "my new dimension"]]
+
+        import_dimension_titles(user_email=user.email, app=single_use_app, dimension_rows=dimension_rows)
+
+        measure = Measure.query.get(1)
+
+        assert len(measure.versions) == 3
+        assert measure.versions[0].version == "2.0"
+        assert measure.versions[0].status == new_version_state
+        assert measure.versions[0].dimensions[0].title == "my dimension"
+        assert measure.versions[0].external_edit_summary is None
+
+        assert measure.versions[1].version == "1.1"
+        assert measure.versions[1].status == "DRAFT"
+        assert measure.versions[1].dimensions[0].title == "my new dimension"
+        assert measure.versions[1].external_edit_summary == "Updated dimension titles"
+
+        assert measure.versions[2].version == "1.0"
+        assert measure.versions[2].dimensions[0].title == "my dimension"
 
     def test_error_count_returned_if_new_version_exists_with_different_dimension_titles(self, single_use_app):
         user = UserFactory(user_type=TypeOfUser.ADMIN_USER, email="admin@eff.gov.uk")
@@ -227,9 +272,91 @@ class TestImportNewDimensionTitles:
 
         measure = Measure.query.get(1)
 
-        assert error_count == 2
+        assert error_count == 1
         assert len(measure.versions) == 1
         assert measure.versions[0].version == "1.0"
         assert measure.versions[0].status == "APPROVED"
         assert measure.versions[0].dimensions[0].title == "my dimension"
         assert measure.versions[0].dimensions[1].title == "my dimension"
+
+    def test_new_measure_version_not_created_if_any_new_dimension_titles_are_blank(self, single_use_app, db_session):
+        user = UserFactory(user_type=TypeOfUser.ADMIN_USER, email="admin@eff.gov.uk")
+        mv = MeasureVersionFactory.build(
+            status="APPROVED", version="1.0", title="my measure", measure__id=1, uploads=[]
+        )
+        mv.dimensions = [
+            DimensionFactory.build(guid="dimension-guid-1", title="my dimension 1"),
+            DimensionFactory.build(guid="dimension-guid-2", title="my dimension 2"),
+        ]
+        db_session.session.add(mv)
+        db_session.session.commit()
+
+        dimension_rows = [
+            ["dimension-guid-1", "my measure", "my dimension 1", ""],
+            ["dimension-guid-2", "my measure", "my dimension 2", "my new dimension 2"],
+        ]
+
+        error_count = import_dimension_titles(user_email=user.email, app=single_use_app, dimension_rows=dimension_rows)
+
+        measure = Measure.query.get(1)
+
+        assert error_count == 0
+        assert len(measure.versions) == 1
+        assert measure.versions[0].version == "1.0"
+        assert measure.versions[0].dimensions[0].title == "my dimension 1"
+        assert measure.versions[0].dimensions[1].title == "my dimension 2"
+
+    def test_new_measure_version_not_created_if_script_thinks_it_has_already_created_one(
+        self, single_use_app, db_session
+    ):
+        user = UserFactory(user_type=TypeOfUser.ADMIN_USER, email="admin@eff.gov.uk")
+        mv = MeasureVersionWithDimensionFactory(
+            status="APPROVED",
+            version="1.0",
+            title="my measure",
+            external_edit_summary=None,
+            measure__id=1,
+            dimensions__guid="dimension-guid-1.0",
+            dimensions__title="my dimension",
+            uploads=[],
+        )
+        MeasureVersionWithDimensionFactory(
+            status="DRAFT",
+            version="1.1",
+            title="my measure",
+            external_edit_summary="Updated dimension titles",
+            measure=mv.measure,
+            dimensions__guid="dimension-guid-1.1",
+            dimensions__title="my new dimension",
+            uploads=[],
+        )
+        MeasureVersionWithDimensionFactory(
+            status="DRAFT",
+            version="2.0",
+            title="my measure",
+            external_edit_summary=None,
+            measure=mv.measure,
+            dimensions__guid="dimension-guid-2.0",
+            dimensions__title="my dimension",
+            uploads=[],
+        )
+        dimension_rows = [["dimension-guid-1.0", "my measure", "my dimension", "my new dimension"]]
+
+        error_count = import_dimension_titles(user_email=user.email, app=single_use_app, dimension_rows=dimension_rows)
+
+        measure = Measure.query.get(1)
+
+        assert error_count == 0
+        assert len(measure.versions) == 3
+        assert measure.versions[0].version == "2.0"
+        assert measure.versions[0].status == "DRAFT"
+        assert measure.versions[0].dimensions[0].title == "my dimension"
+        assert measure.versions[0].external_edit_summary is None
+
+        assert measure.versions[1].version == "1.1"
+        assert measure.versions[1].status == "DRAFT"
+        assert measure.versions[1].dimensions[0].title == "my new dimension"
+        assert measure.versions[1].external_edit_summary == "Updated dimension titles"
+
+        assert measure.versions[2].version == "1.0"
+        assert measure.versions[2].dimensions[0].title == "my dimension"
