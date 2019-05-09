@@ -1,0 +1,528 @@
+dimension_id,Measure title,Current dimension title,New dimension title
+5d66f12334474fd076aa17715ba97b9a3534b5a1,Absence from school,Overall absence by ethnicity,
+cf3254185c591a72cd5441febf7298dbf85cf69d,Absence from school,Persistent absence by ethnicity,
+a4cd609f79db88ce0f68929a4af5091488e7b0b2,Absence from school,Overall absence by ethnicity and type of school,
+2e31ebe9bc947c62206f1522e307327bf1df4cc6,Absence from school,Persistent absence by ethnicity and type of school,
+bd08b82908b2cc3adc8c336ca787bdf0c0f53c83,Absence from school,Overall absence by ethnicity and local authority,
+d585751d7dd36fa423d10869b309548dd1674e75,Absence from school,Persistent absence by ethnicity and local authority,
+9645107818bbf1859e9728d13715d48fd6e48827,Absence of tooth decay in 5 year olds,Absence of tooth decay in 5 year olds,By ethnicity
+85fd2ff16ab239a5fb23a97af95e3d649abc23fc,Access to NHS dental services,Access to NHS dental services,By ethnicity over time
+5f62398140a5aaabae99a91a158557cee418491d,Adult smokers,Adult smokers by ethnicity,By ethnicity
+3e38473d3dcc635c5cace6fcdeb98d2d260bbf22,Adult smokers,Adult smokers by ethnicity over time,By ethnicity over time
+2dfcd4780ab3b9fb54fcc1c6d3a09f55fe9099e2,Adults experiencing a psychotic disorder,Psychotic disorder in adults by ethnicity and sex,By ethnicity and sex
+8fbb2c39b7535d5ee5710c3781f77b392b2e2ad8,Adults experiencing common mental disorders,Percentage of people with a common mental disorder by sex and ethnicity,By ethnicity and sex
+a3f150676def061e3fda3bf679f011304db0e2ab,Adults receiving treatment for mental or emotional problems,Adults receiving treatment for mental or emotional problems by ethnicity,By ethnicity
+c2b879ae69b9d3a2eae2b58558be8f40e3b35f99,"Adults reporting suicidal thoughts, attempts and self harm",Suicidal thoughts or attempts and self-harm in adults,By ethnicity
+814fd955f21bf705182a11f628b721aa0899d6a8,Adults screening positive for bipolar disorder,Adults screening positive for bipolar disorder by ethnicity and sex,By ethnicity and sex
+57725c4605b92ded508a5eff799a8c4e178dfdca,Adults using NHS-funded mental health and learning disability services,Rates of adults using NHS-funded secondary mental health and learning disability services,By ethnicity
+2b0a3376b70b8b3f54f80776445d3f8402670f9d,Adults with post-traumatic stress disorder (PTSD) in the month prior to survey,Percentage of adults screening positive for PTSD in the month prior to the survey by ethnicity and sex,By ethnicity and sex
+dae5e7a809d0cff1fcae776d6f57056ed8bdcd13,Age groups,Average age by ethnicity,
+528cecc95b709b27b035a16f1e16484631a2629a,Age groups,Age profile by ethnicity,
+1e93aa4eab98b2389906c8e7a25783ee7bd9104f,Age groups,Asian ethnic groups: age profile,
+9ac4034ea4b19482231dba8b3e1907f73cae5433,Age groups,Black ethnic groups: age profile,
+bb6ed412b20a126f98026c24211edc244cb7f702,Age groups,Mixed ethnic groups: age profile,
+b3545eb3fb50ca91c19216c6056e3174dd79b4ab,Age groups,White ethnic groups: age profile,
+983d873664b61948d43ad56d2624131c683dd28d,Age groups,Other ethnic groups: age profile,
+e970cdf6a3c441482d7fffba603d2ec594986c8c,Age of first-time buyers,Average age of first-time buyers by ethnicity,By ethnicity
+3fc3cf5e33a032cbaa36bad1e8aa738b199ddbc6,Apprenticeship starts,Percentage of apprenticeship starts by ethnicity over time,By ethnicity over time
+25c3c5480ece976e0ad14b62beadbd8bbe05fd09,Apprenticeship starts,"Percentage of apprenticeship starts, compared with the overall population, by ethnicity",By ethnicity compared with the overall population
+4eaff371665f041fef81bb06a7318c25f8b899a9,Armed forces workforce,"Armed forces personnel by ethnicity, service and rank","By ethnicity, service and rank"
+124a8559c6d4de0f8b6904ca1ed4b9cf3dd68134,Armed forces workforce,Armed forces personnel in officer ranks by ethnicity and service over time,By ethnicity and service over time (officers only)
+0ad1dbcd4376d0b6f4c0e8050e76e44d6d83313c,Armed forces workforce,Armed forces personnel in non-officer ranks by ethnicity and service over time,By ethnicity and service over time (non-officer ranks only)
+b46fecdb895e91908af50fc3a2cb9ecedb1e853e,Armed forces workforce,All armed forces personnel by ethnicity and rank,By ethnicity and rank
+8cebfb50b4045b657fae00133eb1f654c958ca31,Arrests,Arrests by ethnicity,By ethnicity
+9d2e05df27591bb29034bdbcc8c32fc197aae649,Arrests,Arrests by ethnicity over time,By ethnicity over time
+b6887964dc6361a6a98e6992068ef8758c609a25,Arrests,Arrests by ethnicity and area,By ethnicity and area
+a34bd546436e01ed59cf5227e29ac54ea686bf82,Arrests,Arrests by ethnicity and gender,By ethnicity and gender
+b83e2366a501b836e999609917e2bf4b780462eb,Assaults carried out by young people in custody,Assaults carried out by young people in custody by ethnicity,By ethnicity
+d23a60f8fa7e57ece57b7e9407737f051793ee06,Attainment in English and Maths GCSE at grade 5 or above for children aged 14 to 16 (key stage 4),Pupils achieving grade 5 or above in English and Maths GCSE by ethnicity,By ethnicity
+a49d5bd9d257c33868a96cf9eb0cb0f3fcd2d9d7,Attainment in English and Maths GCSE at grade 5 or above for children aged 14 to 16 (key stage 4),Pupils achieving grade 5 or above in English and Maths GCSE by ethnicity and eligibility for free school meals (FSM),By ethnicity and eligibility for free school meals
+55e5f81dac1f5f8ac922bb433bf80bd84e389f9b,Attainment in English and Maths GCSE at grade 5 or above for children aged 14 to 16 (key stage 4),Pupils achieving grade 5 or above in English and Maths GCSE by ethnicity and area,By ethnicity and area
+ef8d5b7e755efc097b344e4db94d70e6b6b21ee6,Attainment in English and Maths GCSE at grade 5 or above for children aged 14 to 16 (key stage 4),Pupils achieving grade 5 or above in English and Maths GCSE by ethnicity and gender,By ethnicity and gender
+8c57a1f48ff87d1dbfcdc6641c32abbcf207b70c,Attainment in English and Maths GCSE at grade 5 or above for children aged 14 to 16 (key stage 4),"Pupils achieving grade 5 or above in English and Maths GCSE by ethnicity, gender and eligibility for free school meals (FSM)","By ethnicity, gender and eligibility for free school meals"
+d4b147df893074df09a19e69ab7e08f905a81dcd,Attainment in English and Maths GCSE at grade 5 or above for children aged 14 to 16 (key stage 4),"Pupils achieving grade 5 or above in English and Maths GCSE by ethnicity, gender and area","By ethnicity, gender and area"
+48255966c5a4bf9dc689491b732934958017ac9a,Attainment in English and Maths GCSE at grade 5 or above for children aged 14 to 16 (key stage 4),"Pupils achieving grade 5 or above in English and Maths GCSE by ethnicity, gender and basis for school admission","By ethnicity, gender and type of selection"
+e3c13557b5c08e28edad52d646eac5213a2528d0,Attainment in English and Maths GCSE at grade 5 or above for children aged 14 to 16 (key stage 4),Pupils achieving grade 5 or above in English and Maths GCSE by ethnicity and school type,By ethnicity and type of school
+fd9d0b06f1a40d796cff07d7bc307825dbdcdc42,Attainment in English and Maths GCSE at grade 5 or above for children aged 14 to 16 (key stage 4),"Pupils achieving grade 5 or above in English and Maths GCSE by ethnicity, special education needs (SEN) and gender","By ethnicity, special education needs and gender"
+b24b22599e0188a5d4b97cfbb18bba74e9e0307a,Attainment in English and Maths GCSE at grade 5 or above for children aged 14 to 16 (key stage 4),"Pupils achieving grade 5 or above in English and Maths GCSE by ethnicity, religion of school and gender","By ethnicity, religion of school and gender"
+59a68fefffe311de696134d996e41fe5f48e1ccb,Attainment of development goals by children aged 4 to 5 years,Attainment of development goals by ethnicity,By ethnicity
+ff2d587d31169f4fbaf31559b2e929bd1e15201d,Attainment of development goals by children aged 4 to 5 years,Attainment of development goals by ethnicity and eligibility for free school meals (FSM),By ethnicity and eligibility for free school meals
+0e24b9799255c0960e84035970679a8c4288b168,Attainment of development goals by children aged 4 to 5 years,Attainment of development goals by ethnicity and area,By ethnicity and area
+a47a98dc1b69abe337dab4fdd1ff3a9eb23a06ed,Attainment of development goals by children aged 4 to 5 years,Attainment of development goals by ethnicity and gender,By ethnicity and gender
+61710d77f2c820786840e9cf201ea756856baa8e,Attainment of development goals by children aged 4 to 5 years,"Attainment of development goals by ethnicity, gender and eligibility for free school meals (FSM)","By ethnicity, gender and eligibility for free school meals"
+4ec9ba1b0a11b5cb35c0d48657498b88ded593f9,Attainment of development goals by children aged 4 to 5 years,"Attainment of development goals by ethnicity, gender and area","By ethnicity, gender and area"
+e16f5de5e2008deb4526c2c5eba26f1c102f6e5f,Average hourly pay,Average hourly pay by ethnicity,By ethnicity
+7aff8fdb0c7a073374ae5eef535bd9d90835a51d,Average length of custodial sentences,Average custodial sentence length by ethnicity of offender over time,By ethnicity of offender over time
+158cf92364cb461403cb1ce1419cb66d4bef7b42,Average length of custodial sentences,Average custodial sentence length by ethnicity and sex of offender,By ethnicity and sex of offender
+b932bc9b1b9233a06afa87ff480db92eb56b8cba,Average length of custodial sentences,Average custodial sentence length by ethnicity and age group of offender,By ethnicity and age group of offender
+9485566a6eed0bdf674db7ccdf56651ca75e53ce,Average length of custodial sentences,Average custodial sentence length by ethnicity of offender and type of offence,By ethnicity of offender and type of offence
+6e6712adb5d74efc9312a95c21fabc340f10c4ec,Cancer diagnosis at an early stage,Cancer diagnosis at an early stage by ethnicity,By ethnicity
+4c72da3ad8f9f4f5255102e5c307f13e6ad14aad,Car or van ownership,Car or van access by ethnicity,By ethnicity
+6e304f6a33ff22571a7f1f32d6f1af3cb0f6042d,Chatting regularly with neighbours,People who chat regularly to their neighbours by ethnicity,By ethnicity
+f5af1ac3e2b2e42382dabecd964a1400bfe2c184,Cigarette smoking among 15 year olds,Cigarette smoking among 15 year olds by ethnicity,By ethnicity
+e978dc4c4baf3fd75dd507be5ee601b2e2f702c7,Civil Service pay,Civil servants' average annual pay by ethnicity,By ethnicity
+89f05447d56a274ab4aa96cb8ddd47e5da8ec363,Civil Service pay,Civil servants' average annual pay by ethnicity and grade,By ethnicity and grade
+265645d8fdc400404399bbab39ea3bd0de33bb2b,Civil Service pay,Civil servants' average annual pay by ethnicity and area,By ethnicity and area
+38987adbd6ea5cb29f53e7cea095662ad9ecc3ef,Civil Service workforce,Civil Service workforce by ethnicity,By ethnicity
+ecc7c96f1b4e877ee63c267a8d40bffe07185d31,Civil Service workforce,Civil service workforce by ethnicity over time,By ethnicity over time
+78c38a17f945a28f8d28c8832de47227b50c5263,Civil Service workforce,Civil Service workforce by ethnicity and grade,By ethnicity and grade
+ac7f9157c6dff2d86368532233198022ca64c5c5,Civil Service workforce,Civil Service workforce by ethnicity and area,By ethnicity and area
+ea8f7a1c0c9d2912b535e365aa4ca5ae8e4fdbc6,Civil Service workforce,Civil Service workforce by ethnicity and gender,By ethnicity and gender
+3b75fcde5765cf7d1ff1a4a916c7010a5651970b,Civil Service workforce,Civil Service workforce by ethnicity and age group,By ethnicity and age group
+b600a9d433a8c70faf7f05b523acde3affb4e682,Confidence in the local police,Confidence in the local police by ethnicity over time,By ethnicity over time
+fbe39a95676f5a98c98c58c3d549b98761294d39,Confidence in the local police,Confidence in the local police by ethnicity and gender,By ethnicity and gender
+e3f5fbf8697c5e63e83743e9528f00cf2a03a077,Confidence in the local police,Confidence in the local police by ethnicity and age,By ethnicity and age
+2de99839b290a5959d9c34746b5ce73d06567c8b,Confidence in the local police,Confidence in the local police by ethnicity and socio-economic group,By ethnicity and socio-economic group
+4f3343071a4c5cd654d09ae526aaa2c4cf83e781,Customer satisfaction with Department for Work and Pensions services,Customer satisfaction with department for work and pensions services by ethnicity 2017/18,By ethnicity
+2c5f1097981250405105c8a09e39d725e9756bee,Deposits paid by first-time buyers,Deposits paid by first-time buyers by ethnicity,By ethnicity
+c30bd3e0cc5f7c6215154baba58db1b8ba063610,Deposits paid by first-time buyers,Deposits paid by first-time buyers by ethnicity and socio-economic group,By ethnicity and socio-economic group
+c07770f159f27d85f2d0b9ba8bab37d9c83c61c7,Destinations and earnings of graduates after higher education,Graduate destinations by ethnicity,
+b58881669bd1c58c2d212449d1439aa59e199a12,Destinations and earnings of graduates after higher education,Graduate destinations (further study or employment only) by ethnicity,
+f2061b54f28dd6b3bddf2e4d3327c2a72ee84f11,Destinations and earnings of graduates after higher education,Average earnings of graduates by ethnicity,
+389fa92c879127187ddf80891f73f0d3b76ad773,Destinations of school pupils after key stage 4 (usually aged 16 years),"Pupils going into sustained education, employment or training by ethnicity",By ethnicity
+d698b18a17d66e1eb58257d4a7d4683f63442b36,Destinations of school pupils after key stage 4 (usually aged 16 years),"Pupils going into sustained education, employment or training by ethnicity over time",By ethnicity over time
+6c47771cbfb9f8572618a64becfa1a1b0c5b6ce0,Destinations of students after key stage 5 (usually aged 18 years),Students going into sustained education or employment by ethnicity,By ethnicity
+6633538f49819501015fac8843329056df7b7907,Detentions under the Mental Health Act,"Rates of detention (per 100,000) under the Mental Health Act 1983 by broad ethnic group",By ethnicity (5 ethnic groups)
+bd1ba70b5f64973d4c48a836754ca4fe9a34eb48,Detentions under the Mental Health Act,"Rates of detention (per 100,000) under the Mental Health Act 1983 by specific ethnic group",By ethnicity (16 ethnic groups)
+e7593557004db932854b61bdd6dfc0c70337b2c3,Driving licences,Driving licence holders by ethnicity,By ethnicity
+42f386399a2043c1e3ff80c96bb28e19248ad287,Drug dependency in adults,Drug dependency in adults,By ethnicity and sex
+a51d01021b1073295a2d7041fcf5288beb91bcfc,Economic inactivity,Economic inactivity by ethnicity,By ethnicity
+470e13cf90a168a674e107d2a603b40606551ad4,Economic inactivity,Economic inactivity by ethnicity (White and Other ethnic groups),By ethnicity (2 ethnic groups)
+cbe7b3b84182527e9ab8b809ffec2daece3f2c58,Economic inactivity,Economic inactivity by ethnicity over time,By ethnicity over time
+8b240da307dd510634fdde52d7595ef7c5c85ee5,Economic inactivity,Economic inactivity by ethnicity and gender,By ethnicity and gender
+a5e60ae1b5e560fb38030785fdbad40374735ff3,Economic inactivity,Economic inactivity by ethnicity and age group,By ethnicity and age group
+258ba6e8ced22f7223f6e68fdb639fd8da1a76b3,Economic inactivity,Economic inactivity among 16 to 24 year olds over time,By ethnicity and age group over time (16 to 24 year olds only)
+a8c978685d19bcc0b127ac3e8afae4c98bf8ce1d,Economic inactivity,Economic inactivity by ethnicity and area,By ethnicity and area
+827e414426dd8d84a848790da2122517b5d889c5,Economic inactivity by qualification level,Economic inactivity by ethnicity and qualification level,By ethnicity and qualification level
+18e09a15938edbcae495f734fe0084df4ee28c9c,Economic inactivity by qualification level,Economic inactivity among men by ethnicity and qualification level,By ethnicity and qualification level (men only)
+b81e0b7d361df43e336aa6409b44585fd4df4154,Economic inactivity by qualification level,Economic inactivity among women by ethnicity and qualification level,By ethnicity and qualification level (women only)
+d926693cd0eac5f5d29aad9c8f5177bb8244a256,Employment,Employment by ethnicity,By ethnicity
+52904ae06042718374e9c2b25dd89b2212475543,Employment,Employment by ethnicity (White and Other ethnic groups),By ethnicity (2 ethnic groups)
+77cfc40b0e71b690b2474d83f7e0db8aa63f982b,Employment,Employment by ethnicity over time,By ethnicity over time
+c931d6d52a69121621a488c99a0de14a39aa3b15,Employment,Employment by ethnicity and gender,By ethnicity and gender
+7376b9104b4981fe9d9b644e5691cf1e918d4928,Employment,Employment by ethnicity and age group,By ethnicity and age group
+e185b9a52dff81926b49cefdad55d87c20f5535b,Employment,Employment among 16 to 24 year olds by ethnicity over time,By ethnicity and age group over time (16 to 24 year olds only)
+812b9397dd4b7e2de56894590f9d09bf3559019f,Employment,Employment by ethnicity and area,By ethnicity and area
+66f857ed6d76f240996d934edb3cc7a06e285e81,Employment and Support Allowance: sanctions,"Employment and Support Allowance claimants sanctioned, by ethnicity",By ethnicity
+f85ad426f49a5bb728030761f326add9a34d00f6,Employment and Support Allowance: sanctions,"Employment and Support Allowance claimants sanctioned, by ethnicity over time",By ethnicity over time
+7dfb845aabdf9e871f29531654c2dd0849130ef2,Employment and Support Allowance: sanctions,"Employment and Support Allowance claimants sanctioned, by ethnicity and age group",By ethnicity and age group
+27e6b7624e3843a8112241ab3fc721b2907d89f6,Employment by occupation,Employment by type of occupation and ethnicity,By ethnicity and type of occupation
+a2278835f0af9970ac118b2c63e5985f4dc93ef3,Employment by qualification level,Employment by qualification level and ethnicity,By ethnicity and qualification level
+26a830878c47ad40d36dda6a972323e02d9affe0,Employment by qualification level,Employment among men by qualification level and ethnicity,By ethnicity and qualification level (men only)
+df7a43213274b9090ce0c95bf5b0e31b5718cb01,Employment by qualification level,Employment among women by qualification level and ethnicity,By ethnicity and qualification level (women only)
+c45bde82b6abbbb461f3b5655cfc28ddbff0324b,Employment by sector,Employment by sector and ethnicity,By ethnicity and sector
+14dcc4ad9b97cc20192fbcd84a3708d9306959a6,Employment tribunal claims,Employment tribunal claims by ethnicity,By ethnicity
+16f01533ad69fff0acd17733d6a9199a88d3bf5e,English Baccalaureate (EBacc) achievement for children aged 14 to 16 (key stage 4),EBacc achievement by ethnicity,By ethnicity
+9f32bf9b33bb81db9cfd31c51656555ce733714f,English Baccalaureate (EBacc) achievement for children aged 14 to 16 (key stage 4),EBacc achievement by ethnicity and eligibility for free school meals (FSM),By ethnicity and eligibility for free school meals
+0dc539af1742e2a7c08c10608599069f683c6d91,English Baccalaureate (EBacc) achievement for children aged 14 to 16 (key stage 4),EBacc achievement by ethnicity and area,By ethnicity and area
+9ccddd5613a5c1e217beadc7262e46bea055a426,English Baccalaureate (EBacc) achievement for children aged 14 to 16 (key stage 4),EBacc achievement by ethnicity and gender,By ethnicity and gender
+23728eeb064b30737655edabb725888b3d1e1ba4,English Baccalaureate (EBacc) achievement for children aged 14 to 16 (key stage 4),"EBacc achievement by ethnicity, gender and eligibility for free school meals (FSM)","By ethnicity, gender and eligibility for free school meals"
+143280aa9b889e88c2e9adcea9669d0a27ef580d,English Baccalaureate (EBacc) achievement for children aged 14 to 16 (key stage 4)," EBacc achievement by ethnicity, gender and area","By ethnicity, gender and area"
+621b85f9f84fffdf9a169276bf57c77124e6c6bc,English Baccalaureate (EBacc) achievement for children aged 14 to 16 (key stage 4),"EBacc achievement by ethnicity, gender and basis for school admission","By ethnicity, gender and type of selection"
+f41045bcda1645c62162b50b75dcb60d56091563,English Baccalaureate (EBacc) achievement for children aged 14 to 16 (key stage 4),EBacc achievement by ethnicity and type of school,By ethnicity and type of school
+013fc5e2f25163f42eef81656368b00a8ccdade3,English Baccalaureate (EBacc) achievement for children aged 14 to 16 (key stage 4),"EBacc achievement by ethnicity, gender and special education needs (SEN)","By ethnicity, gender and special education needs"
+5c447ccffc5fbe08bfd55fe4e1b58ddea035d54c,English Baccalaureate (EBacc) achievement for children aged 14 to 16 (key stage 4),"EBacc achievement by ethnicity, gender and religion of school","By ethnicity, gender and religion of school"
+0592f9176ec4f6c532a60d9e991b751973de19b2,English Baccalaureate (EBacc) entry for children aged 14 to 16 (key stage 4),EBacc entry by ethnicity,By ethnicity
+7dab8178c34d2c412a8a366b41cf0cbcf236a327,English Baccalaureate (EBacc) entry for children aged 14 to 16 (key stage 4),EBacc entry by ethnicity and eligibility for free school meals (FSM),By ethnicity and eligibility for free school meals
+2fbd3b1995800c1a834e9243849f9ea3c0e1917d,English Baccalaureate (EBacc) entry for children aged 14 to 16 (key stage 4),EBacc entry by ethnicity and area,By ethnicity and area
+ac97f4ca4d7bae6b093800da1fb84a7a72d1e34d,English Baccalaureate (EBacc) entry for children aged 14 to 16 (key stage 4),EBacc entry by ethnicity and gender,By ethnicity and gender
+7a2e5a0db103fcaf67e79c00981426c748fc4c99,English Baccalaureate (EBacc) entry for children aged 14 to 16 (key stage 4),"EBacc entry by ethnicity, gender and eligibility for free school meals (FSM)","By ethnicity, gender and eligibility for free school meals"
+43e9f69012fc45ea3831223d1d1b5f6f71a2896f,English Baccalaureate (EBacc) entry for children aged 14 to 16 (key stage 4)," EBacc entry by ethnicity, gender and area","By ethnicity, gender and area"
+b9dab0a9f61d62f069294f61e97e6c696353509d,English Baccalaureate (EBacc) entry for children aged 14 to 16 (key stage 4),"EBacc entry by ethnicity, gender and basis for school admission","By ethnicity, gender and type of selection"
+415aa03de60514dd0c5dc0f438b0e86dc60d3f8f,English Baccalaureate (EBacc) entry for children aged 14 to 16 (key stage 4),EBacc entry by ethnicity and type of school,By ethnicity and type of school
+50a4aaf415d7ef4b41ab3c6f3db8d7d6c9d78342,English Baccalaureate (EBacc) entry for children aged 14 to 16 (key stage 4),"EBacc entry by ethnicity, gender and special education needs (SEN)","By ethnicity, gender and special education needs"
+232fd0e7a389ea2a8ae2603307c49677d7b6160c,English Baccalaureate (EBacc) entry for children aged 14 to 16 (key stage 4),"EBacc entry by ethnicity, gender and religion of school","By ethnicity, gender and religion of school"
+322f0effd94132a6ad40d01b225885ee69c3473f,English language skills,English language skills by ethnicity,By ethnicity
+48863ca03cdc3d9c08c34d168ddf0f2115cbb46c,English language skills,English language skills by ethnicity and sex,By ethnicity and sex
+e11fca98df90428a7592de3bf0da376260399df6,English language skills,English language skills by ethnicity and region,By ethnicity and area
+d9e68d00584a7498cf6874650e5cadd4f41713fc,English language skills,"English language skills by ethnicity, sex and age","By ethnicity, sex and age"
+9ef1ebddd30c2ae6a8e584ab48cb791ca5f3124e,English language skills,Languages spoken other than English,Other languages spoken
+3e3bfb8e7a5b19628a09a707dd091e5223a8c0d1,"Entrants at higher education providers with high, medium and low entry tariffs","Entrants to courses at ‘low’, ‘medium’ and ‘high’ tariff institutions, by ethnicity",By ethnicity
+db0d87908b57779904ffc59e9f26b758c3c7fafc,"Entrants at higher education providers with high, medium and low entry tariffs","Ethnic groups of entrants, by tariff level of provider",By tariff level of provider
+cd1b58bb17e4c0693ec40d348efbcd1f83eb1efe,Entry rates into higher education,Entry rates into higher education by ethnicity,By ethnicity
+73a5f0969ea86e74302bf8c0e309e70836ae7ef5,Families and households,Household types by ethnicity,
+1663e8b0cf37b56df54bd84da09fe9bb993c1191,Families and households,Ethnic groups by household type,
+13a00dfe767a26eb5e862e7d1ede78037f2015fe,Families and households,Households with dependent children by ethnicity,
+f1625cab8c6dd1d05bdc3714a1393ae4457c684f,Families and households,Asian ethnic group by household type,
+46e7f0ec4931054caf32ef172b5df97746d8cde3,Families and households,Black ethnic group by household type,
+a5940602787b17758cb1f28df74d599679055182,Families and households,Mixed ethnic group by household type,
+a13d27d91c1c91300b6fe1b8d511f4bc20735b9e,Families and households,White ethnic group by household type,
+3740739c7d300bfa06546e57c922dadb69255b65,Families and households,Other ethnic group by household type,
+ca7eeb39bc8277526e2ac3d66f3c00ae5b2a9438,Fear of crime,Fear of crime by ethnicity over time,By ethnicity over time
+95450282142e0e8a6e5ea8e328c22c926bf4a82d,Fear of crime,Fear of crime by ethnicity and gender,By ethnicity and gender
+fdc84717ee3efd01af625d8ac9fee207d4c5cc56,Fear of crime,Fear of crime by ethnicity and age group,By ethnicity and age group
+b50264464fb9beb0d0c7eb30a3ba18c95c111b91,Fear of crime,Fear of crime by ethnicity and socio-economic group,By ethnicity and socio-economic group
+ed1f738d39680717e18220988e828daa30b3bffe,Feeling of belonging to Britain,"People feeling strongly they belong to Britain, by ethnicity",By ethnicity
+dbc4430f32200ecb62bfb3ea9d93d236d8893081,Feeling of belonging to a neighbourhood,People feeling strongly they belong to their neighbourhood by ethnicity,By ethnicity
+323cd0c6734277ef4266871f52421f9dd92602d7,Feeling of community integration,Feeling of community integration by ethnicity,By ethnicity
+8fc84a209224f2849c34f58698f7c55c0b626d83,Financial help from family to buy a home,"Households getting financial help from family to buy their home, by ethnicity",By ethnicity
+b6be60a59904f967ba99912a71b9c1ee44e020ec,Fire and rescue services workforce,Firefighters by ethnicity,By ethnicity (firefighters only)
+b87d2ed3c4b32add4711120cf5b3057e3c7b9dc7,Fire and rescue services workforce,Firefighters by ethnicity over time,By ethnicity over time (firefighters only)
+3640c625e5e16c0e51bcf3e8ab5b3ace18c64355,Fire and rescue services workforce,Fire and rescue service workforce by ethnicity and type of role,By ethnicity and type of role
+2ba0c4eb4225589f9325673476c922b2f7ee0daa,Fire and rescue services workforce,Fire and rescue service workforce by ethnicity and type of role over time,By ethnicity and type of role over time
+3c49c755e2852eb1661d56bf9dbfb26394c04c52,Fire and rescue services workforce,Fire and rescue service workforce by type of role within each ethnic group,By type of role within each ethnic group
+0b71bbc9c89a65b475524b92d94f53e93ab9cd88,Fire and rescue services workforce,Firefighters by ethnicity and area,By ethnicity and area (firefighters only)
+86e1d3e123d35b59f0c4314dab4dae2d62c0be7f,Fire and rescue services workforce,Firefighters by ethnicity and duty type,By ethnicity and duty type (firefighters only)
+4ddcf0c881dc7d8d956ed98695fadce828a55f7a,First year entrants onto postgraduate degrees,First year entrants onto postgraduate degrees by ethnicity,By ethnicity
+f8ff00237d7687f0ead34c4818ea1f3ca751e199,First year entrants onto undergraduate degrees,First year entrants onto undergraduate degrees by ethnicity,By ethnicity
+5350c394f54809a11e3b53202aa145589ac33571,Fuel poverty,Households in fuel poverty by ethnicity over time,By ethnicity over time
+903b084b148902c957cc230022bdafba4483f09c,Fuel poverty gap,Average fuel poverty gap by ethnicity over time,By ethnicity over time
+6748b4750adb7851d7f5995a8fa41376190c7dab,Further education participation,Percentage of people in further education by ethnicity over time,By ethnicity over time
+c0f45cbd9f96f29cbfffb596142aae14d4447395,Further education participation,"Further education participation by ethnicity, compared with the overall population by ethnicity",By ethnicity compared with the overall population
+26a003217f1ec8f90bfce746277c62bb2db61b63,GCSE results (‘Attainment 8’) for children aged 14 to 16 (key stage 4),GCSE-level exam results (‘Attainment 8’) by ethnicity,By ethnicity
+d591876c8e1c7fc132b84e58ee2ca7c8159941d3,GCSE results (‘Attainment 8’) for children aged 14 to 16 (key stage 4),GCSE-level exam results (‘Attainment 8’) by ethnicity and eligibility for free school meals (FSM),By ethnicity and eligibility for free school meals
+8c5e4a47aadbd867881778d07e6bcc5d328f4681,GCSE results (‘Attainment 8’) for children aged 14 to 16 (key stage 4),GCSE-level exam results (‘Attainment 8’) by ethnicity and area,By ethnicity and area
+961f0b8545e9d08033f7416001c1ecdd4032bc79,GCSE results (‘Attainment 8’) for children aged 14 to 16 (key stage 4),GCSE-level exam results (‘Attainment 8’) by ethnicity and gender,By ethnicity and gender
+fab430c4393a954d95f2db9a7f5f903c81d0ca36,GCSE results (‘Attainment 8’) for children aged 14 to 16 (key stage 4),"GCSE-level exam results (‘Attainment 8’) by ethnicity, gender and eligibility for free school meals (FSM)","By ethnicity, gender and eligibility for free school meals"
+6e138eaf53e5e3d7ee2ab684e1ac09424bd23bd2,GCSE results (‘Attainment 8’) for children aged 14 to 16 (key stage 4),"GCSE-level exam results (‘Attainment 8’) by ethnicity, gender and area","By ethnicity, gender and area"
+0ba6fb0d398c4dccb64ebde893bb8b8cbc979856,GCSE results (‘Attainment 8’) for children aged 14 to 16 (key stage 4),"GCSE-level exam results (‘Attainment 8’) by ethnicity, basis for school admission and gender","By ethnicity, gender and type of selection"
+527b0f19f0a38a3796614b67a14262d3c8e425a3,GCSE results (‘Attainment 8’) for children aged 14 to 16 (key stage 4),GCSE-level exam results (‘Attainment 8’) by ethnicity and type of school,By ethnicity and type of school
+e86dd773ae6d372879858eedb469812d07890b37,GCSE results (‘Attainment 8’) for children aged 14 to 16 (key stage 4),"GCSE-level exam results (‘Attainment 8’) by ethnicity, special education needs (SEN) and gender","By ethnicity, special education needs and gender"
+f36cc8ab3f07004265c4af93483a9b37caa6ff5f,GCSE results (‘Attainment 8’) for children aged 14 to 16 (key stage 4),"GCSE-level exam results (‘Attainment 8’) by ethnicity, religion of school and gender","By ethnicity, religion of school and gender"
+2196651f2dc02c1f577380ca9d9e463b0c0a10c7,"Grammar, punctuation and spelling attainment for children aged 10 to 11 (key stage 2)","Grammar, punctuation and spelling attainment for children aged 10 to 11 by ethnicity",By ethnicity
+d25456d0973d252295bf89fff4e7bbb9966accb9,"Grammar, punctuation and spelling attainment for children aged 10 to 11 (key stage 2)","Grammar, punctuation and spelling attainment for children aged 10 to 11 by ethnicity and area",By ethnicity and area
+8274b7b02e58cab82f040ed032c632e5f948abb5,"Grammar, punctuation and spelling attainment for children aged 10 to 11 (key stage 2)","Grammar, punctuation and spelling attainment for children aged 10 to 11 by ethnicity and gender",By ethnicity and gender
+c548c5277726281a0a059e47c332bcce19686326,HIV infection with late diagnosis,HIV infection with late diagnosis by ethnicity,By ethnicity
+f24cd4557244612db537e860c16233ede758dcc5,Harmful and probable dependent drinking in adults,"Hazardous, harmful or probable dependent drinking by ethnicity and sex",By ethnicity and sex (low risk drinking)
+8ebe469662b08e6137ec729a52fe84d997dee710,Harmful and probable dependent drinking in adults,Harmful or probable dependent drinking among adults by ethnicity and sex,By ethnicity and sex (harmful or dependent drinking)
+9e2145e6713948d81c1cb201f66a1f1780a7dd14,Healthy eating of 5-a-day among 15 year olds,Healthy eating of 5-a-day among 15 year olds by ethnicity,By ethnicity
+f52fc94620c7a178c511030d7952a92ac84c6192,Healthy eating of 5-a-day among adults,Healthy eating of 5-a-day among adults by ethnicity,By ethnicity
+0633fb3d1f2981186063977ca350b0b8c7ebd59b,Home ownership,Home ownership by ethnicity,By ethnicity
+e3d34455b02630aabe43f7c99d5d96a84a630b4a,Home ownership,Home ownership by ethnicity and socio-economic group,By ethnicity and socio-economic group
+3bf25b73d9e3c29cb29624f7d280196738e412dc,Home ownership,Home ownership by ethnicity and age group,By ethnicity and age group
+3a9aece05150b41d53ed1cb9b563e157ae71c2f9,Home ownership,Home ownership by ethnicity and area,By ethnicity and area
+b27f278dcc7853aae1c3489d354ee0952b98c3e8,Home ownership,Home ownership by ethnicity and weekly income,By ethnicity and weekly income
+dcbc475d11facd5550e5b7fad40d5dc096381d2d,Household income,Weekly household income by ethnicity,By ethnicity
+35bdf7ad0d9e19d546ebe9202a52af72a7ab8d48,Households under-occupying their home,Households under-occupying their home by ethnicity,By ethnicity
+87aef993478b83e391965822b704494547a0d1c2,Households under-occupying their home,Households under-occupying their home by ethnicity and socio-economic group,By ethnicity and socio-economic group
+1c388c91f5a9f10cf44c618dea92088d2ad3fbe3,Households under-occupying their home,Households under-occupying their home by ethnicity and income,By ethnicity and income
+d77b5ff14fcc1cfe78b81ea83344f689201410b9,Households under-occupying their home,Households under-occupying their home by ethnicity and area,By ethnicity and area
+60a564f14dad4693bff14566d11348c33711c3de,Households under-occupying their home,Households under-occupying their home by ethnicity and age group,By ethnicity and age group
+12ebd822411491c056de68be196237ae5e07aa41,Households under-occupying their home,Households under-occupying their home by ethnicity and type of occupancy (renting or ownership),By ethnicity and type of occupancy (renting or ownership)
+6bf7803b19cd03ced4e5f16d2e8b33e2acf6241b,Housing with damp problems,Households with damp problems by ethnicity,By ethnicity
+8e8b3af71d4cb041dc6540f4578f9043e94146cc,Illicit drug use among adults,Percentage of adults who used illicit drugs by ethnicity and sex,By ethnicity and sex
+d913c956643db1e138f6141a6a4169b298a7289a,Income distribution,Income distribution before housing costs in each ethnic group,
+1e1895cb20257c8b01f30215d383270f6c8ce134,Income distribution,Income distribution after housing costs in each ethnic group,
+64dc2052469def119f5cd3ee5d3d68917ec46b4f,Income spent on rent for new lettings of social housing,Income spent on rent for new social lettings by ethnicity,By ethnicity
+1310532fe1dc53445bd2a5c9da158adaffc10000,Income spent on rent for new lettings of social housing,Income spent on rent for new social lettings by ethnicity and area,By ethnicity and area
+7e7e90cb495ea96360296ae035661cd65ace6d11,Influencing local decisions,"People who felt they could influence local decisions, by ethnicity",By ethnicity
+3b33a221ebdd67eccd0b87a3074a19fad165107c,Inpatient satisfaction with hospital care,Inpatient satisfaction with hospital care by ethnicity,By ethnicity
+49ae57a3dd1c3f1878ac0e363d2a52520372f784,Inpatient satisfaction with hospital care,Inpatient satisfaction with hospital care by ethnicity over time,By ethnicity over time
+2c4be951589a5131c2f850d26d4b00327c888ae2,Internet use,Internet use by ethnicity,By ethnicity
+72101859928a66903a034818e312dd60efd9116e,Internet use,Internet use by ethnicity and area,By ethnicity and area
+9efe1ad8e462506df6f6edb1a4541fcb0a3aa2f4,Internet use,Internet use by ethnicity and age group,By ethnicity and age group
+c7b010d30391f1226f0fa098bbb42e2b8382b476,Jobseeker's Allowance: sanctions,"Jobseeker’s Allowance claimants sanctioned, by ethnicity",By ethnicity
+b24da98474b6a74b2c05b1d24e6a3278de49892e,Jobseeker's Allowance: sanctions,"Jobseeker’s Allowance claimants sanctioned, by ethnicity and area",By ethnicity and area
+e7b63547b7a9707c1e7920661fd88b0a97e4d9e7,Jobseeker's Allowance: sanctions,"Jobseeker’s Allowance claimants sanctioned, by ethnicity and age group",By ethnicity and age group
+bb9f6e93d841e3fd1fd4299a4355d42c744dac42,Jobseeker's Allowance: sanctions,"Jobseeker’s Allowance claimants sanctioned, by ethnicity over time",By ethnicity over time
+03c9a72a2abc62b7e37a5fb9c83f52d063501df4,Jobseeker’s Allowance: how long people claim for,"How long people claim Jobseeker’s Allowance for, by ethnicity",By ethnicity
+62cb902f3d141af6eb9ae01f96d19bc6947d0988,Jobseeker’s Allowance: how long people claim for,"Claims for Jobseeker’s Allowance lasting for more than 104 weeks, by ethnicity and area",By ethnicity and area
+161a4e921b5ea754bd0488fb30fa2b5b308b6933,Judges and non-legal members of the judiciary,Judges and non-legal members of the judiciary by ethnicity,By ethnicity
+35d310ffb6490448fb08501cd255892a48933cc9,Judges and non-legal members of the judiciary,Ethnic groups broken down by their judicial roles,By judicial roles for each ethnic group
+998dbd8c2187d9839433ccd1ead74684bb8f979f,Leadership of Small and Medium Enterprises,Leadership of SME employers by ethnicity and UK nation,By ethnicity and area (employers only)
+0759417ebfb878b8aecfe56dec5a2b6a2f5b708c,Leadership of Small and Medium Enterprises,Leadership of SME non-employers by ethnicity and UK nation,By ethnicity and area (non-employers only)
+0db1288fd824e0f95b665f51cad8c9b57df35828,Leadership of Small and Medium Enterprises,Leadership of SME employers by ethnicity and sector,By ethnicity and sector (employers only)
+86bf6414cb4a2c9f3b63a4e99cf49a9e7c08819f,Leadership of Small and Medium Enterprises,Leadership of SME non-employers by ethnicity and sector,By ethnicity and sector (non-employers only)
+eb7b9a5e07980cf5675c6c0c9464e420d44fa047,Length of fixed-term tenancies in social housing,Length of tenancy for new lettings in social housing by ethnicity,By ethnicity
+f01affd5894bd8b9c345577cbec9eaa8bfd48801,Length of fixed-term tenancies in social housing,Length of tenancy for new lettings in social housing by ethnicity over time,By ethnicity over time
+c19edaf71a47d58f2d66bd45c0e3ccc99d457227,Length of time spent in unemployment,Time spent in unemployment,By ethnicity
+c63bd1de8602031d60861558144a9007baac9310,Male and female populations,Ethnic groups by sex,By ethnicity
+e3effe732d9167b68f2a0c02f4379e237f90eed1,Mathematics attainments for children aged 6 to 7 (key stage 1),Mathematics attainment for children aged 6 to 7 by ethnicity,By ethnicity
+f183b6cab5a65ed1eb5d7c63bf1aa1b99ec8ba93,Mathematics attainments for children aged 6 to 7 (key stage 1),Mathematics attainment for children aged 6 to 7 by ethnicity and eligibility for free school meals (FSM),By ethnicity and eligibility for free school meals
+1212dc77afbe7db1fe500f0fb5556b4a89dc93ca,Mathematics attainments for children aged 6 to 7 (key stage 1),Mathematics attainment for children aged 6 to 7 by ethnicity and area,By ethnicity and area
+04f4a9fe068383bdb35a16057843ba2232436bc7,Mathematics attainments for children aged 6 to 7 (key stage 1),Mathematics attainment for children aged 6 to 7 by ethnicity and gender,By ethnicity and gender
+a7bf7b21f5ead29cd53ec12a5035daa531444bcd,Mathematics attainments for children aged 6 to 7 (key stage 1),"Mathematics attainment for children aged 6 to 7 by ethnicity,  gender, and eligibility for free school meals (FSM)","By ethnicity,  gender, and eligibility for free school meals"
+2f498e76691f63f27dc975fb003dac64445c8719,Mathematics attainments for children aged 6 to 7 (key stage 1),"Mathematics attainment for children aged 6 to 7 by ethnicity, area and gender","By ethnicity, area and gender"
+861a1c9d3b38e60c94cb2e25c72af85543d50703,Maths attainments for children aged 10 to 11 (key stage 2),Maths attainment for children aged 10 to 11 by ethnicity,By ethnicity
+3ac98855041a70a20ad591f1cec845efa084e825,Maths attainments for children aged 10 to 11 (key stage 2),Maths attainment for children aged 10 to 11 by ethnicity and area,By ethnicity and area
+837ae237a302f128eaa7e79173b854b9ed2e03c3,Maths attainments for children aged 10 to 11 (key stage 2),Maths attainment for children aged 10 to 11 by ethnicity and gender,By ethnicity and gender
+8298b0a3685e0d76c42029e468587d0f55f0e890,NHS basic pay,NHS staff pay by ethnicity and gender,By ethnicity and gender (all staff)
+1e14704187a2c87b6c4c6dff7c078fb712d470a1,NHS basic pay,NHS medical staff pay by ethnicity and gender,By ethnicity and gender (medical staff)
+e0bab6ceecd48e86ae47eb4999dce292ee2591c1,NHS basic pay,NHS non-medical staff pay by ethnicity and gender,By ethnicity and gender (non-medical staff)
+4e550d29100b1d07700c92d6a7b2278c01bb9706,NHS basic pay,"NHS non-medical staff pay by ethnicity, gender, and broad staff groups","By ethnicity, gender, and broad staff groups"
+b544cac2bbbac741653b95458a84d4b3d0e04be6,NHS basic pay,"Gender pay gap among NHS staff in each ethnic group, by type of role",Gender pay gap by type of role
+1b9e71cf49fd4f0f438691eb274cfbc6643030b8,NHS basic pay,"Gender pay gap among NHS non-medical staff in each ethnic group, by broad staff group",Gender pay gap by broad staff group
+82edfd762d769020ed1d13f40258ecfb45b5a4d7,NHS staff believing career progression is fair at work for all staff,"NHS staff believing career progression is fair at work for all staff, by ethnicity and area",By ethnicity and area
+ca9e0d160e4c8ba84afc63f194f94eb0585e1f86,NHS staff believing career progression is fair at work for all staff,"NHS staff believing career progression is fair at work for all staff, by ethnicity and type of trust",By ethnicity and type of trust
+f6975fea7739bb92a2de7f6701b2f1b0d9d80ab1,NHS staff experiencing discrimination at work,NHS staff experiencing discrimination at work by ethnicity and area,By ethnicity and area
+89861a278a64ce7ff4c236e0e3c6f1b514dbb94d,NHS staff experiencing discrimination at work,NHS staff experiencing discrimination at work by ethnicity and type of trust,By ethnicity and type of trust
+d6370b3cdfd0a56695031bbfda14bbfea09cf415,NHS trust board membership,NHS trust board members by ethnicity and area,By ethnicity and area
+2c7bf61663ac01900f38cccd3bb477bf812185c5,NHS trust board membership,NHS trust board membership by ethnicity and trust,By ethnicity and trust
+05fdffb117a4576ca86ab4ebbd2ecd6f3db31c4a,NHS workforce,NHS workforce by ethnicity,By ethnicity
+3b456b2ee75cc302484f7661ddc20aac0c920086,NHS workforce,NHS workforce by ethnicity and type of role,By ethnicity and type of role
+5fc6663fa03d05b2015fbec56c3e8ebb284f3e48,NHS workforce,NHS non-medical workforce by ethnicity and broad grade,By ethnicity and broad grade (non-medical staff)
+484a03abd5348336e688a4df76daa7de600c2a35,NHS workforce,NHS non-medical workforce by ethnicity and specific grade,By ethnicity and specific grade (non-medical staff)
+e6e457e6a1b71951346b952edd30501788404d68,NHS workforce,NHS medical workforce by ethnicity and grade,By ethnicity and grade (medical staff)
+31b734b68f69efc1fb468af5261d729c0ce46978,NHS workforce appointments from shortlisting,Appointment of shortlisted applicants to NHS jobs by ethnicity and area,By ethnicity and area
+c7836be0dfdf6f5b3be17b9675ca3b5778477cef,NHS workforce appointments from shortlisting,Appointment of shortlisted applicants to NHS jobs by ethnicity and trust type,By ethnicity and type of trust
+f4954e7189fe6caee75b303448f3f9063a50d7b2,New social housing lettings,New social housing lettings by ethnicity,By ethnicity
+d93aaec6f244e5e1557eb6da52f2e88afd05dc4d,New social housing lettings,New social housing lettings by ethnicity and income,By ethnicity and income
+76694a1fb22c8efde46c7bcebb1a172feb6a170e,New social housing lettings,New social housing lettings by ethnicity and area,By ethnicity and area
+47c2e525f43ae7bf865080eb799736c4c4b3ffc7,New social housing lettings,New social housing lettings by ethnicity and local authority,By ethnicity and local authority
+02792a743e783e26f2dd7cfe3fe68dfc3446297c,New social housing lettings,New social housing lettings by ethnicity and age group,By ethnicity and age group
+e9f68e11812f6258c82f3bade52d3e37735c648b,Non-decent homes,Households living in non-decent homes by ethnicity,By ethnicity
+d4cd61ee596646c73103d0163d4ccb00958e3126,Organ donation: consent,Consent for organ donation,By ethnicity
+7c10ab42eabe417995350b5bc0b32b81b5d1224d,Outcomes for treatment for anxiety and depression,Outcomes of referrals following psychological therapy by ethnicity,By ethnicity
+2d2862056b3b1032e84d901ec6b4f27b529f23f1,Outcomes for treatment for anxiety and depression,Outcomes of referrals following psychological therapy by ethnicity over time,By ethnicity over time
+7d0ccf4d710042d68e950ae9b4abff1963db1ca7,Outcomes for treatment for anxiety and depression,Outcomes of referrals following psychological therapy by ethnicity and gender,By ethnicity and gender
+5e69b8436d29e9dc18af7b911210739a6aadcd9b,Overcrowded households,Overcrowded households by ethnicity,By ethnicity
+e13e3a1173a8f9c7239b294678e1fde2a9f9e27a,Overcrowded households,Overcrowded households by ethnicity and socio-economic group,By ethnicity and socio-economic group
+5cdcc598d42ddab3d1f4ee00f8ae1a5899dbaf2f,Overcrowded households,Overcrowded households by ethnicity and income,By ethnicity and income
+a991f2f4824204e14847e329fb5886ab844ed616,Overcrowded households,Overcrowded households by ethnicity and area,By ethnicity and area
+da8d8c5c3cb0cab22ca085c959920b19b6d2a5a4,Overcrowded households,Overcrowded households by ethnicity and age group,By ethnicity and age group
+d5a1d1e67fcb0a8a17807791edb4a1a239374e2e,Overcrowded households,Overcrowded households by ethnicity and type of occupancy,By ethnicity and type of occupancy (owning or renting)
+4efe76418c6e865ebd59bc4e60637f55ce87a23d,Overweight adults,Overweight or obese adults by ethnicity,By ethnicity
+532cec27efeb281d2e0ef154979eb1f76b8f3bf7,Overweight children,Overweight children by ethnicity,By ethnicity
+a153cb2153fa12ae1e8b1b181bbef3ea53340b0e,Participation in apprenticeships,Apprentices by ethnicity over time,By ethnicity over time
+6c4e6532f8689bde2e12dc6ba1cc752b690cdb82,Participation in apprenticeships,"Participation in apprenticeships by ethnicity, compared with the overall population by ethnicity",By ethnicity compared with the overall population
+02e39d3be288ee1fd23bf0910d9faddb7c11fe09,Participation in the arts,"Participation in the arts in the past year, by ethnicity over time",By ethnicity over time
+aaccbafb60b5115be11b26034886fe6e0edafca5,Participation in the arts,"Participation in the arts in the past year, by ethnicity over time (3 specific years)",By ethnicity over time (3 specific years)
+73c65cf3825e49ba09b69c9b21bab9adcda7f6cf,Patient experience of primary care: GP services,Satisfaction with GP services by ethnicity,By ethnicity
+5211beef7087c02126840802892cab23fe2a4264,Patient experience of primary care: GP services,"Satisfaction with GP services, by ethnicity over time (up to  2016/17)",By ethnicity over time
+5f3b09cf1f4c49bb049c4bfec63c55322157f728,Patient satisfaction with GP out-of-hours services,Satisfaction with GP out-of-hours services by ethnicity,By ethnicity
+4b7abb98a14761813a15ec9598e409ae1cdd43eb,Patient satisfaction with NHS dental services,Patients reporting a positive experience of NHS dental services by ethnicity,By ethnicity
+1631ac888415e55709464c04d420d20710c6defc,Pensioner income,Pensioners' income sources by ethnicity,Income sources by ethnicity
+854d5a2adb7dd7bd302ee68dfaaf8ee6c84f1fc9,Pensioner income,Pensioner households' total income by ethnicity and source of income,Total income by ethnicity and source of income
+9e6542c4a220103a47d79f1991daf6ac97aeffd3,Pensioner income,Pensioner households' total income by ethnicity over time,Total income by ethnicity over time
+63064f4f385aca23e6e31cda31a4c7fca6e4b10e,Pensioner income,Pensioner households' income from the State Pension by ethnicity over time,State Pension income by ethnicity over time
+5aa599e966b5cc8d10855ed0db5a8a16e1332b68,Pensioner income,Pensioner households' income from occupational pensions by ethnicity over time,Occupational pension income by ethnicity over time
+a038ce6e354407ddde4025c1f1de70b85e84abff,People born outside the UK,Place of birth (UK or non-UK) by ethnicity,
+ea21fcac6230d9fde809fe17ec6aaed05d5e919a,People born outside the UK,Ethnic groups by region of birth,
+51f8828031947500db85e619a5564a37d695517a,People born outside the UK,Top 10 countries of birth outside the UK,
+5c0d95904829ea423492fd32f089bada965aec3c,People claiming Jobseeker’s Allowance,People claiming Jobseeker’s Allowance by ethnicity,By ethnicity
+b357ad0b1af07b1230ca6d8e3872e4e138ff61d7,People claiming Jobseeker’s Allowance,People claiming Jobseeker's Allowance by ethnicity over time,By ethnicity over time
+c768d0de302a46b4d2d3f9404a0fbc8774f43f8d,People claiming Jobseeker’s Allowance,People claiming Jobseeker's Allowance by ethnicity and area,By ethnicity and area
+df2aa40f63f04c1d2af14b222c6ea250dbaf5f57,People living in deprived neighbourhoods,"People living in the most deprived 10% of neighbourhoods, by ethnicity",
+025906b84a4e413d2a751ce732b74fca1397a0bc,People living in deprived neighbourhoods,"People living in the most income-deprived 10% of neighbourhoods, by ethnicity",
+27d1a74e405eb9ad443a3685b4cf896cccd9c2bd,People living in deprived neighbourhoods,"People living in the most employment-deprived 10% of neighbourhoods, by ethnicity",
+21660a24f1812e9222218d179831fb8f0aeb3d21,People living in deprived neighbourhoods,"People living in the most deprived 10% of neighbourhoods, by type of deprivation and ethnicity",
+72ea042e8ecd497d68996ce3cd0b0b1e696f59ca,Persistent low income,Persistent low income before housing costs by ethnicity,By ethnicity (before housing costs)
+7171eaf8d3e10350caffc0b3272443cdeec36ccc,Persistent low income,Persistent low income before housing costs by ethnicity and age group,By ethnicity and age group (before housing costs)
+bd4b205415aa0d8ef8ab34c3f97615a3c201d544,Persistent low income,Persistent low income after housing costs by ethnicity and age group,By ethnicity and age group (after housing costs)
+7a9c3d43c287c8285b54e1a498c69dd233d54101,Persistent low income,Individuals entering persistent low income before housing costs by ethnicity,Entering persistent low income
+a8661d468db93f51e99dc7adb657f20824098b6b,Persistent low income,Individuals leaving persistent low income before housing costs by ethnicity,Leaving persistent low income
+d78e8b60b3368c917f133f65073cc079fba5a8fc,Phonics attainments for children aged 5 to 7 (key stage 1),Phonics attainment for children aged 5 to 7 by ethnicity,By ethnicity
+1d0621a74479ed4607e3684639ed81647fb76b1d,Phonics attainments for children aged 5 to 7 (key stage 1),Phonics attainment for children aged 5 to 6 by ethnicity and eligibility for free school meals (FSM),By ethnicity and eligibility for free school meals
+6b6c8a1367a76380ca72f189b291b54d99f12703,Phonics attainments for children aged 5 to 7 (key stage 1),Phonics attainment for children aged 5 to 6 by ethnicity and area,By ethnicity and area
+c75c5f6d00da379ca8a5977c28acbcfef41a750d,Phonics attainments for children aged 5 to 7 (key stage 1),Phonics attainment for children aged 5 to 7 by ethnicity and gender,By ethnicity and gender
+a0dd60ea9fb79dd4eba2d4c0d166cfc46f87e7ae,Phonics attainments for children aged 5 to 7 (key stage 1),"Phonics attainment for children aged 5 to 6 by ethnicity, gender and eligibility for free school meals (FSM)","By ethnicity, gender and eligibility for free school meals"
+2b719a639bd1a57c6344487546af2e8de62b8c6d,Phonics attainments for children aged 5 to 7 (key stage 1),"Phonics attainment for children aged 5 to 6 by ethnicity, gender and area","By ethnicity, gender and area"
+a7ae6c648e01de663405111a63e485a2fe03c4ee,Physical activity,Physical activity levels by ethnicity,By ethnicity
+a3a9b3d3333be3bab91692913f080997b3660177,Physical activity,Physical activity levels by ethnicity and gender,By ethnicity and gender
+0c9cf2be9c296b0e6a3930ee0991e572eaa3c68a,Physical activity,Physical activity levels by ethnicity and age group,By ethnicity and age group
+cb7fb36a3a324ff77e695736b0798b9af55b5ef6,Physical activity,Physical activity levels by ethnicity and area,By ethnicity and area
+45ba1d879978a44bb3a417ab912b910a4a0c92fc,Physical activity,Physical activity levels by ethnicity and socio-economic group,By ethnicity and socio-economic group
+5a8c43ef4221fd9cce1d15bdb9e15f4028a3ce4d,Physical inactivity,Physical inactivity by ethnicity,By ethnicity
+c63e47b570a8851a9f76f9df03bc6ad0c460b59d,Physical inactivity,Physical inactivity by ethnicity and gender,By ethnicity and gender
+e7df914c6a9bd873b2c1b3fdb1f3466e3f44bcf3,Physical inactivity,Physical inactivity by ethnicity and age group,By ethnicity and age group
+e14feaabae9b5a45d98b733778cc8cc67e85129b,Physical inactivity,Physical inactivity by ethnicity and socio-economic group,By ethnicity and socio-economic group
+5df6a092272bbcb643ef2eb810281accc009534f,Police workforce,Police officers by ethnicity,By ethnicity
+2ece1e0825625b3a231c85347843bf80e8274551,Police workforce,Police officers by ethnicity over time,By ethnicity over time
+7f8db1326e2819c885e9063bebc4e74f68aad52d,Police workforce,Police officers by ethnicity and area,By ethnicity and area
+a67928f0b8aab707a4f4b3956d4291ffe2e4cf43,Police workforce,Police officers by ethnicity and rank over time,By ethnicity and rank over time
+5a76bf3091c05f27340febeb5635ad03d6c192dc,Police workforce,Police officers by ethnicity and gender,By ethnicity and gender
+7d218dade88d4dbc6ccff37039c330b41b79d9d0,Police workforce,Police workforce by ethnicity and role,By ethnicity and role (whole workforce)
+a5acd2eb4390c1be700898c9cb81db09bcdf62f0,Police workforce,Special constables by ethnicity,By ethnicity (special constables only)
+cc46e6702915f8a444904ec103c2889243673fc6,Population of England and Wales,Population of England and Wales by ethnicity,By ethnicity
+9575557abbaeaabc297e6a62e54e178fc8b98803,Population of England and Wales,Population of England and Wales by ethnicity over time,By ethnicity over time
+55e6e0a0fb5ae717038ec1013ecef218594e6a4c,Prevalence of ADHD among adults,Positive screenings for ADHD in adults,By ethnicity and sex
+c9396b06e010bf9a373d382707b9ed96bee00aa9,Prevalence of personality disorder in adults,Positive screenings for personality disorder in adults by ethnicity,By ethnicity and sex
+a6b5da59c5a6cbd385aee76b664e23869ef6069a,Prison officer workforce,Prison officers by ethnicity,By ethnicity
+7a120380aebe18d455f53a4981d51581da6fe1f8,Prison officer workforce,Prison officers by ethnicity over time,By ethnicity over time
+636e01f79d0ccc8a527a3a6cd04a941570aa69aa,Prosecutions and convictions,Conviction ratio by ethnicity of defendant over time,By ethnicity of defendant over time
+9eea236c6ae34bb83b661c82ca03bc4dfb804caa,Prosecutions and convictions,Conviction ratio by ethnicity and sex of defendant,By ethnicity and sex of defendant
+b93b0ac246a3827cab4a215f15e394e2a126ea02,Prosecutions and convictions,Conviction ratio by ethnicity and age group of defendant,By ethnicity and age group of defendant
+9140062c812b4ef31a3f31f3ffe6f67ec90d2c66,Prosecutions and convictions,Conviction ratio by ethnicity of defendant and offence,By ethnicity of defendant and offence
+54b056795ae03c4789b1d7ee533cf31cd2a41f95,Proven reoffending,Percentage of offenders who reoffended by ethnicity,By ethnicity
+978c2f464e78668fde0c1d5165588525f22f3180,Proven reoffending,Percentage of offenders who reoffended by ethnicity and age group,By ethnicity and age group
+8f9fc66358b52b3a7c3069ccca47df4dce9ff658,Proven reoffending,Percentage of offenders who reoffended by ethnicity over time,By ethnicity over time
+95fbb4a509a66bba288b66c3cd374b336c76ef2f,Proven reoffending,Average number of reoffences per reoffender,Reoffences per reoffender by ethnicity
+5af2504426cfeac296f2fa075d7873aca33b3ab4,Pupil exclusions,Temporary exclusions by ethnicity,
+a3db421af58376bcc8749c3b405b817d6563ef45,Pupil exclusions,Permanent exclusions by ethnicity,
+5803a584530593d9406286cf95bd4304b820a35a,Pupil exclusions,Temporary exclusions by ethnicity and type of school,
+e0144a924d8fd2cb86a568a9050f51ec3af7e53b,Pupil exclusions,Permanent exclusions by ethnicity and type of school,
+9bee40e05fc60e28b405d131dd05206569b65045,Pupil exclusions,Temporary exclusions by ethnicity and local authority,
+9f4c65498b3436849cc460bf8b80d0779a33f286,Pupil exclusions,Permanent exclusions by ethnicity and local authority,
+7f5fb391e2848f34c5a7a5f0b3bdb6ac90abcafc,Pupil progress (‘Progress 8’) between ages 11 and 16 (key stage 2 to key stage 4),Pupil progress (‘Progress 8’) by ethnicity,By ethnicity
+45d03f839043d0b4de4730087c56f9a4cd4d45a1,Pupil progress (‘Progress 8’) between ages 11 and 16 (key stage 2 to key stage 4),Pupil progress (‘Progress 8’) by ethnicity and eligibility for free school meals (FSM),By ethnicity and eligibility for free school meals
+54b5e412795bf4001e7d6811537cdd55ba4b27f3,Pupil progress (‘Progress 8’) between ages 11 and 16 (key stage 2 to key stage 4),Pupil progress (‘Progress 8’)  by ethnicity and area,By ethnicity and area
+fa92dd4eb9a6bbfda9e39d315ab44526f3da5d51,Pupil progress (‘Progress 8’) between ages 11 and 16 (key stage 2 to key stage 4),Pupil progress (‘Progress 8’) by ethnicity and gender,By ethnicity and gender
+e94bcf9d0dea2378c395c0af4816945c8d36fdf7,Pupil progress (‘Progress 8’) between ages 11 and 16 (key stage 2 to key stage 4),"Pupil progress (‘Progress 8’) by ethnicity, gender and eligibility for free school meals (FSM)","By ethnicity, gender and eligibility for free school meals"
+0b8ffc5c0f3088278b7ce6c5aa38c909ad00edac,Pupil progress (‘Progress 8’) between ages 11 and 16 (key stage 2 to key stage 4),"Pupil progress (‘Progress 8’) by ethnicity, gender and area","By ethnicity, gender and area"
+eabc651cb28b2e434d4eae80f9465ee0a64e30c1,Pupil progress (‘Progress 8’) between ages 11 and 16 (key stage 2 to key stage 4),"Pupil progress (‘Progress 8’) by ethnicity, basis for school admission and gender","By ethnicity, gender and type of selection"
+7c4731d0af5819eaaf61d2049701beeb4843b6dc,Pupil progress (‘Progress 8’) between ages 11 and 16 (key stage 2 to key stage 4),Pupil progress (‘Progress 8’) by ethnicity and type of school,By ethnicity and type of school
+d573ea274aefc897eb7d7c5f281631a57ba0da75,Pupil progress (‘Progress 8’) between ages 11 and 16 (key stage 2 to key stage 4),"Pupil progress (‘Progress 8’) by ethnicity, special educational needs and gender","By ethnicity, special educational needs and gender"
+ef579bcef20fbaf7d4b394681f1d57ddfe943295,Pupil progress (‘Progress 8’) between ages 11 and 16 (key stage 2 to key stage 4),"Pupil progress (‘Progress 8’) by ethnicity, religion of school and gender","By ethnicity, religion of school and gender"
+aa1a4c2654ec7f3d83a2157369966ee07d9e0750,Reading attainments for children aged 10 to 11 (key stage 2),Reading attainment for children aged 10 to 11 by ethnicity,By ethnicity
+a7fd21cd393f5c70d501896186d4b3beb2156abd,Reading attainments for children aged 10 to 11 (key stage 2),Reading attainment for children aged 10 to 11 by ethnicity and area,By ethnicity and area
+0b6dc7cf3372c5def7708366444879dd3e3ef700,Reading attainments for children aged 10 to 11 (key stage 2),Reading attainment for children aged 10 to 11 by ethnicity and gender,By ethnicity and gender
+dea1532f04d1dd4124c097b3f4664c3b4749dbb2,Reading attainments for children aged 6 to 7 (key stage 1),Reading attainment for children aged 6 to 7 by ethnicity,By ethnicity
+bb4690259a4e6a677347fdfa575d223e2ad8163a,Reading attainments for children aged 6 to 7 (key stage 1),Reading attainment for children aged 6 to 7 by ethnicity and eligibility for free school meals (FSM),By ethnicity and eligibility for free school meals
+07c1673e5831acbf14f58485ccb6fcdf1d083dd6,Reading attainments for children aged 6 to 7 (key stage 1),Reading attainment for children aged 6 to 7 by ethnicity and area,By ethnicity and area
+2e3b881c100fc5ed9065d1e37b3c7e2983f18d1d,Reading attainments for children aged 6 to 7 (key stage 1),Reading attainment for children aged 6 to 7 by ethnicity and gender,By ethnicity and gender
+b48b95df92360d8879de5e97d32de71851918dd3,Reading attainments for children aged 6 to 7 (key stage 1),"Reading attainment for children aged 6 to 7 by ethnicity, gender and eligibility for free school meals (FSM)","By ethnicity, gender and eligibility for free school meals"
+6861074a425d7a7a49ceb6695f5a54d3b5d6de9d,Reading attainments for children aged 6 to 7 (key stage 1),"Reading attainment for children aged 6 to 7 by ethnicity, gender and area","By ethnicity, gender and area"
+6d1f56b8010fcf821dd6d9f610f57aea85fa0503,"Reading, writing and maths attainments for children aged 10 to 11 (key stage 2)","Reading, writing and maths attainment for children aged 10 to 11 by ethnicity",By ethnicity
+5f914be8dc70c41c9ddfd3fd5290f637731afc0b,"Reading, writing and maths attainments for children aged 10 to 11 (key stage 2)","Reading, writing and maths attainment for children aged 10 to 11 by ethnicity and eligibility for free school meals (FSM)",By ethnicity and eligibility for free school meals
+6fbc82c6a61fc192fd90fdc4e1b4768c17aef9fc,"Reading, writing and maths attainments for children aged 10 to 11 (key stage 2)","Reading, writing and maths attainment for children aged 10 to 11 by ethnicity and area",By ethnicity and area
+44bb6c889e265d7485b7461788b37b0dac9644a3,"Reading, writing and maths attainments for children aged 10 to 11 (key stage 2)","Reading, writing and maths attainment for children aged 10 to 11 by ethnicity and gender",By ethnicity and gender
+e0c25cc9783760967d9e63fbaf9f6cb988a2b424,Receipt of Start Up Loans,Access to Start Up Loans by ethnicity over time,By ethnicity over time
+66a94eb7eae0678c34f3c095908e88236cbd9dd9,Regional ethnic diversity,Areas of England and Wales by ethnicity,
+5fe6aa8d19c6a6ec3a4ca747e901bce1884de10c,Regional ethnic diversity,Ethnic groups by area,
+55d04911e19f1f951b714e72d4a4996890be5941,Regional ethnic diversity,Ethnic groups by type of location (urban or rural),
+1028d34ea8080882c24b87cc6e69abdc86d36a0e,Regional ethnic diversity,Ethnic diversity by area,
+bc8b8db9a32b14f3fedb45211a3f5f1158fa00b0,Remand status at Crown Court,Remand status by ethnicity,By ethnicity
+a14ca8fd153e467d9db172b8f5fe579b338a31d9,Remand status at Crown Court,Remands in custody by ethnicity over time,By ethnicity over time (remands in custody only)
+ff9286e58239da10468dd0fa8009c482e0041b8f,Remand status at Crown Court,Remands in custody by ethnicity and gender,By ethnicity and gender (remands in custody only)
+6445778c6f1b665d2316434421ce3eef2fd68c8f,Remand status at Crown Court,Remands in custody by ethnicity and age group,By ethnicity and age group (remands in custody only)
+2c0dbd2d6b7d0cc5300b8a2a8449a44714836ee0,Renting from a local authority or housing association (‘social housing’),Households renting social housing by ethnicity,By ethnicity
+bcc465d4be906c6a287736b297525c0de9606a8a,Renting from a local authority or housing association (‘social housing’),Households renting social housing by ethnicity and socio-economic group,By ethnicity and socio-economic group
+03fd5a940b009a8b80b512ddaab17f74c2204042,Renting from a local authority or housing association (‘social housing’),Households renting social housing by ethnicity and income,By ethnicity and income
+2eb503defe83f5906a891c6edafa3efee82494ef,Renting from a local authority or housing association (‘social housing’),Households renting social housing by ethnicity and age group,By ethnicity and age group
+dbc7713df92f68456bbaa58c8e94509658f3e8a9,Renting from a local authority or housing association (‘social housing’),Households renting social housing by ethnicity and area,By ethnicity and area
+ff4aef8008fe9afbc5cae2a979a8b82cc2714b06,Renting from a private landlord,Households renting from a private landlord by ethnicity,By ethnicity
+3d59bf77762c975842010080fc4517991b8a25ee,Renting from a private landlord,Households renting from a private landlord by ethnicity and socio-economic group,By ethnicity and socio-economic group
+5cad2e87881b510d833e820a208757eca002c83a,Renting from a private landlord,Households renting from a private landlord by ethnicity and income,By ethnicity and income
+1095be589b8fee5d9e5e65f577e60212cd65b5d1,Renting from a private landlord,Households renting from a private landlord by ethnicity and area,By ethnicity and area
+15410c851dec3ae4c30f583813991bc3e26397d6,Renting from a private landlord,Households renting from a private landlord by ethnicity and age group,By ethnicity and age group
+88ba17a275b1287213c5e38a2d1eeb1d70a812ee,Restrictive physical interventions involving young people in custody,Restrictive physical interventions involving young people in custody by ethnicity,By ethnicity
+068b511d9b37f875718d8328d9d4f6d2632a7a76,Routes into social housing,Routes into social housing by ethnicity,By ethnicity
+82ace391d123c56a985686b3e56e58953902b4f5,Satisfaction with access to GP services,Satisfaction with access to GP services by ethnicity,By ethnicity
+d3430e9a06f89f277459a13cdf24101c7a47c258,Satisfaction with access to GP services,"Satisfaction with access to GP services, by ethnicity over time (up to 2016/17)",By ethnicity over time
+731eebef9b95852b9ac061ee35431d2398ac2213,School teacher workforce,School teacher workforce by ethnicity,By ethnicity
+3eb5cc6070ebb8ec65c2cd03fab25e4602bb2da4,School teacher workforce,School teacher workforce by ethnicity and gender,By ethnicity and gender
+ac7fe231864323b4f359a94b69cb25750cfb04c1,School teacher workforce,School teacher workforce by ethnicity and type of role,By ethnicity and type of role
+d644e553dd685cfe5c8962b0fe08e65bb54fe78a,School teacher workforce,School teacher workforce by ethnicity and type of school,By ethnicity and type of school
+8eb437f44f4c23b2530601d2c4278479d4ed1b49,School teacher workforce,Headteacher workforce by ethnicity and gender,By ethnicity and gender (headteachers only)
+17ee9459d32a802bcd1b1f287a410716c27a3759,Science attainments for children aged 6 to 7 (key stage 1),Science attainment for children aged 6 to 7 by ethnicity,By ethnicity
+56e65cc9b7a672dadcbb180f80f711d7591db22e,Science attainments for children aged 6 to 7 (key stage 1),Science attainment for children aged 6 to 7 by ethnicity and eligibility for free school meals (FSM),By ethnicity and eligibility for free school meals
+f59c4fbfc407acdb4f1593f680a482d397e1f485,Science attainments for children aged 6 to 7 (key stage 1),Science attainment for children aged 6 to 7 by ethnicity and area,By ethnicity and area
+b34ffb83ee79a1278d4283f3909c3aec4be0f88f,Science attainments for children aged 6 to 7 (key stage 1),Science attainment for children aged 6 to 7 by ethnicity and gender,By ethnicity and gender
+b4fe94da24ac98793dc99d9b6e9e6b0c257236da,Science attainments for children aged 6 to 7 (key stage 1),"Science attainment for children aged 6 to 7 by ethnicity, gender and eligibility for free school meals (FSM)","By ethnicity, gender and eligibility for free school meals"
+019958a14e64b78123e612efd660012803b188a2,Science attainments for children aged 6 to 7 (key stage 1),"Science attainment for children aged 6 to 7 by ethnicity, area and gender","By ethnicity, area and gender"
+4b38b4b737860ec7e0e5a17b6ebf3b667b586a2e,Self-employment,Self-employment by ethnicity over time,By ethnicity over time
+267d60ad3bc3b4fe98f843e626f2d2f659b65e8a,Self-harm by young people in custody,Incidents of self-harm by young people in custody by ethnicity,By ethnicity
+e67e8fbb9495a27ad12d0a58d54afa07f57293e6,Self-harm by young people in custody,Incidents of self-harm by young people in custody by ethnicity over time,By ethnicity over time
+6bbac095d0e8efcb963b50e210a807fec9f8f7c3,Self-harm in prison custody,"Self-harm incidents per 1,000 prisoners by ethnicity over time",By ethnicity over time
+e202f0b439c8a6caecd374f0049905ecd57191c2,Self-inflicted deaths in prison custody,"Self-inflicted deaths per 1,000 prisoners by ethnicity over time",By ethnicity over time
+2d76d6d3edfbd4ae257b1ca4eaa7c80a9900414f,Sentences and custody,Sentences for indictable offences by ethnicity of offender,By ethnicity of offender (all sentences)
+c50af6b666ccf565e8c6cbbcc9331b781b293b9b,Sentences and custody,Custody rate by ethnicity over time,By ethnicity over time (custody only)
+1853db7bd94295eaa544905b3436720c033c0741,Sentences and custody,Custody rate by ethnicity and age group,By ethnicity and age group (custody only)
+dfad382cf3c6820f8218c84165128b8938727eb5,Sentences and custody,Custody rate by ethnicity and gender,By ethnicity and gender (custody only)
+085e53f91a4f72ec34455405f9e8a367f15d328c,Sentences and custody,Type of sentence by ethnicity of offender,By ethnicity of offender (all types of sentences)
+9ecd5501ba868ca73ebfbad9fabdb7958b73129f,Sentences and custody,Custodial sentences by ethnicity of offender and type of offence,By ethnicity of offender and type of offence (custody only)
+5d076047db7aa81c0246eb4d3e8e4c283980b4d8,Single separation incidents for young people in custody,Single separation incidents for young people in custody by ethnicity,By ethnicity
+bc1e63a7717facc2210395aa0453b509b58b29e3,Social workers for children and families,Children and family social workers by ethnicity,By ethnicity
+6d50f628d19ae85f32c367ca69359c50c59eee71,Socioeconomic status,Socio-economic groups by ethnicity,
+7ad690445b4620147d27e76388b509b48750eed5,Socioeconomic status,Ethnic groups by socio-economic status,
+4e647369b45e9d9bc29bf770155d09a26395ded7,Socioeconomic status,Ethnic groups by socio-economic status of men,
+458fd842171584592613db4b125476d539249dc1,Socioeconomic status,Ethnic groups by socio-economic status of women,
+b05b64d0d9cfb56a7f652599f945cea07ee87124,Sources of household income,Sources of household income by ethnicity,Sources of income by ethnicity
+6d3631c554c7001208b9f9156e63db6d1503f7f3,Sources of household income,"Percentage of income from wages, salaries or self-employment by ethnicity over time",Employment income by ethnicity over time
+94173875d9a383b3631e7bfa6db5e838653369b8,Sources of household income,Percentage of income from pensions by ethnicity over time,Pension income by ethnicity over time
+49bf2ca2e624544d839847046c1378193c9ad570,Sources of household income,Percentage of income from benefits and tax credits by ethnicity over time,Benefits and tax credits by ethnicity over time
+4dd24c2a90cbb0d4c8c82277d078ec15becdde03,Spending on rent and mortgages,Spending on mortgages by ethnicity,
+853667976af4802d38a2372eaad253d51b8ee37a,Spending on rent and mortgages,Spending on rent by ethnicity,
+b2467010b38ca3ab771870c95f730dd4512611e3,State support,"Family units receiving state support, by ethnicity and type of support",By ethnicity and type of support (all state support)
+e0153aa08580a81a8832147916b418375e0b4fb5,State support,"Family units receiving non-income related benefits, by ethnicity and type of benefit",By ethnicity and type of benefit (non-income related benefits)
+463ec60ca38a06d4839484035ea68d1db73fc1f6,State support,Family units receiving income-related benefits,By ethnicity (income-related benefits)
+f0fc4913d8c1cd6c08351247ec35c9ed71550d34,State support,Family units receiving Jobseeker’s Allowance (JSA) or Employment and Support Allowance (ESA),"By ethnicity (Jobseeker's Allowance, or Employment and Support Allowance)"
+6fc0cc90332a9317760e5d17eb0a06cc62d1da4d,State support,Family units receiving tax credits,By ethnicity (tax credits only)
+216cc4519493ce3ad2dc3dd202fd29d129604289,State support,Family units receiving state support by ethnicity over time,By ethnicity over time (all state support)
+bcf093de5b65709ccac3e6b51eb193029a64e727,Statutory homelessness,Number of homeless households by ethnicity over time,By ethnicity over time (numbers)
+09aeec01d173df0b78f7d9d2bf34a601df2f502e,Statutory homelessness,Percentage of homeless households by ethnicity over time,By ethnicity over time (percentages)
+4f55f262cbf12b49d968a95402208af5fd41b297,Statutory homelessness,Percentage of homeless households by ethnicity and area,By ethnicity and area (percentages)
+ece008ea09e95f5b9cf8e8f5ae29f58535168008,Stop and search,Stop and search by ethnicity,By ethnicity
+219c7ba7cafa2824628e8c07b8df6d536c01b5a3,Stop and search,Stop and search by ethnicity over time,By ethnicity over time
+f846a97b548b35487f2dd3d8bf93a43ce102d5b0,Stop and search,Stop and search by ethnicity and area,By ethnicity and area
+ebc33b5c4c5a13264afd6c3761c8a3f6fde2efb4,Students aged 16 to 18 achieving 3 A grades or better at A level,Students aged 16 to 18 achieving at least 3 A grades at A level by ethnicity,By ethnicity
+c929968e5d645a10adfc3ec067ba6faa44dd5662,Taking part in local decision making,"People getting involved in local decisions, by ethnicity",By ethnicity
+07f8e53fe9a97ea4dc9a72cb4cd2b36bb46a0ad3,Time spent living in current home,Time spent living in current home by ethnicity,By ethnicity
+7a3e6bd179057478b222adf85b95a6fa84ef6cf7,Time spent living in current home,Time spent living in current home by ethnicity and socio-economic group,By ethnicity and socio-economic group
+b013052dafbc5820e05c62bf07585f9b9dd44690,Time spent living in current home,Time spent living in current home by ethnicity and income,By ethnicity and income
+609300172da90230a536cc74b7610dd46fe4a192,Time spent living in current home,Time spent living in current home by ethnicity and area,By ethnicity and area
+5742045407702a06fc6ac77cf31da63e31c729a6,Time spent living in current home,Time spent living in current home by ethnicity and type of occupancy,By ethnicity and type of occupancy (renting or owning)
+bda44a1e1c293aaba9156b10a844a96f4d224735,"Travel by distance, trips, type of transport and purpose",Distance travelled by ethnicity over time,
+302d39013a555967a95ebd9e09d6bf7bd98cf96e,"Travel by distance, trips, type of transport and purpose",Distance travelled by ethnicity and mode of transport,
+a09da9389607f38fe1241abb1514d641e974c88d,"Travel by distance, trips, type of transport and purpose",Distance travelled by ethnicity and purpose of journey,
+c26be34bd963b1272b15fd89ad165a18df98e009,"Travel by distance, trips, type of transport and purpose",Number of trips per person by ethnicity over time,
+47ee0db423de0734648602cc0cb0b8d4d34f48ae,"Travel by distance, trips, type of transport and purpose",Number of trips per person by ethnicity and mode of transport,
+2425c6d46c222552d4f228a6ffa340ed5febbdfd,"Travel by distance, trips, type of transport and purpose",Number of trips per person by ethnicity and purpose of journey,
+c24acd69253e3c62bc6e34f190035304abf1feca,Travel to school,Average trip distance to school by ethnicity over time,
+771452b06382e2c74cedeb05d62131086aaeaebd,Travel to school,Average trip duration to school by ethnicity over time,
+0042a0c862f8458710036e7e9a3e7503929c0807,Travel to school,Type of transport used to get to school by ethnicity over time,
+efc01259bb4198921bb0fb099f2d621d8888d6cb,Undergraduate degree results,Degree classifications by ethnicity,By ethnicity
+45a2b555e886f9c23ec1410031329847efe5b03f,Undergraduate degree results,Degree classifications by ethnicity over time,By ethnicity over time
+a7b15e466f332a26eb65e2a29e1b401e767e3110,Unemployment,Unemployment by ethnicity,By ethnicity
+ea60daf6774c3b14198780ae9d1e90a7f24c31a0,Unemployment,Unemployment by ethnicity (White and Other ethnic groups),By ethnicity (2 ethnic groups)
+ca1cd470964d725e4ee8d49c2d3ba94d4f8da350,Unemployment,Unemployment by ethnicity over time,By ethnicity over time
+d039503d962630456fc4caceac1a731d2b93ad00,Unemployment,Unemployment by ethnicity and gender,By ethnicity and gender
+3f46f5568939ff571735f3b8b50b291a73e9a14c,Unemployment,Unemployment by ethnicity and age group,By ethnicity and age group
+274b3ac125ef65601dd86b5b71bad12a76f68554,Unemployment,Unemployment among 16 to 24 year olds by ethnicity over time,By ethnicity and age group over time (16 to 24 year olds only)
+f1fe0d55457b7583bfd9bdc9f4bf5feece4d8bc9,Unemployment,Unemployment by ethnicity and area,By ethnicity and area
+90bf0beaa4542a67e75fdeb557b972183f5fdbff,Unemployment by qualification level,Unemployment by ethnicity and qualification level,By ethnicity and qualification level
+50b6dc177038dfef901f048b680a59679bb438ad,Unemployment by qualification level,Unemployed men by ethnicity and qualification level,By ethnicity and qualification level (men only)
+820b751a78504fcd8439b1623ba244ea4ac20f12,Unemployment by qualification level,Unemployed women by ethnicity and qualification level,By ethnicity and qualification level (women only)
+f78a6a102ce5009c6b7e21e48d43d4acaa93f367,Use of force on young people in custody,Use of force on young people in custody by ethnicity of offender,By ethnicity of offender
+69f42f7a7b5072833a5ef38c1b50fe1c3cd6b005,Use of public libraries,Public library use by ethnicity over time,By ethnicity over time
+d80576549f92b8a2e316936eb851b7d04b63a78d,Use of public libraries,Public library use by ethnicity over time (3 specific years),By ethnicity over time (3 specific years)
+695bc3fac4c7509b4e0e1042b703ec95f80d9354,Victims of crime,Victims of crime by ethnicity over time,By ethnicity over time
+8b6fed6e99863b9d32189b007be7af2f4adf2b3b,Victims of crime,Victims of crime by ethnicity and gender,By ethnicity and gender
+679d63ec83d52734e1ca22f034959a2ea4506b65,Victims of crime,Victims of crime by ethnicity and age group,By ethnicity and age group
+76ba0a0874305c3ee55a2dc61224dae992138357,Victims of crime,Victims of crime by ethnicity and socio-economic group,By ethnicity and socio-economic group
+898a9b57e8322a01beb3facba1c30301298993f2,Violence involving prisoners,"Violent incidents per 1,000 prisoners by ethnicity",By ethnicity (all violent incidents)
+43e24daa12f702e53ef3b4cdc1c3b2d06b0913b6,Violence involving prisoners,"Assaults per 1,000 prisoners by ethnicity over time",By ethnicity over time (assaults only)
+535f07380097c1861a7f4a920fc6fd4047342b0c,Visits to heritage sites," People visiting a heritage site in the past year, by ethnicity over time",By ethnicity over time
+84d81da0c61c23088b3edbc04e258a6b88bc991f,Visits to heritage sites,"People visiting a heritage site in the past year, by ethnicity over time (3 specific years)",By ethnicity over time (3 specific years)
+ae246d1af7f9cf63279607f199d2dd9cfb5a2940,Visits to museums and galleries," People visiting a museum or gallery in the past year, by ethnicity over time",By ethnicity over time
+b73a82f93916dd5cbe5177159185631bfe2eef3d,Visits to museums and galleries," People visiting a museum or gallery in the past year, by ethnicity over time (3 specific years) ",By ethnicity over time (3 specific years)
+f9893ab1777cfcd691d6090ec908bf60abadeb47,Visits to the natural environment,Visits to the natural environment in the previous 7 days by ethnicity,By ethnicity (last 7 days)
+b5e24f0bcac3f4ed82c019235798f835b9b209b2,Visits to the natural environment,Visits to the natural environment in the previous 7 days by ethnicity and socio-economic group,By ethnicity and socio-economic group (last 7 days)
+a3e7ba5e0ab26d05950671f3bec7278908b1a074,Visits to the natural environment,Visits to the natural environment in the previous 7 days by ethnicity and type of location,By ethnicity and type of location (last 7 days)
+d26913a6ee3d2c3f5885baff401e9f0ea0198104,Visits to the natural environment,Visits to the natural environment in the previous 12 months by ethnicity,By ethnicity (last 12 months)
+69a82f8f29b96a48c8da19a38fd2227f0beb2d7e,Volunteering,Regular formal volunteering by ethnicity,By ethnicity
+85b0d5238c8f1356a4afa9aa6c139a2a04a52090,Vulnerable households going into social housing,Vulnerable households going into social housing by ethnicity and type of priority need,By ethnicity and type of priority need
+34c965243a78b3b0a0d5553dff3f7f234f91089c,Well-being: Life satisfaction,Life satisfaction by ethnicity,
+5149046e8ff94c2d19fedb0d0e3d613e8bba41da,Well-being: Life satisfaction,Life satisfaction over time by ethnicity,
+b704949b38e54397274c5d54f1d662fdfda69cbc,Well-being: Life satisfaction,Life satisfaction thresholds by ethnicity,
+be4c3ed5f0f67f4842b701651f563ba518670a32,Well-being: Life satisfaction,Life satisfaction by ethnicity and gender,
+5a0541b823b07c59c0104a7f0f8e2a24e32d4552,Well-being: Life satisfaction,Life satisfaction by ethnicity and socio-economic group,
+e62ad8e86ae685f061723528215ee7ecfac28bfd,Well-being: anxiety yesterday,Anxiety yesterday by ethnicity,
+c0dc12c778d4e705a7230247427388a5d0c3847b,Well-being: anxiety yesterday,Anxiety yesterday by ethnicity over time,
+f7fdc2c3054984bd8121cca1a8d70b47090f4afe,Well-being: anxiety yesterday,Anxiety thresholds by ethnicity,
+e03e85a2fd474c6e227a26c77668176247668fe0,Well-being: anxiety yesterday,"‘Very low’ levels of anxiety, by ethnicity over time",
+c98c3d7dc63c6ac2400a001c66007335134981e6,Well-being: anxiety yesterday,Anxiety by ethnicity and socio-economic group,
+04fd2428ace93e334603b4425c192121130b24d0,Well-being: anxiety yesterday,Anxiety by ethnicity and gender,
+219fd54c2983b70d46ffb8f068f1c60c8a67b9a6,Well-being: happiness yesterday,Happiness yesterday by ethnicity,
+97f19f9ab4c7c62e5fef545d2085863facd4f585,Well-being: happiness yesterday,Happiness yesterday by ethnicity over time,
+0f3026d9a493d26bec17345b45aba1b80ffe9faa,Well-being: happiness yesterday,Happiness thresholds by ethnicity,
+e3648354df62c13a7ca111172b3822080f6afe9f,Well-being: happiness yesterday,"‘Very high’ levels of happiness, by ethnicity over time",
+f9f38f21245aa4bfe6b6788044e1ca4cdeb02df8,Well-being: happiness yesterday,Happiness by ethnicity and gender,
+fede6a2ed737d62fd23bff0191579f889dd48bee,Well-being: happiness yesterday,Happiness  by ethnicity and socio-economic group,
+106e70bbc4c0ddd6891fab77d340fc62fb171c45,Well-being: how worthwhile people feel the things they do in their life are,"Feeling the things you do in your life are worthwhile, by ethnicity",
+1f139c46f37c5a0853a5f65d1ae188c265c10a83,Well-being: how worthwhile people feel the things they do in their life are,"Feeling the things you do in your life are worthwhile, by ethnicity over time",
+a0b8c675085694da73466056975f7c0c61ccf3c3,Well-being: how worthwhile people feel the things they do in their life are,"Feeling the things you do in your life are worthwhile: thresholds, by ethnicity",
+a99311a82c3ee16bd49745f9ad0f98df772838c1,Well-being: how worthwhile people feel the things they do in their life are,"‘Very high’ levels of feeling the things you do in your life are worthwhile, by ethnicity over time",
+66f5065bd52ab77c4ed450ad281171abe09c58ad,Well-being: how worthwhile people feel the things they do in their life are,"Feeling the things you do in your life are worthwhile, by ethnicity and socio-economic group",
+8dfde7c832e5afc850b50812c15190d0528cfe0b,Well-being: how worthwhile people feel the things they do in their life are,"Feeling the things you do in your life are worthwhile, by ethnicity and sex",
+8c88bb8113dfeb2ed1196d420ed994e0cb197c59,Working age population,Working age population by ethnicity,
+92914ff812e98fd6ddd1be4297fbdf0a798a6a15,Working age population,Ethnic groups by working age,
+80b3c1615cf4cc601ff6475120de0ec935eda8e8,Working age population,"Working age population by ethnicity and country (England, Wales)",
+ae357f233e2c74163d5b4f7251b35dc00c40c1c3,Working age population,"Ethnic groups by working age and country (England, Wales)",
+4559fffe2fc31c92fef052bae5bd87ae8b7f61a3,Writing attainments for children aged 10 to 11 (key stage 2),Writing attainment for children aged 10 to 11 by ethnicity,By ethnicity
+3e6d2a6c2933ce6183341756312f32a7e4c10e37,Writing attainments for children aged 10 to 11 (key stage 2),Writing attainment for children aged 10 to 11 by ethnicity and area,By ethnicity and area
+e520197b20df2e7dde0a4953b0d027662947d4e9,Writing attainments for children aged 10 to 11 (key stage 2),Writing attainment for children aged 10 to 11 by ethnicity and gender,By ethnicity and gender
+86b1344e9b6e0f6d348cf4b2bd28680b3aee8399,Writing attainments for children aged 6 to 7 (key stage 1),Writing attainment for children aged 6 to 7 by ethnicity,By ethnicity
+b89ac0871dff6530258e906093cb2c6f9906eb93,Writing attainments for children aged 6 to 7 (key stage 1),Writing attainment for children aged 6 to 7 by ethnicity and eligibility for free school meals (FSM),By ethnicity and eligibility for free school meals
+ad8f347a38afc95cfb5a6bde9e10a2cd5daf5bc1,Writing attainments for children aged 6 to 7 (key stage 1),Writing attainment for children aged 6 to 7 by ethnicity and area,By ethnicity and area
+b6cab1f9c244c9785355a40b11e8ca214356eee7,Writing attainments for children aged 6 to 7 (key stage 1),Writing attainment for children aged 6 to 7 by ethnicity and gender,By ethnicity and gender
+32e2df7f90708c339dfb8fa5dc0373d965d8f99c,Writing attainments for children aged 6 to 7 (key stage 1),"Writing attainment for children aged 6 to 7 by ethnicity, gender and eligibility for free school meals (FSM)","By ethnicity, gender and eligibility for free school meals"
+6084ab5376976bdd63178c9ceb85a775501243d3,Writing attainments for children aged 6 to 7 (key stage 1),"Writing attainment for children aged 6 to 7 by ethnicity, gender and area","By ethnicity, gender and area"
+d53d6baa5c23e80792e33d564f8a4bf1c882e1ac,Young people in custody,Young people in custody by ethnicity over time,By ethnicity over time
+87a6126d3e369d27d6a698d64ee34191df30c813,Young people in custody,Young people in custody by ethnicity and type of custodial order over time,By ethnicity and type of custodial order over time
+d1a419dede0fafdd3b4f3077ff7b7887b224e2fa,Young people in custody,Young people in custody by ethnicity and offence group,By ethnicity and offence group
+1cf5fe102c6a52f83de32833abe3f05cf4f8395f,"Young people not in employment, education or training (NEET)","Percentage of young people not in employment, education or training by ethnicity",By ethnicity
+3d34940f82fea07d0a9478f889abfa91bd0c783e,"Young people not in employment, education or training (NEET)","Percentage of young people not in employment, education or training by ethnicity and sex",By ethnicity and sex
+3dafd1b44395fd6bc426a5bf87e0fe4d4c856f4b,"Young people not in employment, education or training (NEET)","Percentage of young people not in employment, education, or training by ethnicity and economic activity",By ethnicity and economic activity
+7ee3f689e75c598439d2ce3b72439993fb248223,"Young people not in employment, education or training (NEET)","Percentage of young people not in employment, education, or training by ethnicity, sex and economic activity","By ethnicity, sex and economic activity"
+197fc60d5a7db2982a269323d3bda4057e67e93e,Youth cautions,Youth cautions by ethnicity over time,By ethnicity over time
