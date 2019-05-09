@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 
 from application.auth.models import TypeOfUser
@@ -27,9 +29,17 @@ class TestImportNewDimensionTitles:
 
         assert len(measure.versions) == 2
         assert measure.versions[0].version == "1.1"
-        assert measure.versions[0].status == "DRAFT"
+        assert measure.versions[0].status == "APPROVED"
         assert measure.versions[0].dimensions[0].title == "my new dimension"
         assert measure.versions[0].external_edit_summary == "Updated dimension titles"
+        assert measure.versions[0].created_by == "admin@eff.gov.uk"
+        assert (
+            datetime.utcnow() - measure.versions[0].created_at
+        ).seconds < 5, "Creation time should be within the last 5 seconds"
+        assert measure.versions[0].update_corrects_data_mistake is False
+        assert measure.versions[0].published_by == "admin@eff.gov.uk"
+        assert measure.versions[0].published_at is None
+        assert measure.versions[0].last_updated_by == "admin@eff.gov.uk"
 
         assert measure.versions[1].version == "1.0"
         assert measure.versions[1].dimensions[0].title == "my dimension"
@@ -59,7 +69,7 @@ class TestImportNewDimensionTitles:
 
         assert len(measure.versions) == 2
         assert measure.versions[0].version == "1.1"
-        assert measure.versions[0].status == "DRAFT"
+        assert measure.versions[0].status == "APPROVED"
         assert measure.versions[0].dimensions[0].title == "my new dimension 1"
         assert measure.versions[0].dimensions[1].title == "my new dimension 2"
         assert measure.versions[0].external_edit_summary == "Updated dimension titles"
@@ -147,7 +157,7 @@ class TestImportNewDimensionTitles:
         assert measure.versions[0].external_edit_summary is None
 
         assert measure.versions[1].version == "1.1"
-        assert measure.versions[1].status == "DRAFT"
+        assert measure.versions[1].status == "APPROVED"
         assert measure.versions[1].dimensions[0].title == "my new dimension"
         assert measure.versions[1].external_edit_summary == "Updated dimension titles"
 
@@ -225,7 +235,7 @@ class TestImportNewDimensionTitles:
 
         assert len(measure.versions) == 3
         assert measure.versions[0].version == "1.2"
-        assert measure.versions[0].status == "DRAFT"
+        assert measure.versions[0].status == "APPROVED"
         assert measure.versions[0].dimensions[0].title == "my new dimension"
         assert measure.versions[0].external_edit_summary == "Updated dimension titles"
 
@@ -321,7 +331,7 @@ class TestImportNewDimensionTitles:
             uploads=[],
         )
         MeasureVersionWithDimensionFactory(
-            status="DRAFT",
+            status="APPROVED",
             version="1.1",
             title="my measure",
             external_edit_summary="Updated dimension titles",
@@ -354,7 +364,7 @@ class TestImportNewDimensionTitles:
         assert measure.versions[0].external_edit_summary is None
 
         assert measure.versions[1].version == "1.1"
-        assert measure.versions[1].status == "DRAFT"
+        assert measure.versions[1].status == "APPROVED"
         assert measure.versions[1].dimensions[0].title == "my new dimension"
         assert measure.versions[1].external_edit_summary == "Updated dimension titles"
 

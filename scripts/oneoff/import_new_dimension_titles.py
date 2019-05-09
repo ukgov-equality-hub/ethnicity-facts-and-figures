@@ -137,7 +137,6 @@ def import_dimension_titles(user_email, app, dimension_rows: List):  # noqa: C90
                 draft_measure_to_update = page_service.create_measure_version(
                     measure_version, NewVersionType.MINOR_UPDATE, user
                 )
-                draft_measure_to_update.external_edit_summary = STANDARD_EDIT_SUMMARY
 
                 print(f"---> Created draft {draft_measure_to_update}")
 
@@ -146,7 +145,6 @@ def import_dimension_titles(user_email, app, dimension_rows: List):  # noqa: C90
                     draft_measure_to_update = page_service.create_measure_version(
                         latest_measure_version, NewVersionType.MINOR_UPDATE, user
                     )
-                    draft_measure_to_update.external_edit_summary = STANDARD_EDIT_SUMMARY
 
                     print(f"---> Created draft {draft_measure_to_update}")
 
@@ -154,6 +152,9 @@ def import_dimension_titles(user_email, app, dimension_rows: List):  # noqa: C90
                     raise RuntimeError("Unexpected status on measure_version")
 
             if draft_measure_to_update:
+                draft_measure_to_update.update_corrects_data_mistake = False
+                draft_measure_to_update.external_edit_summary = STANDARD_EDIT_SUMMARY
+
                 dimensions = [Dimension.query.get(dimension_guid) for dimension_guid in dimension_guids]
                 for dimension in dimensions:
                     for draft_dimension in draft_measure_to_update.dimensions:
@@ -169,6 +170,15 @@ def import_dimension_titles(user_email, app, dimension_rows: List):  # noqa: C90
                             f"Could not find dimension for measure_version={measure_version}, "
                             f"dimension={dimension}, dimension_title={dimension.title}"
                         )
+
+                # From draft to internal review
+                page_service.move_measure_version_to_next_state(draft_measure_to_update, updated_by=user_email)
+
+                # From internal review to department review
+                page_service.move_measure_version_to_next_state(draft_measure_to_update, updated_by=user_email)
+
+                # From department review to approved
+                page_service.move_measure_version_to_next_state(draft_measure_to_update, updated_by=user_email)
 
         db.session.commit()
 
