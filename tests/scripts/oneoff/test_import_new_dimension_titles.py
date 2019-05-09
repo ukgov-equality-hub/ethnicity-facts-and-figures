@@ -31,7 +31,7 @@ class TestImportNewDimensionTitles:
         assert measure.versions[0].version == "1.1"
         assert measure.versions[0].status == "APPROVED"
         assert measure.versions[0].dimensions[0].title == "my new dimension"
-        assert measure.versions[0].external_edit_summary == "We’ve rewritten some of the headings. We haven’t changed any data or commentary."
+        assert measure.versions[0].external_edit_summary == "Some headings have been changed. No data or commentary has been updated."
         assert measure.versions[0].created_by == "admin@eff.gov.uk"
         assert (
             datetime.utcnow() - measure.versions[0].created_at
@@ -72,7 +72,7 @@ class TestImportNewDimensionTitles:
         assert measure.versions[0].status == "APPROVED"
         assert measure.versions[0].dimensions[0].title == "my new dimension 1"
         assert measure.versions[0].dimensions[1].title == "my new dimension 2"
-        assert measure.versions[0].external_edit_summary == "We’ve rewritten some of the headings. We haven’t changed any data or commentary."
+        assert measure.versions[0].external_edit_summary == "Some headings have been changed. No data or commentary has been updated."
 
         assert measure.versions[1].version == "1.0"
         assert measure.versions[1].dimensions[0].title == "my dimension 1"
@@ -159,7 +159,7 @@ class TestImportNewDimensionTitles:
         assert measure.versions[1].version == "1.1"
         assert measure.versions[1].status == "APPROVED"
         assert measure.versions[1].dimensions[0].title == "my new dimension"
-        assert measure.versions[1].external_edit_summary == "We’ve rewritten some of the headings. We haven’t changed any data or commentary."
+        assert measure.versions[1].external_edit_summary == "Some headings have been changed. No data or commentary has been updated."
 
         assert measure.versions[2].version == "1.0"
         assert measure.versions[2].dimensions[0].title == "my dimension"
@@ -237,7 +237,7 @@ class TestImportNewDimensionTitles:
         assert measure.versions[0].version == "1.2"
         assert measure.versions[0].status == "APPROVED"
         assert measure.versions[0].dimensions[0].title == "my new dimension"
-        assert measure.versions[0].external_edit_summary == "We’ve rewritten some of the headings. We haven’t changed any data or commentary."
+        assert measure.versions[0].external_edit_summary == "Some headings have been changed. No data or commentary has been updated."
 
         assert measure.versions[1].version == "1.1"
         assert measure.versions[1].status == "APPROVED"
@@ -334,7 +334,7 @@ class TestImportNewDimensionTitles:
             status="APPROVED",
             version="1.1",
             title="my measure",
-            external_edit_summary="We’ve rewritten some of the headings. We haven’t changed any data or commentary.",
+            external_edit_summary="Some headings have been changed. No data or commentary has been updated.",
             measure=mv.measure,
             dimensions__guid="dimension-guid-1.1",
             dimensions__title="my new dimension",
@@ -366,7 +366,7 @@ class TestImportNewDimensionTitles:
         assert measure.versions[1].version == "1.1"
         assert measure.versions[1].status == "APPROVED"
         assert measure.versions[1].dimensions[0].title == "my new dimension"
-        assert measure.versions[1].external_edit_summary == "We’ve rewritten some of the headings. We haven’t changed any data or commentary."
+        assert measure.versions[1].external_edit_summary == "Some headings have been changed. No data or commentary has been updated."
 
         assert measure.versions[2].version == "1.0"
         assert measure.versions[2].dimensions[0].title == "my dimension"

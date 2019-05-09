@@ -19,7 +19,7 @@ from application.cms.models import Dimension, NewVersionType
 from sqlalchemy.orm.exc import NoResultFound
 
 
-STANDARD_EDIT_SUMMARY = "We’ve rewritten some of the headings. We haven’t changed any data or commentary."
+STANDARD_EDIT_SUMMARY = "Some headings have been changed. No data or commentary has been updated."
 
 
 def import_dimension_titles(user_email, app, dimension_rows: List):  # noqa: C901
