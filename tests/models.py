@@ -284,10 +284,14 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     ethnicity_definition_summary = factory.Faker("paragraph", nb_sentences=3)
     area_covered = factory.LazyFunction(lambda: _random_combination(UKCountry))
     time_covered = factory.Faker("paragraph", nb_sentences=3)
-    external_edit_summary = factory.Faker("sentence", nb_words=10)
-    internal_edit_summary = factory.Faker("sentence", nb_words=10)
-    update_corrects_data_mistake = factory.LazyAttribute(
-        lambda o: False if o._is_major_version else random.choice((True, False))
+    external_edit_summary = factory.Maybe(
+        "_is_major_version", yes_declaration="", no_declaration=factory.Faker("sentence", nb_words=10)
+    )
+    internal_edit_summary = factory.Maybe(
+        "_is_major_version", yes_declaration="", no_declaration=factory.Faker("sentence", nb_words=10)
+    )
+    update_corrects_data_mistake = factory.Maybe(
+        "_is_major_version", yes_declaration=False, no_declaration=random.choice((True, False))
     )
     lowest_level_of_geography_id = factory.SelfAttribute("lowest_level_of_geography.name")
     methodology = factory.Faker("paragraph", nb_sentences=3)

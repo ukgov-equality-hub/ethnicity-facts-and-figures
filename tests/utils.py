@@ -38,6 +38,7 @@ def multidict_from_measure_version_and_kwargs(measure_version: MeasureVersion, *
     return ImmutableMultiDict(
         {
             "title": measure_version.title,
+            "description": measure_version.description,
             "measure_summary": measure_version.measure_summary,
             "summary": measure_version.summary,
             "lowest_level_of_geography": measure_version.lowest_level_of_geography_id,
