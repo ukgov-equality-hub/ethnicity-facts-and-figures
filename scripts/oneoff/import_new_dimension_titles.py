@@ -2,6 +2,7 @@
 
 
 import csv
+
 import sys
 from argparse import ArgumentParser
 from collections import defaultdict
@@ -52,7 +53,7 @@ def import_dimension_titles(user_email, app, dimension_rows: List):  # noqa: C90
 
         print()
         print("2. VALIDATING DIMENSION TITLES CAN BE UPDATED")
-        # Validate dimensions can be updated; create new measures and update titles if possible.
+        # Validate dimensions can be updated; record measures to skip if they fail validation
         for measure_version, dimension_guids in measure_versions_to_dimension_guids.items():
             print(f"-> {measure_version}")
             latest_measure_version = measure_version.measure.latest_version
@@ -125,6 +126,7 @@ def import_dimension_titles(user_email, app, dimension_rows: List):  # noqa: C90
 
         print()
         print("3. CREATING NEW MEASURE VERSIONS AND UPDATING DIMENSION TITLES")
+        # Actually update the dimensions by creating a new measure and changing the titles
         for measure_version, dimension_guids in measure_versions_to_dimension_guids.items():
             print(f"-> {measure_version}")
             latest_measure_version = measure_version.measure.latest_version
