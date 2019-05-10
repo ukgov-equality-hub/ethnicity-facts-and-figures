@@ -116,15 +116,15 @@
 
         {% for dimension in measure_version.dimensions %}
 
-          <li><a class="govuk-link" href="#{{ dimension.title|slugify_value }}"><span class="eff-table-of-contents__number" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Dimension" data-event-label="{{ dimension.title }}">{{ loop.index + 1 }}. </span><span class="eff-table-of-contents__content">{{ dimension.title }}</span></a></li>
+          <li><a class="govuk-link" href="#{{ dimension.title|slugify_value }}" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Dimension" data-event-label="{{ dimension.title }}"><span class="eff-table-of-contents__number">{{ loop.index + 1 }}. </span><span class="eff-table-of-contents__content">{{ dimension.title }}</span></a></li>
 
         {% endfor %}
 
         {% set dimensions_count = measure_version.dimensions.all()|length %}
 
-        <li><a class="govuk-link" href="#methodology"><span class="eff-table-of-contents__number" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Methodology" data-event-label="">{{ dimensions_count + 2 }}. </span><span class="eff-table-of-contents__content">Methodology</span></a></li>
-        <li><a class="govuk-link" href="#data-sources" data-event-category="Table of contents link clicked" data-event-action="Data sources" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 3 }}. </span><span class="eff-table-of-contents__content">Data sources</span></a></li>
-        <li><a class="govuk-link" href="#download-the-data" data-event-category="Table of contents link clicked" data-event-action="Download the data" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 4 }}. </span><span class="eff-table-of-contents__content">Download the data</span></a></li>
+        <li><a class="govuk-link" href="#methodology" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Methodology" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 2 }}. </span><span class="eff-table-of-contents__content">Methodology</span></a></li>
+        <li><a class="govuk-link" href="#data-sources" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Data sources" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 3 }}. </span><span class="eff-table-of-contents__content">Data sources</span></a></li>
+        <li><a class="govuk-link" href="#download-the-data" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Download the data" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 4 }}. </span><span class="eff-table-of-contents__content">Download the data</span></a></li>
 
       </ol>
     </div>
