@@ -2,23 +2,21 @@
 
 
 import csv
-
 import sys
+
 from argparse import ArgumentParser
 from collections import defaultdict
+from sqlalchemy.orm.exc import NoResultFound
 from typing import List
 
 sys.path.insert(0, ".")  # noqa
 
 from application import db
+from application.auth.models import User
+from application.cms.models import Dimension, NewVersionType
 from application.cms.page_service import page_service
 from application.config import DevConfig
 from application.factory import create_app
-
-from application.auth.models import User
-from application.cms.models import Dimension, NewVersionType
-from sqlalchemy.orm.exc import NoResultFound
-
 
 STANDARD_EDIT_SUMMARY = "Some headings have been changed. No data or commentary has been updated."
 
