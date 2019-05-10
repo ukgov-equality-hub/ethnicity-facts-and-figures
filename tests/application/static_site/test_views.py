@@ -475,21 +475,6 @@ def test_view_measure_page(test_app_client, logged_in_rdu_user):
     # check that the status bar is shown
     assert page.find("div", class_="status")
 
-    # check metadata
-    metadata_titles = page.find("div", class_="metadata").find_all("dt")
-    assert len(metadata_titles) == 4
-    assert metadata_titles[0].text == "Department:"
-    assert metadata_titles[1].text == "Source:"
-    assert metadata_titles[2].text == "Area covered:"
-    assert metadata_titles[3].text == "Time period:"
-
-    metadata_values = page.find("div", class_="metadata").find_all("dd")
-    assert len(metadata_values) == 4
-    assert metadata_values[0].text.strip() == "Department for Work and Pensions"
-    assert metadata_values[1].text.strip() == "DWP Stats"
-    assert metadata_values[2].text.strip() == "England"
-    assert metadata_values[3].text.strip() == "4 months"
-
     things_to_know = page.select_one("#things-you-need-to-know summary")
     assert things_to_know.text.strip() == "Things you need to know"
 
@@ -499,32 +484,28 @@ def test_view_measure_page(test_app_client, logged_in_rdu_user):
     categories_used = page.select_one("#the-ethnic-categories-used-in-this-data summary")
     assert categories_used.text.strip() == "The ethnic categories used in this data"
 
-    # methodology accordion
+    # methodology section
     methodology = page.find("h2", attrs={"id": "methodology"})
-    assert methodology.text.strip() == "Methodology"
+    assert methodology.text.strip() == "2. Methodology"
     methodology_headings = methodology.parent.parent.find_all("h3")
-    assert methodology_headings[0].text.strip() == "Methodology"
-    assert methodology_headings[1].text.strip() == "Suppression rules and disclosure control"
-    assert methodology_headings[2].text.strip() == "Rounding"
-    assert methodology_headings[3].text.strip() == "Related publications"
+    assert methodology_headings[0].text.strip() == "Suppression rules and disclosure control"
+    assert methodology_headings[1].text.strip() == "Rounding"
+    assert methodology_headings[2].text.strip() == "Related publications"
 
-    # data sources accordion
-    data_source_details = page.find("span", attrs={"id": "data-sources-heading"})
-    assert data_source_details.text.strip() == "Data sources"
-    data_source_headings = data_source_details.parent.parent.parent.find_all("h3")
-    assert data_source_headings[0].text.strip() == "Source"
-    assert data_source_headings[1].text.strip() == "Type of data"
-    assert data_source_headings[2].text.strip() == "Type of statistic"
-    assert data_source_headings[3].text.strip() == "Publisher"
-    assert data_source_headings[4].text.strip() == "Note on corrections or updates"
-    assert data_source_headings[5].text.strip() == "Publication frequency"
-    assert data_source_headings[6].text.strip() == "Purpose of data source"
-    # These dates are temporarliy excluded while being reviewed - remove this once they are added back to the page
-    assert "Publication release date" not in data_source_headings
+    data_source_heading = page.find("h2", attrs={"id": "data-sources"})
+    assert data_source_heading.text.strip() == "3. Data sources"
+    data_source_subheadings = data_source_heading.parent.find_all("h3")
+    assert data_source_subheadings[0].text.strip() == "Source"
+    assert data_source_subheadings[1].text.strip() == "Type of data"
+    assert data_source_subheadings[2].text.strip() == "Type of statistic"
+    assert data_source_subheadings[3].text.strip() == "Publisher"
+    assert data_source_subheadings[4].text.strip() == "Note on corrections or updates"
+    assert data_source_subheadings[5].text.strip() == "Publication frequency"
+    assert data_source_subheadings[6].text.strip() == "Purpose of data source"
 
     download_the_data = page.find("h2", attrs={"id": "download-the-data"})
     assert download_the_data
-    assert download_the_data.text.strip() == "Download the data"
+    assert download_the_data.text.strip() == "4. Download the data"
 
 
 @pytest.mark.parametrize(["number_of_topics", "row_counts"], ((1, (1,)), (3, (3,)), (5, (3, 2)), (9, (3, 3, 3))))

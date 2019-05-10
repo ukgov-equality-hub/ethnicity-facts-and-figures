@@ -98,7 +98,15 @@ function TableWithFixedHeader(outerTableElement) {
     var height;
 
     if (typeof window.getComputedStyle === "function") {
-      height = getComputedStyle(element).height
+      var style = getComputedStyle(element);
+
+      if (style.height !== 'auto') {
+        height = (
+            parseFloat(style.height) +
+            parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) +
+            parseFloat(style.borderTop) + parseFloat(style.borderBottom)
+        ) + 'px';
+      }
     }
 
     if (!height || height == 'auto') {

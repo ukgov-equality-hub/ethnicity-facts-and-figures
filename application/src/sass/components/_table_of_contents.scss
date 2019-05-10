@@ -1,0 +1,26 @@
+/* Table of Contents */
+
+.eff-table-of-contents {
+  padding-left: 0;
+  margin-top: 0;
+  @include govuk-responsive-margin(9, "bottom");
+  @include govuk-typography-responsive(16);
+}
+
+.eff-table-of-contents > li {
+  display: table-row;
+}
+
+.eff-table-of-contents > li a {
+  text-decoration: none;
+}
+
+.eff-table-of-contents__number {
+  display: table-cell;
+  width: 24px;
+}
+
+.eff-table-of-contents__content {
+  display: table-cell;
+  @include govuk-responsive-padding(1, "bottom");
+}

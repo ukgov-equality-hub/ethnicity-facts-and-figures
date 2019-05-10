@@ -100,9 +100,33 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-l" itemprop="headline">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2" itemprop="headline">
         {{ measure_version.title }}
       </h1>
+
+      {%  if measure_version.first_published_date %}
+        <p class="govuk-body">Published <time itemprop="datePublished" datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
+        </p>
+      {%  endif %}
+
+      <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+      <ol class="eff-table-of-contents">
+        <li><a class="govuk-link" href="#main-facts-and-figures" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Main facts and figures" data-event-label=""><span class="eff-table-of-contents__number">1. </span><span class="eff-table-of-contents__content">Main facts and figures</span></a></li>
+
+
+        {% for dimension in measure_version.dimensions %}
+
+          <li><a class="govuk-link" href="#{{ dimension.title|slugify_value }}"><span class="eff-table-of-contents__number" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Dimension" data-event-label="{{ dimension.title }}">{{ loop.index + 1 }}. </span><span class="eff-table-of-contents__content">{{ dimension.title }}</span></a></li>
+
+        {% endfor %}
+
+        {% set dimensions_count = measure_version.dimensions.all()|length %}
+
+        <li><a class="govuk-link" href="#methodology"><span class="eff-table-of-contents__number" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Methodology" data-event-label="">{{ dimensions_count + 2 }}. </span><span class="eff-table-of-contents__content">Methodology</span></a></li>
+        <li><a class="govuk-link" href="#data-sources" data-event-category="Table of contents link clicked" data-event-action="Data sources" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 3 }}. </span><span class="eff-table-of-contents__content">Data sources</span></a></li>
+        <li><a class="govuk-link" href="#download-the-data" data-event-category="Table of contents link clicked" data-event-action="Download the data" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 4 }}. </span><span class="eff-table-of-contents__content">Download the data</span></a></li>
+
+      </ol>
     </div>
   </div>
 
@@ -119,60 +143,9 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <div class="metadata">
-        <dl>
-          {% if measure_version.primary_data_source and measure_version.primary_data_source.publisher %}
-            <dt>Department:</dt>
-            <dd itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
-             <span itemprop="name">{{ measure_version.primary_data_source.publisher.name }}</span>
-            </dd>
-          {% endif %}
 
-          {%  if measure_version.first_published_date %}
-            <dt>Published:</dt>
-            <dd><time itemprop="datePublished" datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
-            </dd>
-          {%  endif %}
+      <h2 class="govuk-heading-l" id="main-facts-and-figures">1. Main facts and figures</h2>
 
-          {% if measure_version.version != '1.0' and measure_version.published_at %}
-            <dt>Last updated:</dt>
-            <dd><time itemprop="dateModified" datetime="{{ measure_version.published_at | format_iso8601_date }}">{{ measure_version.published_at | format_friendly_date }}</time>, <a class="govuk-link" href="#history">see all updates</a>
-            </dd>
-          {% endif %}
-
-          {% if measure_version.primary_data_source %}
-          <dt>Source:</dt>
-          <dd>
-            <a class="govuk-link" href="{{ measure_version.primary_data_source.source_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Data Source (page header)" data-event-label="{{ measure_version.primary_data_source.title }}">
-              {{ measure_version.primary_data_source.title }}
-            </a>
-          </dd>
-          {% endif %}
-
-          {% if measure_version.area_covered %}
-          <dt>Area covered:</dt>
-          <dd>
-            {{ measure_version.format_area_covered()  }}
-          </dd>
-          {% endif %}
-          {% if measure_version.time_covered %}
-          <dt>Time period:</dt>
-          <dd>
-            {{ measure_version.time_covered }}
-          </dd>
-          {% endif %}
-
-
-        </dl>
-      </div>
-    </div>
-  </div>
-
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <p class="govuk-body">
-        The main facts and figures show that:
-      </p>
         {% if measure_version.summary %}
             <div class="eff-summary--with-bullets-spaced-out">
                 {{ measure_version.summary | render_markdown }}
@@ -236,7 +209,7 @@
           {% for dimension in measure_version.dimensions %}
 
               <div class="govuk-grid-column-two-thirds">
-                  <h2 class="govuk-heading-m" id="{{ dimension.title | slugify_value }}">{{ dimension.title }}</h2>
+                  <h2 class="govuk-heading-l govuk-!-margin-top-9" id="{{ dimension.title | slugify_value }}">{{ loop.index + 1}}. {{ dimension.title }}</h2>
                   <div class="metadata">
                       <dl>
                           {% if measure_version.area_covered %}
@@ -361,22 +334,11 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <div class="govuk-accordion" data-module="accordion" id="mv-{{ measure_version.id }}">
-        <div class="govuk-accordion__section">
-          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Methodology" class="govuk-accordion__section-header">
-            <h2 id="methodology" class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button" id="mv-{{ measure_version.id }}-methodology">
-                Methodology
-              </span>
+            <h2 class="govuk-heading-l" id="methodology">
+              {{ dimensions_count + 2 }}. Methodology
             </h2>
-          </div>
-
-          <div class="govuk-accordion__section-content" aria-labelledby="mv-{{ measure_version.id }}-methodology">
 
             {% if measure_version.methodology %}
-            <h3 class="govuk-heading-s">
-              Methodology
-            </h3>
               {{ measure_version.methodology | render_markdown  }}
             {% endif %}
 
@@ -396,17 +358,16 @@
             {% endif %}
 
             {% if measure_version.qmi_url %}
-              <a class="govuk-body govuk-link" href="{{ measure_version.qmi_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Quality and methodology information" data-event-label="{{ measure_version.title }}">Quality and methodology information</a>
+              <p class="govuk-body"><a class="govuk-link" href="{{ measure_version.qmi_url }}" data-on="click" data-event-category="External link clicked" data-event-action="Quality and methodology information" data-event-label="{{ measure_version.title }}">Quality and methodology information</a></p>
             {% endif %}
 
             {% if measure_version.further_technical_information %}
-            <h3 class="govuk-heading-s">
-              Further technical information
-            </h3>
+              <h3 class="govuk-heading-s">
+                Further technical information
+              </h3>
+
               {{ measure_version.further_technical_information | render_markdown }}
             {% endif %}
-          </div>
-        </div>
 
         <div itemscope itemtype="http://schema.org/Dataset">
           <meta itemprop="version" content=" {{ measure_version.version }}">
@@ -419,17 +380,11 @@
             <meta itemprop="name" content="Race Disparity Unit">
             <meta itemprop="url" content="https://www.gov.uk/government/organisations/race-disparity-unit">
           </div>
-        <div class="govuk-accordion__section">
 
-          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Data sources" class="govuk-accordion__section-header">
-            <h2 class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button" id="data-sources-heading">
-                Data sources
-              </span>
+            <h2 class="govuk-heading-l" id="data-sources">
+                {{ dimensions_count + 3 }}. Data sources
             </h2>
-          </div>
 
-          <div class="govuk-accordion__section-content" id="data-sources-content" aria-labelledby="data-sources-heading">
             <div itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
             {% if measure_version.primary_data_source %}
             <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Source</h3>
@@ -472,7 +427,6 @@
               {% endif %}
             {% endif %}
 
-            </div>
             {% if measure_version.secondary_data_source %}
               <div class="secondary-source" itemprop="isBasedOn" itemscope itemtype="http://schema.org/Dataset">
                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Secondary source</h3>
@@ -524,20 +478,14 @@
 
             {% endif %}
 
-          </div>
 
-        </div>
 
-        <div class="govuk-accordion__section">
-          <div data-on="click" data-event-category="Accordion" data-event-action="Section opened" data-event-label="Download the data" class="govuk-accordion__section-header">
-            <h2 id="download-the-data" class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button" id="download-the-data-heading">
-                Download the data
-              </span>
+            <h2 class="govuk-heading-l" id="download-the-data">
+                {{ dimensions_count + 4 }}. Download the data
             </h2>
           </div>
 
-          <div class="govuk-accordion__section-content downloads" aria-labelledby="download-the-data-heading">
+          <div>
             <div itemprop="license" itemscope itemtype="http://schema.org/CreativeWork">
               <meta itemprop="url" content="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">
               <meta itemprop="name" content="Open Government Licence">
@@ -590,11 +538,7 @@
             <meta itemprop="name" content="Ethnicity facts and figures">
             <meta itemprop="url" content="{{ url_for('static_site.index') }}">
           </div>
-        </div>
 
-        </div>
-      </div>
-    </div>
 
       <div class="eff-document-footer">
 
