@@ -563,30 +563,17 @@
 
           <div class="change-notes">
 
-            <details data-on="click" data-event-category="Disclosure" data-event-action="Opened" data-event-label="Full page history" class="govuk-details" class="">
-              <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text eff-document-footer__full_history_summary_text">
-                  full page history
-                </span>
-              </summary>
-
-              <div class="eff-document-footer__full_history_body" id="full-history" aria-live="polite" role="region">
-                <ol class="govuk-list">
-                {% set current_edit_summary = measure_version.external_edit_summary %}
-                {% if measure_version.published_at %}
-                    {% set publish_date = measure_version.published_at|format_friendly_date %}
-                {% else %}
-                    {% set publish_date = 'TBC' %}
-                {% endif %}
+            {% set fullPageHistoryHtml %}
+              <ol class="govuk-list">
                 <li>
-                    {% if measure_version.published_at %}
-                        <time datetime="{{ measure_version.published_at }}" class="timestamp">{{ measure_version.published_at|format_friendly_date }}</time>
-                    {% else %}
-                        <span class="timestamp">TBC</span>
-                    {% endif %}
-                    {% if current_edit_summary %}
-                        {{ current_edit_summary }}
-                    {% endif %}
+                  {% if measure_version.published_at %}
+                    <time datetime="{{ measure_version.published_at }}" class="timestamp">{{ measure_version.published_at|format_friendly_date }}</time>
+                  {% else %}
+                    <span class="timestamp">TBC</span>
+                  {% endif %}
+                  {% if measure_version.external_edit_summary %}
+                    {{ measure_version.external_edit_summary }}
+                  {% endif %}
                 </li>
                 {% for old_page_version in measure_version.previous_minor_versions %}
                   <li>
@@ -598,13 +585,26 @@
                       {% set edit_summary = old_page_version.external_edit_summary or "Minor edit" %}
                     {% endif %}
                     {% if edit_summary %}
-                        {{ edit_summary }}
+                      {{ edit_summary }}
                     {% endif %}
                   </li>
                 {% endfor %}
-                </ol>
-              </div>
-            </details>
+              </ol>
+            {% endset %}
+
+            {{ govukDetails(
+              summaryText="full page history",
+              html=fullPageHistoryHtml,
+              id="full-page-history",
+              classes="eff-details--page-history",
+              attributes={
+                "data-on":"click",
+                "data-event-category":"Disclosure",
+                "data-event-action":"Opened",
+                "data-event-label":"Full page history"
+              }
+            ) }}
+
           </div>
         </div>
         <div class="related-information">

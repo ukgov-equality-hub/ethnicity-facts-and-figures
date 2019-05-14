@@ -1,0 +1,32 @@
+
+/* Page history modifier for Details component
+ *
+ * This adapts the Details component for use in showing
+ * the detailed edit history of a page, in a similar way
+ * to specialist pages on GOV.UK
+ *
+ * The main changes are a smaller font, and not having the
+ * grey border and margin on the left of the revealed
+ * content.
+ */
+.eff-details--page-history .govuk-details__summary-text {
+  @include govuk-font(16);
+}
+
+.eff-details--page-history .govuk-list {
+  @include govuk-font(16);
+}
+
+.eff-details--page-history .govuk-details__text {
+  padding: 0;
+  border-left-width: 0;
+}
+
+.eff-details--page-history li {
+  margin-bottom: 10px
+}
+
+.eff-details--page-history .timestamp {
+  display: block;
+  font-weight: bold;
+}
