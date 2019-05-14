@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-
-import csv
 import sys
 
 sys.path.insert(0, ".")  # noqa
