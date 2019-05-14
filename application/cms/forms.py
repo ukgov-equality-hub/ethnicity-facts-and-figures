@@ -308,7 +308,7 @@ class MeasureVersionForm(FlaskForm):
 class DimensionForm(FlaskForm):
     title = RDUStringField(
         label="Title",
-        hint="For example, ‘Employment by ethnicity and gender’",
+        hint="For example, ‘By ethnicity and gender’",
         validators=[DataRequired(message="Enter the dimension title")],
     )
     time_period = RDUStringField(label="Time period covered", hint="For example, ‘2015/16’")
