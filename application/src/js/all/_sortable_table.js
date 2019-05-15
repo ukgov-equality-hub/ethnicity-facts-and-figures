@@ -74,7 +74,21 @@ SortableTable.prototype.createHeadingButton = function(heading, i, disabled) {
     button.setAttribute('type', 'button')
     button.setAttribute('data-index', i)
     button.setAttribute('class', 'govuk-button eff-button--link eff-button--sort')
-    button.textContent = text
+
+    var button_prefix = document.createElement('span')
+    button_prefix.textContent = 'Sort by: '
+    button_prefix.classList.add('govuk-visually-hidden')
+    button.appendChild(button_prefix)
+
+    var button_label = document.createTextNode(text)
+    button.appendChild(button_label)
+
+    var button_suffix = document.createElement('span')
+    button_suffix.setAttribute('data-role', 'button-suffix')
+    button_suffix.textContent = ' (descending)'
+    button_suffix.classList.add('govuk-visually-hidden')
+    button.appendChild(button_suffix)
+
     button.addEventListener('click', this.sortButtonClicked.bind(this))
     heading.textContent = '';
 
@@ -106,8 +120,14 @@ SortableTable.prototype.createStatusBox = function() {
 
 SortableTable.prototype.sortButtonClicked = function(event) {
 
-  var columnNumber = event.target.getAttribute('data-index')
-  var sortDirection = event.target.parentElement.getAttribute('aria-sort')
+  var button = event.target
+
+  if (button.tagName != 'BUTTON') {
+    button = button.parentElement
+  }
+
+  var columnNumber = button.getAttribute('data-index')
+  var sortDirection = button.parentElement.getAttribute('aria-sort')
   var newSortDirection;
     if(sortDirection === 'none' || sortDirection === 'ascending') {
         newSortDirection = 'descending';
@@ -128,7 +148,9 @@ SortableTable.prototype.sortButtonClicked = function(event) {
   };
 
   this.removeButtonStates();
-  this.updateButtonState(event.target, newSortDirection);
+
+
+  this.updateButtonState(button, newSortDirection);
 
 }
 
@@ -202,6 +224,10 @@ SortableTable.prototype.updateButtonState = function(button, direction) {
 
     button.classList.remove('eff-button--sort')
     button.classList.add('eff-button--sort-' + direction)
+
+    var oppositeDirection = (direction == 'ascending' ? 'descending' : 'ascending')
+    var button_suffix = button.querySelector('*[data-role=button-suffix]')
+    button_suffix.textContent = ' (' + oppositeDirection + ')'
 
     if ('ga' in window) {
       var eventAction = (direction == 'ascending' ? 'Descending' : 'Ascending')

@@ -23,7 +23,7 @@
 
 .eff-button--sort:before,
 .eff-button--sort:active:before {
-  content: " \25bc"; /* ▼ */
+  content: " \25bc" / ""; /* ▼ */
   position: absolute;
   right: -2px;
   top: 9px;
@@ -33,7 +33,7 @@
 
 .eff-button--sort:after,
 .eff-button--sort:active:after {
-  content: " \25b2"; /* ▲ */
+  content: " \25b2" / ""; /* ▲ */
   position: absolute;
   right: -2px;
   top: 0px;
@@ -47,7 +47,7 @@
 }
 
 .eff-button--sort-ascending:after {
-  content: " \25b2"; /* ▲ */
+  content: " \25b2" / ""; /* ▲ */
   font-size: .7em;
   position: absolute;
   right: -2px;
@@ -55,7 +55,7 @@
 }
 
 .eff-button--sort-descending:after {
-  content: " \25bc"; /* ▼ */
+  content: " \25bc" / ""; /* ▼ */
   font-size: .7em;
   position: absolute;
   right: -2px;
