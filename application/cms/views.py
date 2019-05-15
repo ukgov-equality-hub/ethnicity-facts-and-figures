@@ -324,13 +324,19 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             current_app.logger.error(e)
             diffs = _diff_updates(measure_version_form, measure_version)
             if diffs:
-                errors_preamble = "Your update will overwrite the latest content. Resolve the conflicts below:"
+                errors_preamble = (
+                    "Your update will overwrite updates made by other people. "
+                    "Only save the page after reviewing all of the following:"
+                )
 
                 # Need to manually update the `db_version_id`, otherwise when the form is re-submitted it will just
                 # throw the same error.
                 measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
             else:
-                errors_preamble = "Your update will overwrite the latest content. Reload this page."
+                errors_preamble = (
+                    "Your update will overwrite updates made by other people. "
+                    "Reload this page and re-enter your update."
+                )
 
         except PageUnEditable as e:
             current_app.logger.info(e)
