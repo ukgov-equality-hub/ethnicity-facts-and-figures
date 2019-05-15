@@ -1,0 +1,11 @@
+.eff-diffs {
+  & ins {
+    background-color: lighten(govuk-colour('green'), 60%);
+    text-decoration: none;
+  }
+
+  & del {
+    background-color: lighten(govuk-colour('red'), 50%);
+    text-decoration: line-through;
+  }
+}

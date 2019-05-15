@@ -37,7 +37,13 @@ from application.cms.models import NewVersionType, MeasureVersion, Measure
 from application.cms.models import Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
-from application.cms.utils import copy_form_errors, get_data_source_forms, get_form_errors, ErrorSummaryMessage
+from application.cms.utils import (
+    copy_form_errors,
+    get_data_source_forms,
+    get_form_errors,
+    ErrorSummaryMessage,
+    TextFieldDiff,
+)
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
 
@@ -211,16 +217,24 @@ def delete_dimension(topic_slug, subtopic_slug, measure_slug, version, dimension
 
 def _diff_updates(form, page):
     from lxml.html.diff import htmldiff
+    from flask import escape
+    from markupsafe import Markup
 
     diffs = {}
     for k, v in form.data.items():
         if hasattr(page, k) and k != "db_version_id":
             page_value = getattr(page, k)
             if v is not None and page_value is not None:
-                diff = htmldiff(str(page_value).rstrip(), str(v).rstrip())
+                diff = htmldiff(escape(str(page_value).rstrip()), escape(str(v).rstrip()))
                 if "<ins>" in diff or "<del>" in diff:
-                    getattr(form, k).errors.append("has been updated by %s" % page.last_updated_by)
-                    diffs[k] = diff
+                    getattr(form, k).errors.append(
+                        f"‘{getattr(form, k).label.text}’ has been updated by {page.last_updated_by}"
+                    )
+
+                    # The resulting diff has had the user-input escaped, but does contain <ins> and <del> tags that
+                    # need to be rendered without being escaped. So we should consider the diff as safe Markup.
+                    diffs[k] = TextFieldDiff(diff_markup=Markup(diff), updated_by=page.last_updated_by)
+
     form.db_version_id.data = page.db_version_id
     return diffs
 
@@ -286,6 +300,7 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         measure_version_form = MeasureVersionForm(is_minor_update=measure_version.is_minor_version())
 
     saved = False
+    errors_preamble = None
     if (
         measure_version_form.validate_on_submit()
         and data_source_form.validate_on_submit()
@@ -315,13 +330,19 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             current_app.logger.error(e)
             diffs = _diff_updates(measure_version_form, measure_version)
             if diffs:
-                flash("Your update will overwrite the latest content. Resolve the conflicts below", "error")
+                errors_preamble = (
+                    "Your update will overwrite updates made by other people. "
+                    "Only save the page after reviewing all of the following:"
+                )
 
                 # Need to manually update the `db_version_id`, otherwise when the form is re-submitted it will just
                 # throw the same error.
                 measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
             else:
-                flash("Your update will overwrite the latest content. Reload this page", "error")
+                errors_preamble = (
+                    "Your update will overwrite updates made by other people. "
+                    "Reload this page and re-enter your update."
+                )
 
         except PageUnEditable as e:
             current_app.logger.info(e)
@@ -355,6 +376,7 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "diffs": diffs,
         "organisations_by_type": Organisation.select_options_by_type(),
         "topics": page_service.get_topics(include_testing_space=True),
+        "errors_preamble": errors_preamble,
         "errors": get_form_errors(forms=[measure_version_form, data_source_form, data_source_2_form]),
         "new": False,
         "data_not_uploaded_error": False,

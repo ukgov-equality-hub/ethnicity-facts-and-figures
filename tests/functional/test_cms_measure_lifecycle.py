@@ -27,7 +27,7 @@ def test_create_a_measure_as_editor(driver, live_server, government_departments,
         data_sources__publisher=random.choice(government_departments),
         data_sources__frequency_of_release=random.choice(frequencies_of_release),
     )
-    sample_measure_version = MeasureVersionFactory.build(data_sources=[])
+    sample_measure_version = MeasureVersionFactory.build(version="1.1", data_sources=[])
     sample_data_source = DataSourceFactory.build(
         publisher__name=random.choice(government_departments).name,
         frequency_of_release__description=random.choice(frequencies_of_release).description,

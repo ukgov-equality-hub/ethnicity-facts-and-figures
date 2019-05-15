@@ -72,7 +72,7 @@ class TestMeasureVersionForm:
 
     @pytest.mark.parametrize("is_minor_update", ((True,), (False,)))
     def test_all_fields_populate_with_data(self, is_minor_update):
-        measure_version = MeasureVersionFactory.create(version="1.0", status="APPROVED")
+        measure_version = MeasureVersionFactory.create(version="1.1", status="APPROVED")
 
         form = MeasureVersionForm(is_minor_update=False, sending_to_review=True, obj=measure_version)
 
