@@ -220,7 +220,6 @@ def test_non_admin_user_can_not_publish_page_in_dept_review(test_app_client, log
     mock_request_build.assert_not_called()
 
 
-
 def test_admin_user_can_see_publish_buttons_on_edit_page(test_app_client, logged_in_admin_user):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
     response = test_app_client.get(
