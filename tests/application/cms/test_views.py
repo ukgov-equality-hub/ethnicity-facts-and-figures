@@ -813,7 +813,7 @@ def test_edit_measure_page_updated_with_latest_db_version_id_when_posting_a_conf
     assert len(page.findAll("div", class_="eff-diffs")) == 1
     assert (
         str(page.find("div", class_="eff-diffs"))
-        == '<div class="govuk-body eff-diffs">\n<p class="govuk-body"> <ins>try</ins> new title</p>\n</div>'
+        == '<div class="govuk-inset-text eff-diffs">\n<ins>try</ins> new title\n  </div>'
     )
 
 

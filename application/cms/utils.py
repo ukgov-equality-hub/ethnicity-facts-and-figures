@@ -3,6 +3,7 @@ from functools import partial
 from typing import List
 
 from flask import current_app
+from markupsafe import Markup
 
 from application.cms.forms import DataSourceForm
 
@@ -11,6 +12,12 @@ from application.cms.forms import DataSourceForm
 class ErrorSummaryMessage:
     text: str
     href: str
+
+
+@dataclass
+class TextFieldDiff:
+    diff_markup: Markup
+    updated_by: str
 
 
 def copy_form_errors(from_form, to_form):

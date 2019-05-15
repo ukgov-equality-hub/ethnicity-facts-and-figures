@@ -37,7 +37,13 @@ from application.cms.models import NewVersionType, MeasureVersion, Measure
 from application.cms.models import Organisation
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
-from application.cms.utils import copy_form_errors, get_data_source_forms, get_form_errors, ErrorSummaryMessage
+from application.cms.utils import (
+    copy_form_errors,
+    get_data_source_forms,
+    get_form_errors,
+    ErrorSummaryMessage,
+    TextFieldDiff,
+)
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
 
@@ -212,15 +218,14 @@ def delete_dimension(topic_slug, subtopic_slug, measure_slug, version, dimension
 def _diff_updates(form, page):
     from lxml.html.diff import htmldiff
     from flask import escape
-    from application.cms.markdown import markdown
-    from flask import Markup
+    from markupsafe import Markup
 
     diffs = {}
     for k, v in form.data.items():
         if hasattr(page, k) and k != "db_version_id":
             page_value = getattr(page, k)
             if v is not None and page_value is not None:
-                diff = htmldiff(markdown(escape(str(page_value).rstrip())), markdown(escape(str(v).rstrip())))
+                diff = htmldiff(escape(str(page_value).rstrip()), escape(str(v).rstrip()))
                 if "<ins>" in diff or "<del>" in diff:
                     getattr(form, k).errors.append(
                         f"‘{getattr(form, k).label.text}’ has been updated by {page.last_updated_by}"
@@ -228,7 +233,8 @@ def _diff_updates(form, page):
 
                     # The resulting diff has had the user-input escaped, but does contain <ins> and <del> tags that
                     # need to be rendered without being escaped. So we should consider the diff as safe Markup.
-                    diffs[k] = Markup(diff)
+                    diffs[k] = TextFieldDiff(diff_markup=Markup(diff), updated_by=page.last_updated_by)
+
     form.db_version_id.data = page.db_version_id
     return diffs
 

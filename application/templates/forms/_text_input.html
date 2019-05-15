@@ -13,7 +13,20 @@
 {% endif %}
 
 {% if field.errors %}
-  <span class="govuk-error-message">{{ field.errors[0] }}</span>
+  {% if diffs is defined and diffs and name in diffs %}
+  <div class="govuk-error-message">
+    Your update will overwrite a change made by {{ diffs[name].updated_by }}.
+    <br>
+    Review the additions and deletions shown below.
+    <br>
+    Only save the page when you have reviewed all conflicts.
+  </div>
+  <div class="govuk-inset-text eff-diffs">
+      {{ diffs[name].diff_markup }}
+  </div>
+  {% else %}
+    <span class="govuk-error-message">{{ field.errors[0] }}</span>
+  {% endif %}
 {% endif %}
 
 {{ field.extended_hint if field.extended_hint is defined and field.extended_hint else '' }}
@@ -22,13 +35,6 @@
   <textarea id="{{ id_ }}" name="{{ name }}" class="govuk-textarea {{ class_ }}{% if field.errors %} govuk-textarea--error{% endif %}{% if field.character_count_limit %} js-character-count{% endif %}" {{ field_params }}>{{ value or "" }}</textarea>
 {% else %}
   <input id="{{ id_ }}" name="{{ name }}" class="govuk-input {{ class_ }}{% if field.errors %} govuk-input--error{% endif %}" value="{{ value }}" {{ field_params }}>
-{% endif %}
-
-{% if diffs is defined and diffs and name in diffs %}
-  <p class="govuk-body govuk-!-margin-top-4">Your update to "{{ field.label.text }}" is shown below, with detected additions and deletions emphasised. If these changes are fine, save the page, otherwise make further edits above and then save.</p>
-  <div class="govuk-body eff-diffs">
-      {{ diffs[name] }}
-  </div>
 {% endif %}
 
 {% if field.character_count_limit %}
