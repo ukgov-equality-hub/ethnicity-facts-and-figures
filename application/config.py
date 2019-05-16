@@ -19,7 +19,7 @@ load_dotenv(dotenv_path)
 
 class Config:
     DEBUG = False
-    LOG_LEVEL = logging.INFO
+    LOG_LEVEL = logging.getLevelName(os.environ["LOG_LEVEL"]) if "LOG_LEVEL" in os.environ else logging.INFO
     ENVIRONMENT = os.environ.get("ENVIRONMENT", "PRODUCTION")
     SECRET_KEY = os.environ["SECRET_KEY"]
     PROJECT_NAME = "ethnicity-facts-and-figures-publisher"
@@ -105,7 +105,7 @@ class Config:
 
 class DevConfig(Config):
     DEBUG = True
-    LOG_LEVEL = logging.DEBUG
+    LOG_LEVEL = logging.getLevelName(os.environ["LOG_LEVEL"]) if "LOG_LEVEL" in os.environ else logging.DEBUG
     ENVIRONMENT = "DEVELOPMENT"
     SESSION_COOKIE_SECURE = False
     SESSION_COOKIE_DOMAIN = False
