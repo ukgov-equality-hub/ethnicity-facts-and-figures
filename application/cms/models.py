@@ -413,9 +413,6 @@ class MeasureVersion(db.Model, CopyableModel):
         if self.status == "DEPARTMENT_REVIEW":
             return ["APPROVE", "REJECT"]
 
-        if self.status == "APPROVED":
-            return ["UNPUBLISH"]
-
         if self.status in ["REJECTED", "UNPUBLISHED"]:
             return ["RETURN_TO_DRAFT"]
         else:
@@ -443,12 +440,6 @@ class MeasureVersion(db.Model, CopyableModel):
         rejected_state = "REJECTED"
         message = 'Sent page "{}" to {}'.format(self.title, rejected_state)
         self.status = rejected_state
-        return message
-
-    def unpublish(self):
-        unpublish_state = publish_status.inv[5]
-        message = 'Request to unpublish page "{}" - page will be removed from site'.format(self.title)
-        self.status = unpublish_state
         return message
 
     def not_editable(self):
