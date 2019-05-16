@@ -421,11 +421,17 @@ def build_error_pages(build_dir):
 
 
 def pull_current_site(build_dir, remote_repo):
+    current_app.logger.debug("Starting pull_current_site")
     repo = Repo.init(build_dir)
+    current_app.logger.debug("Repo.init complete")
     origin = repo.create_remote("origin", remote_repo)
+    current_app.logger.debug("repo.create_remote complete")
     origin.fetch()
+    current_app.logger.debug("origin.fetch complete")
     repo.create_head("master", origin.refs.master).set_tracking_branch(origin.refs.master).checkout()
+    current_app.logger.debug("repo.create_head complete")
     origin.pull()
+    current_app.logger.debug("origin.pull complete")
 
 
 def delete_files_from_repo(build_dir):
