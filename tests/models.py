@@ -7,6 +7,7 @@ See `tests/README.md` for further information on our use of Factory Boy.
 """
 
 import itertools
+
 import random
 
 from faker import Faker
