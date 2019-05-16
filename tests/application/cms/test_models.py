@@ -663,11 +663,6 @@ class TestMeasureVersionModel:
         with pytest.raises(RejectionImpossible):
             measure_version.reject()
 
-    def test_unpublish_page(self):
-        measure_version = MeasureVersionFactory(status="APPROVED")
-        measure_version.unpublish()
-        assert measure_version.status == "UNPUBLISH"
-
     @pytest.mark.parametrize(
         "status, should_be_eligible",
         [
@@ -711,7 +706,7 @@ class TestMeasureVersionModel:
 
     def test_available_actions_for_approved_page(self):
         measure_version = MeasureVersionFactory(status="APPROVED")
-        expected_available_actions = ["UNPUBLISH"]
+        expected_available_actions = []
 
         assert expected_available_actions == measure_version.available_actions
 
