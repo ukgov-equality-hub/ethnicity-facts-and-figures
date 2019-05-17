@@ -234,7 +234,7 @@ def process_dimensions(measure_version, slug):
 
 
 def build_dashboards(build_dir):
-    # Import these locally, as importing at file level gives circular imports when rwning tests
+    # Import these locally, as importing at file level gives circular imports when running tests
     from application.dashboard.data_helpers import (
         get_published_dashboard_data,
         get_planned_pages_dashboard_data,
