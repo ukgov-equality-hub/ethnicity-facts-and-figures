@@ -63,10 +63,6 @@
                 </a>
             {% endif %}
 
-            {% if measure_version.status == 'APPROVED' and current_user.can(PUBLISH) %}
-                <button id="unpublish-measure" name="measure-action" value="unpublish-measure" class="govuk-button eff-button--destructive">Unpublish</button>
-            {% endif %}
-
             {% if measure_version.status == 'APPROVED' and not measure_version.latest %}
 
                 {%  set latest = measure.latest_version %}

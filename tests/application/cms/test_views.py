@@ -220,48 +220,7 @@ def test_non_admin_user_can_not_publish_page_in_dept_review(test_app_client, log
     mock_request_build.assert_not_called()
 
 
-def test_admin_user_can_unpublish_page(test_app_client, logged_in_admin_user, mock_request_build):
-    measure_version = MeasureVersionFactory(status="APPROVED")
-
-    response = test_app_client.post(
-        url_for(
-            "cms.edit_measure_version",
-            topic_slug=measure_version.measure.subtopic.topic.slug,
-            subtopic_slug=measure_version.measure.subtopic.slug,
-            measure_slug=measure_version.measure.slug,
-            version=measure_version.version,
-        ),
-        data=ImmutableMultiDict({"measure-action": "unpublish-measure"}),
-        follow_redirects=True,
-    )
-
-    assert response.status_code == 200
-    assert measure_version.status == "UNPUBLISH"
-    assert measure_version.unpublished_by == logged_in_admin_user.email
-    mock_request_build.assert_called_once()
-
-
-def test_non_admin_user_can_not_unpublish_page(test_app_client, logged_in_rdu_user, mock_request_build):
-    measure_version = MeasureVersionFactory(status="APPROVED")
-
-    response = test_app_client.post(
-        url_for(
-            "cms.edit_measure_version",
-            topic_slug=measure_version.measure.subtopic.topic.slug,
-            subtopic_slug=measure_version.measure.subtopic.slug,
-            measure_slug=measure_version.measure.slug,
-            version=measure_version.version,
-        ),
-        data=ImmutableMultiDict({"measure-action": "unpublish-measure"}),
-        follow_redirects=True,
-    )
-
-    assert response.status_code == 403
-    assert measure_version.status == "APPROVED"
-    mock_request_build.assert_not_called()
-
-
-def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(test_app_client, logged_in_admin_user):
+def test_admin_user_can_see_publish_buttons_on_edit_page(test_app_client, logged_in_admin_user):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
     response = test_app_client.get(
         url_for(
@@ -277,24 +236,8 @@ def test_admin_user_can_see_publish_unpublish_buttons_on_edit_page(test_app_clie
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert page.find_all("button")[-1].text.strip().lower() == "approve for publishing"
 
-    measure_version = MeasureVersionFactory(status="APPROVED")
 
-    response = test_app_client.get(
-        url_for(
-            "cms.edit_measure_version",
-            topic_slug=measure_version.measure.subtopic.topic.slug,
-            subtopic_slug=measure_version.measure.subtopic.slug,
-            measure_slug=measure_version.measure.slug,
-            version=measure_version.version,
-        ),
-        follow_redirects=True,
-    )
-
-    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("button")[-1].text.strip().lower() == "unpublish"
-
-
-def test_internal_user_can_not_see_publish_unpublish_buttons_on_edit_page(test_app_client, logged_in_rdu_user):
+def test_internal_user_can_not_see_publish_buttons_on_edit_page(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
     response = test_app_client.get(
         url_for(

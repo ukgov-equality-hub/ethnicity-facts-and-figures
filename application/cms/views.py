@@ -282,12 +282,6 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             _publish(topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug, version=version)
             return redirect_following_change_of_status
 
-        elif measure_action == "unpublish-measure":
-            _unpublish_page(
-                topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug, version=version
-            )
-            return redirect_following_change_of_status
-
     diffs = {}
 
     data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=measure_version)
@@ -590,21 +584,6 @@ def _reject_page(topic_slug, subtopic_slug, measure_slug, version):
         abort(400, "This page can not be rejected because it is not currently under review.")
 
     message = page_service.reject_measure_version(measure_version)
-    flash(message, "info")
-    current_app.logger.info(message)
-
-
-def _unpublish_page(topic_slug, subtopic_slug, measure_slug, version):
-    if not current_user.can(PUBLISH):
-        abort(403)
-    *_, measure_version = page_service.get_measure_version_hierarchy(topic_slug, subtopic_slug, measure_slug, version)
-
-    # Can only unpublish if currently published
-    if measure_version.status != "APPROVED":
-        abort(400, "This page is not published, so it can’t be unpublished.")
-
-    message = page_service.unpublish_measure_version(measure_version, unpublished_by=current_user.email)
-    _build_if_necessary(measure_version)
     flash(message, "info")
     current_app.logger.info(message)
 
