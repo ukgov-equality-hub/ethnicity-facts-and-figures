@@ -5,7 +5,6 @@ import uuid
 from contextlib import contextmanager
 from datetime import datetime
 
-import boto3
 import shutil
 
 import os
