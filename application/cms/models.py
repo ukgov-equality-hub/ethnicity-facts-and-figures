@@ -505,6 +505,10 @@ class MeasureVersion(db.Model, CopyableModel):
         return [v for v in self.measure.versions if v.major() == self.major() and v.minor() < self.minor()]
 
     @property
+    def later_minor_versions(self):
+        return [v for v in self.measure.versions if v.major() == self.major() and v.minor() > self.minor()]
+
+    @property
     def first_published_date(self):
         return self.previous_minor_versions[-1].published_at if self.previous_minor_versions else self.published_at
 
@@ -565,6 +569,25 @@ class MeasureVersion(db.Model, CopyableModel):
             return days_from_now.days
         except Exception:
             return 0
+
+    @property
+    def has_known_statistical_errors(self) -> bool:
+        """Returns true if any later version is flagged as correcting a data mistake. This will still return true even
+        if *this* version is correcting a mistake - because it might be that not all the mistakes were fixed by this
+        version."""
+        return any(
+            later_minor_version.update_corrects_data_mistake for later_minor_version in self.later_minor_versions
+        )
+
+    @property
+    def has_known_statistical_corrections(self) -> bool:
+        """Returns true if this version, or an earlier version, is flagged as correcting a data mistake. This is not
+        exclusive to the property above - a measure version can both be correcting errors in a previous version while
+        still also having errors itself (presumably discovered at a later date)."""
+        return self.update_corrects_data_mistake or any(
+            previous_minor_version.update_corrects_data_mistake
+            for previous_minor_version in self.previous_minor_versions
+        )
 
 
 class Dimension(db.Model):
@@ -1096,6 +1119,7 @@ class Measure(db.Model):
     @property
     def latest_published_version(self):
         """Return the latest _published_ version of a measure."""
+
         published_versions = [
             version for version in self.versions if (version.status == "APPROVED" and version.published_at is not None)
         ]

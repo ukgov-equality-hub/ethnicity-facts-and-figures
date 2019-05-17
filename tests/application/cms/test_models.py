@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from flask import url_for
 
 from application.cms.exceptions import RejectionImpossible
-from application.cms.models import Dimension, UKCountry, Table, Chart, DimensionClassification
+from application.cms.models import Dimension, UKCountry, Table, Chart, DimensionClassification, MeasureVersion
 from tests.models import (
     MeasureFactory,
     MeasureVersionFactory,
@@ -886,6 +886,78 @@ class TestMeasureVersionModel:
         measure_version = MeasureVersionFactory(description=None, summary="This is an intro.")
 
         assert measure_version.social_description is None
+
+    def test_later_minor_versions(self):
+        mv_1_0: MeasureVersion = MeasureVersionFactory.build(status="APPROVED", version="1.0")
+        mv_1_1: MeasureVersion = MeasureVersionFactory.build(status="APPROVED", version="1.1", measure=mv_1_0.measure)
+        mv_1_2: MeasureVersion = MeasureVersionFactory.build(status="APPROVED", version="1.2", measure=mv_1_0.measure)
+        mv_1_3: MeasureVersion = MeasureVersionFactory.build(status="APPROVED", version="1.3", measure=mv_1_0.measure)
+        mv_2_0: MeasureVersion = MeasureVersionFactory.build(status="APPROVED", version="2.0", measure=mv_1_0.measure)
+
+        assert mv_1_0.previous_minor_versions == []
+        assert mv_1_0.later_minor_versions == [mv_1_1, mv_1_2, mv_1_3]
+
+        assert mv_1_1.previous_minor_versions == [mv_1_0]
+        assert mv_1_1.later_minor_versions == [mv_1_2, mv_1_3]
+
+        assert mv_1_2.previous_minor_versions == [mv_1_0, mv_1_1]
+        assert mv_1_2.later_minor_versions == [mv_1_3]
+
+        assert mv_1_3.previous_minor_versions == [mv_1_0, mv_1_1, mv_1_2]
+        assert mv_1_3.later_minor_versions == []
+
+        assert mv_2_0.previous_minor_versions == []
+        assert mv_2_0.later_minor_versions == []
+
+    def test_has_known_statistical_errors(self):
+        mv_1_0: MeasureVersion = MeasureVersionFactory.build(version="1.0", update_corrects_data_mistake=False)
+        mv_1_1: MeasureVersion = MeasureVersionFactory.build(
+            version="1.1", measure=mv_1_0.measure, update_corrects_data_mistake=False
+        )
+        mv_1_2: MeasureVersion = MeasureVersionFactory.build(
+            version="1.2", measure=mv_1_0.measure, update_corrects_data_mistake=True
+        )
+        mv_1_3: MeasureVersion = MeasureVersionFactory.build(
+            version="1.3", measure=mv_1_0.measure, update_corrects_data_mistake=False
+        )
+        mv_1_4: MeasureVersion = MeasureVersionFactory.build(
+            version="1.4", measure=mv_1_0.measure, update_corrects_data_mistake=True
+        )
+        mv_1_5: MeasureVersion = MeasureVersionFactory.build(
+            version="1.5", measure=mv_1_0.measure, update_corrects_data_mistake=False
+        )
+
+        assert mv_1_0.has_known_statistical_errors is True
+        assert mv_1_1.has_known_statistical_errors is True
+        assert mv_1_2.has_known_statistical_errors is True
+        assert mv_1_3.has_known_statistical_errors is True
+        assert mv_1_4.has_known_statistical_errors is False
+        assert mv_1_5.has_known_statistical_errors is False
+
+    def test_has_known_statistical_corrections(self):
+        mv_1_0: MeasureVersion = MeasureVersionFactory.build(version="1.0", update_corrects_data_mistake=False)
+        mv_1_1: MeasureVersion = MeasureVersionFactory.build(
+            version="1.1", measure=mv_1_0.measure, update_corrects_data_mistake=False
+        )
+        mv_1_2: MeasureVersion = MeasureVersionFactory.build(
+            version="1.2", measure=mv_1_0.measure, update_corrects_data_mistake=True
+        )
+        mv_1_3: MeasureVersion = MeasureVersionFactory.build(
+            version="1.3", measure=mv_1_0.measure, update_corrects_data_mistake=False
+        )
+        mv_1_4: MeasureVersion = MeasureVersionFactory.build(
+            version="1.4", measure=mv_1_0.measure, update_corrects_data_mistake=True
+        )
+        mv_1_5: MeasureVersion = MeasureVersionFactory.build(
+            version="1.5", measure=mv_1_0.measure, update_corrects_data_mistake=False
+        )
+
+        assert mv_1_0.has_known_statistical_corrections is False
+        assert mv_1_1.has_known_statistical_corrections is False
+        assert mv_1_2.has_known_statistical_corrections is True
+        assert mv_1_3.has_known_statistical_corrections is True
+        assert mv_1_4.has_known_statistical_corrections is True
+        assert mv_1_5.has_known_statistical_corrections is True
 
 
 class TestChartModel:
