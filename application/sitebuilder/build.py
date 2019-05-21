@@ -50,9 +50,6 @@ def do_it(application, build):
 
         local_build = application.config["LOCAL_BUILD"]
 
-        print("DEBUG do_it(): Unpublishing pages...")
-        pages_unpublished = unpublish_pages()
-
         print("DEBUG do_it(): Building from homepage...")
         build_homepage_and_topic_hierarchy(build_dir, config=application.config)
 
@@ -70,7 +67,7 @@ def do_it(application, build):
         if application.config["DEPLOY_SITE"]:
             from application.sitebuilder.build_service import s3_deployer
 
-            s3_deployer(application, build_dir, measure_versions_to_delete=pages_unpublished)
+            s3_deployer(application, build_dir)
             print("Static site deployed")
 
         if not local_build:
@@ -234,15 +231,6 @@ def process_dimensions(measure_version, slug):
             table_file_path = os.path.join(download_dir, dimension.static_table_file_name)
             with open(table_file_path, "w") as dimension_file:
                 dimension_file.write(table_output)
-
-
-def unpublish_pages():
-    from application.cms.page_service import page_service
-
-    measure_versions_to_unpublish = page_service.get_measure_versions_to_unpublish()
-
-    page_service.mark_measure_versions_unpublished(measure_versions_to_unpublish)
-    return measure_versions_to_unpublish
 
 
 def build_dashboards(build_dir):

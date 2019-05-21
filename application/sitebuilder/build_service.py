@@ -5,7 +5,6 @@ import uuid
 from contextlib import contextmanager
 from datetime import datetime
 
-import boto3
 import shutil
 
 import os
@@ -89,27 +88,11 @@ def build_site(app):
         print("DEBUG _build_site(): Finished build.")
 
 
-def s3_deployer(app, build_dir, measure_versions_to_delete=[]):
+def s3_deployer(app, build_dir):
     _delete_files_not_needed_for_deploy(build_dir)
 
     site_bucket_name = app.config["S3_STATIC_SITE_BUCKET"]
     s3 = S3FileSystem(site_bucket_name, region=app.config["S3_REGION"])
-    resource = boto3.resource("s3")
-    bucket = resource.Bucket(site_bucket_name)
-
-    for measure_version in measure_versions_to_delete:
-        version = (
-            "latest" if measure_version == measure_version.measure.latest_published_version else measure_version.version
-        )
-
-        topic_slug = measure_version.measure.subtopic.topic.slug
-        subtopic_slug = measure_version.measure.subtopic.slug
-        prefix = f"{topic_slug}/{subtopic_slug}/{measure_version.measure.slug}/{version}"
-        to_delete = list(bucket.objects.filter(Prefix=prefix))
-
-        for d in to_delete:
-            print("Deleting: " + d.key)
-            resource.Object(bucket.name, key=d.key).delete()
 
     # Ensure static assets (css, JavaScripts, etc) are uploaded before the rest of the site
     _upload_dir_to_s3(build_dir, s3, specific_subdirectory=get_static_dir())
