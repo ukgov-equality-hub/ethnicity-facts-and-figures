@@ -916,8 +916,6 @@ def get_measure_version_uploads(topic_slug, subtopic_slug, measure_slug, version
 
 
 def _build_is_required(page, req, beta_publication_states):
-    if page.status == "UNPUBLISH":
-        return True
     if get_bool(req.args.get("build")) and page.eligible_for_build(beta_publication_states):
         return True
     return False
@@ -1087,10 +1085,7 @@ def set_measure_order():
 
 
 def _build_if_necessary(measure_version):
-    if measure_version.status == "UNPUBLISH":
-        build_service.request_build()
-
-    elif measure_version.eligible_for_build():
+    if measure_version.eligible_for_build():
         page_service.mark_measure_version_published(measure_version)
         build_service.request_build()
 

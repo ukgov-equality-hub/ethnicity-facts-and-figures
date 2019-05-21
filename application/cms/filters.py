@@ -51,7 +51,6 @@ def format_status(state):
         "DEPARTMENT_REVIEW": "Department&nbsp;review",
         "APPROVED": "Published",
         "REJECTED": "Rejected",
-        "UNPUBLISHED": "Un&#8209;published",
     }
     return status_names.get(state, state.replace("_", "&nbsp;").capitalize())
 
