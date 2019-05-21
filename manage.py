@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import ast
+
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -17,7 +18,7 @@ from application import db
 from application.admin.forms import AddUserForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES
 from application.cms.classification_service import classification_service
-from application.cms.models import MeasureVersion
+from application.cms.models import MeasureVersion, Measure, Subtopic, Topic
 from application.config import Config, DevConfig
 from application.data.ethnicity_classification_synchroniser import EthnicityClassificationSynchroniser
 from application.factory import create_app
@@ -538,6 +539,32 @@ def delete_all_measures_except_two_per_subtopic():
             print(e)
 
     db.session.commit()
+
+
+@manager.option("--topic_slug", dest="topic_slug")
+@manager.option("--subtopic_slug", dest="subtopic_slug")
+@manager.option("--measure_slug", dest="measure_slug")
+@manager.option("--version", dest="version")
+def unpublish_measure_version(topic_slug, subtopic_slug, measure_slug, version):
+    measure_version: MeasureVersion = MeasureVersion.query.filter(
+        MeasureVersion.measure.has(Measure.subtopics.any(Subtopic.topic.has(Topic.slug == topic_slug))),
+        MeasureVersion.measure.has(Measure.subtopics.any(Subtopic.slug == subtopic_slug)),
+        MeasureVersion.measure.has(Measure.slug == measure_slug),
+        MeasureVersion.version == version,
+    ).one()
+
+    measure_version.status = "DRAFT"
+    measure_version.published_at = None
+    measure_version.published_by = None
+
+    db.session.commit()
+
+    print(
+        f"Measure version #{measure_version.id} "
+        f"(topic:{topic_slug}, subtopic:{subtopic_slug}, measure:{measure_slug}, version:{version}) "
+        f"has been returned to 'DRAFT' state.\n\n"
+        f"Remember to delete objects in S3, if applicable."
+    )
 
 
 if __name__ == "__main__":
