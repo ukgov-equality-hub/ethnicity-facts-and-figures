@@ -377,8 +377,7 @@ class PageService(Service):
             measure_version.measure.reference = reference if reference else None
 
         if measure_version.publish_status() == "REJECTED":
-            new_status = publish_status.inv[1]
-            measure_version.status = new_status
+            measure_version.status = "DRAFT"
 
         measure_version.updated_at = datetime.utcnow()
         measure_version.last_updated_by = last_updated_by_email
@@ -406,8 +405,7 @@ class PageService(Service):
 
     def send_measure_version_to_draft(self, measure_version: MeasureVersion):
         if "RETURN_TO_DRAFT" in measure_version.available_actions:
-            numerical_status = measure_version.publish_status(numerical=True)
-            measure_version.status = publish_status.inv[(numerical_status + 1) % 6]
+            measure_version.status = "DRAFT"
             db.session.commit()
             message = 'Sent measure_version "{}" back to {}'.format(measure_version.title, measure_version.status)
         else:
