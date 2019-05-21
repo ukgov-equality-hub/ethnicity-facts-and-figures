@@ -23,9 +23,7 @@ from application.cms.exceptions import (
 from application.utils import get_token_age, create_guid
 from application.utils import cleanup_filename
 
-publish_status = bidict(
-    REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4, UNPUBLISH=5, UNPUBLISHED=6
-)
+publish_status = bidict(REJECTED=0, DRAFT=1, INTERNAL_REVIEW=2, DEPARTMENT_REVIEW=3, APPROVED=4)
 
 TESTING_SPACE_SLUG = "testing-space"
 
@@ -413,10 +411,10 @@ class MeasureVersion(db.Model, CopyableModel):
         if self.status == "DEPARTMENT_REVIEW":
             return ["APPROVE", "REJECT"]
 
-        if self.status in ["REJECTED", "UNPUBLISHED"]:
+        if self.status == "REJECTED":
             return ["RETURN_TO_DRAFT"]
-        else:
-            return []
+
+        return []
 
     def next_state(self):
         num_status = self.publish_status(numerical=True)
@@ -443,10 +441,7 @@ class MeasureVersion(db.Model, CopyableModel):
         return message
 
     def not_editable(self):
-        if self.publish_status(numerical=True) == 5:
-            return False
-        else:
-            return self.publish_status(numerical=True) >= 2
+        return self.publish_status(numerical=True) >= 2
 
     def eligible_for_build(self):
         return self.status == "APPROVED"

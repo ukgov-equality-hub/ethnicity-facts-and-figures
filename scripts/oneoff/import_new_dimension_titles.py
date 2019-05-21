@@ -105,14 +105,7 @@ def import_dimension_titles(user_email, app, dimension_rows: List):  # noqa: C90
                         error_count += 1
                         continue
 
-                    if latest_measure_version.status in (
-                        "REJECTED",
-                        "INTERNAL_REVIEW",
-                        "DRAFT",
-                        "DEPARTMENT_REVIEW",
-                        "UNPUBLISH",
-                        "UNPUBLISHED",
-                    ):
+                    if latest_measure_version.status in ("REJECTED", "INTERNAL_REVIEW", "DRAFT", "DEPARTMENT_REVIEW"):
                         print(
                             f"---> ERROR: Need latest measure version to be PUBLISHED; "
                             f"state is {latest_measure_version.status}."

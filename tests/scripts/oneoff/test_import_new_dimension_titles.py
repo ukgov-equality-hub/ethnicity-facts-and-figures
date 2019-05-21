@@ -77,9 +77,7 @@ class TestImportNewDimensionTitles:
         assert measure.versions[1].dimensions[0].title == "my dimension 1"
         assert measure.versions[1].dimensions[1].title == "my dimension 2"
 
-    @pytest.mark.parametrize(
-        "new_version_state", ["REJECTED", "DRAFT", "INTERNAL_REVIEW", "DEPARTMENT_REVIEW", "UNPUBLISH", "UNPUBLISHED"]
-    )
+    @pytest.mark.parametrize("new_version_state", ["REJECTED", "DRAFT", "INTERNAL_REVIEW", "DEPARTMENT_REVIEW"])
     def test_script_ignores_measure_versions_where_a_new_minor_version_already_exists(
         self, single_use_app, new_version_state
     ):
@@ -119,8 +117,7 @@ class TestImportNewDimensionTitles:
         assert measure.versions[1].dimensions[0].title == "my dimension"
 
     @pytest.mark.parametrize(
-        "new_version_state",
-        ["REJECTED", "DRAFT", "INTERNAL_REVIEW", "DEPARTMENT_REVIEW", "APPROVED", "UNPUBLISH", "UNPUBLISHED"],
+        "new_version_state", ["REJECTED", "DRAFT", "INTERNAL_REVIEW", "DEPARTMENT_REVIEW", "APPROVED"]
     )
     def test_script_creates_new_minor_version_where_new_major_version_exists(self, single_use_app, new_version_state):
         user = UserFactory(user_type=TypeOfUser.ADMIN_USER, email="admin@eff.gov.uk")

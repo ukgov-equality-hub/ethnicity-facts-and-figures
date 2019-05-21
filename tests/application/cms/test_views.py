@@ -178,7 +178,7 @@ def test_admin_user_can_publish_page_in_dept_review(test_app_client, logged_in_a
     mock_request_build.assert_called_once()
 
 
-@pytest.mark.parametrize("cannot_publish_status", ("DRAFT", "INTERNAL_REVIEW", "APPROVED", "REJECTED", "UNPUBLISH"))
+@pytest.mark.parametrize("cannot_publish_status", ("DRAFT", "INTERNAL_REVIEW", "APPROVED", "REJECTED"))
 def test_admin_user_can_not_publish_page_not_in_department_review(
     test_app_client, logged_in_admin_user, mock_request_build, cannot_publish_status
 ):

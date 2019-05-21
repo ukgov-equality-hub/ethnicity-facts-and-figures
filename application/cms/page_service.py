@@ -327,9 +327,7 @@ class PageService(Service):
         self, measure_version, measure_version_form, data_source_forms, last_updated_by_email, **kwargs
     ):
         if measure_version.not_editable():
-            message = "Error updating '{}': Versions not in DRAFT, REJECT, UNPUBLISHED can't be edited".format(
-                measure_version.title
-            )
+            message = "Error updating '{}': Versions not in DRAFT, REJECT can't be edited".format(measure_version.title)
             self.logger.error(message)
             raise PageUnEditable(message)
         elif page_service._is_stale_update(measure_version_form.data, measure_version):
@@ -378,7 +376,7 @@ class PageService(Service):
             reference = measure_version_form.data["internal_reference"]
             measure_version.measure.reference = reference if reference else None
 
-        if measure_version.publish_status() in ["REJECTED", "UNPUBLISHED"]:
+        if measure_version.publish_status() == "REJECTED":
             new_status = publish_status.inv[1]
             measure_version.status = new_status
 
@@ -483,22 +481,6 @@ class PageService(Service):
     def first_published_date(measure_version):
         versions = measure_version.previous_minor_versions()
         return versions[-1].published_at if versions else measure_version.published_at
-
-    @staticmethod
-    def get_measure_versions_to_unpublish():
-        return (
-            MeasureVersion.query.filter_by(status="UNPUBLISH")
-            .order_by(MeasureVersion.title, desc(MeasureVersion.version))
-            .all()
-        )
-
-    @staticmethod
-    def mark_measure_versions_unpublished(measure_versions):
-        for measure_version in measure_versions:
-            measure_version.unpublished_at = datetime.utcnow()
-            measure_version.status = "UNPUBLISHED"
-
-            db.session.commit()
 
     @staticmethod
     def get_measure_version_pairs_with_data_corrections() -> List[Tuple[MeasureVersion, MeasureVersion]]:

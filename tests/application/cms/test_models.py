@@ -670,8 +670,6 @@ class TestMeasureVersionModel:
             ("INTERNAL_REVIEW", False),
             ("DEPARTMENT_REVIEW", False),
             ("REJECTED", False),
-            ("UNPUBLISH", False),
-            ("UNPUBLISHED", False),
             ("APPROVED", True),
         ],
     )
@@ -707,18 +705,6 @@ class TestMeasureVersionModel:
     def test_available_actions_for_approved_page(self):
         measure_version = MeasureVersionFactory(status="APPROVED")
         expected_available_actions = []
-
-        assert expected_available_actions == measure_version.available_actions
-
-    def test_no_available_actions_for_page_awaiting_unpublication(self):
-        measure_version = MeasureVersionFactory(status="UNPUBLISH")
-        expected_available_actions = []
-
-        assert expected_available_actions == measure_version.available_actions
-
-    def test_available_actions_for_unpublished(self):
-        measure_version = MeasureVersionFactory(status="UNPUBLISHED")
-        expected_available_actions = ["RETURN_TO_DRAFT"]
 
         assert expected_available_actions == measure_version.available_actions
 

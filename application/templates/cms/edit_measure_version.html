@@ -87,7 +87,7 @@
                 <button id="reject-measure" name="measure-action" value="reject-measure" class="govuk-button eff-button--destructive">Reject</button>
             {% endif %}
 
-            {% if measure_version.status == 'REJECTED' or measure_version.status == 'UNPUBLISHED' %}
+            {% if measure_version.status == 'REJECTED' %}
                 <button id="send-back-to-draft" name="measure-action" value="send-back-to-draft" class="govuk-button">Send back to draft</button>
             {%  endif %}
 
