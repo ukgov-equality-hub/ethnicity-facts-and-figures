@@ -631,6 +631,24 @@ class TestDimensionModel:
         assert dimension.static_file_name == "dimension-guid.csv"
         assert dimension.static_table_file_name == "dimension-guid-table.csv"
 
+class TestMeasureModel:
+
+    def test_versions_to_publish(self):
+
+        measure = MeasureFactory.create()
+        measure_version_1_0 = MeasureVersionFactory.create(measure=measure,version="1.0",status="APPROVED", published_at=datetime(2018, 1, 19).date())
+        measure_version_1_1 = MeasureVersionFactory.create(measure=measure,version="1.1",status="APPROVED", published_at=datetime(2018, 1, 20).date())
+        measure_version_1_2 = MeasureVersionFactory.create(measure=measure,version="1.2",status="APPROVED", published_at=datetime(2018, 1, 21).date())
+        measure_version_2_0 = MeasureVersionFactory.create(measure=measure,version="2.0",status="APPROVED", published_at=datetime(2019, 1, 19).date())
+        measure_version_2_1 = MeasureVersionFactory.create(measure=measure,version="2.1",status="DRAFT", published_at=None)
+
+
+        assert len(measure.versions_to_publish)==4
+        assert measure.versions_to_publish[0] == measure_version_2_0
+        assert measure.versions_to_publish[1] == measure_version_1_2
+        assert measure.versions_to_publish[2] == measure_version_1_1
+        assert measure.versions_to_publish[3] == measure_version_1_0
+
 
 class TestMeasureVersionModel:
     def test_publish_to_internal_review(self):

@@ -1125,12 +1125,8 @@ class Measure(db.Model):
 
     @property
     def versions_to_publish(self):
-        # Need to publish:
-        # 1. Latest published version
-        # 2. Latest published version of all previous major versions
-        if self.latest_published_version:
-            return [self.latest_published_version] + self.latest_published_version.previous_major_versions
-        return []
+        # Need to publish all approved versions with a publication date
+        return [version for version in self.versions if (version.status == "APPROVED" and version.published_at is not None)]
 
     @property
     def subtopic(self):
