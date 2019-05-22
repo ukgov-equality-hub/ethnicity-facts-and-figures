@@ -241,14 +241,12 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = MeasureVersion
         sqlalchemy_session_persistence = "flush"
-        exclude = {"_creator", "_published", "_publisher", "_unpublished", "_unpublisher", "_is_major_version"}
+        exclude = {"_creator", "_published", "_publisher", "_is_major_version"}
 
     # Underscored attributes are helpers that assist in the creation of a valid (business-logic-wise) measure version.
     _creator = factory.SubFactory(UserFactory)
     _published = factory.LazyAttribute(lambda o: o.status == "APPROVED")
     _publisher = factory.SubFactory(UserFactory)
-    _unpublished = factory.LazyAttribute(lambda o: o.status == "UNPUBLISHED")
-    _unpublisher = factory.Maybe("_unpublished", yes_declaration=factory.SubFactory(UserFactory))
     _is_major_version = factory.LazyAttribute(lambda o: o.version.endswith(".0"))
 
     # columns
@@ -269,8 +267,6 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     last_updated_by = factory.SelfAttribute("_creator.email")
     published_at = factory.Maybe("_published", yes_declaration=factory.Faker("past_date", start_date="-7d"))
     published_by = factory.Maybe("_published", yes_declaration=factory.SelfAttribute("_publisher.email"))
-    unpublished_at = factory.Maybe("_unpublished", yes_declaration=Faker().past_date(start_date="-7d"))
-    unpublished_by = factory.Maybe("_unpublished", yes_declaration=factory.SelfAttribute("_unpublisher.email"))
 
     # We probably don't want to fake this attribute, as it is tied into a system that SQLAlchemy manages for us,
     # providing automatic version counting when UPDATE statements are issued against the row. If you try to set it

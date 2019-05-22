@@ -253,7 +253,7 @@ class MeasureVersion(db.Model, CopyableModel):
     review_token = db.Column(db.String())  # used for review page URLs
     description = db.Column(db.Text)  # A short summary used by search engines and social sharing.
 
-    # status for measure versions is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED, UNPUBLISHED
+    # status for measure versions is one of APPROVED, DRAFT, DEPARTMENT_REVIEW, INTERNAL_REVIEW, REJECTED
     status = db.Column(db.String(255))
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)  # timestamp when page created
@@ -263,9 +263,6 @@ class MeasureVersion(db.Model, CopyableModel):
 
     published_at = db.Column(db.Date, nullable=True)  # date - set automatically when a measure version is published
     published_by = db.Column(db.String(255))  # email address of user who published the measure version
-
-    unpublished_at = db.Column(db.Date, nullable=True)
-    unpublished_by = db.Column(db.String(255))  # email address of user who unpublished the page
 
     db_version_id = db.Column(db.Integer, nullable=False)  # used to detect and prevent stale updates
     __mapper_args__ = {"version_id_col": db_version_id}
