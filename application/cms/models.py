@@ -1126,7 +1126,9 @@ class Measure(db.Model):
     @property
     def versions_to_publish(self):
         # Need to publish all approved versions with a publication date
-        return [version for version in self.versions if (version.status == "APPROVED" and version.published_at is not None)]
+        return [
+            version for version in self.versions if (version.status == "APPROVED" and version.published_at is not None)
+        ]
 
     @property
     def subtopic(self):
