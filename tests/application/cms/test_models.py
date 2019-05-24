@@ -648,7 +648,7 @@ class TestMeasureModel:
         measure_version_2_0 = MeasureVersionFactory.create(
             measure=measure, version="2.0", status="APPROVED", published_at=datetime(2019, 1, 19).date()
         )
-        measure_version_2_1 = MeasureVersionFactory.create(
+        MeasureVersionFactory.create(
             measure=measure, version="2.1", status="DRAFT", published_at=None
         )
 
