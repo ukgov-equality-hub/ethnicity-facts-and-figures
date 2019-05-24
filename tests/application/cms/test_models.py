@@ -648,9 +648,7 @@ class TestMeasureModel:
         measure_version_2_0 = MeasureVersionFactory.create(
             measure=measure, version="2.0", status="APPROVED", published_at=datetime(2019, 1, 19).date()
         )
-        MeasureVersionFactory.create(
-            measure=measure, version="2.1", status="DRAFT", published_at=None
-        )
+        MeasureVersionFactory.create(measure=measure, version="2.1", status="DRAFT", published_at=None)
 
         assert len(measure.versions_to_publish) == 4
         assert measure.versions_to_publish[0] == measure_version_2_0
