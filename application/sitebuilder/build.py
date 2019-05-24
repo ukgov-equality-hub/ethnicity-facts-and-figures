@@ -155,28 +155,36 @@ def write_measure_versions(measure, build_dir, local_build=False):
 
     for measure_version in measure.versions_to_publish:
         slug = os.path.join(
-            build_dir,
-            measure.subtopic.topic.slug,
-            measure.subtopic.slug,
-            measure.slug,
-            "latest" if measure_version == measure.latest_published_version else measure_version.version,
-        )
-        os.makedirs(slug, exist_ok=True)
-
-        process_dimensions(measure_version, slug)
-
-        content = render_template(
-            "static_site/measure.html",
-            topic_slug=measure.subtopic.topic.slug,
-            subtopic_slug=measure.subtopic.slug,
-            measure_version=measure_version,
+            build_dir, measure.subtopic.topic.slug, measure.subtopic.slug, measure.slug, measure_version.version
         )
 
-        file_path = os.path.join(slug, "index.html")
-        write_html(file_path, content)
+        write_measure_vesion_at_slug(measure, measure_version, slug, local_build)
 
-        if not local_build:
-            write_measure_version_downloads(measure_version, slug)
+        # ALSO publish the same version at a '/latests' URL if it’s the latest one.
+        if measure_version == measure.latest_published_version:
+
+            slug = os.path.join(build_dir, measure.subtopic.topic.slug, measure.subtopic.slug, measure.slug, "latest")
+
+            write_measure_vesion_at_slug(measure, measure_version, slug, local_build)
+
+
+def write_measure_vesion_at_slug(measure, measure_version, slug, local_build=False):
+    os.makedirs(slug, exist_ok=True)
+
+    process_dimensions(measure_version, slug)
+
+    content = render_template(
+        "static_site/measure.html",
+        topic_slug=measure.subtopic.topic.slug,
+        subtopic_slug=measure.subtopic.slug,
+        measure_version=measure_version,
+    )
+
+    file_path = os.path.join(slug, "index.html")
+    write_html(file_path, content)
+
+    if not local_build:
+        write_measure_version_downloads(measure_version, slug)
 
 
 def write_measure_version_downloads(measure_version, slug):
