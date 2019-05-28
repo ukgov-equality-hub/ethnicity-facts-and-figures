@@ -160,7 +160,7 @@ def write_measure_versions(measure, build_dir, local_build=False):
 
         write_measure_vesion_at_slug(measure, measure_version, slug, local_build)
 
-        # ALSO publish the same version at a '/latests' URL if it’s the latest one.
+        # ALSO publish the same version at a '/latest' URL if it’s the latest one.
         if measure_version == measure.latest_published_version:
 
             slug = os.path.join(build_dir, measure.subtopic.topic.slug, measure.subtopic.slug, measure.slug, "latest")
