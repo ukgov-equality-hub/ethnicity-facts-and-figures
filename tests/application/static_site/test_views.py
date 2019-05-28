@@ -917,7 +917,7 @@ class TestCorrections:
         assert corrected_measure_versions[0].find("a").text.strip() == "Measure 2 version 1.1"
         assert corrected_measure_versions[1].find("a").text.strip() == "Measure 1 version 1.1"
 
-    def test_latest_published_version_uses_latest_reference_rather_than_numerical_version_if_no_later_versions(
+    def test_latest_published_version_uses_numerical_version(
         self, test_app_client, logged_in_rdu_user
     ):
         resp = test_app_client.get("/corrections", follow_redirects=False)
@@ -925,5 +925,5 @@ class TestCorrections:
 
         corrected_measure_versions = page.findAll("div", {"class": "corrected-measure-version"})
 
-        assert corrected_measure_versions[0].find("a").attrs["href"].endswith("1.2")
-        assert corrected_measure_versions[1].find("a").attrs["href"].endswith("latest")
+        assert corrected_measure_versions[0].find("a").attrs["href"].endswith("1.1")
+        assert corrected_measure_versions[1].find("a").attrs["href"].endswith("1.1")

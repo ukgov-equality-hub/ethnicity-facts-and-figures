@@ -481,25 +481,14 @@ class PageService(Service):
         return versions[-1].published_at if versions else measure_version.published_at
 
     @staticmethod
-    def get_measure_version_pairs_with_data_corrections() -> List[Tuple[MeasureVersion, MeasureVersion]]:
-        measures_versions_with_data_corrections = (
-            MeasureVersion.query.filter(
-                MeasureVersion.update_corrects_data_mistake == True,
-                MeasureVersion.status == "APPROVED",
-                MeasureVersion.published_at != None,
-            )  # noqa
-            .order_by(desc(MeasureVersion.published_at))
-            .all()
-        )
+    def get_measure_versions_with_data_corrections() -> List[MeasureVersion]:
 
-        measure_versions_corrected_and_published = []
-        for measure_version in measures_versions_with_data_corrections:
-            published_version_with_correction = next(
-                filter(lambda mv: mv.major() == measure_version.major(), measure_version.measure.versions_to_publish)
-            )
-            measure_versions_corrected_and_published.append((measure_version, published_version_with_correction))
+        return MeasureVersion.query.filter(
+            MeasureVersion.update_corrects_data_mistake == True,
+            MeasureVersion.status == "APPROVED",
+            MeasureVersion.published_at != None,
+        ).order_by(desc(MeasureVersion.published_at)).all()
 
-        return measure_versions_corrected_and_published
 
 
 page_service = PageService()

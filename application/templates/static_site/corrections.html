@@ -11,24 +11,24 @@
 {% block content %}
     <h1 class="govuk-heading-xl">Corrections to published data</h1>
 
-    {% if measure_versions_corrected_and_published|length > 0 %}
-      {% for corrected_measure_version, published_version_with_correction in measure_versions_corrected_and_published %}
+    {% if measure_versions_with_corrections|length > 0 %}
+      {% for measure_version in measure_versions_with_corrections %}
         <div class="corrected-measure-version">
         <h2 class="govuk-heading-s govuk-!-margin-bottom-1">
           <a class="govuk-link" href="{{ url_for('static_site.measure_version',
-                               topic_slug=corrected_measure_version.measure.subtopic.topic.slug,
-                               subtopic_slug=corrected_measure_version.measure.subtopic.slug,
-                               measure_slug=corrected_measure_version.measure.slug,
-                               version=corrected_measure_version.version) }}">
-            {{ corrected_measure_version.title }}
+                               topic_slug=measure_version.measure.subtopic.topic.slug,
+                               subtopic_slug=measure_version.measure.subtopic.slug,
+                               measure_slug=measure_version.measure.slug,
+                               version=measure_version.version) }}">
+            {{ measure_version.title }}
           </a>
         </h2>
         <p class="govuk-body">
-          Version: {{ corrected_measure_version.version }}
+          Version: {{ measure_version.version }}
           <br>
-          {{ corrected_measure_version.published_at | format_friendly_date }}
+          {{ measure_version.published_at | format_friendly_date }}
           <br>
-          {{ corrected_measure_version.external_edit_summary }}
+          {{ measure_version.external_edit_summary }}
         </p>
         </div>
         <br>
