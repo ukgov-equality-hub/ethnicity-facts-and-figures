@@ -197,6 +197,8 @@
                     {% if new or measure_version.version == '1.0' %}<div class="hidden">{% endif %}
                         {% if form.is_minor_update %}
                             {{ form.update_corrects_data_mistake(disabled=form_disabled, diffs=diffs, inline=True) }}
+
+                            {{ form.update_corrects_measure_version(disabled=form_disabled, diffs=diffs) }}
                         {% endif %}
 
                         {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
