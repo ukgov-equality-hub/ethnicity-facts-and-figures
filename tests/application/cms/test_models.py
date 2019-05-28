@@ -651,10 +651,7 @@ class TestMeasureModel:
         MeasureVersionFactory.build(measure=measure, version="2.1", status="DRAFT", published_at=None)
 
         assert len(measure.versions_to_publish) == 4
-        assert measure.versions_to_publish[0] == measure_version_2_0
-        assert measure.versions_to_publish[1] == measure_version_1_2
-        assert measure.versions_to_publish[2] == measure_version_1_1
-        assert measure.versions_to_publish[3] == measure_version_1_0
+        assert measure.versions_to_publish == [measure_version_2_0, measure_version_1_2, measure_version_1_1, measure_version_1_0]
 
 
 class TestMeasureVersionModel:
