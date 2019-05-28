@@ -520,7 +520,9 @@ class MeasureVersion(db.Model, CopyableModel):
     def latest_published_minor_version(self):
         """This returns the latest published version which matches the same major version
         as the current version.
-        Note: this may return the same version (if it’s the only one published), or a previous version (if this one is not yet published). If there is no published version available yet, it returns None.
+        Note: this may return the same version (if it’s the only one published),
+        or a previous version (if this one is not yet published). If there is no published
+        version available yet, it returns None.
         """
         published_minor_versions = [
             v for v in self.measure.versions if v.major() == self.major() and v.status == "APPROVED"
