@@ -13,6 +13,8 @@ $govuk-assets-path: '/static/assets/';
 @import 'components/details';
 @import 'components/diffs';
 @import 'components/document_footer';
+@import 'components/factual_corrections';
+@import 'components/factual_mistake';
 @import 'components/flash_message';
 @import 'components/header';
 @import 'components/header_search_box';

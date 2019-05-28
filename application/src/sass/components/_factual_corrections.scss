@@ -1,0 +1,5 @@
+.eff-factual-corrections {
+  @include govuk-font($size: 19, $weight: normal);
+  border-left: $govuk-border-width-wide solid govuk-colour("green");
+  padding: govuk-spacing(3);
+}

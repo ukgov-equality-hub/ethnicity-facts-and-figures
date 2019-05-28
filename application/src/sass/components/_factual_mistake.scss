@@ -1,0 +1,13 @@
+.eff-factual-mistake {
+  @include govuk-font($size: 19, $weight: normal);
+  @include govuk-responsive-margin(3, "bottom");
+  color: govuk-colour("white");
+  background-color: $govuk-error-colour;
+  padding: govuk-spacing(3);
+}
+
+.eff-factual-mistake__link:link,
+.eff-factual-mistake__link:visited {
+  color: govuk-colour("white");
+  @include govuk-font($size: 19, $weight: bold);
+}
