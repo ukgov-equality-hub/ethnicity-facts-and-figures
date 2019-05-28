@@ -68,7 +68,6 @@ def topic(topic_slug):
     topic = page_service.get_topic_with_subtopics_and_measures(topic_slug)
 
     # We want to avoid passing measures into the template that the current user should not be able to see listed.
-    # Departmental users should not be able to see unpublished measures that have not been explicitly shared with them.
     def user_can_see_measure(measure):
         if (
             any(
