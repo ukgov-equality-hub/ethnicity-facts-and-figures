@@ -922,6 +922,24 @@ class TestMeasureVersionModel:
         assert mv_2_0.previous_minor_versions == []
         assert mv_2_0.later_minor_versions == []
 
+
+    def test_latest_published_minor_version(self, db_session):
+        mv_1_0: MeasureVersion = MeasureVersionFactory.create(status="APPROVED", version="1.0")
+        mv_1_1: MeasureVersion = MeasureVersionFactory.build(status="APPROVED", version="1.1", measure=mv_1_0.measure)
+        mv_1_2: MeasureVersion = MeasureVersionFactory.build(status="APPROVED", version="1.2", measure=mv_1_0.measure)
+        mv_1_3: MeasureVersion = MeasureVersionFactory.build(status="DRAFT", version="1.3", measure=mv_1_0.measure)
+
+        mv_2_0: MeasureVersion = MeasureVersionFactory.build(status="DRAFT", version="2.0", measure=mv_1_0.measure)
+
+        db_session.session.commit()
+
+        assert mv_1_0.latest_published_minor_version == mv_1_2
+        assert mv_1_1.latest_published_minor_version == mv_1_2
+        assert mv_1_2.latest_published_minor_version == mv_1_2
+        assert mv_1_3.latest_published_minor_version == mv_1_2
+        assert mv_2_0.latest_published_minor_version is None
+
+
     def test_has_known_statistical_errors(self):
         mv_1_0: MeasureVersion = MeasureVersionFactory.build(version="1.0", update_corrects_data_mistake=False)
         mv_1_1: MeasureVersion = MeasureVersionFactory.build(
