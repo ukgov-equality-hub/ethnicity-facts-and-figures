@@ -598,8 +598,8 @@ class TestPageService:
 
     def test_get_latest_publishable_versions_of_measures_for_subtopic(self):
         measure = MeasureFactory()
-        MeasureVersionFactory(version="1.0", status="APPROVED", measure=measure)
-        MeasureVersionFactory(version="1.1", status="APPROVED", measure=measure)
+        version_1_0 = MeasureVersionFactory(version="1.0", status="APPROVED", measure=measure)
+        version_1_1 = MeasureVersionFactory(version="1.1", status="APPROVED", measure=measure)
         latest_publishable_version = MeasureVersionFactory(version="1.2", status="APPROVED", measure=measure)
         MeasureVersionFactory(version="1.3", status="DRAFT", measure=measure)
 
@@ -609,7 +609,7 @@ class TestPageService:
         measures = page_service.get_publishable_measures_for_subtopic(measure.subtopic)
         assert len(measures) == 1
         assert measures[0] == measure
-        assert measure.versions_to_publish == [latest_publishable_version]
+        assert measure.versions_to_publish == [latest_publishable_version, version_1_1, version_1_0]
         assert measure_2.versions_to_publish == []
 
     @pytest.mark.parametrize(
