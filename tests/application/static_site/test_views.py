@@ -917,9 +917,7 @@ class TestCorrections:
         assert corrected_measure_versions[0].find("a").text.strip() == "Measure 2 version 1.1"
         assert corrected_measure_versions[1].find("a").text.strip() == "Measure 1 version 1.1"
 
-    def test_latest_published_version_uses_numerical_version(
-        self, test_app_client, logged_in_rdu_user
-    ):
+    def test_latest_published_version_uses_numerical_version(self, test_app_client, logged_in_rdu_user):
         resp = test_app_client.get("/corrections", follow_redirects=False)
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 

@@ -237,6 +237,5 @@ def corrections():
     measure_versions_with_corrections = page_service.get_measure_versions_with_data_corrections()
 
     return render_template(
-        "static_site/corrections.html",
-        measure_versions_with_corrections=measure_versions_with_corrections,
+        "static_site/corrections.html", measure_versions_with_corrections=measure_versions_with_corrections
     )

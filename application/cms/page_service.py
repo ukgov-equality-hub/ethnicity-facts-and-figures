@@ -483,12 +483,15 @@ class PageService(Service):
     @staticmethod
     def get_measure_versions_with_data_corrections() -> List[MeasureVersion]:
 
-        return MeasureVersion.query.filter(
-            MeasureVersion.update_corrects_data_mistake == True,
-            MeasureVersion.status == "APPROVED",
-            MeasureVersion.published_at != None,
-        ).order_by(desc(MeasureVersion.published_at)).all()
-
+        return (
+            MeasureVersion.query.filter(
+                MeasureVersion.update_corrects_data_mistake == True,
+                MeasureVersion.status == "APPROVED",
+                MeasureVersion.published_at != None,
+            )
+            .order_by(desc(MeasureVersion.published_at))
+            .all()
+        )
 
 
 page_service = PageService()
