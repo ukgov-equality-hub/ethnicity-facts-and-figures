@@ -10,7 +10,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.expected_conditions import _find_element
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    ElementClickInterceptedException,
+    ElementNotVisibleException,
+)
 
 from application.cms.models import TypeOfData, TypeOfStatistic, DataSource, FrequencyOfRelease, Organisation
 
@@ -113,7 +117,10 @@ class BasePage:
         return check_does_not_contain
 
     def select_checkbox_or_radio(self, element):
-        self.driver.execute_script("arguments[0].setAttribute('checked', 'checked')", element)
+        try:
+            element.click()
+        except (ElementClickInterceptedException, ElementNotVisibleException):
+            self.driver.execute_script("arguments[0].setAttribute('checked', 'checked')", element)
 
     def search_site(self, text):
         element = self.wait_for_element(BasePage.search_input)
