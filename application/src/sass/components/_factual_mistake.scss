@@ -1,13 +1,18 @@
 .eff-factual-mistake {
-  @include govuk-font($size: 19, $weight: normal);
+  @include govuk-font($size: 19, $weight: bold);
   @include govuk-responsive-margin(3, "bottom");
-  color: govuk-colour("white");
+  border-color: $govuk-error-colour;
+  border-width: $govuk-border-width;
+  border-style: solid;
+  padding: govuk-spacing(4);
   background-color: $govuk-error-colour;
-  padding: govuk-spacing(3);
+  color: govuk-colour('white');
 }
 
-.eff-factual-mistake__link:link,
-.eff-factual-mistake__link:visited {
-  color: govuk-colour("white");
-  @include govuk-font($size: 19, $weight: bold);
+.eff-factual-mistake__details,
+.eff-factual-mistake .govuk-heading-l,
+.eff-factual-mistake__details a:link,
+.eff-factual-mistake__details a:visited {
+  color: govuk-colour('white');
+  font-weight: bold;
 }
