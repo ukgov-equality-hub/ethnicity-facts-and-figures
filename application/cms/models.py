@@ -613,7 +613,7 @@ class MeasureVersion(db.Model, CopyableModel):
         return any(
             later_minor_version.update_corrects_data_mistake
             and later_minor_version.correction_for_measure_version <= self
-            for later_minor_version in self.later_minor_versions
+            for later_minor_version in self.later_published_minor_versions
         )
 
     @property
