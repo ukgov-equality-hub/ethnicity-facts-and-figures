@@ -2,10 +2,11 @@ import pytest
 from werkzeug.datastructures import ImmutableMultiDict
 
 
-from application.cms.models import DataSource
+from application.cms.models import DataSource, MeasureVersion
 from application.cms.forms import DataSourceForm, MeasureVersionForm
 
 from tests.models import MeasureVersionFactory
+from tests.utils import multidict_from_measure_version_and_kwargs
 
 
 class TestDataSourceForm:
@@ -70,11 +71,42 @@ class TestMeasureVersionForm:
 
         assert ("update_corrects_data_mistake" in form.errors.keys()) == form_should_error
 
-    @pytest.mark.parametrize("is_minor_update", ((True,), (False,)))
-    def test_all_fields_populate_with_data(self, is_minor_update):
-        measure_version = MeasureVersionFactory.create(version="1.1", status="APPROVED")
+    @pytest.mark.parametrize("is_minor_update", [False, True])
+    def test_fields_populate_with_data(self, is_minor_update):
+        measure_version_1_0 = MeasureVersionFactory.create(version="1.0", status="APPROVED")
+        measure_version_1_1 = MeasureVersionFactory.create(
+            version="1.1", measure=measure_version_1_0.measure, status="APPROVED"
+        )
 
-        form = MeasureVersionForm(is_minor_update=False, sending_to_review=True, obj=measure_version)
+        form = MeasureVersionForm(
+            is_minor_update=False,
+            sending_to_review=True,
+            obj=measure_version_1_1 if is_minor_update else measure_version_1_0,
+        )
+
+        for field in form:
+            if field.name in {"update_corrects_measure_version"}:
+                assert field.data is None
+
+            elif is_minor_update is False and field.name in {"external_edit_summary", "internal_edit_summary"}:
+                assert field.data is ""
+
+            else:
+                assert (
+                    field.data is not None and field.data is not ""
+                ), f"{field.name} should be populated from the measure version"
+
+    def test_fields_populate_with_data_when_correcting_data_mistake(self):
+        measure_version_1_0 = MeasureVersionFactory.create(version="1.0", status="APPROVED")
+        measure_version_1_1 = MeasureVersionFactory.create(
+            version="1.1",
+            measure=measure_version_1_0.measure,
+            status="APPROVED",
+            update_corrects_data_mistake=True,
+            update_corrects_measure_version=measure_version_1_0.id,
+        )
+
+        form = MeasureVersionForm(is_minor_update=False, sending_to_review=True, obj=measure_version_1_1)
 
         for field in form:
             assert (
@@ -87,3 +119,33 @@ class TestMeasureVersionForm:
         form = MeasureVersionForm(is_minor_update=False, sending_to_review=True, obj=measure_version)
 
         assert form.internal_reference.data == "", "Measure reference None should convert to empty string in the form"
+
+    @pytest.mark.parametrize("corrects_data_mistake", [True, False])
+    def test_populate_obj_doesnt_set_corrected_measure_version_if_not_correcting_a_data_mistake(
+        self, corrects_data_mistake
+    ):
+        measure_version_1_0 = MeasureVersionFactory.create(version="1.0", status="APPROVED")
+        measure_version_1_1 = MeasureVersionFactory.create(
+            version="1.1",
+            measure=measure_version_1_0.measure,
+            status="APPROVED",
+            update_corrects_data_mistake=corrects_data_mistake,
+            update_corrects_measure_version=measure_version_1_0.id,
+        )
+
+        new_measure_version = MeasureVersion()
+
+        form = MeasureVersionForm(
+            is_minor_update=True,
+            sending_to_review=False,
+            formdata=multidict_from_measure_version_and_kwargs(measure_version_1_1),
+        )
+
+        form.populate_obj(obj=new_measure_version)
+
+        assert new_measure_version.update_corrects_data_mistake is corrects_data_mistake
+
+        if corrects_data_mistake:
+            assert new_measure_version.update_corrects_measure_version == measure_version_1_0.id
+        else:
+            assert new_measure_version.update_corrects_measure_version is None

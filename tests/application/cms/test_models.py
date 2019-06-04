@@ -945,66 +945,36 @@ class TestMeasureVersionModel:
         assert mv_1_3.later_minor_versions == []
         assert mv_2_0.later_minor_versions == []
 
-    def test_later_published_minor_versions(self, db_session):
-        mv_1_0: MeasureVersion = MeasureVersionFactory.create(status="APPROVED", version="1.0")
-        mv_1_1: MeasureVersion = MeasureVersionFactory.build(status="APPROVED", version="1.1", measure=mv_1_0.measure)
-        mv_1_2: MeasureVersion = MeasureVersionFactory.build(status="APPROVED", version="1.2", measure=mv_1_0.measure)
-        mv_1_3: MeasureVersion = MeasureVersionFactory.build(status="DRAFT", version="1.3", measure=mv_1_0.measure)
-        mv_2_0: MeasureVersion = MeasureVersionFactory.build(status="DRAFT", version="2.0", measure=mv_1_0.measure)
-
-        db_session.session.commit()
-
-        assert mv_1_0.later_published_minor_versions == [mv_1_2, mv_1_1]
-        assert mv_1_1.later_published_minor_versions == [mv_1_2]
-        assert mv_1_2.later_published_minor_versions == []
-        assert mv_1_3.later_published_minor_versions == []
-        assert mv_2_0.later_published_minor_versions == []
-
-    def test_latest_published_minor_version(self, db_session):
-        mv_1_0: MeasureVersion = MeasureVersionFactory.create(status="APPROVED", version="1.0")
-        mv_1_1: MeasureVersion = MeasureVersionFactory.build(status="APPROVED", version="1.1", measure=mv_1_0.measure)
-        mv_1_2: MeasureVersion = MeasureVersionFactory.build(status="APPROVED", version="1.2", measure=mv_1_0.measure)
-        mv_1_3: MeasureVersion = MeasureVersionFactory.build(status="DRAFT", version="1.3", measure=mv_1_0.measure)
-
-        mv_2_0: MeasureVersion = MeasureVersionFactory.build(status="DRAFT", version="2.0", measure=mv_1_0.measure)
-
-        db_session.session.commit()
-
-        assert mv_1_0.latest_published_minor_version == mv_1_2
-        assert mv_1_1.latest_published_minor_version == mv_1_2
-        assert mv_1_2.latest_published_minor_version == mv_1_2
-        assert mv_1_3.latest_published_minor_version == mv_1_2
-        assert mv_2_0.latest_published_minor_version is None
-
+        
     def test_has_known_statistical_errors(self, db_session):
         mv_1_0: MeasureVersion = MeasureVersionFactory.create(version="1.0", update_corrects_data_mistake=False)
-        mv_1_1: MeasureVersion = MeasureVersionFactory.build(
-            version="1.1", measure=mv_1_0.measure, update_corrects_data_mistake=False, status="APPROVED"
+        mv_1_1: MeasureVersion = MeasureVersionFactory.create(
+            version="1.1", measure=mv_1_0.measure, update_corrects_data_mistake=False
         )
-        mv_1_2: MeasureVersion = MeasureVersionFactory.build(
-            version="1.2", measure=mv_1_0.measure, update_corrects_data_mistake=True, status="APPROVED"
+        mv_1_2: MeasureVersion = MeasureVersionFactory.create(
+            version="1.2",
+            measure=mv_1_0.measure,
+            update_corrects_data_mistake=True,
+            update_corrects_measure_version=mv_1_1.id,
         )
-        mv_1_3: MeasureVersion = MeasureVersionFactory.build(
-            version="1.3", measure=mv_1_0.measure, update_corrects_data_mistake=False, status="APPROVED"
+        mv_1_3: MeasureVersion = MeasureVersionFactory.create(
+            version="1.3", measure=mv_1_0.measure, update_corrects_data_mistake=False
         )
-        mv_1_4: MeasureVersion = MeasureVersionFactory.build(
-            version="1.4", measure=mv_1_0.measure, update_corrects_data_mistake=True, status="APPROVED"
+        mv_1_4: MeasureVersion = MeasureVersionFactory.create(
+            version="1.4",
+            measure=mv_1_0.measure,
+            update_corrects_data_mistake=True,
+            update_corrects_measure_version=mv_1_3.id,
         )
-        mv_1_5: MeasureVersion = MeasureVersionFactory.build(
-            version="1.5", measure=mv_1_0.measure, update_corrects_data_mistake=False, status="APPROVED"
-        )
-        mv_2_0: MeasureVersion = MeasureVersionFactory.build(
-            version="2.0", measure=mv_1_0.measure, update_corrects_data_mistake=False, status="APPROVED"
-        )
-        mv_2_1: MeasureVersion = MeasureVersionFactory.build(
-            version="2.1", measure=mv_1_0.measure, update_corrects_data_mistake=True, status="DRAFT"
+        mv_1_5: MeasureVersion = MeasureVersionFactory.create(
+            version="1.5", measure=mv_1_0.measure, update_corrects_data_mistake=False
         )
 
         db_session.session.commit()
 
-        assert mv_1_0.has_known_statistical_errors is True
+        assert mv_1_0.has_known_statistical_errors is False
         assert mv_1_1.has_known_statistical_errors is True
-        assert mv_1_2.has_known_statistical_errors is True
+        assert mv_1_2.has_known_statistical_errors is False
         assert mv_1_3.has_known_statistical_errors is True
         assert mv_1_4.has_known_statistical_errors is False
         assert mv_1_5.has_known_statistical_errors is False
@@ -1013,31 +983,28 @@ class TestMeasureVersionModel:
 
     def test_has_known_statistical_corrections(self, db_session):
         mv_1_0: MeasureVersion = MeasureVersionFactory.create(version="1.0", update_corrects_data_mistake=False)
-        mv_1_1: MeasureVersion = MeasureVersionFactory.build(
-            version="1.1", measure=mv_1_0.measure, update_corrects_data_mistake=False, status="APPROVED"
-        )
-        mv_1_2: MeasureVersion = MeasureVersionFactory.build(
-            version="1.2", measure=mv_1_0.measure, update_corrects_data_mistake=True, status="APPROVED"
-        )
-        mv_1_3: MeasureVersion = MeasureVersionFactory.build(
-            version="1.3", measure=mv_1_0.measure, update_corrects_data_mistake=False, status="APPROVED"
-        )
-        mv_1_4: MeasureVersion = MeasureVersionFactory.build(
-            version="1.4", measure=mv_1_0.measure, update_corrects_data_mistake=True, status="APPROVED"
-        )
-        mv_1_5: MeasureVersion = MeasureVersionFactory.build(
-            version="1.5", measure=mv_1_0.measure, update_corrects_data_mistake=False, status="APPROVED"
-        )
-        mv_2_0: MeasureVersion = MeasureVersionFactory.build(
-            version="2.0", measure=mv_1_0.measure, update_corrects_data_mistake=False, status="APPROVED"
-        )
-        mv_2_1: MeasureVersion = MeasureVersionFactory.build(
-            version="2.1", measure=mv_1_0.measure, update_corrects_data_mistake=True, status="DRAFT"
-        )
-        mv_2_2: MeasureVersion = MeasureVersionFactory.build(
-            version="2.2", measure=mv_1_0.measure, update_corrects_data_mistake=False, status="DRAFT"
-        )
 
+        mv_1_1: MeasureVersion = MeasureVersionFactory.create(
+            version="1.1", measure=mv_1_0.measure, update_corrects_data_mistake=False
+        )
+        mv_1_2: MeasureVersion = MeasureVersionFactory.create(
+            version="1.2",
+            measure=mv_1_0.measure,
+            update_corrects_data_mistake=True,
+            update_corrects_measure_version=mv_1_1.id,
+        )
+        mv_1_3: MeasureVersion = MeasureVersionFactory.create(
+            version="1.3", measure=mv_1_0.measure, update_corrects_data_mistake=False
+        )
+        mv_1_4: MeasureVersion = MeasureVersionFactory.create(
+            version="1.4",
+            measure=mv_1_0.measure,
+            update_corrects_data_mistake=True,
+            update_corrects_measure_version=mv_1_3.id,
+        )
+        mv_1_5: MeasureVersion = MeasureVersionFactory.create(
+            version="1.5", measure=mv_1_0.measure, update_corrects_data_mistake=False
+        )
         db_session.session.commit()
 
         assert mv_1_0.has_known_statistical_corrections is False

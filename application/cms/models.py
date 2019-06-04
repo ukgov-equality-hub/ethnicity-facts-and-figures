@@ -283,6 +283,10 @@ class MeasureVersion(db.Model, CopyableModel):
     internal_edit_summary = db.Column(db.TEXT)  # internal notes on new version, not displayed on public measure page
     update_corrects_data_mistake = db.Column(db.Boolean)  # Whether or not a minor updates fixes a mistake in the data
 
+    # Where a measure version is a correction, this points to the earliest version (within the same major version)
+    # that contains the error.
+    update_corrects_measure_version = db.Column(db.Integer, ForeignKey("measure_version.id"))
+
     # lowest_level_of_geography is not displayed on the public site but is used for geographic dashboard
     lowest_level_of_geography_id = db.Column(
         db.String(255), ForeignKey("lowest_level_of_geography.name", ondelete="restrict"), nullable=True
@@ -313,6 +317,12 @@ class MeasureVersion(db.Model, CopyableModel):
         secondary="data_source_in_measure_version",
         back_populates="measure_versions",
         order_by=asc(DataSource.id),
+    )
+    corrected_by_measure_version = db.relationship(
+        "MeasureVersion",
+        remote_side=[update_corrects_measure_version],
+        uselist=False,
+        backref=db.backref("correction_for_measure_version", remote_side=[id]),
     )
 
     @property
@@ -602,7 +612,8 @@ class MeasureVersion(db.Model, CopyableModel):
         version."""
         return any(
             later_minor_version.update_corrects_data_mistake
-            for later_minor_version in self.later_published_minor_versions
+            and later_minor_version.correction_for_measure_version <= self
+            for later_minor_version in self.later_minor_versions
         )
 
     @property

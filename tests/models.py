@@ -290,6 +290,7 @@ class MeasureVersionFactory(factory.alchemy.SQLAlchemyModelFactory):
     update_corrects_data_mistake = factory.Maybe(
         "_is_major_version", yes_declaration=False, no_declaration=random.choice((True, False))
     )
+    update_corrects_measure_version = None  # Needs to be manually assigned if `update_corrects_data_mistake` is True
     lowest_level_of_geography_id = factory.SelfAttribute("lowest_level_of_geography.name")
     methodology = factory.Faker("paragraph", nb_sentences=3)
     suppression_and_disclosure = factory.Faker("paragraph", nb_sentences=3)
