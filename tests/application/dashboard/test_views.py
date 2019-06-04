@@ -43,7 +43,7 @@ def test_data_corrections_page_with_no_corrections(test_app_client, logged_in_rd
     assert len(doc.xpath("//div[@class='corrected-measure-version']")) == 0
 
 
-def test_data_corrections_page_shows_corrected_versions_with_link_to_latest_minor_version_in_same_major_version(
+def test_data_corrections_page_shows_corrected_versions_with_link_to_page_containing_correction(
     test_app_client, logged_in_rdu_user, db_session
 ):
     measure = MeasureFactory(slug="measure", subtopics__slug="subtopic", subtopics__topic__slug="topic")
@@ -70,4 +70,4 @@ def test_data_corrections_page_shows_corrected_versions_with_link_to_latest_mino
 
     assert len(doc.xpath("//div[@class='corrected-measure-version']")) == 1
     assert "1 January 2001" in doc.xpath("//div[@class='corrected-measure-version']")[0].text_content()
-    assert doc.xpath("//div[@class='corrected-measure-version']//h2/a/@href")[0] == "/topic/subtopic/measure/1.2"
+    assert doc.xpath("//div[@class='corrected-measure-version']//h2/a/@href")[0] == "/topic/subtopic/measure/1.1"
