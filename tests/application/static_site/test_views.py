@@ -870,12 +870,10 @@ class TestMeasurePage:
         # GIVEN a 1.0 measure which contains factual errors
         measure = MeasureFactory()
 
-        measure_1_0 = MeasureVersionFactory.create(
-            measure=measure, status="APPROVED", version="1.0"
-        )
+        measure_1_0 = MeasureVersionFactory.create(measure=measure, status="APPROVED", version="1.0")
 
         MeasureVersionFactory.create(
-            measure=measure, status="APPROVED", version="1.1",update_corrects_data_mistake=True
+            measure=measure, status="APPROVED", version="1.1", update_corrects_data_mistake=True
         )
 
         measure_1_0_url = url_for(
@@ -894,20 +892,17 @@ class TestMeasurePage:
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
         # THEN it should contain a banner explaining that the page contains an error
-        assert 'This page contains a factual mistake. Details can be found on the corrected page.' in page.get_text()
-
+        assert "This page contains a factual mistake. Details can be found on the corrected page." in page.get_text()
 
     def test_version_with_factual_corrections(self, test_app_client, logged_in_rdu_user):
 
         # GIVEN a 1.0 measure which contains factual errors
         measure = MeasureFactory()
 
-        MeasureVersionFactory.create(
-            measure=measure, status="APPROVED", version="1.0"
-        )
+        MeasureVersionFactory.create(measure=measure, status="APPROVED", version="1.0")
 
         measure_1_1 = MeasureVersionFactory.create(
-            measure=measure, status="APPROVED", version="1.1",update_corrects_data_mistake=True
+            measure=measure, status="APPROVED", version="1.1", update_corrects_data_mistake=True
         )
 
         measure_1_1_url = url_for(
@@ -926,7 +921,7 @@ class TestMeasurePage:
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
         # THEN it should contain a banner explaining that the page contains corrections
-        assert 'This page corrects mistakes in a previous version. See details.' in page.get_text()
+        assert "This page corrects mistakes in a previous version. See details." in page.get_text()
 
 
 class TestCorrections:
