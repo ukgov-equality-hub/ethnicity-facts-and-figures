@@ -945,7 +945,6 @@ class TestMeasureVersionModel:
         assert mv_1_3.later_minor_versions == []
         assert mv_2_0.later_minor_versions == []
 
-        
     def test_has_known_statistical_errors(self, db_session):
         mv_1_0: MeasureVersion = MeasureVersionFactory.create(version="1.0", update_corrects_data_mistake=False)
         mv_1_1: MeasureVersion = MeasureVersionFactory.create(
