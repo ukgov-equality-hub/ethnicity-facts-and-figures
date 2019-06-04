@@ -892,7 +892,8 @@ class TestMeasurePage:
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
         # THEN it should contain a banner explaining that the page contains an error
-        assert "This page contains a factual mistake. Details can be found on the corrected page." in page.get_text()
+        assert page.find('h2', string="This page contains a factual mistake")
+        assert "Details can be found on the corrected page." in page.get_text()
 
     def test_version_with_factual_corrections(self, test_app_client, logged_in_rdu_user):
 
