@@ -239,14 +239,16 @@ def test_version_history(test_app_client, logged_in_rdu_user):
 
     assert details_tag
 
-    details_text = details_tag.get_text()
+    details_text = details_tag.get_text(separator="\n", strip=True).split("\n")
 
-    assert '10 January 2018'  in details_text
-    assert 'First published'  in details_text
-    assert '20 February 2018' in details_text
-    assert 'Fixed a spelling mistake.' in details_text
-    assert '13 December 2018' in details_text
-    assert 'Updated headings for clarity.' in details_text
+    assert details_text == ['full page history',
+        '13 December 2018',
+        'Updated headings for clarity.',
+        '20 February 2018',
+        'Fixed a spelling mistake.',
+        '10 January 2018',
+        'First published']
+
 
     first_published_link = find_link_with_text(details_tag, '10 January 2018')
 
