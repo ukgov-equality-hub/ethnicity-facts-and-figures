@@ -280,7 +280,10 @@ class MeasureVersionForm(FlaskForm):
     )
     external_edit_summary = RDUTextAreaField(
         label="Changes to previous version",
-        validators=[RequiredForReviewValidator(message="Summarise changes to the previous version")],
+        validators=[
+            NotRequiredForMajorVersions(),
+            RequiredForReviewValidator(message="Summarise changes to the previous version"),
+        ],
         hint=(
             "If you’ve corrected the data, explain what’s changed and why. Otherwise, summarise what you’ve updated "
             "(for example, ‘Updated with the latest available data’)."
