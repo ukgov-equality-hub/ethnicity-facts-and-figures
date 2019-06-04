@@ -17,7 +17,7 @@ from tests.models import (
     MeasureVersionWithDimensionFactory,
     UserFactory,
 )
-from tests.utils import assert_strings_match_ignoring_whitespace, details_tag_with_summary,find_link_with_text
+from tests.utils import assert_strings_match_ignoring_whitespace, details_tag_with_summary, find_link_with_text
 
 
 def test_homepage_includes_mailing_list_sign_up(test_app_client, logged_in_rdu_user, app):
@@ -214,19 +214,28 @@ def test_version_history(test_app_client, logged_in_rdu_user):
 
     measure = MeasureFactory(slug="my-measure", subtopics=[subtopic])
 
-    measure_1_0 = MeasureVersionFactory(
-        measure=measure, status="APPROVED", version="1.0", published_at=datetime.datetime(2018, 1, 10),
-        external_edit_summary="First published"
+    MeasureVersionFactory(
+        measure=measure,
+        status="APPROVED",
+        version="1.0",
+        published_at=datetime.datetime(2018, 1, 10),
+        external_edit_summary="First published",
     )
 
-    measure_1_1 = MeasureVersionFactory(
-        measure=measure, status="APPROVED", version="1.1", published_at=datetime.datetime(2018, 2, 20),
-        external_edit_summary="Fixed a spelling mistake."
+    MeasureVersionFactory(
+        measure=measure,
+        status="APPROVED",
+        version="1.1",
+        published_at=datetime.datetime(2018, 2, 20),
+        external_edit_summary="Fixed a spelling mistake.",
     )
 
-    measure_1_2 = MeasureVersionFactory(
-        measure=measure, status="APPROVED", version="1.2", published_at=datetime.datetime(2018, 12, 13),
-        external_edit_summary="Updated headings for clarity."
+    MeasureVersionFactory(
+        measure=measure,
+        status="APPROVED",
+        version="1.2",
+        published_at=datetime.datetime(2018, 12, 13),
+        external_edit_summary="Updated headings for clarity.",
     )
 
     resp = test_app_client.get("/my-topic/my-subtopic/my-measure/latest")
@@ -241,29 +250,30 @@ def test_version_history(test_app_client, logged_in_rdu_user):
 
     details_text = details_tag.get_text(separator="\n", strip=True).split("\n")
 
-    assert details_text == ['full page history',
-        '13 December 2018',
-        'Updated headings for clarity.',
-        '20 February 2018',
-        'Fixed a spelling mistake.',
-        '10 January 2018',
-        'First published']
+    assert details_text == [
+        "full page history",
+        "13 December 2018",
+        "Updated headings for clarity.",
+        "20 February 2018",
+        "Fixed a spelling mistake.",
+        "10 January 2018",
+        "First published",
+    ]
 
-
-    first_published_link = find_link_with_text(details_tag, '10 January 2018')
+    first_published_link = find_link_with_text(details_tag, "10 January 2018")
 
     assert first_published_link
-    assert first_published_link.get('href') == "/my-topic/my-subtopic/my-measure/1.0"
+    assert first_published_link.get("href") == "/my-topic/my-subtopic/my-measure/1.0"
 
-    spelling_mistake_link = find_link_with_text(details_tag, '20 February 2018')
+    spelling_mistake_link = find_link_with_text(details_tag, "20 February 2018")
 
     assert spelling_mistake_link
-    assert spelling_mistake_link.get('href') == "/my-topic/my-subtopic/my-measure/1.1"
+    assert spelling_mistake_link.get("href") == "/my-topic/my-subtopic/my-measure/1.1"
 
-    updated_headings_link = find_link_with_text(details_tag, '13 December 2018')
+    updated_headings_link = find_link_with_text(details_tag, "13 December 2018")
 
     assert updated_headings_link
-    assert updated_headings_link.get('href') == "/my-topic/my-subtopic/my-measure/1.2"
+    assert updated_headings_link.get("href") == "/my-topic/my-subtopic/my-measure/1.2"
 
 
 def test_view_export_page(test_app_client, logged_in_rdu_user):

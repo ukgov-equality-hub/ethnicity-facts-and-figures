@@ -57,9 +57,10 @@ def multidict_from_measure_version_and_kwargs(measure_version: MeasureVersion, *
         }
     )
 
+
 def details_tag_with_summary(dom_node, summary_text):
 
-    summary_tags = dom_node.find_all('summary')
+    summary_tags = dom_node.find_all("summary")
 
     summary_tags_with_matching_text = list(filter(lambda x: x.get_text().strip() == summary_text, summary_tags))
 
@@ -68,6 +69,7 @@ def details_tag_with_summary(dom_node, summary_text):
     else:
         return None
 
+
 def find_link_with_text(dom_node, link_text):
 
-    return dom_node.find('a', string=link_text)
+    return dom_node.find("a", string=link_text)
