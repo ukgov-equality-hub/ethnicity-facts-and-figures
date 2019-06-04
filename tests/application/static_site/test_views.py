@@ -872,9 +872,10 @@ class TestMeasurePage:
 
         measure_1_0 = MeasureVersionFactory.create(measure=measure, status="APPROVED", version="1.0")
 
-        MeasureVersionFactory.create(
-            measure=measure, status="APPROVED", version="1.1", update_corrects_data_mistake=True
-        )
+        MeasureVersionFactory.create(measure=measure, status="APPROVED", version="1.1",
+            update_corrects_data_mistake=True,
+            update_corrects_measure_version=measure_1_0.id)
+
 
         measure_1_0_url = url_for(
             "static_site.measure_version",
