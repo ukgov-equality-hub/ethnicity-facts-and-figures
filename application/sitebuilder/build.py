@@ -391,7 +391,7 @@ def build_other_static_pages(build_dir):
         os.path.join(output_dir, "index.html"),
         render_template(
             "static_site/corrections.html",
-            measure_versions_corrected_and_published=page_service.get_measure_version_pairs_with_data_corrections(),
+            measure_versions_with_corrections=page_service.get_measure_versions_with_data_corrections(),
         ),
     )
 

@@ -234,9 +234,8 @@ def search():
 @static_site_blueprint.route("/corrections")
 @login_required
 def corrections():
-    measure_versions_corrected_and_published = page_service.get_measure_version_pairs_with_data_corrections()
+    measure_versions_with_corrections = page_service.get_measure_versions_with_data_corrections()
 
     return render_template(
-        "static_site/corrections.html",
-        measure_versions_corrected_and_published=measure_versions_corrected_and_published,
+        "static_site/corrections.html", measure_versions_with_corrections=measure_versions_with_corrections
     )
