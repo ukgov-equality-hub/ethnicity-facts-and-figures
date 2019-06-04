@@ -10,7 +10,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.expected_conditions import _find_element
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    ElementClickInterceptedException,
+    ElementNotVisibleException,
+)
 
 from application.cms.models import TypeOfData, TypeOfStatistic, DataSource, FrequencyOfRelease, Organisation
 
@@ -113,7 +117,10 @@ class BasePage:
         return check_does_not_contain
 
     def select_checkbox_or_radio(self, element):
-        self.driver.execute_script("arguments[0].setAttribute('checked', 'checked')", element)
+        try:
+            element.click()
+        except (ElementClickInterceptedException, ElementNotVisibleException):
+            self.driver.execute_script("arguments[0].setAttribute('checked', 'checked')", element)
 
     def search_site(self, text):
         element = self.wait_for_element(BasePage.search_input)
@@ -554,6 +561,12 @@ class MeasureEditPage(BasePage):
         radio = element.find_element_by_xpath(f"//input[@value='{value}']")
         self.select_checkbox_or_radio(radio)
 
+    def set_corrected_measure_version(self, version):
+        element = self.driver.find_element(*EditMeasureLocators.UPDATE_CORRECTS_DATA_MISTAKE)
+        label = element.find_element_by_xpath(f"//label[contains(., '{version}')]")
+        radio = element.find_element_by_xpath(f"//input[@id='{label.get_attribute('for')}']")
+        self.select_checkbox_or_radio(radio)
+
     def fill_measure_page(self, measure_version, data_source):
         self.set_time_period_covered(measure_version.time_covered)
         self.set_area_covered(area="England")
@@ -587,6 +600,9 @@ class MeasureEditPage(BasePage):
 
     def fill_measure_page_minor_edit_fields(self, measure_version):
         self.set_update_corrects_data_mistake(measure_version.update_corrects_data_mistake)
+
+        if measure_version.update_corrects_data_mistake:
+            self.set_corrected_measure_version("1.0")
 
         self.set_text_field(EditMeasureLocators.EXTERNAL_EDIT_SUMMARY, measure_version.external_edit_summary)
 

@@ -161,6 +161,12 @@ class MeasureVersionForm(FlaskForm):
                 field.errors[:] = []
                 raise StopValidation()
 
+    class OnlyIfUpdatingDataMistake:
+        def __call__(self, form: "MeasureVersionForm", field):
+            if not form.update_corrects_data_mistake.data:
+                field.errors[:] = []
+                raise StopValidation()
+
     db_version_id = IntegerField(widget=HiddenInput())
     title = RDUStringField(
         label="Title",
@@ -263,6 +269,15 @@ class MeasureVersionForm(FlaskForm):
             RequiredForReviewValidator("Confirm whether this is a correction", else_optional=True),
         ],
     )
+    update_corrects_measure_version = RDURadioField(
+        label="In which version did the mistake first appear?",
+        coerce=int,
+        validators=[
+            NotRequiredForMajorVersions(),
+            OnlyIfUpdatingDataMistake(),
+            RequiredForReviewValidator("Confirm when the mistake first appeared", else_optional=True),
+        ],
+    )
     external_edit_summary = RDUTextAreaField(
         label="Changes to previous version",
         validators=[RequiredForReviewValidator(message="Summarise changes to the previous version")],
@@ -276,7 +291,9 @@ class MeasureVersionForm(FlaskForm):
         hint="Include any additional information someone might need if they’re working on this page in the future",
     )
 
-    def __init__(self, is_minor_update: bool, sending_to_review=False, *args, **kwargs):
+    def __init__(
+        self, is_minor_update: bool, sending_to_review=False, previous_minor_versions=tuple(), *args, **kwargs
+    ):
         super(MeasureVersionForm, self).__init__(*args, **kwargs)
 
         self.is_minor_update = is_minor_update
@@ -300,6 +317,24 @@ class MeasureVersionForm(FlaskForm):
 
         if kwargs.get("obj", None):
             self.internal_reference.data = kwargs["obj"].measure.reference or ""
+
+        if previous_minor_versions or kwargs.get("obj", None):
+            self.update_corrects_measure_version.choices = tuple(
+                [
+                    (measure_version.id, measure_version.version)
+                    for measure_version in (previous_minor_versions or kwargs.get("obj", None).previous_minor_versions)
+                ]
+            )
+
+        else:
+            self.update_corrects_measure_version.choices = tuple()
+
+    def populate_obj(self, obj: MeasureVersion):
+        super().populate_obj(obj)
+
+        # We only want to record the related measure version if this is actually a correction
+        if self.update_corrects_data_mistake.data is not True:
+            obj.update_corrects_measure_version = None
 
     def error_items(self):
         return self.errors.items()

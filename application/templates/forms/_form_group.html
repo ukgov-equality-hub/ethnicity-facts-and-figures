@@ -1,6 +1,8 @@
-{# Required parameters: id_, name, class_, fieldset_class, field_class, field_type, legend, fields, errors, label_class, disabled #}
+{# Required parameters: id_, name, class_, fieldset_class, field_class, field_type, legend, fields, errors, label_class, disabled, inline #}
 
-{% set govukBaseClass = 'govuk-' + ('checkboxes' if field_type == 'checkbox' else 'radios') %}
+{% set baseFieldType = ('checkboxes' if field_type == 'checkbox' else 'radios') %}
+{% set govukBaseClass = 'govuk-' + baseFieldType %}
+{% set hasConditionalQuestions = conditional_questions is not none %}
 
 <div id="{{ id_ }}" name="{{ name }}" class="govuk-form-group{% if class_ %} {{ class_ }}{% endif %}{% if errors is defined and errors %} govuk-form-group--error{% endif %}">
   {% if fields|length == 1 %}
@@ -13,15 +15,25 @@
     {% if field.hint or hint | default(false) %}
     <span class="govuk-hint">{{ field.hint or hint }}</span>
     {% endif %}
-      <div class="{{ govukBaseClass }}{% if inline %} {{ govukBaseClass }}--inline{% endif %}">
-        {% for field in fields %}
+      <div class="{{ govukBaseClass }}{% if inline %} {{ govukBaseClass }}--inline{% endif %}{% if conditional_questions %} {{ govukBaseClass }}--conditional{% endif %}"
+           {% if conditional_questions %} data-module="{{ baseFieldType }}"{% endif %}
+      >
+        {% for subfield in fields %}
             {% set field_options = {"disabled": disabled, "class_": field_class} %}
             {% if loop.last and other_field %}
               {% do field_options.update({"aria-controls": other_field.id + "-wrapper", "aria-expanded": "false"}) %}
             {% endif %}
-            {{ field(**field_options) }}
+            {% if conditional_questions and subfield.label.text in conditional_questions %}
+              {% do field_options.update({"conditional_question": conditional_questions.pop(subfield.label.text)}) %}
+            {% endif %}
+            {{ subfield(**field_options) }}
         {% endfor %}
       </div>
+
+      {# Fail fast to catch conditionals which have are associated with labels not present in this field #}
+      {% if hasConditionalQuestions and conditional_questions | length > 0 %}
+        {{ raise_exception("Not all conditional questions have been rendered.") }}
+      {% endif %}
 
       {% if fields and other_field %}
         <div class="panel panel-border-narrow govuk-form-group{% if other_field.errors %} govuk-form-group--error{% endif %}"

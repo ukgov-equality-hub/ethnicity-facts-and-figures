@@ -52,6 +52,8 @@ def multidict_from_measure_version_and_kwargs(measure_version: MeasureVersion, *
             "estimation": measure_version.estimation,
             "qmi_url": measure_version.qmi_url,
             "further_technical_information": measure_version.further_technical_information,
+            "update_corrects_data_mistake": measure_version.update_corrects_data_mistake,
+            "update_corrects_measure_version": measure_version.update_corrects_measure_version,
             "db_version_id": measure_version.db_version_id,
             **kwargs,
         }
