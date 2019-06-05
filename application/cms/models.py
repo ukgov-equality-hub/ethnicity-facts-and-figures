@@ -507,8 +507,41 @@ class MeasureVersion(db.Model, CopyableModel):
         return [v for v in self.measure.versions if v.major() == self.major() and v.minor() < self.minor()]
 
     @property
+    def previous_published_minor_versions(self):
+        return [
+            v
+            for v in self.measure.versions
+            if v.major() == self.major() and v.minor() < self.minor() and v.status == "APPROVED"
+        ]
+
+    @property
     def later_minor_versions(self):
         return [v for v in self.measure.versions if v.major() == self.major() and v.minor() > self.minor()]
+
+    @property
+    def later_published_minor_versions(self):
+        return [
+            v
+            for v in self.measure.versions
+            if v.major() == self.major() and v.minor() > self.minor() and v.status == "APPROVED"
+        ]
+
+    @property
+    def latest_published_minor_version(self):
+        """This returns the latest published version which matches the same major version
+        as the current version.
+        Note: this may return the same version (if it’s the only one published),
+        or a previous version (if this one is not yet published). If there is no published
+        version available yet, it returns None.
+        """
+        published_minor_versions = [
+            v for v in self.measure.versions if v.major() == self.major() and v.status == "APPROVED"
+        ]
+
+        if len(published_minor_versions) > 0:
+            return max(published_minor_versions)
+        else:
+            return None
 
     @property
     def first_published_date(self):
@@ -580,7 +613,7 @@ class MeasureVersion(db.Model, CopyableModel):
         return any(
             later_minor_version.update_corrects_data_mistake
             and later_minor_version.correction_for_measure_version <= self
-            for later_minor_version in self.later_minor_versions
+            for later_minor_version in self.later_published_minor_versions
         )
 
     @property
@@ -590,7 +623,7 @@ class MeasureVersion(db.Model, CopyableModel):
         still also having errors itself (presumably discovered at a later date)."""
         return self.update_corrects_data_mistake or any(
             previous_minor_version.update_corrects_data_mistake
-            for previous_minor_version in self.previous_minor_versions
+            for previous_minor_version in self.previous_published_minor_versions
         )
 
 

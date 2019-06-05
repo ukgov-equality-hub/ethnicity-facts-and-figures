@@ -1,0 +1,9 @@
+<div class="eff-factual-mistake">
+  <h2 class="govuk-heading-l">This page contains a factual mistake</h2>
+
+  <p class="govuk-body govuk-!-margin-bottom-0 eff-factual-mistake__details">Details can be found on <a href="{{ url_for('static_site.measure_version',
+                        topic_slug=topic_slug,
+                        subtopic_slug=subtopic_slug,
+                        measure_slug=measure_version.measure.slug,
+                        version=measure_version.latest_published_minor_version.version) }}" class="eff-factual-mistake__link">the corrected page</a>.</p>
+</div>

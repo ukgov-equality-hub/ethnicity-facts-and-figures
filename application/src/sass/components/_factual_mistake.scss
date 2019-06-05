@@ -1,0 +1,18 @@
+.eff-factual-mistake {
+  @include govuk-font($size: 19, $weight: bold);
+  @include govuk-responsive-margin(3, "bottom");
+  border-color: $govuk-error-colour;
+  border-width: $govuk-border-width;
+  border-style: solid;
+  padding: govuk-spacing(4);
+  background-color: $govuk-error-colour;
+  color: govuk-colour('white');
+}
+
+.eff-factual-mistake__details,
+.eff-factual-mistake .govuk-heading-l,
+.eff-factual-mistake__details a:link,
+.eff-factual-mistake__details a:visited {
+  color: govuk-colour('white');
+  font-weight: bold;
+}

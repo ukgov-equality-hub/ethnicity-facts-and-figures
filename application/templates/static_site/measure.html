@@ -109,6 +109,20 @@
         </p>
       {%  endif %}
 
+    </div>
+  </div>
+
+  {% if measure_version.has_known_statistical_errors %}
+    {% include "_shared/_contains_factual_mistake.html" %}
+  {% elif measure_version.has_known_statistical_corrections %}
+    {% include "_shared/_contains_corrections.html" %}
+  {% elif version != 'latest' %}
+    {% include "_shared/_newer_version_available.html" %}
+  {% endif %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
       <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
       <ol class="eff-table-of-contents">
         <li><a class="govuk-link" href="#main-facts-and-figures" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Main facts and figures" data-event-label=""><span class="eff-table-of-contents__number">1. </span><span class="eff-table-of-contents__content">Main facts and figures</span></a></li>
@@ -129,17 +143,6 @@
       </ol>
     </div>
   </div>
-
-  {% if version != 'latest' %}
-    <div class="old-edition-notice">
-      <h2 class="govuk-heading-l">There is a new version of this page</h2>
-      <p class="govuk-body">View the <a class="govuk-link" href="{{ url_for('static_site.measure_version',
-                            topic_slug=topic_slug,
-                            subtopic_slug=subtopic_slug,
-                            measure_slug=measure_version.measure.slug,
-                            version='latest') }}">latest version</a></p>
-    </div>
-  {% endif %}
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
