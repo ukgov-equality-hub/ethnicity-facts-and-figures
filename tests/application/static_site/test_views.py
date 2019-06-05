@@ -931,7 +931,7 @@ class TestMeasurePage:
         see_details_link = page.find("a", string="See details")
 
         assert see_details_link
-        assert page.select(see_details_link.get('href')) # ID hash
+        assert page.select(see_details_link.get("href"))  # ID hash
 
 
 class TestCorrections:
