@@ -539,7 +539,7 @@ class MeasureVersion(db.Model, CopyableModel):
         ]
 
         if len(published_minor_versions) > 0:
-            return published_minor_versions[0]
+            return max(published_minor_versions)
         else:
             return None
 
