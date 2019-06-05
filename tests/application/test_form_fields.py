@@ -77,7 +77,7 @@ class TestValidPublisherEmailAddress:
         self.form.email.data = "bad@email.com"
         assert self.form.validate() is False
 
-        os.environ["ACCOUNT_WHITELIST"] = "['bad@email.com']"
+        os.environ["ACCOUNT_WHITELIST"] = "{'bad@email.com': 'DEV_USER'}"
         assert self.form.validate() is True
 
 

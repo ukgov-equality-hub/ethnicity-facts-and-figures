@@ -65,7 +65,10 @@ def create_measure(topic_slug, subtopic_slug):
         abort(404)
 
     form = MeasureVersionForm(
-        is_minor_update=False, internal_edit_summary="Initial version", external_edit_summary="First published"
+        is_minor_update=False,
+        internal_edit_summary="Initial version",
+        external_edit_summary="First published",
+        previous_minor_versions=tuple(),
     )
     data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=None)
 
@@ -291,7 +294,10 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             is_minor_update=measure_version.is_minor_version(), obj=measure_version
         )
     elif request.method == "POST":
-        measure_version_form = MeasureVersionForm(is_minor_update=measure_version.is_minor_version())
+        measure_version_form = MeasureVersionForm(
+            is_minor_update=measure_version.is_minor_version(),
+            previous_minor_versions=measure_version.previous_minor_versions,
+        )
 
     saved = False
     errors_preamble = None

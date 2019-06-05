@@ -172,6 +172,9 @@ def create_app(config_object):
 
     mail.init_app(app)
 
+    def jinja_raise_exception(message):
+        raise RuntimeError(message)
+
     @app.context_processor
     def inject_globals():
         from application.auth.models import (
@@ -205,6 +208,7 @@ def create_app(config_object):
             current_timestamp=datetime.datetime.now().isoformat(),
             get_form_errors=get_form_errors,
             static_mode=get_bool(request.args.get("static_mode", app.config["STATIC_MODE"])),
+            raise_exception=jinja_raise_exception,
         )
 
     return app

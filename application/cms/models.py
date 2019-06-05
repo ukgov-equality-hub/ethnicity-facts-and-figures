@@ -283,6 +283,10 @@ class MeasureVersion(db.Model, CopyableModel):
     internal_edit_summary = db.Column(db.TEXT)  # internal notes on new version, not displayed on public measure page
     update_corrects_data_mistake = db.Column(db.Boolean)  # Whether or not a minor updates fixes a mistake in the data
 
+    # Where a measure version is a correction, this points to the earliest version (within the same major version)
+    # that contains the error.
+    update_corrects_measure_version = db.Column(db.Integer, ForeignKey("measure_version.id"))
+
     # lowest_level_of_geography is not displayed on the public site but is used for geographic dashboard
     lowest_level_of_geography_id = db.Column(
         db.String(255), ForeignKey("lowest_level_of_geography.name", ondelete="restrict"), nullable=True
@@ -313,6 +317,12 @@ class MeasureVersion(db.Model, CopyableModel):
         secondary="data_source_in_measure_version",
         back_populates="measure_versions",
         order_by=asc(DataSource.id),
+    )
+    corrected_by_measure_version = db.relationship(
+        "MeasureVersion",
+        remote_side=[update_corrects_measure_version],
+        uselist=False,
+        backref=db.backref("correction_for_measure_version", remote_side=[id]),
     )
 
     @property
@@ -497,8 +507,41 @@ class MeasureVersion(db.Model, CopyableModel):
         return [v for v in self.measure.versions if v.major() == self.major() and v.minor() < self.minor()]
 
     @property
+    def previous_published_minor_versions(self):
+        return [
+            v
+            for v in self.measure.versions
+            if v.major() == self.major() and v.minor() < self.minor() and v.status == "APPROVED"
+        ]
+
+    @property
     def later_minor_versions(self):
         return [v for v in self.measure.versions if v.major() == self.major() and v.minor() > self.minor()]
+
+    @property
+    def later_published_minor_versions(self):
+        return [
+            v
+            for v in self.measure.versions
+            if v.major() == self.major() and v.minor() > self.minor() and v.status == "APPROVED"
+        ]
+
+    @property
+    def latest_published_minor_version(self):
+        """This returns the latest published version which matches the same major version
+        as the current version.
+        Note: this may return the same version (if it’s the only one published),
+        or a previous version (if this one is not yet published). If there is no published
+        version available yet, it returns None.
+        """
+        published_minor_versions = [
+            v for v in self.measure.versions if v.major() == self.major() and v.status == "APPROVED"
+        ]
+
+        if len(published_minor_versions) > 0:
+            return max(published_minor_versions)
+        else:
+            return None
 
     @property
     def first_published_date(self):
@@ -568,7 +611,9 @@ class MeasureVersion(db.Model, CopyableModel):
         if *this* version is correcting a mistake - because it might be that not all the mistakes were fixed by this
         version."""
         return any(
-            later_minor_version.update_corrects_data_mistake for later_minor_version in self.later_minor_versions
+            later_minor_version.update_corrects_data_mistake
+            and later_minor_version.correction_for_measure_version <= self
+            for later_minor_version in self.later_published_minor_versions
         )
 
     @property
@@ -578,7 +623,7 @@ class MeasureVersion(db.Model, CopyableModel):
         still also having errors itself (presumably discovered at a later date)."""
         return self.update_corrects_data_mistake or any(
             previous_minor_version.update_corrects_data_mistake
-            for previous_minor_version in self.previous_minor_versions
+            for previous_minor_version in self.previous_published_minor_versions
         )
 
 

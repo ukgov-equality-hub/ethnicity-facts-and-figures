@@ -934,6 +934,74 @@ class TestMeasurePage:
         measure_1_0_links = page.find_all("a", attrs={"href": measure_1_0_url})
         assert len(measure_1_0_links) == 0
 
+    def test_version_with_factual_error(self, test_app_client, logged_in_rdu_user):
+
+        # GIVEN a 1.0 measure which contains factual errors
+        measure = MeasureFactory()
+
+        measure_1_0 = MeasureVersionFactory.create(measure=measure, status="APPROVED", version="1.0")
+
+        MeasureVersionFactory.create(
+            measure=measure,
+            status="APPROVED",
+            version="1.1",
+            update_corrects_data_mistake=True,
+            update_corrects_measure_version=measure_1_0.id,
+        )
+
+        measure_1_0_url = url_for(
+            "static_site.measure_version",
+            topic_slug=measure_1_0.measure.subtopic.topic.slug,
+            subtopic_slug=measure_1_0.measure.subtopic.slug,
+            measure_slug=measure_1_0.measure.slug,
+            version=measure_1_0.version,
+        )
+
+        # WHEN we get the 1.0 measure page
+        resp = test_app_client.get(measure_1_0_url)
+
+        assert resp.status_code == 200
+
+        page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+        # THEN it should contain a banner explaining that the page contains an error
+        assert page.find("h2", string="This page contains a factual mistake")
+        assert "Details can be found on the corrected page." in page.get_text()
+
+    def test_version_with_factual_corrections(self, test_app_client, logged_in_rdu_user):
+
+        # GIVEN a 1.0 measure which contains factual errors
+        measure = MeasureFactory()
+
+        MeasureVersionFactory.create(measure=measure, status="APPROVED", version="1.0")
+
+        measure_1_1 = MeasureVersionFactory.create(
+            measure=measure, status="APPROVED", version="1.1", update_corrects_data_mistake=True
+        )
+
+        measure_1_1_url = url_for(
+            "static_site.measure_version",
+            topic_slug=measure_1_1.measure.subtopic.topic.slug,
+            subtopic_slug=measure_1_1.measure.subtopic.slug,
+            measure_slug=measure_1_1.measure.slug,
+            version=measure_1_1.version,
+        )
+
+        # WHEN we get the 1.1 measure page
+        resp = test_app_client.get(measure_1_1_url)
+
+        assert resp.status_code == 200
+
+        page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+
+        # THEN it should contain a banner explaining that the page contains corrections
+        assert "This page corrects mistakes in a previous version. See details." in page.get_text()
+
+        see_details_link = page.find("a", string="See details")
+
+        assert see_details_link
+        assert page.select(see_details_link.get("href"))  # ID hash
+
 
 class TestCorrections:
     def setup(self):
@@ -986,13 +1054,11 @@ class TestCorrections:
         assert corrected_measure_versions[0].find("a").text.strip() == "Measure 2 version 1.1"
         assert corrected_measure_versions[1].find("a").text.strip() == "Measure 1 version 1.1"
 
-    def test_latest_published_version_uses_latest_reference_rather_than_numerical_version_if_no_later_versions(
-        self, test_app_client, logged_in_rdu_user
-    ):
+    def test_latest_published_version_uses_numerical_version(self, test_app_client, logged_in_rdu_user):
         resp = test_app_client.get("/corrections", follow_redirects=False)
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
         corrected_measure_versions = page.findAll("div", {"class": "corrected-measure-version"})
 
-        assert corrected_measure_versions[0].find("a").attrs["href"].endswith("1.2")
-        assert corrected_measure_versions[1].find("a").attrs["href"].endswith("latest")
+        assert corrected_measure_versions[0].find("a").attrs["href"].endswith("1.1")
+        assert corrected_measure_versions[1].find("a").attrs["href"].endswith("1.1")

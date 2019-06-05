@@ -127,6 +127,7 @@ class EditMeasureLocators:
     FURTHER_TECHNICAL_INFORMATION_INPUT = (By.NAME, "further_technical_information")
 
     UPDATE_CORRECTS_DATA_MISTAKE = (By.NAME, "update_corrects_data_mistake")
+    UPDATE_CORRECTS_DATA_MISTAKE = (By.NAME, "update_corrects_measure_version")
     EXTERNAL_EDIT_SUMMARY = (By.ID, "external_edit_summary")
 
 

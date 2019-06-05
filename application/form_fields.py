@@ -10,7 +10,6 @@ from enum import Enum
 
 from functools import partial
 
-
 from flask import render_template
 from markupsafe import Markup
 from wtforms.fields import SelectMultipleField, RadioField, StringField
@@ -63,7 +62,7 @@ def _strip_whitespace_extended(value):
 def is_whitelisted_or_government_email(email):
     email = email.lower()
 
-    email_whitelist = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "[]"))
+    email_whitelist = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "{}"))
     if email in email_whitelist:
         return True
 
@@ -152,7 +151,7 @@ class _RDUChoiceInput(_FormFieldTemplateRenderer):
         super().__init__(*args, **kwargs)
         self.field_type = field_type
 
-    def __call__(self, field, class_="", diffs=None, disabled=False, **kwargs):
+    def __call__(self, field, class_="", diffs=None, disabled=False, conditional_question=None, **kwargs):
         if getattr(field, "checked", field.data):
             kwargs["checked"] = True
 
@@ -163,7 +162,11 @@ class _RDUChoiceInput(_FormFieldTemplateRenderer):
             class_=class_,
             diffs=diffs,
             disabled=disabled,
-            render_params={"value": field.data, "field_type": self.field_type.value},
+            render_params={
+                "value": field.data,
+                "field_type": self.field_type.value,
+                "conditional_question": conditional_question,
+            },
             field_params={**kwargs},
         )
 
@@ -186,6 +189,7 @@ class _FormGroup(_FormFieldTemplateRenderer):
         diffs=None,
         disabled=False,
         inline=False,
+        conditional_questions=None,
         **kwargs,
     ):
         subfields = [subfield for subfield in field]
@@ -205,6 +209,7 @@ class _FormGroup(_FormFieldTemplateRenderer):
                 "field_class": field_class,
                 "field_type": self.field_type.value,
                 "inline": inline,
+                "conditional_questions": conditional_questions,
             },
             field_params={**kwargs},
         )
