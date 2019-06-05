@@ -570,7 +570,11 @@
               <ol class="govuk-list">
                 <li>
                   {% if measure_version.published_at %}
-                    <time datetime="{{ measure_version.published_at }}" class="timestamp">{{ measure_version.published_at|format_friendly_date }}</time>
+                    <a class="govuk-link" href="{{ url_for('static_site.measure_version',
+                            topic_slug=topic_slug,
+                            subtopic_slug=subtopic_slug,
+                            measure_slug=measure_version.measure.slug,
+                            version=measure_version.version) }}"><time datetime="{{ measure_version.published_at }}" class="timestamp">{{ measure_version.published_at|format_friendly_date }}</time></a>
                   {% else %}
                     <span class="timestamp">TBC</span>
                   {% endif %}
@@ -580,7 +584,11 @@
                 </li>
                 {% for old_page_version in measure_version.previous_minor_versions %}
                   <li>
-                    <time datetime="{{ old_page_version.published_at }}" class="timestamp">{{ old_page_version.published_at|format_friendly_date }}</time>
+                    <a class="govuk-link" href="{{ url_for('static_site.measure_version',
+                            topic_slug=topic_slug,
+                            subtopic_slug=subtopic_slug,
+                            measure_slug=measure_version.measure.slug,
+                            version=old_page_version.version) }}"><time datetime="{{ old_page_version.published_at }}" class="timestamp">{{ old_page_version.published_at|format_friendly_date }}</time></a>
 
                     {% if (loop.index == loop|length) %}
                       {% set edit_summary = old_page_version.external_edit_summary or "First published" %}
