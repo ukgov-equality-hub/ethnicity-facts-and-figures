@@ -928,6 +928,11 @@ class TestMeasurePage:
         # THEN it should contain a banner explaining that the page contains corrections
         assert "This page corrects mistakes in a previous version. See details." in page.get_text()
 
+        see_details_link = page.find("a", string="See details")
+
+        assert see_details_link
+        assert page.select(see_details_link.get('href')) # ID hash
+
 
 class TestCorrections:
     def setup(self):
