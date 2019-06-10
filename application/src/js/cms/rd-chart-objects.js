@@ -336,7 +336,7 @@ function panelLinechartObject(data, x_axis_column, panel_column, chart_title, x_
     } else {
         panelNames = uniqueDataInColumnOrdered(dataRows, indices['category'], indices['custom'])
     }
-    var xAxisNames = uniqueDataInColumn(dataRows, indices['secondary']);
+    var xAxisNames = uniqueDataInColumnMaintainOrder(dataRows, indices['secondary']);
 
     var panelCharts = _.map(panelNames, function(panelName) {
             var values = _.map(xAxisNames, function(category) {
