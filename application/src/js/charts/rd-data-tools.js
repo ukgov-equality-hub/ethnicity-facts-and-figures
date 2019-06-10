@@ -129,13 +129,6 @@ function decimalPlaces(valueStr) {
     }
 }
 
-function uniqueDataInColumn(data, index) {
-    var values = _.map(data.slice(start = 0), function (item) {
-        return item[index];
-    });
-    return _.uniq(values).sort();
-}
-
 function uniqueDataInColumnOrdered(data, index, order_column) {
     // Sort by the specified column
     var sorted = _.sortBy(data, function (item) {
@@ -249,7 +242,6 @@ if (typeof exports !== 'undefined') {
     exports.seriesCouldBeYear = seriesCouldBeYear;
     exports.formatNumberWithDecimalPlaces = formatNumberWithDecimalPlaces;
 
-    exports.uniqueDataInColumn = uniqueDataInColumn;
     exports.uniqueDataInColumnOrdered = uniqueDataInColumnOrdered;
     exports.uniqueDataInColumnMaintainOrder = uniqueDataInColumnMaintainOrder;
 
