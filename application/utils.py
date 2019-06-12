@@ -86,7 +86,7 @@ def get_csv_data_for_download(filename):
 
     rows = []
     try:
-        with open(filename, "r", encoding="utf-8") as f:
+        with open(filename, "r", encoding="utf-8-sig") as f:
             reader = csv.reader(f, delimiter=",")
             for row in reader:
                 rows.append(row)
