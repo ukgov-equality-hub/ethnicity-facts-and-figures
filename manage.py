@@ -1,11 +1,14 @@
 #! /usr/bin/env python
 import ast
+import gzip
 
 import os
+import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 
+import boto3
 from flask_migrate import Migrate, MigrateCommand, upgrade
 from flask_script import Manager, Server
 from flask_security import SQLAlchemyUserDatastore
@@ -565,6 +568,32 @@ def unpublish_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         f"has been returned to 'DRAFT' state.\n\n"
         f"Remember to delete objects in S3, if applicable."
     )
+
+
+@manager.command
+def backup_database_to_s3():
+    app_name = os.environ["DB_BACKUP_NAME"]
+    db_backup_url = os.environ["DB_BACKUP_URL"]
+    db_backup_s3_bucket = os.environ["DB_BACKUP_S3_BUCKET"]
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+    temp_filename = f"{app_name}-{timestamp}.gz"
+    temp_filepath = f"/tmp/{temp_filename}"
+
+    with TimedExecution("Writing database backup ..."):
+        with gzip.open(temp_filepath, "wb") as f:
+            proc = subprocess.Popen(["pg_dump", db_backup_url], stdout=subprocess.PIPE, universal_newlines=True)
+
+            for stdout_line in iter(proc.stdout.readline, ""):
+                f.write(stdout_line.encode("utf - 8"))
+
+            proc.stdout.close()
+            proc.wait()
+
+    with TimedExecution("Uploading database backup to s3 ..."):
+        with open(temp_filepath, "rb") as f:
+            client = boto3.resource("s3")
+            bucket = client.Bucket(db_backup_s3_bucket)
+            bucket.upload_fileobj(Fileobj=f, Key=temp_filepath)
 
 
 if __name__ == "__main__":
