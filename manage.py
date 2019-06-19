@@ -255,11 +255,17 @@ def report_broken_build():
         .first()
     )
     if failed:
-        message = "Build failure in application %s. Build id %s created at %s\n\n%s" % (
+        message = "Build failure in application %s. Build id %s created at %s<br><br>%s" % (
             app.config["ENVIRONMENT"],
             failed.id,
             failed.created_at,
             failed.failure_reason,
+        )
+        message += (
+            f"Acknowledge with:<br>"
+            f"<strong><code>"
+            f'heroku run "./manage.py acknowledge_build_issue --build_id {failed.id}" -a APP_NAME'
+            f"</code></strong>"
         )
         subject = "Build failure in application %s on %s" % (app.config["ENVIRONMENT"], date.today())
         recipients = db.session.query(User).filter(User.user_type == TypeOfUser.DEV_USER.name).all()
