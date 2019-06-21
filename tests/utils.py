@@ -75,3 +75,16 @@ def details_tag_with_summary(dom_node, summary_text):
 def find_link_with_text(dom_node, link_text):
 
     return dom_node.find("a", string=link_text)
+
+
+def find_input_for_label_with_text(dom_node, label_text):
+
+    label_tags = dom_node.find_all("label")
+
+    label_tags_with_matching_text = list(filter(lambda x: x.get_text().strip() == label_text, label_tags))
+
+    if len(label_tags_with_matching_text) > 0:
+
+        return dom_node.select('input[for="' + label_tags_with_matching_text[0]["id"] + '"]')
+    else:
+        return None
