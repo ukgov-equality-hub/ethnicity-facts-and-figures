@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% from "_shared/_status_banner_macro.html" import status_banner %}
 {% from "_macros/_details.html" import govukDetails %}
+{% from "_macros/_back_to_top.html" import appBackToTop %}
 
 {% set breadcrumbs =
   [
@@ -124,7 +125,7 @@
     <div class="govuk-grid-column-two-thirds">
 
       <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
-      <ol class="eff-table-of-contents">
+      <ol class="eff-table-of-contents" id="toc">
         <li><a class="govuk-link" href="#main-facts-and-figures" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Main facts and figures" data-event-label=""><span class="eff-table-of-contents__number">1. </span><span class="eff-table-of-contents__content">Main facts and figures</span></a></li>
 
 
@@ -649,6 +650,8 @@
         </div>
 
       </div>
+
+      {{ appBackToTop(anchor="toc",text="Contents") }}
 
       {% include "static_site/_share.html" %}
 

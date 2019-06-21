@@ -1,0 +1,18 @@
+{# Adapted from https://github.com/alphagov/govuk-design-system/blob/master/views/partials/_back-to-top.njk #}
+
+{% macro appBackToTop(anchor=None, text=None) %}
+  {# Safari on OSX with `position: -webkit-sticky` requires a block level element.
+  To avoid a large focus area we use a wrapper element. #}
+  <div class="app-back-to-top app-back-to-top--hidden app-back-to-top--fixedxx" data-module="app-back-to-top">
+    <div class="app-back-to-top__container">
+      <a class="govuk-link govuk-link--no-visited-state app-back-to-top__link" href="#{{ anchor }}">
+        {#- The SVG needs `focusable="false"` so that Internet Explorer does not
+           treat it as an interactive element - without this it will be 'focusable'
+           when using the keyboard to navigate. #}
+        <svg role="presentation" focusable="false" class="app-back-to-top__icon" xmlns="http://www.w3.org/2000/svg" width="13" height="17" viewBox="0 0 13 17">
+          <path fill="currentColor" d="M6.5 0L0 6.5 1.4 8l4-4v12.7h2V4l4.3 4L13 6.4z"></path>
+        </svg>{{ text }}
+      </a>
+    </div>
+  </div>
+{% endmacro %}
