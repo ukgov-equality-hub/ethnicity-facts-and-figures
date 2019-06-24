@@ -83,8 +83,16 @@ def find_input_for_label_with_text(dom_node, label_text):
 
     label_tags_with_matching_text = list(filter(lambda x: x.get_text().strip() == label_text, label_tags))
 
-    if len(label_tags_with_matching_text) > 0:
+    if len(label_tags_with_matching_text) == 1:
 
-        return dom_node.select('input[for="' + label_tags_with_matching_text[0]["id"] + '"]')
+        id_label_is_for = label_tags_with_matching_text[0]["for"]
+
+        input_element = dom_node.select('input[id="' + id_label_is_for + '"]')
+
+        if len(input_element) == 1:
+            return input_element[0]
+        else:
+            raise Exception(f"No input found with the id '{id_label_is_for}'")
+
     else:
-        return None
+        raise Exception(f"Label not found with the text '{label_text}'")
