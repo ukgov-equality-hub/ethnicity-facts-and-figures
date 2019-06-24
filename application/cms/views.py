@@ -32,9 +32,10 @@ from application.cms.forms import (
     NewUploadForm,
     NewVersionForm,
     UploadForm,
+    DataSourceForm,
 )
 from application.cms.models import NewVersionType, MeasureVersion, Measure
-from application.cms.models import Organisation
+from application.cms.models import Organisation, DataSource
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
 from application.cms.utils import (
@@ -46,6 +47,8 @@ from application.cms.utils import (
 )
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
+
+from application import db
 
 
 @cms_blueprint.route("")
@@ -1109,3 +1112,95 @@ def view_measure_version_by_measure_version_id(measure_version_id):
             version=measure_version.version,
         )
     )
+
+
+@cms_blueprint.route("/data-sources/new", methods=["GET"])
+@login_required
+def new_data_source():
+
+    data_source_form = DataSourceForm()
+    organisations_by_type = Organisation.select_options_by_type()
+
+    return render_template(
+        "cms/new_data_source.html", data_source_form=data_source_form, organisations_by_type=organisations_by_type
+    )
+
+
+@cms_blueprint.route("/data-sources", methods=["POST"])
+@login_required
+def create_data_source():
+
+    data_source_form = DataSourceForm(request.form)
+
+    data_source = DataSource()
+    data_source_form.populate_obj(data_source)
+
+    if data_source.title:
+
+        db.session.add(data_source)
+        db.session.commit()
+
+        return redirect(url_for("cms.edit_data_source", data_source_id=data_source.id))
+
+    else:
+
+        errors = [{"href": "#title", "text": "Enter a title"}]
+
+        return render_template(
+            "cms/new_data_source.html",
+            data_source_form=data_source_form,
+            organisations_by_type=Organisation.select_options_by_type(),
+            errors=errors,
+        )
+
+
+@cms_blueprint.route("/data-sources/<data_source_id>", methods=["GET"])
+@login_required
+def edit_data_source(data_source_id):
+
+    data_source = DataSource.query.get(data_source_id)
+
+    if data_source is None:
+        raise PageNotFoundException()
+
+    data_source_form = DataSourceForm(obj=data_source)
+    organisations_by_type = Organisation.select_options_by_type()
+
+    return render_template(
+        "cms/edit_data_source.html",
+        data_source=data_source,
+        data_source_form=data_source_form,
+        organisations_by_type=organisations_by_type,
+    )
+
+
+@cms_blueprint.route("/data-sources/<data_source_id>", methods=["POST"])
+@login_required
+def update_data_source(data_source_id):
+
+    data_source = DataSource.query.get(data_source_id)
+
+    if data_source is None:
+        raise PageNotFoundException()
+
+    data_source_form = DataSourceForm(request.form)
+    data_source_form.populate_obj(data_source)
+
+    if data_source.title:
+
+        db.session.add(data_source)
+        db.session.commit()
+
+        return redirect(url_for("cms.edit_data_source", data_source_id=data_source.id))
+
+    else:
+
+        errors = [{"href": "#title", "text": "Enter a title"}]
+
+        return render_template(
+            "cms/edit_data_source.html",
+            data_source=data_source,
+            data_source_form=data_source_form,
+            organisations_by_type=Organisation.select_options_by_type(),
+            errors=errors,
+        )

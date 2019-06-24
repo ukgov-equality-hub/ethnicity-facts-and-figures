@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% from "cms/_data_source_form.html" import render_data_source_form %}
+
+{% block pageTitle %}Add data source{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">Add data source</h1>
+
+      <form method="POST" action="{{ url_for('cms.create_data_source' )}}">
+
+        {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=False, diffs=[]) }}
+
+        <button class="govuk-button">Save</button>
+
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}
