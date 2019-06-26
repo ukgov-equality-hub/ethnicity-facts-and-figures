@@ -1142,6 +1142,7 @@ def new_data_source(topic_slug, subtopic_slug, measure_slug, version):
     "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources", methods=["POST"]
 )
 @login_required
+@user_has_access
 def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
 
     topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
@@ -1193,6 +1194,7 @@ def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
     "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<data_source_id>", methods=["GET"]
 )
 @login_required
+@user_has_access
 def edit_data_source(topic_slug, subtopic_slug, measure_slug, version, data_source_id):
 
     topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
@@ -1226,6 +1228,7 @@ def edit_data_source(topic_slug, subtopic_slug, measure_slug, version, data_sour
     "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<data_source_id>", methods=["POST"]
 )
 @login_required
+@user_has_access
 def update_data_source(topic_slug, subtopic_slug, measure_slug, version, data_source_id):
 
     topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(

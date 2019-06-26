@@ -48,6 +48,24 @@ class TestAddDataSourceView:
         response = test_app_client.get("/cms/topic/subtopic/measure/1.0/edit/data-sources/new")
         assert response.status_code == 404
 
+    def test_returns_403_if_dept_user_cant_access_measure(self, test_app_client, logged_in_dept_user):
+
+        measure_version = MeasureVersionFactory.create()
+
+        url = f"{self.__measure_edit_url(measure_version)}/data-sources/new"
+
+        response = test_app_client.get(url)
+        assert response.status_code == 403
+
+    def test_returns_200_if_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
+
+        measure_version = MeasureVersionFactory.create(measure__shared_with=[logged_in_dept_user])
+
+        url = f"{self.__measure_edit_url(measure_version)}/data-sources/new"
+
+        response = test_app_client.get(url)
+        assert response.status_code == 200
+
 
 class TestCreateDataSource:
     def __edit_measure_version_url(self, measure_version):
@@ -108,6 +126,25 @@ class TestCreateDataSource:
 
         assert response.status_code == 404
 
+    def test_returns_403_if_dept_user_cant_access_measure(self, test_app_client, logged_in_dept_user):
+
+        measure_version = MeasureVersionFactory.create(measure__shared_with=[])
+
+        url = self.__create_data_source_for_measure_url(measure_version)
+
+        response = test_app_client.post(url, data={"title": "Test"})
+
+        assert response.status_code == 403
+
+    def test_returns_200_if_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
+
+        measure_version = MeasureVersionFactory.create(measure__shared_with=[logged_in_dept_user])
+
+        url = self.__create_data_source_for_measure_url(measure_version)
+
+        response = test_app_client.post(url, data={"title": "Test"})
+        assert response.status_code == 302
+
 
 class TestEditDataSourceView:
     def __get_page(self, test_app_client, data_source, measure_version):
@@ -158,6 +195,24 @@ class TestEditDataSourceView:
         response, _ = self.__get_page(test_app_client, data_source, measure_version)
 
         assert response.status_code == 404
+
+    def test_edit_page_if_dept_user_cannot_access_measure(self, test_app_client, logged_in_dept_user):
+
+        data_source = DataSourceFactory.create()
+        measure_version = MeasureVersionFactory.create(data_sources=[data_source], measure__shared_with=[])
+
+        response, _ = self.__get_page(test_app_client, data_source, measure_version)
+        assert response.status_code == 403
+
+    def test_edit_page_if_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
+
+        data_source = DataSourceFactory.create()
+        measure_version = MeasureVersionFactory.create(
+            data_sources=[data_source], measure__shared_with=[logged_in_dept_user]
+        )
+
+        response, _ = self.__get_page(test_app_client, data_source, measure_version)
+        assert response.status_code == 200
 
 
 class TestUpdateDataSource:
@@ -213,3 +268,27 @@ class TestUpdateDataSource:
 
         assert response.status_code == 200
         assert "Error: Edit data source" == page.find("title").text
+
+    def test_post_when_dept_user_cannot_access_measure(self, test_app_client, logged_in_dept_user):
+
+        data_source = DataSourceFactory.create(title="Police stats 2019")
+        measure_version = MeasureVersionFactory.create(data_sources=[data_source], measure__shared_with=[])
+
+        url = self.__update_data_source_url(data_source, measure_version)
+
+        response = test_app_client.post(url, data={"title": "Police statistics 2019"})
+
+        assert response.status_code == 403
+
+    def test_post_when_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
+
+        data_source = DataSourceFactory.create(title="Police stats 2019")
+        measure_version = MeasureVersionFactory.create(
+            data_sources=[data_source], measure__shared_with=[logged_in_dept_user]
+        )
+
+        url = self.__update_data_source_url(data_source, measure_version)
+
+        response = test_app_client.post(url, data={"title": "Police statistics 2019"})
+
+        assert response.status_code == 302
