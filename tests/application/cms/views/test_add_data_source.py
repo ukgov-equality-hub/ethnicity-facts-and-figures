@@ -82,7 +82,7 @@ class TestCreateDataSource:
 
         return f"{edit_measure_url}/data-sources"
 
-    def test_post_with_a_title(self, test_app_client, logged_in_rdu_user, db_session):
+    def test_post_with_a_title_redirects_to_edit_measure(self, test_app_client, logged_in_rdu_user, db_session):
 
         measure_version = MeasureVersionFactory.create(data_sources=[])
         url = self.__create_data_source_for_measure_url(measure_version)
@@ -167,7 +167,7 @@ class TestEditDataSourceView:
         response, _ = self.__get_page(test_app_client, data_source, measure_version)
         assert response.status_code == 200
 
-    def test_page_title(self, test_app_client, logged_in_rdu_user):
+    def test_page_title_is_set(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create()
         measure_version = MeasureVersionFactory.create(data_sources=[data_source])
@@ -176,7 +176,7 @@ class TestEditDataSourceView:
         assert "Edit data source" == page.find("h1").text
         assert "Edit data source" == page.find("title").text
 
-    def test_edit_form(self, test_app_client, logged_in_rdu_user):
+    def test_edit_form_fields_populate_from_existing_data(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create(title="Police statistics 2019")
         measure_version = MeasureVersionFactory.create(data_sources=[data_source])
@@ -232,7 +232,7 @@ class TestUpdateDataSource:
 
         return f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}/edit"
 
-    def test_post_with_an_updated_title(self, test_app_client, logged_in_rdu_user):
+    def test_post_with_an_updated_title_redirects_to_edit_measure(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create(title="Police stats 2019")
         measure_version = MeasureVersionFactory.create(data_sources=[data_source])
@@ -256,7 +256,7 @@ class TestUpdateDataSource:
 
         assert data_source.title == "Police statistics 2019", "Expected title to have been updated"
 
-    def test_post_with_no_title(self, test_app_client, logged_in_rdu_user):
+    def test_post_with_no_title_redisplays_form_with_error(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create(title="Police stats 2019")
         measure_version = MeasureVersionFactory.create(data_sources=[data_source])
