@@ -10,7 +10,7 @@
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">Add data source</h1>
 
-      <form method="POST" action="{{ url_for('cms.create_data_source' )}}">
+      <form method="POST" action="{{ url_for('cms.create_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version )}}">
 
         {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=False, diffs=[]) }}
 

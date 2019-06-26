@@ -1114,41 +1114,39 @@ def view_measure_version_by_measure_version_id(measure_version_id):
     )
 
 
-@cms_blueprint.route("/data-sources/new", methods=["GET"])
+@cms_blueprint.route(  # noqa: C901 (complexity)
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/new", methods=["GET"]
+)
 @login_required
-def new_data_source():
-
-    measure_version_id = request.args.get("measure_version_id")
-
-    if not measure_version_id:
-        abort(400, "No measure version specified")
-
-    measure_version = MeasureVersion.query.get(measure_version_id)
-
-    if not measure_version:
-        abort(400, "Invalid measure version specified")
+@user_has_access
+def new_data_source(topic_slug, subtopic_slug, measure_slug, version):
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
 
     data_source_form = DataSourceForm()
     organisations_by_type = Organisation.select_options_by_type()
 
     return render_template(
-        "cms/new_data_source.html", data_source_form=data_source_form, organisations_by_type=organisations_by_type
+        "cms/new_data_source.html",
+        data_source_form=data_source_form,
+        organisations_by_type=organisations_by_type,
+        topic=topic,
+        subtopic=subtopic,
+        measure=measure,
+        measure_version=measure_version,
     )
 
 
-@cms_blueprint.route("/data-sources", methods=["POST"])
+@cms_blueprint.route(  # noqa: C901 (complexity)
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources", methods=["POST"]
+)
 @login_required
-def create_data_source():
+def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
 
-    measure_version_id = request.form.get("measure_version_id")
-
-    if not measure_version_id:
-        abort(400, "No measure version specified")
-
-    measure_version = MeasureVersion.query.get(measure_version_id)
-
-    if not measure_version:
-        abort(400, "Invalid measure version specified")
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
 
     data_source_form = DataSourceForm(sending_to_review=False)
 
@@ -1162,7 +1160,15 @@ def create_data_source():
         measure_version.data_sources.append(data_source)
         db.session.commit()
 
-        return redirect(url_for("cms.edit_data_source", data_source_id=data_source.id))
+        return redirect(
+            url_for(
+                "cms.edit_measure_version",
+                topic_slug=topic.slug,
+                subtopic_slug=subtopic.slug,
+                measure_slug=measure.slug,
+                version=measure_version.version,
+            )
+        )
 
     else:
 
@@ -1176,16 +1182,29 @@ def create_data_source():
             data_source_form=data_source_form,
             organisations_by_type=Organisation.select_options_by_type(),
             errors=errors,
+            topic=topic,
+            subtopic=subtopic,
+            measure=measure,
+            measure_version=measure_version,
         )
 
 
-@cms_blueprint.route("/data-sources/<data_source_id>", methods=["GET"])
+@cms_blueprint.route(  # noqa: C901 (complexity)
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<data_source_id>", methods=["GET"]
+)
 @login_required
-def edit_data_source(data_source_id):
+def edit_data_source(topic_slug, subtopic_slug, measure_slug, version, data_source_id):
+
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
 
     data_source = DataSource.query.get(data_source_id)
 
     if data_source is None:
+        raise PageNotFoundException()
+
+    if data_source not in measure_version.data_sources:
         raise PageNotFoundException()
 
     data_source_form = DataSourceForm(obj=data_source)
@@ -1196,12 +1215,22 @@ def edit_data_source(data_source_id):
         data_source=data_source,
         data_source_form=data_source_form,
         organisations_by_type=organisations_by_type,
+        topic=topic,
+        subtopic=subtopic,
+        measure=measure,
+        measure_version=measure_version,
     )
 
 
-@cms_blueprint.route("/data-sources/<data_source_id>", methods=["POST"])
+@cms_blueprint.route(  # noqa: C901 (complexity)
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<data_source_id>", methods=["POST"]
+)
 @login_required
-def update_data_source(data_source_id):
+def update_data_source(topic_slug, subtopic_slug, measure_slug, version, data_source_id):
+
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
 
     data_source = DataSource.query.get(data_source_id)
 
@@ -1216,7 +1245,15 @@ def update_data_source(data_source_id):
 
         db.session.commit()
 
-        return redirect(url_for("cms.edit_data_source", data_source_id=data_source.id))
+        return redirect(
+            url_for(
+                "cms.edit_measure_version",
+                topic_slug=topic.slug,
+                subtopic_slug=subtopic.slug,
+                measure_slug=measure.slug,
+                version=measure_version.version,
+            )
+        )
 
     else:
 
@@ -1231,4 +1268,8 @@ def update_data_source(data_source_id):
             data_source_form=data_source_form,
             organisations_by_type=Organisation.select_options_by_type(),
             errors=errors,
+            topic=topic,
+            subtopic=subtopic,
+            measure=measure,
+            measure_version=measure_version,
         )

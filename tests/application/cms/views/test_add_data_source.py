@@ -10,138 +10,191 @@ from tests.utils import find_input_for_label_with_text
 
 
 class TestAddDataSourceView:
-    def __get_page(self, measure_version_id, test_app_client):
+    def __get_page(self, url, test_app_client):
 
-        response = test_app_client.get(f"/cms/data-sources/new?measure_version_id={measure_version_id}")
+        response = test_app_client.get(url)
 
         return (response, BeautifulSoup(response.data.decode("utf-8"), "html.parser"))
 
-    def test_returns_200_if_measure_version_set(self, test_app_client, logged_in_rdu_user):
+    def __measure_edit_url(self, measure_version):
+
+        measure_slug = measure_version.measure.slug
+        subtopic_slug = measure_version.measure.subtopic.slug
+        topic_slug = measure_version.measure.subtopic.topic.slug
+
+        return f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}/edit"
+
+    def test_returns_200(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionFactory.create()
 
-        response, _ = self.__get_page(measure_version.id, test_app_client)
+        url = f"{self.__measure_edit_url(measure_version)}/data-sources/new"
+
+        response, _ = self.__get_page(url, test_app_client)
         assert response.status_code == 200
 
-    def test_page_title_if_measure_version_set(self, test_app_client, logged_in_rdu_user):
+    def test_page_title(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionFactory.create()
 
-        response, page = self.__get_page(measure_version.id, test_app_client)
+        url = f"{self.__measure_edit_url(measure_version)}/data-sources/new"
+
+        response, page = self.__get_page(url, test_app_client)
         assert "Add data source" == page.find("h1").text
         assert "Add data source" == page.find("title").text
 
-    def test_returns_400_if_measure_version_no_set(self, test_app_client, logged_in_rdu_user):
+    def test_returns_404_if_measure_doesnt_exist(self, test_app_client, logged_in_rdu_user):
 
-        response = test_app_client.get("/cms/data-sources/new")
-        assert response.status_code == 400
-
-    def test_returns_400_if_measure_version_is_invalid(self, test_app_client, logged_in_rdu_user):
-
-        response = test_app_client.get("/cms/data-sources/new?measure_version_id=999999999")
-        assert response.status_code == 400
+        response = test_app_client.get("/cms/topic/subtopic/measure/1.0/edit/data-sources/new")
+        assert response.status_code == 404
 
 
 class TestCreateDataSource:
+    def __edit_measure_version_url(self, measure_version):
+
+        measure_slug = measure_version.measure.slug
+        subtopic_slug = measure_version.measure.subtopic.slug
+        topic_slug = measure_version.measure.subtopic.topic.slug
+
+        return f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}/edit"
+
+    def __create_data_source_for_measure_url(self, measure_version):
+
+        edit_measure_url = self.__edit_measure_version_url(measure_version)
+
+        return f"{edit_measure_url}/data-sources"
+
     def test_post_with_a_title(self, test_app_client, logged_in_rdu_user, db_session):
 
         measure_version = MeasureVersionFactory.create(data_sources=[])
+        url = self.__create_data_source_for_measure_url(measure_version)
 
-        response = test_app_client.post(
-            "/cms/data-sources", data={"measure_version_id": measure_version.id, "title": "Test"}
-        )
+        response = test_app_client.post(url, data={"measure_version_id": measure_version.id, "title": "Test"})
 
         assert response.status_code == 302
 
         redirected_to_location = response.headers["Location"]
 
-        match = re.search(r"/cms/data-sources/(\d+)$", redirected_to_location)
+        edit_measure_url = self.__edit_measure_version_url(measure_version)
 
-        assert match, f"Expected {redirected_to_location} to match /cms/data-sources/(\\d+)"
+        match = re.search(f"{edit_measure_url}$", redirected_to_location)
 
-        data_source_id = match.group(1)
+        assert match, f"Expected {redirected_to_location} to match {edit_measure_url}"
 
-        data_source = DataSource.query.get(data_source_id)
-
-        assert data_source, f"Expected to be able to find a data source with id {data_source_id}"
-        assert data_source.title == "Test"
-
+        # Refresh measure version from database
         measure_version = MeasureVersion.query.get(measure_version.id)
 
-        assert measure_version.data_sources == [
-            data_source
-        ], "Expected data source to have been associated with the measure version"
+        assert len(measure_version.data_sources) == 1, "Expected to be able to find a data source attached to measure"
+
+        assert measure_version.data_sources[0].title == "Test", "Expected data source to have a Title set"
+
+        measure_version = MeasureVersion.query.get(measure_version.id)
 
     def test_post_with_no_title(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionFactory.create()
 
-        response = test_app_client.post(
-            "/cms/data-sources", data={"measure_version_id": measure_version.id, "title": ""}
-        )
+        url = self.__create_data_source_for_measure_url(measure_version)
+
+        response = test_app_client.post(url, data={"measure_version_id": measure_version.id, "title": ""})
         page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
         assert response.status_code == 200
         assert "Error: Add data source" == page.find("title").text
 
-    def test_post_with_no_measure_version_id(self, test_app_client, logged_in_rdu_user):
+    def test_post_with_invalid_measure_version_path_id(self, test_app_client, logged_in_rdu_user):
 
-        response = test_app_client.post("/cms/data-sources", data={"title": "Test"})
+        response = test_app_client.post("/cms/topic/subtopic/measure_slug/1.0/data-sources", data={"title": "Test"})
 
-        assert response.status_code == 400
-
-    def test_post_with_invalid_measure_version_id(self, test_app_client, logged_in_rdu_user):
-
-        response = test_app_client.post("/cms/data-sources", data={"measure_version_id": "999999999", "title": "Test"})
-
-        assert response.status_code == 400
+        assert response.status_code == 404
 
 
 class TestEditDataSourceView:
-    def __get_page(self, test_app_client, data_source):
+    def __get_page(self, test_app_client, data_source, measure_version):
 
-        response = test_app_client.get(f"/cms/data-sources/{data_source.id}")
+        measure_slug = measure_version.measure.slug
+        subtopic_slug = measure_version.measure.subtopic.slug
+        topic_slug = measure_version.measure.subtopic.topic.slug
+
+        url = f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}/edit/data-sources/{data_source.id}"  # noqa: E501 (line too long)
+
+        response = test_app_client.get(url)
 
         return (response, BeautifulSoup(response.data.decode("utf-8"), "html.parser"))
 
     def test_returns_200(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create()
+        measure_version = MeasureVersionFactory.create(data_sources=[data_source])
 
-        response, _ = self.__get_page(test_app_client, data_source)
+        response, _ = self.__get_page(test_app_client, data_source, measure_version)
         assert response.status_code == 200
 
     def test_page_title(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create()
+        measure_version = MeasureVersionFactory.create(data_sources=[data_source])
 
-        response, page = self.__get_page(test_app_client, data_source)
+        response, page = self.__get_page(test_app_client, data_source, measure_version)
         assert "Edit data source" == page.find("h1").text
         assert "Edit data source" == page.find("title").text
 
     def test_edit_form(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create(title="Police statistics 2019")
+        measure_version = MeasureVersionFactory.create(data_sources=[data_source])
 
-        response, page = self.__get_page(test_app_client, data_source)
+        response, page = self.__get_page(test_app_client, data_source, measure_version)
 
         title_input = find_input_for_label_with_text(page, "Title of data source")
 
         assert "Police statistics 2019" == title_input["value"]
 
+    def test_edit_page_if_data_source_not_associated_with_measure_version(self, test_app_client, logged_in_rdu_user):
+
+        data_source = DataSourceFactory.create(title="Police statistics 2019")
+        measure_version = MeasureVersionFactory.create(data_sources=[])
+
+        response, _ = self.__get_page(test_app_client, data_source, measure_version)
+
+        assert response.status_code == 404
+
 
 class TestUpdateDataSource:
+    def __update_data_source_url(self, data_source, measure_version):
+
+        measure_slug = measure_version.measure.slug
+        subtopic_slug = measure_version.measure.subtopic.slug
+        topic_slug = measure_version.measure.subtopic.topic.slug
+
+        return f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}/edit/data-sources/{data_source.id}"  # noqa: E501 (line too long)
+
+    def __edit_measure_url(self, measure_version):
+
+        measure_slug = measure_version.measure.slug
+        subtopic_slug = measure_version.measure.subtopic.slug
+        topic_slug = measure_version.measure.subtopic.topic.slug
+
+        return f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}/edit"
+
     def test_post_with_an_updated_title(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create(title="Police stats 2019")
+        measure_version = MeasureVersionFactory.create(data_sources=[data_source])
 
-        response = test_app_client.post(f"/cms/data-sources/{data_source.id}", data={"title": "Police statistics 2019"})
+        url = self.__update_data_source_url(data_source, measure_version)
+
+        response = test_app_client.post(url, data={"title": "Police statistics 2019"})
 
         assert response.status_code == 302
 
         redirected_to_location = response.headers["Location"]
-        match = re.search(f"/cms/data-sources/{data_source.id}$", redirected_to_location)
-        assert match, f"Expected {redirected_to_location} to match /cms/data-sources/{data_source.id}"
+
+        edit_measure_url = self.__edit_measure_url(measure_version)
+
+        match = re.search(f"{edit_measure_url}$", redirected_to_location)
+
+        assert match, f"Expected {redirected_to_location} to match /{edit_measure_url}"
 
         # Re-fetch the model from the database to be sure that it has been saved.
         data_source = DataSource.query.get(data_source.id)
@@ -151,8 +204,10 @@ class TestUpdateDataSource:
     def test_post_with_no_title(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create(title="Police stats 2019")
+        measure_version = MeasureVersionFactory.create(data_sources=[data_source])
 
-        response = test_app_client.post(f"/cms/data-sources/{data_source.id}", data={"title": ""})
+        url = self.__update_data_source_url(data_source, measure_version)
+        response = test_app_client.post(url, data={"title": ""})
 
         page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
