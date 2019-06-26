@@ -1118,6 +1118,16 @@ def view_measure_version_by_measure_version_id(measure_version_id):
 @login_required
 def new_data_source():
 
+    measure_version_id = request.args.get("measure_version_id")
+
+    if not measure_version_id:
+        abort(400, "No measure version specified")
+
+    measure_version = MeasureVersion.query.get(measure_version_id)
+
+    if not measure_version:
+        abort(400, "Invalid measure version specified")
+
     data_source_form = DataSourceForm()
     organisations_by_type = Organisation.select_options_by_type()
 
@@ -1130,21 +1140,36 @@ def new_data_source():
 @login_required
 def create_data_source():
 
-    data_source_form = DataSourceForm(request.form)
+    measure_version_id = request.form.get("measure_version_id")
+
+    if not measure_version_id:
+        abort(400, "No measure version specified")
+
+    measure_version = MeasureVersion.query.get(measure_version_id)
+
+    if not measure_version:
+        abort(400, "Invalid measure version specified")
+
+    data_source_form = DataSourceForm(sending_to_review=False)
 
     data_source = DataSource()
     data_source_form.populate_obj(data_source)
 
-    if data_source.title:
+    # TODO: remove check on data_source.title and validate this within form.
+    if data_source_form.validate_on_submit() and data_source.title:
 
         db.session.add(data_source)
+        measure_version.data_sources.append(data_source)
         db.session.commit()
 
         return redirect(url_for("cms.edit_data_source", data_source_id=data_source.id))
 
     else:
 
-        errors = [{"href": "#title", "text": "Enter a title"}]
+        errors = get_form_errors(forms=[data_source_form])
+
+        # TODO: delete this once the validation has been added to the form.
+        errors.append(ErrorSummaryMessage(href="#title-label", text="Enter a title"))
 
         return render_template(
             "cms/new_data_source.html",
@@ -1183,19 +1208,22 @@ def update_data_source(data_source_id):
     if data_source is None:
         raise PageNotFoundException()
 
-    data_source_form = DataSourceForm(request.form)
+    data_source_form = DataSourceForm(sending_to_review=False)
     data_source_form.populate_obj(data_source)
 
-    if data_source.title:
+    # TODO: remove check on data_source.title and validate this within form.
+    if data_source_form.validate_on_submit() and data_source.title:
 
-        db.session.add(data_source)
         db.session.commit()
 
         return redirect(url_for("cms.edit_data_source", data_source_id=data_source.id))
 
     else:
 
-        errors = [{"href": "#title", "text": "Enter a title"}]
+        errors = get_form_errors(forms=[data_source_form])
+
+        # TODO: delete this once the validation has been added to the form.
+        errors.append(ErrorSummaryMessage(href="#title-label", text="Enter a title"))
 
         return render_template(
             "cms/edit_data_source.html",
