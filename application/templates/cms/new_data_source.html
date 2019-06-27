@@ -32,12 +32,5 @@
 
 {% block bodyEnd %}
   {{ super() }}
-  <script>
-    govukGovernmentOrganisationsAutocomplete({
-        selectElement: document.querySelector('select.publisher'),
-        showAllValues: false,
-        minLength: 2,
-        defaultValue: ''
-    });
-  </script>
+  {% include "cms/_initialize_publisher_autocomplete.html" %}
 {% endblock %}
