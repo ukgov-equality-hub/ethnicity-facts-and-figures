@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
+{% from "cms/_data_source_form.html" import render_data_source_form %}
+
+{% block pageTitle %}Add data source{% endblock %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
+    {"url": url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version), "text": measure_version.title}
+  ]
+%}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">Add data source</h1>
+
+      <form method="POST" action="{{ url_for('cms.create_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version )}}">
+
+        {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=False, diffs=[]) }}
+
+        <button class="govuk-button">Save</button>
+
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  {% include "cms/_initialize_publisher_autocomplete.html" %}
+{% endblock %}
