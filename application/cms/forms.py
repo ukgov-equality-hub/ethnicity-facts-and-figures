@@ -76,11 +76,6 @@ class RequiredForReviewValidator(InputRequired):
 
 
 class DataSourceForm(FlaskForm):
-    # Updated via JS if a user wants to remove the data source
-    remove_data_source = RDUCheckboxField(
-        label="Remove data source", choices=[("remove-source", "Remove source")], coerce=lambda x: x if x else ""
-    )
-
     title = RDUStringField(
         label="Title of data source",
         hint="For example, Crime and Policing Survey",
@@ -418,3 +413,7 @@ class NewVersionForm(FlaskForm):
                 ),
             ),
         ]
+
+
+class RemoveDataSourceForm(FlaskForm):
+    pass

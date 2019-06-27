@@ -3,6 +3,7 @@ import json
 
 from flask import redirect, render_template, request, url_for, abort, flash, current_app, jsonify, session
 from flask_login import login_required, current_user
+from sqlalchemy.exc import DataError
 from werkzeug.datastructures import CombinedMultiDict
 
 from application.auth.models import (
@@ -33,18 +34,13 @@ from application.cms.forms import (
     NewVersionForm,
     UploadForm,
     DataSourceForm,
+    RemoveDataSourceForm,
 )
 from application.cms.models import NewVersionType, MeasureVersion, Measure
 from application.cms.models import Organisation, DataSource
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
-from application.cms.utils import (
-    copy_form_errors,
-    get_data_source_forms,
-    get_form_errors,
-    ErrorSummaryMessage,
-    TextFieldDiff,
-)
+from application.cms.utils import copy_form_errors, get_form_errors, ErrorSummaryMessage, TextFieldDiff
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
 
@@ -73,15 +69,11 @@ def create_measure(topic_slug, subtopic_slug):
         external_edit_summary="First published",
         previous_minor_versions=tuple(),
     )
-    data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=None)
 
-    if form.validate_on_submit() and data_source_form.validate_on_submit() and data_source_2_form.validate_on_submit():
+    if form.validate_on_submit():
         try:
             new_measure_version = page_service.create_measure(
-                subtopic=subtopic,
-                measure_version_form=form,
-                data_source_forms=(data_source_form, data_source_2_form),
-                created_by_email=current_user.email,
+                subtopic=subtopic, measure_version_form=form, created_by_email=current_user.email
             )
 
             message = "Created page {}".format(new_measure_version.title)
@@ -107,8 +99,7 @@ def create_measure(topic_slug, subtopic_slug):
     return render_template(
         "cms/edit_measure_version.html",
         form=form,
-        data_source_form=data_source_form,
-        data_source_2_form=data_source_2_form,
+        remove_data_source_form=RemoveDataSourceForm(),
         topic=topic,
         subtopic=subtopic,
         measure=Measure(),
@@ -116,8 +107,9 @@ def create_measure(topic_slug, subtopic_slug):
         new=True,
         organisations_by_type=Organisation.select_options_by_type(),
         topics=page_service.get_topics(include_testing_space=True),
-        errors=get_form_errors(forms=(form, data_source_form, data_source_2_form)),
+        errors=get_form_errors(forms=(form,)),
         data_not_uploaded_error=False,
+        data_sources_not_added=False,
         dimensions_not_complete_error=False,
     )
 
@@ -290,8 +282,6 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
 
     diffs = {}
 
-    data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=measure_version)
-
     if request.method == "GET":
         measure_version_form = MeasureVersionForm(
             is_minor_update=measure_version.is_minor_version(), obj=measure_version
@@ -304,11 +294,7 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
 
     saved = False
     errors_preamble = None
-    if (
-        measure_version_form.validate_on_submit()
-        and data_source_form.validate_on_submit()
-        and data_source_2_form.validate_on_submit()
-    ):
+    if measure_version_form.validate_on_submit():
         additional_kwargs_from_request = {
             "status": request.form.get("status", None),
             "subtopic_id": request.form.get("subtopic", None),
@@ -317,7 +303,6 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             page_service.update_measure_version(
                 measure_version,
                 measure_version_form=measure_version_form,
-                data_source_forms=(data_source_form, data_source_2_form),
                 last_updated_by_email=current_user.email,
                 **additional_kwargs_from_request,
             )
@@ -374,15 +359,15 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "subtopic": measure_version.measure.subtopic,
         "measure": measure_version.measure,
         "measure_version": measure_version,
-        "data_source_form": data_source_form,
-        "data_source_2_form": data_source_2_form,
+        "remove_data_source_form": RemoveDataSourceForm(),
         "diffs": diffs,
         "organisations_by_type": Organisation.select_options_by_type(),
         "topics": page_service.get_topics(include_testing_space=True),
         "errors_preamble": errors_preamble,
-        "errors": get_form_errors(forms=[measure_version_form, data_source_form, data_source_2_form]),
+        "errors": get_form_errors(forms=[measure_version_form]),
         "new": False,
         "data_not_uploaded_error": False,
+        "data_sources_not_added": False,
         "dimensions_not_complete_error": False,
     }
 
@@ -469,25 +454,13 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             sending_to_review=True,
         )
 
-        data_source_form_to_validate, data_source_2_form_to_validate = get_data_source_forms(
-            request, measure_version=measure_version, sending_to_review=True
-        )
-
         invalid_dimensions = []
-
         for dimension in measure_version.dimensions:
             dimension_form = DimensionRequiredForm(obj=dimension, meta={"csrf": False})
             if not dimension_form.validate():
                 invalid_dimensions.append(dimension)
 
         measure_version_form_validated = measure_version_form_to_validate.validate()
-        data_source_form_validated = data_source_form_to_validate.validate()
-
-        # We only want to validate the secondary source if some data has been provided, in which case we ensure that the
-        # full data source is given.
-        data_source_2_form_validated = (
-            data_source_2_form_to_validate.validate() if any(data_source_2_form_to_validate.data.values()) else True
-        )
 
         # Measure versions should have a data file uploaded before sending to review
         data_file_uploaded = len(measure_version.uploads) > 0
@@ -495,9 +468,8 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
         if (
             not measure_version_form_validated
             or invalid_dimensions
-            or not data_source_form_validated
-            or not data_source_2_form_validated
             or not data_file_uploaded
+            or not measure_version.data_sources
         ):
             # don't need to show user page has been saved when
             # required field validation failed.
@@ -511,18 +483,14 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             # If the page was saved before sending to review form's db_version_id will be out of sync, so update it
             measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
 
-            data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=measure_version)
-
             copy_form_errors(from_form=measure_version_form_to_validate, to_form=measure_version_form)
-            copy_form_errors(from_form=data_source_form_to_validate, to_form=data_source_form)
-            copy_form_errors(from_form=data_source_2_form_to_validate, to_form=data_source_2_form)
 
-            non_form_error_messages = []
-            data_not_uploaded_error = dimensions_not_complete_error = False
+            additional_errors = []
+            data_not_uploaded_error = dimensions_not_complete_error = data_sources_not_added = False
             if invalid_dimensions:
                 dimensions_not_complete_error = True
                 for invalid_dimension in invalid_dimensions:
-                    non_form_error_messages.append(
+                    additional_errors.append(
                         ErrorSummaryMessage(
                             text="Your dimension is missing a title. Enter a title.",
                             href=f"./{invalid_dimension.guid}/edit?validate=true",
@@ -531,23 +499,24 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
 
             if not data_file_uploaded:
                 data_not_uploaded_error = True
-                non_form_error_messages.append(ErrorSummaryMessage(text="Upload the source data", href="#source-data"))
+                additional_errors.append(ErrorSummaryMessage(text="Upload the source data", href="#source-data"))
+
+            if not measure_version.data_sources:
+                data_sources_not_added = True
+                additional_errors.append(ErrorSummaryMessage(text="Add at least one data source", href="#data-sources"))
 
             context = {
                 "form": measure_version_form,
-                "data_source_form": data_source_form,
-                "data_source_2_form": data_source_2_form,
+                "remove_data_source_form": RemoveDataSourceForm(),
                 "topic": topic,
                 "subtopic": subtopic,
                 "measure": measure_version.measure,
                 "measure_version": measure_version,
                 "organisations_by_type": Organisation.select_options_by_type(),
                 "topics": page_service.get_topics(include_testing_space=True),
-                "errors": get_form_errors(
-                    forms=[measure_version_form, data_source_form, data_source_2_form],
-                    extra_non_form_errors=non_form_error_messages,
-                ),
+                "errors": get_form_errors(forms=[measure_version_form], extra_non_form_errors=additional_errors),
                 "data_not_uploaded_error": data_not_uploaded_error,
+                "data_sources_not_added": data_sources_not_added,
                 "dimensions_not_complete_error": dimensions_not_complete_error,
                 "new": False,
             }
@@ -1226,7 +1195,10 @@ def edit_data_source(topic_slug, subtopic_slug, measure_slug, version, data_sour
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    data_source = DataSource.query.get(data_source_id)
+    try:
+        data_source = DataSource.query.get(data_source_id)
+    except DataError:  # non-integer data_source_id
+        raise PageNotFoundException()
 
     if data_source is None:
         raise PageNotFoundException()
@@ -1260,21 +1232,85 @@ def update_data_source(topic_slug, subtopic_slug, measure_slug, version, data_so
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    data_source = DataSource.query.get(data_source_id)
+    try:
+        data_source = DataSource.query.get(data_source_id)
+    except DataError:  # non-integer data_source_id
+        raise PageNotFoundException()
 
     if data_source is None:
         raise PageNotFoundException()
 
+    if data_source not in measure_version.data_sources:
+        raise PageNotFoundException()
+
     data_source_form = DataSourceForm(sending_to_review=False)
-    data_source_form.populate_obj(data_source)
 
     # TODO: remove check on data_source.title and validate this within form.
-    if data_source_form.validate_on_submit() and data_source.title:
+    if data_source_form.validate_on_submit():
+        data_source_form.populate_obj(data_source)
 
+        if data_source.title:
+            db.session.commit()
+
+            message = 'Saved data source "{}"'.format(data_source.title)
+            flash(message, "info")
+
+            return redirect(
+                url_for(
+                    "cms.edit_measure_version",
+                    topic_slug=topic.slug,
+                    subtopic_slug=subtopic.slug,
+                    measure_slug=measure.slug,
+                    version=measure_version.version,
+                )
+            )
+
+    errors = get_form_errors(forms=[data_source_form])
+
+    # TODO: delete this once the validation has been added to the form.
+    errors.append(ErrorSummaryMessage(href="#title-label", text="Enter a title"))
+
+    return render_template(
+        "cms/edit_data_source.html",
+        data_source=data_source,
+        data_source_form=data_source_form,
+        organisations_by_type=Organisation.select_options_by_type(),
+        errors=errors,
+        topic=topic,
+        subtopic=subtopic,
+        measure=measure,
+        measure_version=measure_version,
+    )
+
+
+@cms_blueprint.route(
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<data_source_id>/remove", methods=["POST"]
+)
+@login_required
+@user_has_access
+def remove_data_source(topic_slug, subtopic_slug, measure_slug, version, data_source_id):
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
+
+    try:
+        data_source = DataSource.query.get(data_source_id)
+    except DataError:  # non-integer data_source_id
+        raise PageNotFoundException()
+
+    if data_source is None:
+        raise PageNotFoundException()
+
+    if data_source not in measure_version.data_sources:
+        raise PageNotFoundException()
+
+    remove_data_source_form = RemoveDataSourceForm()
+    if remove_data_source_form.validate_on_submit():
+        measure_version.data_sources.remove(data_source)
         db.session.commit()
 
-        message = 'Saved data source "{}"'.format(data_source.title)
-        flash(message, "info")
+        message = 'Removed data source "{}"'.format(data_source.title)
+        flash(message, "error")
 
         return redirect(
             url_for(
@@ -1286,21 +1322,16 @@ def update_data_source(topic_slug, subtopic_slug, measure_slug, version, data_so
             )
         )
 
-    else:
+    message = 'Unable to remove data source "{}"'.format(data_source.title)
+    flash(message, "error")
 
-        errors = get_form_errors(forms=[data_source_form])
-
-        # TODO: delete this once the validation has been added to the form.
-        errors.append(ErrorSummaryMessage(href="#title-label", text="Enter a title"))
-
-        return render_template(
-            "cms/edit_data_source.html",
-            data_source=data_source,
-            data_source_form=data_source_form,
-            organisations_by_type=Organisation.select_options_by_type(),
-            errors=errors,
-            topic=topic,
-            subtopic=subtopic,
-            measure=measure,
-            measure_version=measure_version,
+    return redirect(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=topic.slug,
+            subtopic_slug=subtopic.slug,
+            measure_slug=measure.slug,
+            version=measure_version.version,
+            errors=get_form_errors(forms=(remove_data_source_form,)),
         )
+    )

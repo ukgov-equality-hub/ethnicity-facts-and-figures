@@ -2,7 +2,15 @@ from random import shuffle
 
 import selenium
 
-from tests.functional.pages import HomePage, LogInPage, MeasureCreatePage, MeasureEditPage, TopicPage, AddSourceDataPage
+from tests.functional.pages import (
+    HomePage,
+    LogInPage,
+    MeasureCreatePage,
+    MeasureEditPage,
+    TopicPage,
+    AddSourceDataPage,
+    CreateDataSourcePage,
+)
 from tests.utils import get_page_with_title
 
 EXPECTED_STATUSES = {
@@ -58,8 +66,15 @@ def create_measure_starting_at_topic_page(
     CREATE v1 4: Add some content
     """
     measure_edit_page = MeasureEditPage(driver)
-    measure_edit_page.fill_measure_page(sample_measure_version, sample_data_source)
+    measure_edit_page.fill_measure_page(sample_measure_version)
     measure_edit_page.click_save()
+    """
+    CREATE v1 5: Add a data source
+    """
+    measure_edit_page.click_add_primary_data_source()
+    data_source_page = CreateDataSourcePage(driver)
+    data_source_page.fill_data_source(sample_data_source)
+    data_source_page.click_save()
     """
     CREATE v1 5: Upload a source data file
     """

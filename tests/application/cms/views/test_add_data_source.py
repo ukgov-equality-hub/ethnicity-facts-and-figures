@@ -222,7 +222,10 @@ class TestUpdateDataSource:
         subtopic_slug = measure_version.measure.subtopic.slug
         topic_slug = measure_version.measure.subtopic.topic.slug
 
-        return f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}/edit/data-sources/{data_source.id}"  # noqa: E501 (line too long)
+        return (
+            f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}"
+            f"/edit/data-sources/{data_source.id}"
+        )
 
     def __edit_measure_url(self, measure_version):
 

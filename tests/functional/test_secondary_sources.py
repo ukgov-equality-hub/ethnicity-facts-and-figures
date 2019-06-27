@@ -2,6 +2,7 @@ import random
 
 from application.auth.models import TypeOfUser
 
+from tests.functional.pages import CreateDataSourcePage
 from tests.functional.utils import create_measure_starting_at_topic_page, navigate_to_topic_page, driver_login
 from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory
 
@@ -34,16 +35,10 @@ def test_secondary_source_can_be_added_and_removed(driver, live_server, governme
     )
 
     # Add and save a secondary data source
-    add_secondary_source = driver.find_element_by_link_text("Add secondary source")
-    measure_edit_page.scroll_and_click(add_secondary_source)
-    measure_edit_page.fill_secondary_data_source(sample_data_source)
-    measure_edit_page.click_save()
+    measure_edit_page.click_add_secondary_data_source()
+    data_source_page = CreateDataSourcePage(driver)
+    data_source_page.fill_data_source(sample_data_source)
+    data_source_page.click_save()
 
     # Remove the secondary source
-    remove_secondary_source = driver.find_element_by_link_text("Remove source")
-    measure_edit_page.scroll_and_click(remove_secondary_source)
-    measure_edit_page.click_save()
-
-    # Check that you can re-add a secondary source
-    add_secondary_source = driver.find_element_by_link_text("Add secondary source")
-    assert add_secondary_source
+    measure_edit_page.click_remove_secondary_data_source()
