@@ -30,3 +30,15 @@
   </div>
 
 {% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  <script>
+    govukGovernmentOrganisationsAutocomplete({
+        selectElement: document.querySelector('select.publisher'),
+        showAllValues: false,
+        minLength: 2,
+        defaultValue: ''
+    });
+  </script>
+{% endblock %}
