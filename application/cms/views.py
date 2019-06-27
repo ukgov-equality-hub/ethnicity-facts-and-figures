@@ -1114,9 +1114,7 @@ def view_measure_version_by_measure_version_id(measure_version_id):
     )
 
 
-@cms_blueprint.route(  # noqa: C901 (complexity)
-    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/new", methods=["GET"]
-)
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/new", methods=["GET"])
 @login_required
 @user_has_access
 def new_data_source(topic_slug, subtopic_slug, measure_slug, version):
@@ -1138,9 +1136,7 @@ def new_data_source(topic_slug, subtopic_slug, measure_slug, version):
     )
 
 
-@cms_blueprint.route(  # noqa: C901 (complexity)
-    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources", methods=["POST"]
-)
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources", methods=["POST"])
 @login_required
 @user_has_access
 def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
@@ -1190,7 +1186,7 @@ def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
         )
 
 
-@cms_blueprint.route(  # noqa: C901 (complexity)
+@cms_blueprint.route(
     "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<data_source_id>", methods=["GET"]
 )
 @login_required
@@ -1224,7 +1220,7 @@ def edit_data_source(topic_slug, subtopic_slug, measure_slug, version, data_sour
     )
 
 
-@cms_blueprint.route(  # noqa: C901 (complexity)
+@cms_blueprint.route(
     "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<data_source_id>", methods=["POST"]
 )
 @login_required
