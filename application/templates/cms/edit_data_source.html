@@ -1,8 +1,15 @@
 {% extends "base.html" %}
-
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
 {% from "cms/_data_source_form.html" import render_data_source_form %}
 
 {% block pageTitle %}Edit data source{% endblock %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
+    {"url": url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version), "text": measure_version.title}
+  ]
+%}
 
 {% block content %}
 
