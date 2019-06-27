@@ -1157,6 +1157,9 @@ def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
         measure_version.data_sources.append(data_source)
         db.session.commit()
 
+        message = 'Saved data source "{}"'.format(data_source.title)
+        flash(message, "info")
+
         return redirect(
             url_for(
                 "cms.edit_measure_version",
@@ -1243,6 +1246,9 @@ def update_data_source(topic_slug, subtopic_slug, measure_slug, version, data_so
     if data_source_form.validate_on_submit() and data_source.title:
 
         db.session.commit()
+
+        message = 'Saved data source "{}"'.format(data_source.title)
+        flash(message, "info")
 
         return redirect(
             url_for(
