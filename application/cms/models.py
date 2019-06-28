@@ -190,6 +190,34 @@ class DataSource(db.Model, CopyableModel):
         "MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources"
     )
 
+    # plainto_tsquery('english', 'dwp survey') @@ (to_tsvector('english', title)
+    @staticmethod
+    def search(query, limit=100):
+
+        raw_sql = """
+plainto_tsquery('english', :q)
+@@
+(
+    to_tsvector(
+        'english',
+        title
+        ||  ' '
+        ||  coalesce(organisation.name, '')
+        || ' '
+        || coalesce(source_url, '')
+        || to_tsvector(
+            'english',
+            array_to_string(organisation.abbreviations, ' ')
+        )
+    )
+)
+ """
+
+        query_sql = text(raw_sql)
+        query_sql = query_sql.bindparams(q=query)
+
+        return DataSource.query.join(DataSource.publisher, isouter=True).filter(query_sql).limit(limit).all()
+
 
 class DataSourceInMeasureVersion(db.Model):
     # metadata
