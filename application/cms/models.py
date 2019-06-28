@@ -216,7 +216,15 @@ plainto_tsquery('english', :q)
         query_sql = text(raw_sql)
         query_sql = query_sql.bindparams(q=query)
 
-        return DataSource.query.join(DataSource.publisher, isouter=True).filter(query_sql).limit(limit).all()
+        return (
+            DataSource.query.join(DataSource.publisher, isouter=True)
+            .join(DataSourceInMeasureVersion, isouter=True)
+            .filter(query_sql)
+            .group_by(DataSource.id)
+            .order_by(text("count(data_source_in_measure_version.measure_version_id) desc, data_source.id desc"))
+            .limit(limit)
+            .all()
+        )
 
 
 class DataSourceInMeasureVersion(db.Model):

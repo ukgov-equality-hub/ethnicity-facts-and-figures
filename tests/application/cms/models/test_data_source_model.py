@@ -1,6 +1,6 @@
 from application.cms.models import DataSource
 
-from tests.models import DataSourceFactory, OrganisationFactory
+from tests.models import DataSourceFactory, OrganisationFactory, MeasureVersionFactory
 
 
 class TestDataSourceModel:
@@ -67,3 +67,23 @@ class TestDataSourceModel:
             DataSourceFactory.create(title="Workforce Survey")
 
         assert len(DataSource.search("survey", limit=2)) == 2
+
+    def test_search_should_be_ordered_by_number_of_associated_measure_versions(self):
+
+        data_source_associated_with_1_measure_version = DataSourceFactory.create(title="Survey")
+        data_source_associated_with_2_measure_versions = DataSourceFactory.create(title="Survey")
+
+        MeasureVersionFactory.create(data_sources=[data_source_associated_with_1_measure_version])
+
+        for _ in range(2):
+            MeasureVersionFactory.create(data_sources=[data_source_associated_with_2_measure_versions])
+
+        search = DataSource.search("survey")
+
+        assert len(search) == 2
+        assert (
+            data_source_associated_with_2_measure_versions == search[0]
+        ), "Expected data source associated with 2 measure versions to be first"
+        assert (
+            data_source_associated_with_1_measure_version == search[1]
+        ), "Expected data source associated with 1 measure version to be second"
