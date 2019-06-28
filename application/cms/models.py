@@ -7,7 +7,7 @@ from typing import Optional, Iterable
 import sqlalchemy
 from bidict import bidict
 from dictalchemy import DictableModel
-from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, asc, text
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, asc, text, func, desc
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -221,7 +221,7 @@ plainto_tsquery('english', :q)
             .join(DataSourceInMeasureVersion, isouter=True)
             .filter(query_sql)
             .group_by(DataSource.id)
-            .order_by(text("count(data_source_in_measure_version.measure_version_id) desc, data_source.id desc"))
+            .order_by(desc(func.count(DataSourceInMeasureVersion.measure_version_id)), desc(DataSource.id))
             .limit(limit)
             .all()
         )
