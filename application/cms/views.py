@@ -1122,7 +1122,7 @@ def search_data_sources(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    q = request.args.get("q")
+    q = request.args.get("q", "")
 
     if q:
         data_sources = DataSource.search(q, limit=100)
@@ -1135,7 +1135,7 @@ def search_data_sources(topic_slug, subtopic_slug, measure_slug, version):
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
-        q=(q or ""),
+        q=q,
         data_sources=data_sources,
     )
 
