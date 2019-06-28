@@ -49,7 +49,7 @@ class TestDataSourceModel:
         data_source = DataSourceFactory.create(title="Annual Population Survey", source_url=None, publisher=home_office)
         DataSourceFactory.create(title="Workforce Survey", source_url=None, publisher=foreign_office)
 
-        assert DataSource.search("home office survey") == [data_source]
+        assert DataSource.search("home office") == [data_source]
 
     def test_search_should_match_publisher_abbreviation(self):
 
@@ -59,11 +59,11 @@ class TestDataSourceModel:
         data_source = DataSourceFactory.create(title="Workforce Survey", source_url=None, publisher=dwp)
         DataSourceFactory.create(title="Workforce Survey", source_url=None, publisher=dfe)
 
-        assert DataSource.search("dwp workforce") == [data_source]
+        assert DataSource.search("dwp") == [data_source]
 
     def test_search_be_limited_by_param(self):
 
-        for _ in range(20):
+        for _ in range(5):
             DataSourceFactory.create(title="Workforce Survey")
 
-        assert len(DataSource.search("survey", limit=10)) == 10
+        assert len(DataSource.search("survey", limit=2)) == 2
