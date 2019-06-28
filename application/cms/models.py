@@ -205,6 +205,7 @@ plainto_tsquery('english', :q)
         ||  coalesce(organisation.name, '')
         || ' '
         || coalesce(source_url, '')
+        || ' '
         || to_tsvector(
             'english',
             array_to_string(organisation.abbreviations, ' ')
