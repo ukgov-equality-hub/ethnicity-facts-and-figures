@@ -1114,6 +1114,32 @@ def view_measure_version_by_measure_version_id(measure_version_id):
     )
 
 
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources", methods=["GET"])
+@login_required
+@user_has_access
+def search_data_sources(topic_slug, subtopic_slug, measure_slug, version):
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
+
+    q = request.args.get("q")
+
+    if q:
+        data_sources = DataSource.search(q, limit=100)
+    else:
+        data_sources = None
+
+    return render_template(
+        "cms/search_data_source.html",
+        topic=topic,
+        subtopic=subtopic,
+        measure=measure,
+        measure_version=measure_version,
+        q=(q or ""),
+        data_sources=data_sources,
+    )
+
+
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/new", methods=["GET"])
 @login_required
 @user_has_access

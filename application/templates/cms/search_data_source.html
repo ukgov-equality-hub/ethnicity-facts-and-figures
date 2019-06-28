@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
+
+{% block pageTitle %}Search for an existing data source{% endblock %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title}
+  ]
+%}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <form method="GET" action="{{ url_for('cms.search_data_sources', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version )}}">
+
+        <div class="govuk-form-group">
+
+          <span class="govuk-caption-xl">{{ measure_version.title }} </span>
+          <h1 class="govuk-label-wrapper">
+            <label class="govuk-label govuk-label--xl" for="q">Search for an existing data source</label>
+          </h1>
+
+          <input class="govuk-input govuk-input--width-30" id="q" name="q" type="text" value="{{ q }}">
+        </div>
+
+
+        <button class="govuk-button">Search</button>
+
+      </form>
+
+      {% if data_sources %}
+
+        <ul class="govuk-list">
+          {% for data_source in data_sources %}
+
+            <li>
+              <div class="govuk-heading-s govuk-!-margin-bottom-2">{{ data_source.title }}</div>
+              <div class="govuk-body"><span style="color: #6f777b;">Published on {{ data_source.publication_date }}</span> <a class="govuk-link" href="{{ data_source.source_url }}">View publication</a> </div>
+            </li>
+
+          {% endfor %}
+        </ul>
+
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock %}
