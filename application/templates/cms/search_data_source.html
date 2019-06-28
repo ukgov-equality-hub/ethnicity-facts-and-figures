@@ -31,26 +31,35 @@
 
       </form>
 
-      {% if data_sources %}
+      {% if not data_sources == None %}
 
-        <ul class="govuk-list">
-          {% for data_source in data_sources %}
+        {% if data_sources|length > 0 %}
 
-            <li>
-              <div class="govuk-heading-s govuk-!-margin-bottom-2">{{ data_source.title }}</div>
-              <div class="govuk-body">
-                {% if data_source.publication_date %}
-                  <span style="color: #6f777b;">Published on {{ data_source.publication_date }}</span>
-                {% endif %}
-                {% if data_source.source_url %}
-                  <a class="govuk-link" href="{{ data_source.source_url }}">View publication</a>
-                {% endif %}
-              </div>
-            </li>
+          {% if data_sources|length == 100 %}
 
-          {% endfor %}
-        </ul>
+            <p class="govuk-body">Only the first 100 results shown below.</p>
+          {% endif %}
 
+          <ul class="govuk-list">
+            {% for data_source in data_sources %}
+
+              <li>
+                <div class="govuk-heading-s govuk-!-margin-bottom-2">{{ data_source.title }}</div>
+                <div class="govuk-body">
+                  {% if data_source.publication_date %}
+                    <span class="eff-!-grey-1">Published on {{ data_source.publication_date }}</span>
+                  {% endif %}
+                  {% if data_source.source_url %}
+                    <a class="govuk-link" href="{{ data_source.source_url }}">View publication</a>
+                  {% endif %}
+                </div>
+              </li>
+
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="govuk-body">No results found.</p>
+        {% endif %}
       {% endif %}
 
     </div>
