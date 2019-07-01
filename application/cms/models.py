@@ -7,7 +7,7 @@ from typing import Optional, Iterable
 import sqlalchemy
 from bidict import bidict
 from dictalchemy import DictableModel
-from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, asc, text
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, asc, text, func, desc
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -189,6 +189,45 @@ class DataSource(db.Model, CopyableModel):
     measure_versions = db.relationship(
         "MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources"
     )
+
+    @staticmethod
+    def search(query, limit=False):
+
+        raw_sql = """
+plainto_tsquery('english', :q)
+@@
+(
+    to_tsvector(
+        'english',
+        title
+        ||  ' '
+        ||  coalesce(organisation.name, '')
+        || ' '
+        || coalesce(source_url, '')
+        || ' '
+        || to_tsvector(
+            'english',
+            array_to_string(organisation.abbreviations, ' ')
+        )
+    )
+)
+ """
+
+        query_sql = text(raw_sql)
+        query_sql = query_sql.bindparams(q=query)
+
+        data_source_query = (
+            DataSource.query.join(DataSource.publisher, isouter=True)
+            .join(DataSourceInMeasureVersion, isouter=True)
+            .filter(query_sql)
+            .group_by(DataSource.id)
+            .order_by(desc(func.count(DataSourceInMeasureVersion.measure_version_id)), desc(DataSource.id))
+        )
+
+        if limit:
+            data_source_query = data_source_query.limit(limit)
+
+        return data_source_query.all()
 
 
 class DataSourceInMeasureVersion(db.Model):
