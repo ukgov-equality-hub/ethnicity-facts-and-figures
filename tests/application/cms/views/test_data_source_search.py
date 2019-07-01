@@ -23,9 +23,9 @@ class TestSearchDataSourceView:
 
         assert response.status_code == 200
         assert "Search for an existing data source" == page.find("title").text
-        assert "Search for an existing data source" == page.find("h1").text.strip()
+        assert "Search for an existing data source" == page.find("h1").text.strip()
 
-        input_field = find_input_for_label_with_text(page, "Search for an existing data source")
+        input_field = find_input_for_label_with_text(page, "Search for an existing data source")
 
         assert input_field["value"] == ""
 
@@ -39,9 +39,9 @@ class TestSearchDataSourceView:
 
         assert response.status_code == 200
         assert "Search for an existing data source" == page.find("title").text
-        assert "Search for an existing data source" == page.find("h1").text.strip()
+        assert "Search for an existing data source" == page.find("h1").text.strip()
 
-        input_field = find_input_for_label_with_text(page, "Search for an existing data source")
+        input_field = find_input_for_label_with_text(page, "Search for an existing data source")
 
         assert input_field["value"] == "population"
 
