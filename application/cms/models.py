@@ -190,7 +190,6 @@ class DataSource(db.Model, CopyableModel):
         "MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources"
     )
 
-    # plainto_tsquery('english', 'dwp survey') @@ (to_tsvector('english', title)
     @staticmethod
     def search(query, limit=False):
 
