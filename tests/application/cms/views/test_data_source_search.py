@@ -5,7 +5,7 @@ from tests.models import DataSourceFactory, MeasureVersionFactory
 from tests.utils import find_input_for_label_with_text
 
 
-class TestAddDataSourceView:
+class TestSearchDataSourceView:
     def __search_url(self, measure_version):
 
         measure_slug = measure_version.measure.slug
