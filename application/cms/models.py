@@ -192,7 +192,7 @@ class DataSource(db.Model, CopyableModel):
 
     # plainto_tsquery('english', 'dwp survey') @@ (to_tsvector('english', title)
     @staticmethod
-    def search(query, limit=100):
+    def search(query, limit=False):
 
         raw_sql = """
 plainto_tsquery('english', :q)
@@ -217,15 +217,18 @@ plainto_tsquery('english', :q)
         query_sql = text(raw_sql)
         query_sql = query_sql.bindparams(q=query)
 
-        return (
+        data_source_query = (
             DataSource.query.join(DataSource.publisher, isouter=True)
             .join(DataSourceInMeasureVersion, isouter=True)
             .filter(query_sql)
             .group_by(DataSource.id)
             .order_by(desc(func.count(DataSourceInMeasureVersion.measure_version_id)), desc(DataSource.id))
-            .limit(limit)
-            .all()
         )
+
+        if limit:
+            data_source_query = data_source_query.limit(limit)
+
+        return data_source_query.all()
 
 
 class DataSourceInMeasureVersion(db.Model):
