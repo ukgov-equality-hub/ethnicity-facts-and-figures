@@ -34,7 +34,6 @@ from application.cms.forms import (
     NewVersionForm,
     UploadForm,
     DataSourceForm,
-    RemoveDataSourceForm,
 )
 from application.cms.models import NewVersionType, MeasureVersion, Measure
 from application.cms.models import Organisation, DataSource
@@ -99,7 +98,6 @@ def create_measure(topic_slug, subtopic_slug):
     return render_template(
         "cms/edit_measure_version.html",
         form=form,
-        remove_data_source_form=RemoveDataSourceForm(),
         topic=topic,
         subtopic=subtopic,
         measure=Measure(),
@@ -359,7 +357,6 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "subtopic": measure_version.measure.subtopic,
         "measure": measure_version.measure,
         "measure_version": measure_version,
-        "remove_data_source_form": RemoveDataSourceForm(),
         "diffs": diffs,
         "organisations_by_type": Organisation.select_options_by_type(),
         "topics": page_service.get_topics(include_testing_space=True),
@@ -507,7 +504,6 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
 
             context = {
                 "form": measure_version_form,
-                "remove_data_source_form": RemoveDataSourceForm(),
                 "topic": topic,
                 "subtopic": subtopic,
                 "measure": measure_version.measure,
@@ -1304,25 +1300,10 @@ def remove_data_source(topic_slug, subtopic_slug, measure_slug, version, data_so
     if data_source not in measure_version.data_sources:
         raise PageNotFoundException()
 
-    remove_data_source_form = RemoveDataSourceForm()
-    if remove_data_source_form.validate_on_submit():
-        measure_version.data_sources.remove(data_source)
-        db.session.commit()
+    measure_version.data_sources.remove(data_source)
+    db.session.commit()
 
-        message = 'Removed data source "{}"'.format(data_source.title)
-        flash(message, "error")
-
-        return redirect(
-            url_for(
-                "cms.edit_measure_version",
-                topic_slug=topic.slug,
-                subtopic_slug=subtopic.slug,
-                measure_slug=measure.slug,
-                version=measure_version.version,
-            )
-        )
-
-    message = 'Unable to remove data source "{}"'.format(data_source.title)
+    message = 'Removed data source "{}"'.format(data_source.title)
     flash(message, "error")
 
     return redirect(
@@ -1332,6 +1313,5 @@ def remove_data_source(topic_slug, subtopic_slug, measure_slug, version, data_so
             subtopic_slug=subtopic.slug,
             measure_slug=measure.slug,
             version=measure_version.version,
-            errors=get_form_errors(forms=(remove_data_source_form,)),
         )
     )

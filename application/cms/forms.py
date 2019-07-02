@@ -413,7 +413,3 @@ class NewVersionForm(FlaskForm):
                 ),
             ),
         ]
-
-
-class RemoveDataSourceForm(FlaskForm):
-    pass
