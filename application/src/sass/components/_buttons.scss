@@ -101,7 +101,7 @@ $eff-quiet-button-hover-colour: mix($black, $eff-quiet-button-colour, 15%);
    Use on buttons that should look like they're links,
    except with no underline.
 */
-.eff-button--link {
+.eff-button-link {
   color: govuk-colour("blue");
   font-size: inherit;
   border-width: 0;
@@ -113,17 +113,25 @@ $eff-quiet-button-hover-colour: mix($black, $eff-quiet-button-colour, 15%);
   cursor: pointer;
 }
 
-.eff-button--link:active {
+.eff-button-link:active {
   color: govuk-colour("blue");
 }
 
-.eff-button--link:focus,
-.eff-button--link:focus:hover {
+.eff-button-link:focus,
+.eff-button-link:focus:hover {
   background-color: $govuk-focus-colour;
   color: $govuk-focus-text-colour;
 }
 
-.eff-button--link:hover {
+.eff-button-link:hover {
   color: $govuk-link-hover-colour;
   background-color: transparent;
+}
+
+.eff-button-link--destructive {
+  color: govuk-colour("red");
+
+  &:link, &:visited, &:hover {
+    color: darken(govuk-colour("red"), 15%);
+  }
 }

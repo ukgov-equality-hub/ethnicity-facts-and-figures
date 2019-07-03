@@ -283,7 +283,7 @@
                                 <td class="govuk-table__cell">{% if 'UPDATE' in measure_version.available_actions %}
                                     <form action="{{ url_for('cms.delete_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}" method="post">
                                         {{ form.csrf_token | default('') }}
-                                        <button class="eff-button--link">delete</button>
+                                        <button class="eff-button-link">delete</button>
                                     </form>
                                     {% endif %}
                                 </td>
@@ -333,7 +333,7 @@
                                         {% if 'UPDATE' in measure_version.available_actions %}
                                             <form action="{{ url_for('cms.delete_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}" method="post">
                                                 {{ form.csrf_token | default('') }}
-                                                <button class="eff-button--link">delete</button>
+                                                <button class="eff-button-link">delete</button>
                                             </form>
                                         {% endif %}
                                     </td>

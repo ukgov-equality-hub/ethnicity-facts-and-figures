@@ -22,7 +22,7 @@
           {% if current_user.is_authenticated %}
           <form action="{{ url_for('auth.logout') }}" method="post">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-              <button class="eff-button--link govuk-link" name="logout">Sign out</button>
+              <button class="eff-button-link govuk-link" name="logout">Sign out</button>
           </form>
           {% endif %}
         </div>
