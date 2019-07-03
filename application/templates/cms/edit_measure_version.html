@@ -210,14 +210,14 @@
                   </div>
                   <div class="govuk-grid-column-one-half">
                     <p class="govuk-body">
-                      <a class="govuk-link" href="{{ url_for('cms.edit_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.primary_data_source.id) }}">Edit <span class="govuk-visually-hidden">primary</span> data source</a>
+                      <a class="govuk-link" href="{{ url_for('cms.edit_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.primary_data_source.id) }}">Make changes to this <span class="govuk-visually-hidden">primary</span> data source</a>
                     </p>
                   </div>
                   <div class="govuk-grid-column-one-half">
                     <form method="POST" action="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.primary_data_source.id) }}">
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-                      <button type="submit" class="govuk-button govuk-!-font-size-19 govuk-link eff-button--link eff-link__secondary-source--delete" href="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.primary_data_source.id) }}">Remove <span class="govuk-visually-hidden">primary</span> data source</button>
+                      <button type="submit" class="govuk-!-font-size-19 govuk-button govuk-link eff-button-link eff-button-link--destructive" href="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.primary_data_source.id) }}">Remove<span class="govuk-visually-hidden"> primary data source</span></button>
                     </form>
                   </div>
                 </div>
@@ -238,14 +238,14 @@
                   </div>
                 <div class="govuk-grid-column-one-half">
                   <p class="govuk-body">
-                    <a class="govuk-link" href="{{ url_for('cms.edit_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.secondary_data_source.id) }}">Edit <span class="govuk-visually-hidden">secondary</span> data source</a>
+                    <a class="govuk-link" href="{{ url_for('cms.edit_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.secondary_data_source.id) }}">Make changes to this <span class="govuk-visually-hidden">secondary</span> data source</a>
                   </p>
                 </div>
                 <div class="govuk-grid-column-one-half">
                   <form method="POST" action="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.secondary_data_source.id) }}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-                    <button type="submit" class="govuk-button govuk-!-font-size-19 govuk-link eff-button--link eff-link__secondary-source--delete" href="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.secondary_data_source.id) }}">Remove <span class="govuk-visually-hidden">secondary</span> data source</button>
+                    <button type="submit" class="govuk-!-font-size-19 govuk-button govuk-link eff-button-link eff-button-link--destructive" href="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.secondary_data_source.id) }}">Remove<span class="govuk-visually-hidden"> secondary data source</span></button>
                   </form>
                 </div>
               </div>
