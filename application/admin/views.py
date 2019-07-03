@@ -7,7 +7,7 @@ from application import db
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS
-from application.cms.models import user_measure
+from application.cms.models import user_measure, DataSource
 from application.cms.page_service import page_service
 from application.utils import create_and_send_activation_email, user_can
 from application.cms.utils import get_form_errors
@@ -200,3 +200,15 @@ def make_rdu_user(user_id):
 @user_can(MANAGE_SYSTEM)
 def site_build():
     return render_template("admin/site_build.html")
+
+
+@admin_blueprint.route("/data-sources/merge")
+@login_required
+@user_can(MANAGE_USERS)  # TODO: update to MANAGE_DATA_SOURCES
+def merge_data_sources():
+
+    data_source_ids = request.args.get("ids").split(",")
+
+    data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
+
+    return render_template("admin/merge_data_sources.html", data_sources=data_sources)

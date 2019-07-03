@@ -6,7 +6,7 @@ from application.cms.models import publish_status
 
 from application.utils import generate_token
 
-from tests.models import UserFactory, MeasureVersionFactory
+from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory, OrganisationFactory
 
 
 def test_standard_user_cannot_view_admin_urls(test_app_client, logged_in_rdu_user):
@@ -365,3 +365,36 @@ def test_admin_user_can_delete_non_admin_user_account(test_app_client, logged_in
     )
 
     assert User.query.filter_by(email="someuser@somedept.gov.uk").first() is None
+
+
+class TestMergeDataSourcesView:
+    def test_rdu_user_cannot_see_data_source_merge(self, test_app_client, logged_in_rdu_user):
+
+        response = test_app_client.get("/admin/data-sources/merge")
+
+        assert response.status_code == 403
+
+    def test_admin_user_viewing_two_data_source_to_merge(self, test_app_client, logged_in_admin_user):
+
+        organisation = OrganisationFactory.create(name="Home Office")
+
+        data_source_1 = DataSourceFactory.create(
+            title="2019 police statistics",
+            source_url="https://www.gov.uk/statistics/police/2019",
+            publisher=organisation,
+        )
+        data_source_2 = DataSourceFactory.create(
+            title="Police statistics 2019", source_url="https://statistics.gov.uk/police/2019", publisher=organisation
+        )
+
+        response = test_app_client.get(f"/admin/data-sources/merge?ids={data_source_1.id},{data_source_2.id}")
+
+        assert response.status_code == 200
+
+        page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+
+        assert "Merge data sources" == page.find("h1").text
+        assert "Merge data sources" == page.find("title").text
+
+        assert "2019 police statistics" in page.text
+        assert "Police statistics 2019" in page.text

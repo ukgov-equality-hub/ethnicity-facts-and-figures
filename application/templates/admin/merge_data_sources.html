@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for('admin.index'), "text": "Admin"}
+  ]
+%}
+
+{% block pageTitle %}Merge data sources{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-xl">Merge data sources</h1>
+
+      <div class="govuk-body">All of the following data sources will be merged together.</div>
+      <form>
+        <div class="govuk-form-group">
+          <fieldset class="govuk-fieldset">
+
+            <legend class="govuk-fieldset__legend">
+                Which one would you like to keep?
+            </legend>
+            {% for data_source in data_sources %}
+
+              <div class="govuk-radios">
+                <div class="govuk-radios__item">
+
+                  <input class="govuk-radios__input" id="keep-{{ data_source.id }}" name="keep" type="radio" value="{{ data_source.id }}" aria-describedby="keep-{{ data_source.id }}-hint">
+
+                    <label class="govuk-label govuk-radios__label govuk-label--s" for="keep-{{ data_source.id }}">
+                      {{ data_source.title }}
+                    </label>
+
+                  <div class="govuk-radios__hint">
+
+                    <div class="govuk-body">{{ data_source.publisher.name }}</div>
+
+                    <div class="govuk-body"><a class="govuk-link" href="{{ data_source.source_url }}">{{ data_source.source_url }}</a></div>
+                  </div>
+
+                </div>
+              </div>
+
+            {% endfor %}
+          </fieldset>
+        </div>
+
+        <button class="govuk-button">Merge</button>
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}
