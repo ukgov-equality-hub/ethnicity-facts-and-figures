@@ -207,6 +207,11 @@ def site_build():
 @user_can(MANAGE_DATA_SOURCES)
 def data_sources():
 
-    data_sources = DataSource.query.order_by(DataSource.title).all()
+    q = request.args.get("q", "")
 
-    return render_template("admin/data_sources.html", data_sources=data_sources)
+    if q:
+        data_sources = DataSource.search(q)
+    else:
+        data_sources = DataSource.query.order_by(DataSource.title).all()
+
+    return render_template("admin/data_sources.html", data_sources=data_sources, q=q)
