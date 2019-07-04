@@ -8,7 +8,7 @@ $black: #000000;
 $govuk-button-delete-hover-colour: mix($black, $govuk-error-colour, 15%);
 $govuk-button-delete-shadow-colour: mix($black, $govuk-error-colour, 50%);
 
-.eff-button--destructive {
+.eff-button--warning {
   background-color: $govuk-error-colour;
   box-shadow: 0 $govuk-border-width-form-element 0 $govuk-button-delete-shadow-colour;
 
@@ -128,7 +128,7 @@ $eff-quiet-button-hover-colour: mix($black, $eff-quiet-button-colour, 15%);
   background-color: transparent;
 }
 
-.eff-button-link--destructive {
+.eff-button-link--warning {
   color: govuk-colour("red");
 
   &:link, &:visited, &:hover {
