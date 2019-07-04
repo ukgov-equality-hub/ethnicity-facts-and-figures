@@ -3,7 +3,6 @@ import json
 
 from flask import redirect, render_template, request, url_for, abort, flash, current_app, jsonify, session
 from flask_login import login_required, current_user
-from sqlalchemy.exc import DataError
 from werkzeug.datastructures import CombinedMultiDict
 
 from application.auth.models import (
@@ -1181,7 +1180,7 @@ def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
 
 
 @cms_blueprint.route(
-    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<data_source_id>", methods=["GET"]
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<int:data_source_id>", methods=["GET"]
 )
 @login_required
 @user_has_access
@@ -1191,10 +1190,7 @@ def edit_data_source(topic_slug, subtopic_slug, measure_slug, version, data_sour
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    try:
-        data_source = DataSource.query.get(data_source_id)
-    except DataError:  # non-integer data_source_id
-        raise PageNotFoundException()
+    data_source = DataSource.query.get(data_source_id)
 
     if data_source is None:
         raise PageNotFoundException()
@@ -1218,7 +1214,7 @@ def edit_data_source(topic_slug, subtopic_slug, measure_slug, version, data_sour
 
 
 @cms_blueprint.route(
-    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<data_source_id>", methods=["POST"]
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<int:data_source_id>", methods=["POST"]
 )
 @login_required
 @user_has_access
@@ -1228,10 +1224,7 @@ def update_data_source(topic_slug, subtopic_slug, measure_slug, version, data_so
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    try:
-        data_source = DataSource.query.get(data_source_id)
-    except DataError:  # non-integer data_source_id
-        raise PageNotFoundException()
+    data_source = DataSource.query.get(data_source_id)
 
     if data_source is None:
         raise PageNotFoundException()
@@ -1280,7 +1273,8 @@ def update_data_source(topic_slug, subtopic_slug, measure_slug, version, data_so
 
 
 @cms_blueprint.route(
-    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<data_source_id>/remove", methods=["POST"]
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<int:data_source_id>/remove",
+    methods=["POST"],
 )
 @login_required
 @user_has_access
@@ -1289,10 +1283,7 @@ def remove_data_source(topic_slug, subtopic_slug, measure_slug, version, data_so
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    try:
-        data_source = DataSource.query.get(data_source_id)
-    except DataError:  # non-integer data_source_id
-        raise PageNotFoundException()
+    data_source = DataSource.query.get(data_source_id)
 
     if data_source is None:
         raise PageNotFoundException()
