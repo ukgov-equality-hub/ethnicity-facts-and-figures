@@ -106,7 +106,7 @@ class DataSourceForm(FlaskForm):
     )
 
     publication_date = RDUStringField(
-        label="Source data publication date",
+        label="Source data publication date (optional)",
         hint="For example, 26/03/2018. If you’re using a revised version of the data, give that publication date.",
     )
     note_on_corrections_or_updates = RDUTextAreaField(
