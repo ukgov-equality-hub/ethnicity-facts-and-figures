@@ -993,7 +993,7 @@ class TestRemoveDataSourceView:
 
         assert res.status_code == 403
 
-    @pytest.mark.parametrize("data_source_id", [-1, 123, "abc"])
+    @pytest.mark.parametrize("data_source_id", [-1, 123])
     def test_404_on_invalid_data_source_id(self, test_app_client, logged_in_rdu_user, data_source_id):
         measure_version = MeasureVersionFactory(data_sources=[])
 
