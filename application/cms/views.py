@@ -1135,13 +1135,12 @@ def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    data_source_form = DataSourceForm(sending_to_review=False)
+    data_source_form = DataSourceForm()
 
     data_source = DataSource()
     data_source_form.populate_obj(data_source)
 
-    # TODO: remove check on data_source.title and validate this within form.
-    if data_source_form.validate_on_submit() and data_source.title:
+    if data_source_form.validate_on_submit():
 
         db.session.add(data_source)
         measure_version.data_sources.append(data_source)
@@ -1163,9 +1162,6 @@ def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
     else:
 
         errors = get_form_errors(forms=[data_source_form])
-
-        # TODO: delete this once the validation has been added to the form.
-        errors.append(ErrorSummaryMessage(href="#title-label", text="Enter a title"))
 
         return render_template(
             "cms/new_data_source.html",
@@ -1232,32 +1228,28 @@ def update_data_source(topic_slug, subtopic_slug, measure_slug, version, data_so
     if data_source not in measure_version.data_sources:
         raise PageNotFoundException()
 
-    data_source_form = DataSourceForm(sending_to_review=False)
+    data_source_form = DataSourceForm()
 
     # TODO: remove check on data_source.title and validate this within form.
     if data_source_form.validate_on_submit():
         data_source_form.populate_obj(data_source)
 
-        if data_source.title:
-            db.session.commit()
+        db.session.commit()
 
-            message = 'Saved data source "{}"'.format(data_source.title)
-            flash(message, "info")
+        message = 'Saved data source "{}"'.format(data_source.title)
+        flash(message, "info")
 
-            return redirect(
-                url_for(
-                    "cms.edit_measure_version",
-                    topic_slug=topic.slug,
-                    subtopic_slug=subtopic.slug,
-                    measure_slug=measure.slug,
-                    version=measure_version.version,
-                )
+        return redirect(
+            url_for(
+                "cms.edit_measure_version",
+                topic_slug=topic.slug,
+                subtopic_slug=subtopic.slug,
+                measure_slug=measure.slug,
+                version=measure_version.version,
             )
+        )
 
     errors = get_form_errors(forms=[data_source_form])
-
-    # TODO: delete this once the validation has been added to the form.
-    errors.append(ErrorSummaryMessage(href="#title-label", text="Enter a title"))
 
     return render_template(
         "cms/edit_data_source.html",

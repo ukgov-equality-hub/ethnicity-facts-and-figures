@@ -67,8 +67,8 @@ class EditMeasureLocators:
     SEND_TO_DEPARTMENT_REVIEW_BUTTON = (By.ID, "send-to-department-review")
     REJECT_BUTTON = (By.ID, "reject-measure")
     SEND_TO_DRAFT_BUTTON = (By.ID, "send-back-to-draft")
-    CREATE_PRIMARY_DATA_SOURCE = (By.XPATH, "//a[normalize-space(.)='Add primary data source']")
-    CREATE_SECONDARY_DATA_SOURCE = (By.XPATH, "//a[normalize-space(.)='Add secondary data source']")
+    CREATE_PRIMARY_DATA_SOURCE = (By.XPATH, "//a[normalize-space(.)='Add primary data source information']")
+    CREATE_SECONDARY_DATA_SOURCE = (By.XPATH, "//a[normalize-space(.)='Add secondary data source information']")
     REMOVE_PRIMARY_DATA_SOURCE = (By.XPATH, "//button[normalize-space(.)='Remove primary data source']")
     REMOVE_SECONDARY_DATA_SOURCE = (By.XPATH, "//button[normalize-space(.)='Remove secondary data source']")
     SEND_TO_APPROVED = (By.ID, "send-to-approved")
@@ -77,7 +77,7 @@ class EditMeasureLocators:
 
     PREVIEW_LINK = (By.NAME, "preview")
     ADD_DIMENSION_LINK = (By.LINK_TEXT, "Add dimension")
-    ADD_SOURCE_DATA_LINK = (By.LINK_TEXT, "Add source data")
+    ADD_SOURCE_DATA_LINK = (By.LINK_TEXT, "Add data file (CSV)")
 
     PUBLISHED_AT_DATE_PICKER = (By.NAME, "published_at")
     PUBLISHED_LABEL = (By.NAME, "published")

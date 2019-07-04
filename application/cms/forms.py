@@ -79,24 +79,20 @@ class DataSourceForm(FlaskForm):
     title = RDUStringField(
         label="Title of data source",
         hint="For example, Crime and Policing Survey",
-        validators=[RequiredForReviewValidator(message="Enter a data source title"), Length(max=255)],
+        validators=[InputRequired(message="Enter a data source title"), Length(max=255)],
     )
 
     type_of_data = RDUCheckboxField(
-        label="Type of data",
-        enum=TypeOfData,
-        validators=[RequiredForReviewValidator(message="Select the type of data")],
+        label="Type of data", enum=TypeOfData, validators=[InputRequired(message="Select the type of data")]
     )
     type_of_statistic_id = RDURadioField(
-        label="Type of statistic",
-        coerce=int,
-        validators=[RequiredForReviewValidator("Select the type of statistic", else_optional=True)],
+        label="Type of statistic", coerce=int, validators=[InputRequired("Select the type of statistic")]
     )
 
     publisher_id = RDUStringField(
         label="Source data published by",
         hint="For example, Ministry of Justice",
-        validators=[RequiredForReviewValidator(message="Select a department or organisation")],
+        validators=[InputRequired(message="Select a department or organisation")],
     )
     source_url = RDUURLField(
         label="Link to data source",
@@ -106,7 +102,7 @@ class DataSourceForm(FlaskForm):
             '<a href="https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017" '
             'target="_blank" class="govuk-link">View example</a> (this will open a new page).'
         ),
-        validators=[RequiredForReviewValidator(message="Enter a link to the data source"), Length(max=255)],
+        validators=[InputRequired(message="Enter a link to the data source"), Length(max=255)],
     )
 
     publication_date = RDUStringField(
@@ -122,22 +118,17 @@ class DataSourceForm(FlaskForm):
     frequency_of_release_id = RDURadioField(
         label="How often is the source data published?",
         coerce=int,
-        validators=[
-            FrequencyOfReleaseOtherRequiredValidator(),
-            RequiredForReviewValidator("Select the source data publication frequency", else_optional=True),
-        ],
+        validators=[InputRequired("Select the source data publication frequency")],
     )
 
     purpose = RDUTextAreaField(
         label="Purpose of data source",
         hint="Explain why this data’s been collected and how it will be used",
-        validators=[RequiredForReviewValidator(message="Explain the purpose of the data source")],
+        validators=[InputRequired(message="Explain the purpose of the data source")],
     )
 
-    def __init__(self, sending_to_review=False, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(DataSourceForm, self).__init__(*args, **kwargs)
-
-        self.sending_to_review = sending_to_review
 
         self.type_of_statistic_id.choices = [
             (choice.id, choice.internal) for choice in TypeOfStatistic.query.order_by("position").all()
