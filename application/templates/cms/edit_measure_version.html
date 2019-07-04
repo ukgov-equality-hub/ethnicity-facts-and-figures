@@ -217,7 +217,7 @@
                     <form method="POST" action="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.primary_data_source.id) }}">
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-                      <button type="submit" class="govuk-!-font-size-19 govuk-button eff-button-link eff-button-link--warning" href="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.primary_data_source.id) }}">Remove<span class="govuk-visually-hidden"> primary data source</span></button>
+                      <button type="submit" class="govuk-!-font-size-19 govuk-button eff-button-link eff-button-link--warning">Remove<span class="govuk-visually-hidden"> primary data source</span></button>
                     </form>
                   </div>
                 </div>
@@ -245,7 +245,7 @@
                   <form method="POST" action="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.secondary_data_source.id) }}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-                    <button type="submit" class="govuk-!-font-size-19 govuk-button eff-button-link eff-button-link--warning" href="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.secondary_data_source.id) }}">Remove<span class="govuk-visually-hidden"> secondary data source</span></button>
+                    <button type="submit" class="govuk-!-font-size-19 govuk-button eff-button-link eff-button-link--warning">Remove<span class="govuk-visually-hidden"> secondary data source</span></button>
                   </form>
                 </div>
               </div>

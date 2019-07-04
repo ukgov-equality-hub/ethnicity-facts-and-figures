@@ -102,6 +102,8 @@ $eff-quiet-button-hover-colour: mix($black, $eff-quiet-button-colour, 15%);
    except with no underline.
 */
 .eff-button-link {
+  @extend .govuk-link;
+
   color: govuk-colour("blue");
   font-size: inherit;
   border-width: 0;
