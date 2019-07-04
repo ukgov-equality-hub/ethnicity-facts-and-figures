@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 {% from "_shared/_status_banner_macro.html" import status_banner %}
+{% from "_macros/_data_sources.html" import manage_measure_version_data_source %}
 
 {% set breadcrumbs =
   [
@@ -201,59 +202,11 @@
             {% if new %}
               <p class="govuk-body">Once this page is saved you will be able to add data sources</p>
             {% else %}
-              <h3 class="govuk-heading-s">Primary data source</h3>
-
-              {% if measure_version.primary_data_source %}
-                <div class="govuk-grid-row">
-                  <div class="govuk-grid-column-two-thirds">
-                    <p class="govuk-body">{{ measure_version.primary_data_source.title }}</p>
-                  </div>
-                  <div class="govuk-grid-column-one-half">
-                    <p class="govuk-body">
-                      <a class="govuk-link" href="{{ url_for('cms.edit_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.primary_data_source.id) }}">Make changes to this <span class="govuk-visually-hidden">primary</span> data source</a>
-                    </p>
-                  </div>
-                  <div class="govuk-grid-column-one-half">
-                    <form method="POST" action="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.primary_data_source.id) }}">
-                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-
-                      <button type="submit" class="govuk-!-font-size-19 govuk-button eff-button-link eff-button-link--warning">Remove<span class="govuk-visually-hidden"> primary data source</span></button>
-                    </form>
-                  </div>
-                </div>
-              {% else %}
-                <p class="govuk-body">
-                  <a class="govuk-link" href="{{ url_for('cms.new_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add <span class="govuk-visually-hidden">primary</span> data source</a>
-                </p>
-              {% endif %}
+              {{ manage_measure_version_data_source(measure_version=measure_version, data_source=measure_version.primary_data_source, description="primary") }}
             </div>
 
             {% if measure_version.primary_data_source %}
-              <h3 class="govuk-heading-s">Secondary data source</h3>
-
-              {% if measure_version.secondary_data_source %}
-              <div class="govuk-grid-row">
-                  <div class="govuk-grid-column-two-thirds">
-                  <p class="govuk-body">{{ measure_version.secondary_data_source.title }}</p>
-                  </div>
-                <div class="govuk-grid-column-one-half">
-                  <p class="govuk-body">
-                    <a class="govuk-link" href="{{ url_for('cms.edit_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.secondary_data_source.id) }}">Make changes to this <span class="govuk-visually-hidden">secondary</span> data source</a>
-                  </p>
-                </div>
-                <div class="govuk-grid-column-one-half">
-                  <form method="POST" action="{{ url_for('cms.remove_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, data_source_id=measure_version.secondary_data_source.id) }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-
-                    <button type="submit" class="govuk-!-font-size-19 govuk-button eff-button-link eff-button-link--warning">Remove<span class="govuk-visually-hidden"> secondary data source</span></button>
-                  </form>
-                </div>
-              </div>
-              {% else %}
-                <p class="govuk-body">
-                  <a class="govuk-link" href="{{ url_for('cms.new_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add <span class="govuk-visually-hidden">secondary</span> data source</a>
-                </p>
-              {% endif %}
+              {{ manage_measure_version_data_source(measure_version=measure_version, data_source=measure_version.secondary_data_source, description="secondary") }}
             {% endif %}
           {% endif %}
         </div>
