@@ -1146,16 +1146,17 @@ def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
         measure_version.data_sources.append(data_source)
         db.session.commit()
 
-        message = 'Saved data source "{}"'.format(data_source.title)
+        message = "Saved"
         flash(message, "info")
 
         return redirect(
             url_for(
-                "cms.edit_measure_version",
+                "cms.edit_data_source",
                 topic_slug=topic.slug,
                 subtopic_slug=subtopic.slug,
                 measure_slug=measure.slug,
                 version=measure_version.version,
+                data_source_id=data_source.id,
             )
         )
 
@@ -1236,16 +1237,17 @@ def update_data_source(topic_slug, subtopic_slug, measure_slug, version, data_so
 
         db.session.commit()
 
-        message = 'Saved data source "{}"'.format(data_source.title)
+        message = "Saved"
         flash(message, "info")
 
         return redirect(
             url_for(
-                "cms.edit_measure_version",
+                "cms.edit_data_source",
                 topic_slug=topic.slug,
                 subtopic_slug=subtopic.slug,
                 measure_slug=measure.slug,
                 version=measure_version.version,
+                data_source_id=data_source.id,
             )
         )
 

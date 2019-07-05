@@ -117,9 +117,9 @@ class TestCreateDataSource:
 
         edit_measure_url = self.__edit_measure_version_url(measure_version)
 
-        match = re.search(f"{edit_measure_url}$", redirected_to_location)
+        match = re.search(f"{edit_measure_url}/data-sources/\\d+$", redirected_to_location)
 
-        assert match, f"Expected {redirected_to_location} to match {edit_measure_url}"
+        assert match, f"Expected {redirected_to_location} to match {edit_measure_url}/data-sources/\\d+"
 
         # Refresh measure version from database
         measure_version = MeasureVersion.query.get(measure_version.id)
@@ -274,7 +274,7 @@ class TestUpdateDataSource:
 
         return f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}/edit"
 
-    def test_post_with_an_updated_title_redirects_to_edit_measure(self, test_app_client, logged_in_rdu_user):
+    def test_post_with_an_updated_title_redirects_back_edit_data_source(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create(title="Police stats 2019")
         measure_version = MeasureVersionFactory.create(data_sources=[data_source])
@@ -299,11 +299,9 @@ class TestUpdateDataSource:
 
         redirected_to_location = response.headers["Location"]
 
-        edit_measure_url = self.__edit_measure_url(measure_version)
+        match = re.search(f"{url}$", redirected_to_location)
 
-        match = re.search(f"{edit_measure_url}$", redirected_to_location)
-
-        assert match, f"Expected {redirected_to_location} to match /{edit_measure_url}"
+        assert match, f"Expected {redirected_to_location} to match {url}"
 
         # Re-fetch the model from the database to be sure that it has been saved.
         data_source = DataSource.query.get(data_source.id)
