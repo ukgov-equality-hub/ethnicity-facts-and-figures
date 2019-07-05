@@ -18,10 +18,7 @@
 
       <form method="GET" action="{{ url_for('admin.data_sources' )}}">
 
-        <div class="govuk-form-group">
-          <label class="govuk-label" for="q">Search <span class="govuk-visually-hidden">data sources</span></label>
-          <input class="govuk-input govuk-input--width-30" id="q" name="q" type="text" value="{{ q }}">
-        </div>
+        {{ data_source_search_form.q() }}
 
         <button class="govuk-button">Filter</button>
 
