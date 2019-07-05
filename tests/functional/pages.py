@@ -611,6 +611,9 @@ class CreateDataSourcePage(BasePage):
         element = self.wait_for_element(CreateDataSourcePageLocators.SAVE_BUTTON)
         self.scroll_and_click(element)
 
+    def click_back(self):
+        self.driver.find_element_by_link_text("Back").click()
+
 
 class DimensionAddPage(BasePage):
     def __init__(self, driver):

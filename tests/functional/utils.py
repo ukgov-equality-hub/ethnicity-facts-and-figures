@@ -75,6 +75,7 @@ def create_measure_starting_at_topic_page(
     data_source_page = CreateDataSourcePage(driver)
     data_source_page.fill_data_source(sample_data_source)
     data_source_page.click_save()
+    data_source_page.click_back()
     """
     CREATE v1 5: Upload a source data file
     """
