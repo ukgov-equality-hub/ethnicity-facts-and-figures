@@ -39,6 +39,7 @@ def test_secondary_source_can_be_added_and_removed(driver, live_server, governme
     data_source_page = CreateDataSourcePage(driver)
     data_source_page.fill_data_source(sample_data_source)
     data_source_page.click_save()
+    data_source_page.click_back()
 
     # Remove the secondary source
     measure_edit_page.click_remove_secondary_data_source()
