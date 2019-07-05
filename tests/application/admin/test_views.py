@@ -392,8 +392,8 @@ class TestDataSourcesView:
         assert "Data sources" == page.find("h1").text
         assert "Data sources" == page.find("title").text
 
-        assert "Police statistics 2019" in page.text
-        assert "2011 Census of England and Wales" in page.text
+        assert "Police statistics 2019" in page.find("main").text
+        assert "2011 Census of England and Wales" in page.find("main").text
 
     def test_admin_user_search_for_data_sources(self, test_app_client, logged_in_admin_user):
 
@@ -407,8 +407,8 @@ class TestDataSourcesView:
         assert "Data sources" == page.find("h1").text
         assert "police - Search data sources" == page.find("title").text
 
-        assert "Police statistics 2019" in page.text
-        assert "2011 Census of England and Wales" not in page.text
+        assert "Police statistics 2019" in page.find("main").text
+        assert "2011 Census of England and Wales" not in page.find("main").text
 
         input_field = find_input_for_label_with_text(page, "Search data sources")
         assert input_field["value"] == "police"
