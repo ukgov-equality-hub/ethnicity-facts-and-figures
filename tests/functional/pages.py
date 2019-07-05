@@ -58,9 +58,6 @@ class BasePage:
     def wait_for_seconds(self, seconds):
         time.sleep(seconds)
 
-    def wait_for_invisible_element(self, locator):
-        return WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(locator))
-
     def wait_for_element(self, locator):
         element = WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(locator), EC.presence_of_element_located(locator)
@@ -413,13 +410,12 @@ class MeasureEditPage(BasePage):
         self.scroll_and_click(element)
 
     def click_add_dimension(self):
-        element = self.wait_for_invisible_element(EditMeasureLocators.ADD_DIMENSION_LINK)
+        element = self.driver.find_element(*EditMeasureLocators.ADD_DIMENSION_LINK)
         self.scroll_to(element)
         element.click()
 
     def click_add_source_data(self):
-        element = self.wait_for_invisible_element(EditMeasureLocators.ADD_SOURCE_DATA_LINK)
-        self.scroll_to(element)
+        element = self.driver.find_element(*EditMeasureLocators.ADD_SOURCE_DATA_LINK)
         element.click()
 
     def click_preview(self):
@@ -859,7 +855,7 @@ class ChartBuilderPage(BasePage):
         return all_labels[0].text.split("\n")
 
     def get_custom_classification_panel(self):
-        element = self.wait_for_invisible_element(ChartBuilderPageLocators.CUSTOM_CLASSIFICATION_PANEL)
+        element = self.driver.find_element(*ChartBuilderPageLocators.CUSTOM_CLASSIFICATION_PANEL)
         return element
 
     def get_ethnicity_settings_value(self):
@@ -977,7 +973,7 @@ class TableBuilderPage(BasePage):
         element.click()
 
     def get_custom_classification_panel(self):
-        element = self.wait_for_invisible_element(TableBuilderPageLocators.CUSTOM_CLASSIFICATION_PANEL)
+        element = self.driver.find_element(*TableBuilderPageLocators.CUSTOM_CLASSIFICATION_PANEL)
         return element
 
     def get_ethnicity_settings_value(self):
