@@ -119,8 +119,8 @@ class DataSourceForm(FlaskForm):
         label="How often is the source data published?",
         coerce=int,
         validators=[
-            InputRequired("Select the source data publication frequency"),
             FrequencyOfReleaseOtherRequiredValidator(),
+            InputRequired("Select the source data publication frequency"),
         ],
     )
 
