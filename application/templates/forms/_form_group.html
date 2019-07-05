@@ -35,19 +35,6 @@
         {{ raise_exception("Not all conditional questions have been rendered.") }}
       {% endif %}
 
-      {% if fields and other_field %}
-        <div class="panel panel-border-narrow govuk-form-group{% if other_field.errors %} govuk-form-group--error{% endif %}"
-              id="{{ other_field.id }}-wrapper">
-          {% set field_options = {"disabled": disabled, "class_": field_class} %}
-          {{ other_field(**field_options) }}
-        </div>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                showHideControl(document.getElementById("{{ fields[-1].id }}"))
-            })
-        </script>
-      {% endif %}
   </fieldset>
   {% endif %}
 </div>
