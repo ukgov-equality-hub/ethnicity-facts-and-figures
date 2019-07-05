@@ -118,7 +118,10 @@ class DataSourceForm(FlaskForm):
     frequency_of_release_id = RDURadioField(
         label="How often is the source data published?",
         coerce=int,
-        validators=[InputRequired("Select the source data publication frequency")],
+        validators=[
+            InputRequired("Select the source data publication frequency"),
+            FrequencyOfReleaseOtherRequiredValidator(),
+        ],
     )
 
     purpose = RDUTextAreaField(
