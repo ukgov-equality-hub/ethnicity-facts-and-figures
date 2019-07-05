@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 {% from "cms/_data_source_form.html" import render_data_source_form %}
+{% from "_macros/_back.html" import govukBackLink %}
 
 {% block pageTitle %}Add data source{% endblock %}
 
 {% set breadcrumbs =
   [
-    {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title},
-    {"url": url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version), "text": measure_version.title}
+    {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title}
   ]
 %}
 
@@ -15,6 +15,12 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+
+      {{ govukBackLink(href=url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version ),text="Back") }}
+
+
+      <span class="govuk-caption-xl">{{ measure_version.title }}</span>
+
       <h1 class="govuk-heading-xl">Add data source</h1>
 
       <form method="POST" action="{{ url_for('cms.create_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version )}}">
