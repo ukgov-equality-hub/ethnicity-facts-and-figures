@@ -24,4 +24,4 @@ class AddUserForm(FlaskForm):
 
 class DataSourceSearchForm(FlaskForm):
 
-    q = RDUSearchField(label="Search")
+    q = RDUSearchField(label='Search <span class="govuk-visually-hidden">data sources</span>')
