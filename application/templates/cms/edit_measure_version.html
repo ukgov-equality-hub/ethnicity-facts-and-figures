@@ -232,11 +232,11 @@
                                 </td>
                                 <td class="govuk-table__cell">
                                     <a class="govuk-link" href="{{ url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}">
-                                        {% if 'UPDATE' in measure_version.available_actions %}edit{% else %}view{% endif %}</a></td>
+                                        {% if 'UPDATE' in measure_version.available_actions %}Edit{% else %}view{% endif %}</a></td>
                                 <td class="govuk-table__cell">{% if 'UPDATE' in measure_version.available_actions %}
                                     <form action="{{ url_for('cms.delete_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}" method="post">
                                         {{ form.csrf_token | default('') }}
-                                        <button class="eff-button-link">delete</button>
+                                        <button class="eff-button-link eff-button-link--warning">Delete</button>
                                     </form>
                                     {% endif %}
                                 </td>
@@ -280,13 +280,13 @@
                                     <td class="govuk-table__cell">{{ upload.title }}</td>
                                     <td class="govuk-table__cell">
                                         <a class="govuk-link" href="{{ url_for('cms.edit_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}">
-                                            {% if 'UPDATE' in measure_version.available_actions %}edit{% else %}view{% endif %}</a>
+                                            {% if 'UPDATE' in measure_version.available_actions %}Edit{% else %}view{% endif %}</a>
                                     </td>
                                     <td class="govuk-table__cell">
                                         {% if 'UPDATE' in measure_version.available_actions %}
                                             <form action="{{ url_for('cms.delete_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}" method="post">
                                                 {{ form.csrf_token | default('') }}
-                                                <button class="eff-button-link">delete</button>
+                                                <button class="eff-button-link eff-button-link--warning">Delete</button>
                                             </form>
                                         {% endif %}
                                     </td>
