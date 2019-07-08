@@ -208,7 +208,6 @@ class TestPageService:
             measure_version_form=MeasureVersionForm(
                 is_minor_update=False, title="I care", published_at=datetime.now().date(), internal_reference="abc123"
             ),
-            data_source_forms=[],
             created_by_email=user.email,
         )
 
@@ -230,7 +229,6 @@ class TestPageService:
             measure_version_form=MeasureVersionForm(
                 is_minor_update=False, title="I care", published_at=datetime.now().date()
             ),
-            data_source_forms=[],
             created_by_email=user.email,
         )
 
@@ -242,7 +240,6 @@ class TestPageService:
                     title=created_measure_version.title,
                     published_at=created_measure_version.published_at,
                 ),
-                data_source_forms=[],
                 created_by_email=user.email,
             )
 
@@ -258,7 +255,6 @@ class TestPageService:
                 methodology="\n\n\n\n\n\n",
             ),
             created_by_email=user.email,
-            data_source_forms=[],
         )
 
         assert created_measure_version.title == "I care"
@@ -273,7 +269,6 @@ class TestPageService:
                 is_minor_update=False, title="the title", published_at=datetime.now().date()
             ),
             created_by_email=user.email,
-            data_source_forms=[],
         )
 
         assert "the title" == created_measure_version.title
@@ -300,7 +295,6 @@ class TestPageService:
                 is_minor_update=False, title="the title", published_at=datetime.now().date()
             ),
             created_by_email=user.email,
-            data_source_forms=[],
         )
 
         assert "the title" == created_measure_version.title

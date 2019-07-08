@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% from "_shared/_breadcrumb.html" import breadcrumb %}
 {% from "_shared/_status_banner_macro.html" import status_banner %}
-{% from "cms/_data_source_form.html" import render_data_source_form %}
+{% from "_macros/_data_sources.html" import manage_measure_version_data_source %}
 
 {% set breadcrumbs =
   [
@@ -84,7 +84,7 @@
             {% endif %}
 
             {% if "REJECT" in measure_version.available_actions %}
-                <button id="reject-measure" name="measure-action" value="reject-measure" class="govuk-button eff-button--destructive">Reject</button>
+                <button id="reject-measure" name="measure-action" value="reject-measure" class="govuk-button eff-button--warning">Reject</button>
             {% endif %}
 
             {% if measure_version.status == 'REJECTED' %}
@@ -151,23 +151,6 @@
         </div>
 
         <div class="govuk-grid-row">
-          <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">Data sources</h2>
-            <fieldset class="govuk-fieldset source">
-              <legend><h3 class="govuk-heading-s">Primary source</h3></legend>
-              {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
-            </fieldset>
-
-            <div class="js-secondary-sources">
-              <fieldset class="govuk-fieldset source">
-                <legend><h3 class="govuk-heading-s">Secondary source</h3></legend>
-                {{ render_data_source_form(data_source_form=data_source_2_form, organisations_by_type=organisations_by_type, form_disabled=form_disabled, diffs=diffs) }}
-              </fieldset>
-            </div>
-          </div>
-        </div>
-
-        <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                     <h3 class="govuk-heading-m">Commentary</h3>
 
@@ -211,6 +194,25 @@
         </div>
     </form>
 
+    <div class="govuk-grid-row govuk-!-margin-bottom-5">
+      <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-form-group {% if data_sources_not_added %}govuk-form-group--error{% endif %}">
+          <h2 class="govuk-heading-m" id="data-sources">Data sources</h2>
+          <div class="govuk-!-margin-bottom-5">
+            {% if new %}
+              <p class="govuk-body">Once this page is saved you will be able to add data sources</p>
+            {% else %}
+              {{ manage_measure_version_data_source(measure_version=measure_version, data_source=measure_version.primary_data_source, description="primary") }}
+            </div>
+
+            {% if measure_version.primary_data_source %}
+              {{ manage_measure_version_data_source(measure_version=measure_version, data_source=measure_version.secondary_data_source, description="secondary") }}
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
      <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <div class="govuk-form-group {% if dimensions_not_complete_error %}govuk-form-group--error{% endif %}">
@@ -230,11 +232,11 @@
                                 </td>
                                 <td class="govuk-table__cell">
                                     <a class="govuk-link" href="{{ url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}">
-                                        {% if 'UPDATE' in measure_version.available_actions %}edit{% else %}view{% endif %}</a></td>
+                                        {% if 'UPDATE' in measure_version.available_actions %}Edit{% else %}view{% endif %}</a></td>
                                 <td class="govuk-table__cell">{% if 'UPDATE' in measure_version.available_actions %}
                                     <form action="{{ url_for('cms.delete_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}" method="post">
                                         {{ form.csrf_token | default('') }}
-                                        <button class="eff-button--link">delete</button>
+                                        <button class="eff-button-link eff-button-link--warning">Delete</button>
                                     </form>
                                     {% endif %}
                                 </td>
@@ -278,13 +280,13 @@
                                     <td class="govuk-table__cell">{{ upload.title }}</td>
                                     <td class="govuk-table__cell">
                                         <a class="govuk-link" href="{{ url_for('cms.edit_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}">
-                                            {% if 'UPDATE' in measure_version.available_actions %}edit{% else %}view{% endif %}</a>
+                                            {% if 'UPDATE' in measure_version.available_actions %}Edit{% else %}view{% endif %}</a>
                                     </td>
                                     <td class="govuk-table__cell">
                                         {% if 'UPDATE' in measure_version.available_actions %}
                                             <form action="{{ url_for('cms.delete_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}" method="post">
                                                 {{ form.csrf_token | default('') }}
-                                                <button class="eff-button--link">delete</button>
+                                                <button class="eff-button-link eff-button-link--warning">Delete</button>
                                             </form>
                                         {% endif %}
                                     </td>
@@ -293,7 +295,7 @@
                         </table>
                     {% endif %}
                     {% if 'UPDATE' in measure_version.available_actions %}
-                        <p class="govuk-body"><a class="govuk-link" href="{{ url_for('cms.create_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add source data</a></p>
+                        <p class="govuk-body"><a class="govuk-link" href="{{ url_for('cms.create_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add data file (CSV)</a></p>
                     {% endif %}
                     {% if new %}
                         <p class="govuk-body">Once this page is saved you will be able to add downloads</p>
@@ -302,7 +304,7 @@
             </div>
         </div>
 
-    {% if current_user.can(COPY_MEASURE) %}
+    {% if current_user.can(COPY_MEASURE) and not new %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form id="measure-action-section__copy_measure_form-{{ measure_version.id }}" method="POST" action="{{ url_for('cms.copy_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">

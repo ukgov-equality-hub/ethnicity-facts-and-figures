@@ -33,6 +33,7 @@ from tests.functional.locators import (
     TableBuilderPageLocators,
     TopicPageLocators,
     SourceDataPageLocators,
+    CreateDataSourcePageLocators,
 )
 
 
@@ -118,7 +119,7 @@ class BasePage:
 
     def select_checkbox_or_radio(self, element):
         try:
-            element.click()
+            self.scroll_and_click(element)
         except (ElementClickInterceptedException, ElementNotVisibleException):
             self.driver.execute_script("arguments[0].setAttribute('checked', 'checked')", element)
 
@@ -149,6 +150,19 @@ class BasePage:
 
         if wait_for_new_element_selector:
             self.wait_for_element(wait_for_new_element_selector)
+
+    def set_text_field(self, locator, value):
+        element = self.wait_for_element(locator)
+        element.clear()
+        element.send_keys(value)
+
+    def set_auto_complete_field(self, locator, value):
+        element = self.wait_for_element(locator)
+
+        element.send_keys(Keys.CONTROL + "a")
+        element.send_keys(Keys.DELETE)
+
+        element.send_keys(value)
 
 
 def select_contains(locator, text):
@@ -412,6 +426,22 @@ class MeasureEditPage(BasePage):
         element = self.driver.find_element(*EditMeasureLocators.SEND_TO_DRAFT_BUTTON)
         self.scroll_and_click(element)
 
+    def click_add_primary_data_source(self):
+        element = self.wait_for_element(EditMeasureLocators.CREATE_PRIMARY_DATA_SOURCE)
+        self.scroll_and_click(element)
+
+    def click_add_secondary_data_source(self):
+        element = self.wait_for_element(EditMeasureLocators.CREATE_SECONDARY_DATA_SOURCE)
+        self.scroll_and_click(element)
+
+    def click_remove_primary_data_source(self):
+        element = self.wait_for_element(EditMeasureLocators.REMOVE_PRIMARY_DATA_SOURCE)
+        self.scroll_and_click(element)
+
+    def click_remove_secondary_data_source(self):
+        element = self.wait_for_element(EditMeasureLocators.REMOVE_SECONDARY_DATA_SOURCE)
+        self.scroll_and_click(element)
+
     def click_add_dimension(self):
         element = self.wait_for_invisible_element(EditMeasureLocators.ADD_DIMENSION_LINK)
         self.scroll_to(element)
@@ -484,17 +514,8 @@ class MeasureEditPage(BasePage):
         element = self.driver.find_element(locator[0], locator[1])
         self.select_checkbox_or_radio(element)
 
-    def set_primary_title(self, value):
-        self.set_text_field(EditMeasureLocators.DATA_SOURCE_1_TITLE_TEXTAREA, value)
-
     def set_description(self, value):
         self.set_text_field(EditMeasureLocators.DESCRIPTION_TEXTAREA, value)
-
-    def set_primary_publisher(self, value):
-        self.set_auto_complete_field(EditMeasureLocators.DATA_SOURCE_1_PUBLISHER_ID_INPUT, value)
-
-    def set_primary_url(self, value):
-        self.set_text_field(EditMeasureLocators.DATA_SOURCE_1_SOURCE_URL_INPUT, value)
 
     def set_last_update(self, value):
         self.set_text_field(EditMeasureLocators.LAST_UPDATE_INPUT, value)
@@ -507,51 +528,6 @@ class MeasureEditPage(BasePage):
 
     def set_ethnicity_categories(self, value):
         self.set_text_field(EditMeasureLocators.ETHNICITY_SUMMARY_DETAIL_TEXTAREA, value)
-
-    def set_primary_frequency(self):
-        locator = EditMeasureLocators.frequency_radio_button(0)
-        element = self.driver.find_element(locator[0], locator[1])
-        self.scroll_and_click(element)
-
-    def set_primary_type_of_statistic(self):
-        locator = EditMeasureLocators.type_of_statistic_radio_button(0)
-        element = self.driver.find_element(locator[0], locator[1])
-        self.select_checkbox_or_radio(element)
-
-    def set_primary_source_type_of_data(self):
-        locator = EditMeasureLocators.type_of_data_checkbox(0)
-        element = self.driver.find_element(locator[0], locator[1])
-        self.select_checkbox_or_radio(element)
-
-    def set_primary_data_source_purpose(self, value):
-        self.set_text_field(EditMeasureLocators.DATA_SOURCE_1_PURPOSE_TEXTAREA, value)
-
-    def set_secondary_title(self, value):
-        self.set_text_field(EditMeasureLocators.DATA_SOURCE_2_TITLE_TEXTAREA, value)
-
-    def set_secondary_publisher(self, value):
-        self.set_auto_complete_field(EditMeasureLocators.DATA_SOURCE_2_PUBLISHER_ID_INPUT, value)
-
-    def set_secondary_url(self, value):
-        self.set_text_field(EditMeasureLocators.DATA_SOURCE_2_SOURCE_URL_INPUT, value)
-
-    def set_secondary_data_source_purpose(self, value):
-        self.set_text_field(EditMeasureLocators.DATA_SOURCE_2_PURPOSE_TEXTAREA, value)
-
-    def set_secondary_frequency(self):
-        locator = EditMeasureLocators.frequency_radio_button(0, data_source_index=2)
-        element = self.driver.find_element(locator[0], locator[1])
-        self.scroll_and_click(element)
-
-    def set_secondary_type_of_statistic(self):
-        locator = EditMeasureLocators.type_of_statistic_radio_button(0, data_source_index=2)
-        element = self.driver.find_element(locator[0], locator[1])
-        self.select_checkbox_or_radio(element)
-
-    def set_secondary_source_type_of_data(self):
-        locator = EditMeasureLocators.type_of_data_checkbox(0, data_source_index=2)
-        element = self.driver.find_element(locator[0], locator[1])
-        self.select_checkbox_or_radio(element)
 
     def set_methodology(self, value):
         self.set_text_field(EditMeasureLocators.METHODOLOGY_TEXTAREA, value)
@@ -567,36 +543,17 @@ class MeasureEditPage(BasePage):
         radio = element.find_element_by_xpath(f"//input[@id='{label.get_attribute('for')}']")
         self.select_checkbox_or_radio(radio)
 
-    def fill_measure_page(self, measure_version, data_source):
+    def fill_measure_page(self, measure_version):
         self.set_time_period_covered(measure_version.time_covered)
         self.set_area_covered(area="England")
         self.set_lowest_level_of_geography(lowest_level="0")
-
-        self.set_primary_title(value=data_source.title)
-        self.set_primary_publisher(value=f"{data_source.publisher.name}\n")
-        self.set_primary_url(value=data_source.source_url)
-        self.set_primary_frequency()
-        self.set_primary_type_of_statistic()
-
         self.set_description(value=measure_version.description)
-
         self.set_measure_summary(measure_version.measure_summary)
         self.set_summary(measure_version.summary)
         self.set_things_you_need_to_know(measure_version.need_to_know)
         self.set_what_the_data_measures(measure_version.measure_summary)
         self.set_ethnicity_categories(measure_version.ethnicity_definition_summary)
-        self.set_primary_data_source_purpose(data_source.purpose)
-        self.set_primary_source_type_of_data()
         self.set_methodology(measure_version.methodology)
-
-    def fill_secondary_data_source(self, data_source):
-        self.set_secondary_title(value=data_source.title)
-        self.set_secondary_publisher(value=f"{data_source.publisher.name}\n")
-        self.set_secondary_url(value=data_source.source_url)
-        self.set_secondary_frequency()
-        self.set_secondary_type_of_statistic()
-        self.set_secondary_data_source_purpose(data_source.purpose)
-        self.set_secondary_source_type_of_data()
 
     def fill_measure_page_minor_edit_fields(self, measure_version):
         self.set_update_corrects_data_mistake(measure_version.update_corrects_data_mistake)
@@ -608,6 +565,54 @@ class MeasureEditPage(BasePage):
 
     def fill_measure_page_major_edit_fields(self, measure_version):
         self.set_text_field(EditMeasureLocators.EXTERNAL_EDIT_SUMMARY, measure_version.external_edit_summary)
+
+
+class CreateDataSourcePage(BasePage):
+    def __init__(self, driver):
+        super().__init__(driver=driver, base_url=driver.current_url)
+
+    def set_frequency_of_release(self):
+        locator = CreateDataSourcePageLocators.frequency_radio_button(0)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.scroll_and_click(element)
+
+    def set_title(self, value):
+        self.set_text_field(CreateDataSourcePageLocators.TITLE_TEXTAREA, value)
+
+    def set_publisher(self, value):
+        self.set_auto_complete_field(CreateDataSourcePageLocators.PUBLISHER_ID_INPUT, value)
+
+    def set_url(self, value):
+        self.set_text_field(CreateDataSourcePageLocators.SOURCE_URL_INPUT, value)
+
+    def set_type_of_statistic(self):
+        locator = CreateDataSourcePageLocators.type_of_statistic_radio_button(0)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.select_checkbox_or_radio(element)
+
+    def set_source_type_of_data(self):
+        locator = CreateDataSourcePageLocators.type_of_data_checkbox(0)
+        element = self.driver.find_element(locator[0], locator[1])
+        self.select_checkbox_or_radio(element)
+
+    def set_data_source_purpose(self, value):
+        self.set_text_field(CreateDataSourcePageLocators.PURPOSE_TEXTAREA, value)
+
+    def fill_data_source(self, data_source):
+        self.set_title(value=data_source.title)
+        self.set_publisher(value=f"{data_source.publisher.name}\n")
+        self.set_url(value=data_source.source_url)
+        self.set_frequency_of_release()
+        self.set_type_of_statistic()
+        self.set_data_source_purpose(data_source.purpose)
+        self.set_source_type_of_data()
+
+    def click_save(self):
+        element = self.wait_for_element(CreateDataSourcePageLocators.SAVE_BUTTON)
+        self.scroll_and_click(element)
+
+    def click_back(self):
+        self.driver.find_element_by_link_text("Back").click()
 
 
 class DimensionAddPage(BasePage):
