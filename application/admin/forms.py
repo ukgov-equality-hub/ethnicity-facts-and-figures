@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Length, Email
 
-from application.form_fields import RDURadioField, RDUEmailField, ValidPublisherEmailAddress
+from application.form_fields import RDURadioField, RDUEmailField, ValidPublisherEmailAddress, RDUSearchField
 
 
 class AddUserForm(FlaskForm):
@@ -20,3 +20,8 @@ class AddUserForm(FlaskForm):
         default="RDU_USER",
         validators=[DataRequired()],
     )
+
+
+class DataSourceSearchForm(FlaskForm):
+
+    q = RDUSearchField(label='<span class="govuk-visually-hidden">Search data sources</span>')
