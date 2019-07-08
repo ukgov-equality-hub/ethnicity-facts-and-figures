@@ -434,5 +434,5 @@ class TestDataSourcesView:
         form = page.find_all("form", action=url_for("admin.data_sources"))[1]
         assert form
 
-        checkboxes = form.find_all("input", type="checkbox")
-        assert {int(c.get("value")) for c in checkboxes} == {ds1.id, ds2.id}
+        assert find_input_for_label_with_text(form, "Police statistics 2019").get("value") == str(ds1.id)
+        assert find_input_for_label_with_text(form, "2011 Census of England and Wales").get("value") == str(ds2.id)
