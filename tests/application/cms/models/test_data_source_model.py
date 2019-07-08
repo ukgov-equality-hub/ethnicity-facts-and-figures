@@ -132,3 +132,10 @@ class TestDataSourceModel:
 
         with pytest.raises(ValueError):
             data_source_1.merge(data_source_ids=[99999])
+
+    def test_merge_with_self(self):
+
+        data_source_1 = DataSourceFactory.create()
+
+        with pytest.raises(ValueError):
+            data_source_1.merge(data_source_ids=[data_source_1.id])

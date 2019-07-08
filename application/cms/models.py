@@ -192,6 +192,9 @@ class DataSource(db.Model, CopyableModel):
 
     def merge(self, data_source_ids=[]):
 
+        if self.id in data_source_ids:
+            raise ValueError("Can’t merge with self")
+
         if len(data_source_ids) == 0:
             raise ValueError("No data source IDs specified")
 
