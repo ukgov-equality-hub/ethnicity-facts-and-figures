@@ -1,0 +1,27 @@
+{% macro manage_measure_version_data_source(measure_version, data_source, description) %}
+<h3 class="govuk-heading-s">{{ description | title }} data source</h3>
+
+{% if data_source %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <p class="govuk-body">{{ data_source.title }}</p>
+    </div>
+    <div class="govuk-grid-column-one-half">
+      <p class="govuk-body">
+        <a class="govuk-link" href="{{ url_for('cms.edit_data_source', topic_slug=measure_version.measure.subtopic.topic.slug, subtopic_slug=measure_version.measure.subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, data_source_id=data_source.id) }}">Make changes to this <span class="govuk-visually-hidden">{{ description }}</span> data source</a>
+      </p>
+    </div>
+    <div class="govuk-grid-column-one-half">
+      <form method="POST" action="{{ url_for('cms.remove_data_source', topic_slug=measure_version.measure.subtopic.topic.slug, subtopic_slug=measure_version.measure.subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version, data_source_id=data_source.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+        <button type="submit" class="govuk-!-font-size-19 govuk-button eff-button-link eff-button-link--warning">Remove<span class="govuk-visually-hidden"> {{ description }} data source</span></button>
+      </form>
+    </div>
+  </div>
+{% else %}
+  <p class="govuk-body">
+    <a class="govuk-link" href="{{ url_for('cms.new_data_source', topic_slug=measure_version.measure.subtopic.topic.slug, subtopic_slug=measure_version.measure.subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Add <span class="govuk-visually-hidden">{{ description }}</span> data source information</a>
+  </p>
+{% endif %}
+{% endmacro %}

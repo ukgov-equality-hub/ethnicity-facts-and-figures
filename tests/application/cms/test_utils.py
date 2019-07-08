@@ -1,13 +1,10 @@
-from flask import request, current_app, flash, render_template
+from flask import flash, render_template
 from flask_wtf import FlaskForm
 from lxml import html
-import pytest
 from wtforms.validators import DataRequired
 
-from application.cms.forms import DataSourceForm
 from application.form_fields import RDUStringField
-from application.cms.utils import copy_form_errors, get_data_source_forms, get_form_errors, ErrorSummaryMessage
-from tests.models import MeasureVersionFactory
+from application.cms.utils import copy_form_errors, get_form_errors, ErrorSummaryMessage
 
 
 class TestCopyFormErrors:
@@ -68,47 +65,6 @@ class TestGetErrorSummaryDetails:
         rendered_html = render_template("base.html", errors=get_form_errors(forms=[form]))
         doc = html.fromstring(rendered_html)
         assert doc.xpath("//*[contains(@class, 'govuk-error-summary')]")
-
-
-class TestGetDataSourceForms:
-    def setup(self):
-        self.saved_config = {**current_app.config}
-
-    def teardown(self):
-        current_app.config = {**self.saved_config}
-
-    def test_returns_two_data_source_forms(self):
-        measure_version = MeasureVersionFactory()
-        form1, form2 = get_data_source_forms(request, measure_version)
-
-        assert isinstance(form1, DataSourceForm)
-        assert isinstance(form2, DataSourceForm)
-
-    def test_returned_forms_have_distinct_prefixes(self):
-        measure_version = MeasureVersionFactory()
-        form1, form2 = get_data_source_forms(request, measure_version)
-
-        assert form1._prefix == "data-source-1-"
-        assert form2._prefix == "data-source-2-"
-
-    @pytest.mark.parametrize("csrf_enabled", [True, False])
-    def test_csrf_enabled_depending_on_app_config(self, csrf_enabled):
-        measure_version = MeasureVersionFactory()
-        current_app.config["WTF_CSRF_ENABLED"] = csrf_enabled
-
-        form1, form2 = get_data_source_forms(request, measure_version)
-
-        assert form1.meta.csrf is csrf_enabled
-        assert form2.meta.csrf is csrf_enabled
-
-    def test_csrf_always_disabled_if_sending_to_review(self):
-        measure_version = MeasureVersionFactory()
-        current_app.config["WTF_CSRF_ENABLED"] = True
-
-        form1, form2 = get_data_source_forms(request, measure_version, sending_to_review=True)
-
-        assert form1.meta.csrf is False
-        assert form2.meta.csrf is False
 
 
 class TestFlashMessages:

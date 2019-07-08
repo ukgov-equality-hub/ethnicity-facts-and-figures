@@ -367,6 +367,33 @@ def test_admin_user_can_delete_non_admin_user_account(test_app_client, logged_in
     assert User.query.filter_by(email="someuser@somedept.gov.uk").first() is None
 
 
+class TestDataSourcesView:
+    def test_department_user_cannot_see_page(self, test_app_client, logged_in_dept_user):
+
+        response = test_app_client.get("/admin/data-sources")
+        assert response.status_code == 403
+
+    def test_rdu_user_cannot_see_page(self, test_app_client, logged_in_rdu_user):
+
+        response = test_app_client.get("/admin/data-sources")
+        assert response.status_code == 403
+
+    def test_admin_user_can_see_all_data_sources(self, test_app_client, logged_in_admin_user):
+
+        DataSourceFactory.create(title="Police statistics 2019")
+        DataSourceFactory.create(title="2011 Census of England and Wales")
+
+        response = test_app_client.get("/admin/data-sources")
+        page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+
+        assert response.status_code == 200
+        assert "Data sources" == page.find("h1").text
+        assert "Data sources" == page.find("title").text
+
+        assert "Police statistics 2019" in page.text
+        assert "2011 Census of England and Wales" in page.text
+
+
 class TestMergeDataSourcesView:
     def test_rdu_user_cannot_see_data_source_merge(self, test_app_client, logged_in_rdu_user):
 
