@@ -212,7 +212,7 @@ def data_sources():
     return render_template("admin/data_sources.html", data_sources=data_sources)
 
 
-@admin_blueprint.route("/data-sources/merge")
+@admin_blueprint.route("/data-sources/merge", methods=["GET"])
 @login_required
 @user_can(MANAGE_USERS)  # TODO: update to MANAGE_DATA_SOURCES
 def merge_data_sources():
@@ -222,3 +222,17 @@ def merge_data_sources():
     data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
 
     return render_template("admin/merge_data_sources.html", data_sources=data_sources)
+
+
+@admin_blueprint.route("/data-sources/merge", methods=["POST"])
+@login_required
+@user_can(MANAGE_USERS)  # TODO: update to MANAGE_DATA_SOURCES
+def merge_data_sources_post():
+
+    data_source_ids = request.form.get("ids")
+    data_source_to_keep = DataSource.query.get(request.form.get("keep"))
+    data_source_ids_to_merge = list(set(data_source_ids) - set([data_source_to_keep]))
+
+    data_source_to_keep.merge(data_source_ids=data_source_ids_to_merge)
+
+    return redirect(url_for("admin.data_sources"))

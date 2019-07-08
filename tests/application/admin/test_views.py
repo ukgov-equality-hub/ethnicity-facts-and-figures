@@ -425,3 +425,30 @@ class TestMergeDataSourcesView:
 
         assert "2019 police statistics" in page.text
         assert "Police statistics 2019" in page.text
+
+
+class TestActuallyMergeDataSourcesView:
+    def test_merging_two_data_sources(self, test_app_client, logged_in_admin_user):
+
+        DataSourceFactory.create()
+
+        data_source_1 = DataSourceFactory.create(title="Police Statistics 2019")
+        data_source_2 = DataSourceFactory.create(title="Police Stats 2019")
+
+        response = test_app_client.post(
+            "/admin/data-sources/merge",
+            data={"ids": [data_source_1.id, data_source_2.id], "keep": data_source_1.id},
+            follow_redirects=False,
+        )
+
+        assert response.status_code == 302
+        assert response.location == url_for("admin.data_sources", _external=True)
+
+        # Now follow the redirect
+        response_2 = test_app_client.get(response.location)
+
+        assert response_2.status_code == 200
+        page = BeautifulSoup(response_2.data.decode("utf-8"), "html.parser")
+
+        assert "Police Statistics 2019" not in page.find("main").text
+        assert "Police Stats 2019" not in page.find("main").text
