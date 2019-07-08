@@ -8,6 +8,8 @@ from application.utils import generate_token
 
 from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory, OrganisationFactory
 
+from tests.utils import find_input_for_label_with_text
+
 
 def test_standard_user_cannot_view_admin_urls(test_app_client, logged_in_rdu_user):
     resp = test_app_client.get(url_for("admin.index"), follow_redirects=True)
@@ -390,8 +392,26 @@ class TestDataSourcesView:
         assert "Data sources" == page.find("h1").text
         assert "Data sources" == page.find("title").text
 
-        assert "Police statistics 2019" in page.text
-        assert "2011 Census of England and Wales" in page.text
+        assert "Police statistics 2019" in page.find("main").text
+        assert "2011 Census of England and Wales" in page.find("main").text
+
+    def test_admin_user_search_for_data_sources(self, test_app_client, logged_in_admin_user):
+
+        DataSourceFactory.create(title="Police statistics 2019")
+        DataSourceFactory.create(title="2011 Census of England and Wales")
+
+        response = test_app_client.get("/admin/data-sources?q=police")
+        page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+
+        assert response.status_code == 200
+        assert "Data sources" == page.find("h1").text
+        assert "police - Search data sources" == page.find("title").text
+
+        assert "Police statistics 2019" in page.find("main").text
+        assert "2011 Census of England and Wales" not in page.find("main").text
+
+        input_field = find_input_for_label_with_text(page, "Search data sources")
+        assert input_field["value"] == "police"
 
 
 class TestMergeDataSourcesView:

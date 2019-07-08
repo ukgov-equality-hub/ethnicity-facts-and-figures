@@ -144,6 +144,10 @@ class _RDUURLInput(_RDUTextInput):
     input_type = "url"
 
 
+class _RDUSearchInput(_RDUTextInput):
+    input_type = "search"
+
+
 class _RDUChoiceInput(_FormFieldTemplateRenderer):
     TEMPLATE = "forms/_choice_input.html"
 
@@ -309,3 +313,7 @@ class RDUEmailField(RDUStringField):
 
 class RDUURLField(RDUStringField):
     widget = _RDUURLInput()
+
+
+class RDUSearchField(RDUStringField):
+    widget = _RDUSearchInput()
