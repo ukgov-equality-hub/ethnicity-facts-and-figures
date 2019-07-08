@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
 from application.admin import admin_blueprint
-from application.admin.forms import AddUserForm
+from application.admin.forms import AddUserForm, DataSourceSearchForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS, MANAGE_DATA_SOURCES
 from application.cms.forms import SelectMultipleDataSourcesForm
 from application.cms.models import user_measure, DataSource
@@ -207,8 +207,20 @@ def site_build():
 @login_required
 @user_can(MANAGE_DATA_SOURCES)
 def data_sources():
+    q = request.args.get("q", "")
 
-    data_sources = DataSource.query.order_by(DataSource.title).all()
-    form = SelectMultipleDataSourcesForm(data_sources=data_sources)
+    if q:
+        data_sources = DataSource.search(q)
+    else:
+        data_sources = DataSource.query.order_by(DataSource.title).all()
 
-    return render_template("admin/data_sources.html", data_sources=data_sources, form=form)
+    data_source_search_form = DataSourceSearchForm(data={"q": q})
+    data_source_selection_form = SelectMultipleDataSourcesForm(data_sources=data_sources)
+
+    return render_template(
+        "admin/data_sources.html",
+        data_sources=data_sources,
+        q=q,
+        data_source_search_form=data_source_search_form,
+        data_source_selection_form=data_source_selection_form,
+    )

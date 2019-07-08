@@ -8,16 +8,27 @@
   ]
 %}
 
-{% block pageTitle %}Data sources{% endblock %}
+{% block pageTitle %}{% if q %}{{ q }} - Search data sources{% else %}Data sources{% endif %}{% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">Data sources</h1>
 
+
+      <form method="GET" action="{{ url_for('admin.data_sources' )}}">
+
+        {{ data_source_search_form.q() }}
+
+        <button class="govuk-button">Search</button>
+
+      </form>
+
+      <p class="govuk-body">{% if data_sources|length == 1 %}1 result{% else %}{{ '{:,}'.format(data_sources|length) }} results{% endif %}</p>
+
           <ul class="govuk-list">
             <form method="GET" action="{{ url_for('admin.data_sources') }}">  {# TODO: Update to `merge_data_sources` URL when it's added #}
-              {{ form.data_sources }}
+              {{ data_source_selection_form.data_sources }}
 
               <button type="submit" class="govuk-button">Submit</button>
             </form>
