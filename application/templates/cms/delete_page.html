@@ -20,7 +20,7 @@
 
       <form method="POST" action="{{ url_for('cms.delete_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <button class="govuk-button eff-button--destructive">Yes, delete</button>
+        <button class="govuk-button eff-button--warning">Yes, delete</button>
       </form>
 
       <a class="govuk-link" href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">No, return</a>

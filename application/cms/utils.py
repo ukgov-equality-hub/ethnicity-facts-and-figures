@@ -1,11 +1,7 @@
 from dataclasses import dataclass
-from functools import partial
 from typing import List
 
-from flask import current_app
 from markupsafe import Markup
-
-from application.cms.forms import DataSourceForm
 
 
 @dataclass
@@ -46,25 +42,3 @@ def get_form_errors(forms=None, extra_non_form_errors=None):
         errors.extend(extra_non_form_errors)
 
     return errors
-
-
-def get_data_source_forms(request, measure_version, sending_to_review=False):
-    include_csrf = current_app.config["WTF_CSRF_ENABLED"]
-
-    if sending_to_review:
-        include_csrf = False
-
-    PartialDataSourceForm = partial(
-        DataSourceForm, prefix="data-source-1-", sending_to_review=sending_to_review, meta={"csrf": include_csrf}
-    )
-    PartialDataSource2Form = partial(PartialDataSourceForm, prefix="data-source-2-")
-
-    if measure_version:
-        data_source_form = PartialDataSourceForm(obj=measure_version.primary_data_source)
-        data_source_2_form = PartialDataSource2Form(obj=measure_version.secondary_data_source)
-
-    else:
-        data_source_form = PartialDataSourceForm()
-        data_source_2_form = PartialDataSource2Form()
-
-    return data_source_form, data_source_2_form
