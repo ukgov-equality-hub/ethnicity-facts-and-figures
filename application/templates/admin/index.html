@@ -21,6 +21,10 @@
                 {% if current_user.can(MANAGE_SYSTEM) %}
                     <p class="govuk-body"><a class="govuk-link" href="{{ url_for('admin.site_build') }}">Static site build</a></p>
                 {% endif %}
+
+                {% if current_user.can(MANAGE_DATA_SOURCES) %}
+                    <p class="govuk-body"><a class="govuk-link" href="{{ url_for('admin.data_sources') }}">Data sources</a></p>
+                {% endif %}
             </div>
         </div>
 {% endblock %}
