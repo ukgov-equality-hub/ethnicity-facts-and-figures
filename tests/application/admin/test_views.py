@@ -430,7 +430,8 @@ class TestDataSourcesView:
         response = test_app_client.get("/admin/data-sources")
         page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
-        form = page.find("form", action=url_for("admin.data_sources"))  # TODO: Update to `admin.merge_data_sources`
+        # TODO: Update to `admin.merge_data_sources`
+        form = page.find_all("form", action=url_for("admin.data_sources"))[1]
         assert form
 
         checkboxes = form.find_all("input", type="checkbox")
