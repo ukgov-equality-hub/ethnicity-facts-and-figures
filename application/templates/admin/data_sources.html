@@ -16,22 +16,11 @@
       <h1 class="govuk-heading-xl">Data sources</h1>
 
           <ul class="govuk-list">
-            {% for data_source in data_sources %}
+            <form method="GET" action="{{ url_for('admin.data_sources') }}">  {# TODO: Update to `merge_data_sources` URL when it's added #}
+              {{ form.data_sources }}
 
-              <li>
-                <div class="govuk-heading-s govuk-!-margin-bottom-2">{{ data_source.title }}</div>
-                <div class="govuk-body">
-                  {% if data_source.publication_date %}
-                    <span class="eff-!-grey-1">Published on {{ data_source.publication_date }}</span>
-                  {% endif %}
-                  {% if data_source.source_url %}
-                    <a class="govuk-link" href="{{ data_source.source_url }}">View publication</a>
-                  {% endif %}
-                </div>
-
-              </li>
-
-            {% endfor %}
+              <button type="submit" class="govuk-button">Submit</button>
+            </form>
           </ul>
 
     </div>
