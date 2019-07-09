@@ -86,7 +86,7 @@ class TestCreateDataSource:
 
         edit_measure_url = self.__edit_measure_version_url(measure_version)
 
-        return f"{edit_measure_url}/data-sources"
+        return f"{edit_measure_url}/data-sources/new"
 
     def test_post_with_a_title_redirects_to_edit_measure(self, test_app_client, logged_in_rdu_user, db_session):
 

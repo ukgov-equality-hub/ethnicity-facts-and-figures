@@ -1126,7 +1126,7 @@ def new_data_source(topic_slug, subtopic_slug, measure_slug, version):
     )
 
 
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources", methods=["POST"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/new", methods=["POST"])
 @login_required
 @user_has_access
 def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
