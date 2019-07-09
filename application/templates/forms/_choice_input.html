@@ -3,6 +3,10 @@
 {% set govukBaseClass = 'govuk-' + ('checkboxes' if field_type == 'checkbox' else 'radios') %}
 {% set conditionalId = 'conditional-' + field.id %}
 
+{% if field.divider is defined and field.divider != "" %}
+<div class="{{ govukBaseClass }}__divider">{{ field.divider }}</div>
+{% endif %}
+
 <div class="{{ govukBaseClass }}__item">
   <input id="{{ id_ }}" name="{{ name }}" class="{{ govukBaseClass }}__input {{ class_ }}" value="{{ value }}"
          type="{{ field_type }}"
@@ -10,8 +14,8 @@
          {% if conditional_question %} data-aria-controls="{{ conditionalId }}"{% endif %}
   >
   <label class="govuk-label {{ govukBaseClass }}__label" for="{{ field.id }}">{{ field.label.text }}</label>
-  {% if field.description %}
-  <span id="{{ field.id }}-hint" class="govuk-hint {{ govukBaseClass }}__hint">{{ field.description }}</span>
+  {% if field.hint is defined and field.hint != "" %}
+  <span id="{{ field.id }}-hint" class="govuk-hint {{ govukBaseClass }}__hint">{{ field.hint }}</span>
   {% endif %}
 </div>
 
