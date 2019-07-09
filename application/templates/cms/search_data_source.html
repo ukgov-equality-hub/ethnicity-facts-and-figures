@@ -18,20 +18,23 @@
       {{ govukBackLink(href=url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version ),text="Back") }}
 
       <form method="GET" action="{{ url_for('cms.search_data_sources', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version )}}">
-
         <div class="govuk-form-group">
-
           <span class="govuk-caption-xl">{{ measure_version.title }} </span>
+
           <h1 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--xl" for="q">Search for an existing data&nbsp;source</label>
           </h1>
 
-          <input class="govuk-input govuk-input--width-30" id="q" name="q" type="text" value="{{ q }}">
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+              <input class="govuk-input" id="q" name="q" type="text" value="{{ q }}">
+            </div>
+
+            <div class="govuk-grid-column-one-third">
+              <button class="govuk-button">Search</button>
+            </div>
+          </div>
         </div>
-
-
-        <button class="govuk-button">Search</button>
-
       </form>
 
       {% if not data_sources == None %}
