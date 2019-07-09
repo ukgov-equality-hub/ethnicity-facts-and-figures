@@ -7,7 +7,7 @@ from typing import Optional, Iterable
 import sqlalchemy
 from bidict import bidict
 from dictalchemy import DictableModel
-from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, asc, text, func, desc
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, text, func, desc
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -352,10 +352,7 @@ class MeasureVersion(db.Model, CopyableModel):
         cascade="all, delete-orphan",
     )
     data_sources = db.relationship(
-        "DataSource",
-        secondary="data_source_in_measure_version",
-        back_populates="measure_versions",
-        order_by=asc(DataSource.id),
+        "DataSource", secondary="data_source_in_measure_version", back_populates="measure_versions"
     )
     corrected_by_measure_version = db.relationship(
         "MeasureVersion",
