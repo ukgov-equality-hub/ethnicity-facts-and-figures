@@ -18,39 +18,12 @@
       <div class="govuk-body">All of the following data sources will be merged together.</div>
       <form action="{{ url_for('admin.merge_data_sources_post') }}" method="POST">
         {{ data_source_merge_form.csrf_token | default('') }}
-        <div class="govuk-form-group">
-          <fieldset class="govuk-fieldset">
 
-            <legend class="govuk-fieldset__legend">
-                Which one would you like to keep?
-            </legend>
-            {% for data_source in data_sources %}
+        {{ data_source_merge_form.keep }}
 
-              <div class="govuk-radios">
-                <div class="govuk-radios__item">
-
-                  <input type="hidden" name="ids" value="{{ data_source.id }}" />
-                  <input class="govuk-radios__input" id="keep-{{ data_source.id }}" name="keep" type="radio" value="{{ data_source.id }}" aria-describedby="keep-{{ data_source.id }}-hint">
-
-                    <label class="govuk-label govuk-radios__label govuk-label--s" for="keep-{{ data_source.id }}">
-                      {{ data_source.title or "Untitled" }}
-                    </label>
-
-                  <div class="govuk-radios__hint">
-
-                    <div class="govuk-body">{{ data_source.publisher.name }}</div>
-
-                    <div class="govuk-body">{% if data_source.publication_date %}Published on {{ data_source.publication_date }}{% else %}No publication date{% endif %}</div>
-
-                    <div class="govuk-body"><a class="govuk-link" href="{{ data_source.source_url }}">{{ data_source.source_url | url_with_line_breaks }}</a></div>
-                  </div>
-
-                </div>
-              </div>
-
-            {% endfor %}
-          </fieldset>
-        </div>
+        {% for data_source in data_sources %}
+          <input type="hidden" name="ids" value="{{ data_source.id }}" />
+        {% endfor %}
 
         <button class="govuk-button">Merge</button>
       </form>
