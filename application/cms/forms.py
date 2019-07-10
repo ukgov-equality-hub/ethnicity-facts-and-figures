@@ -1,5 +1,7 @@
+from typing import Sequence
+
 from flask_wtf import FlaskForm
-from flask import abort
+from flask import abort, render_template
 from markupsafe import Markup
 from wtforms import StringField, TextAreaField, FileField, IntegerField
 from wtforms.fields.html5 import DateField
@@ -16,6 +18,7 @@ from application.cms.models import (
     LowestLevelOfGeography,
     FrequencyOfRelease,
     TypeOfStatistic,
+    DataSource,
 )
 from application.utils import get_bool
 
@@ -407,3 +410,18 @@ class NewVersionForm(FlaskForm):
                 ),
             ),
         ]
+
+
+class SelectMultipleDataSourcesForm(FlaskForm):
+    data_sources = RDUCheckboxField(label="Select all options that represent the same data source")
+
+    def _build_data_source_hint(self, data_source):
+        return Markup(render_template("forms/labels/_data_source_choice_label.html", data_source=data_source))
+
+    def __init__(self, data_sources: Sequence[DataSource], *args, **kwargs):
+        super(SelectMultipleDataSourcesForm, self).__init__(*args, **kwargs)
+
+        self.data_sources.choices = [(data_source.id, data_source.title) for data_source in data_sources]
+
+        hints = {data_source.id: self._build_data_source_hint(data_source) for data_source in data_sources}
+        self.data_sources.choices_hints = hints

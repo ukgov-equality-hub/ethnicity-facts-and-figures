@@ -222,7 +222,26 @@ class _FormGroup(_FormFieldTemplateRenderer):
         self.other_field = other_field
 
 
-class RDUCheckboxField(SelectMultipleField):
+class _RDUSelectWithHintsMixin:
+    """Mixin for checkbox/radio fields to provide support for supplementary hint text alongside the labels.
+
+    WTForm checkbox/radio fields are populated from a `choices` variable on the field. This class wraps the provided
+    field and extends it with a `choices_hints` variable that maps choice values to hint text for that choice.
+
+    This utilises the `description` attribute on WTForm's interface for checkbox/radio fields.
+    """
+
+    def __init__(self, *args, choices_hints=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.choices_hints = choices_hints or {}
+
+    def __iter__(self):
+        for opt in super().__iter__():
+            opt.description = self.choices_hints.get(opt.data, "")
+            yield opt
+
+
+class RDUCheckboxField(_RDUSelectWithHintsMixin, SelectMultipleField):
     widget = _FormGroup(field_type=_ChoiceInputs.CHECKBOX)
     option_widget = _RDUChoiceInput(field_type=widget.field_type)
 
@@ -239,7 +258,7 @@ class RDUCheckboxField(SelectMultipleField):
         super().__init__(label, validators, **kwargs)
 
 
-class RDURadioField(RadioField):
+class RDURadioField(_RDUSelectWithHintsMixin, RadioField):
     """
     A radio-button field that supports showing/hiding a different field based on whether the last radio has been
     selected - the current limitation/expectation being that the last field is an "other" selection.
