@@ -33,7 +33,7 @@
                   <input class="govuk-radios__input" id="keep-{{ data_source.id }}" name="keep" type="radio" value="{{ data_source.id }}" aria-describedby="keep-{{ data_source.id }}-hint">
 
                     <label class="govuk-label govuk-radios__label govuk-label--s" for="keep-{{ data_source.id }}">
-                      {{ data_source.title }}
+                      {{ data_source.title or "Untitled" }}
                     </label>
 
                   <div class="govuk-radios__hint">
