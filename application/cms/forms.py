@@ -431,7 +431,7 @@ class SelectMultipleDataSourcesForm(FlaskForm):
 
 
 class SelectOrCreateDataSourceForm(SelectMultipleDataSourcesForm):
-    search_query = HiddenField()
+    search_query = HiddenField()  # Retain the original query for the redirect flow when form was submitted with errors
     data_sources = RDURadioField(
         label="Choose an existing data source or create a new one",
         validators=[InputRequired(message="Select a data source")],
@@ -440,7 +440,9 @@ class SelectOrCreateDataSourceForm(SelectMultipleDataSourcesForm):
     def __init__(self, data_sources: Sequence[DataSource], *args, **kwargs):
         super(SelectOrCreateDataSourceForm, self).__init__(data_sources=data_sources, *args, **kwargs)
 
-        if self.data_sources.choices:
+        # If there are some data sources as options, we also need to include an option for users to create a
+        # new data source if none of those are appropriate. This is a hard-coded choice provided by this form.
+        if data_sources:
             self.data_sources.dividers = {CREATE_NEW_DATA_SOURCE: "or"}
 
         self.data_sources.choices.append((CREATE_NEW_DATA_SOURCE, "Create a new data source"))
