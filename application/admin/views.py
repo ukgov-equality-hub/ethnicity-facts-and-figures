@@ -231,7 +231,7 @@ def data_sources():
 @user_can(MANAGE_USERS)  # TODO: update to MANAGE_DATA_SOURCES
 def merge_data_sources():
 
-    data_source_ids = request.args.get("ids").split(",")
+    data_source_ids = request.args.getlist("data_sources")
 
     data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
 
