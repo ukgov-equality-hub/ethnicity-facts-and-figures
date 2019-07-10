@@ -448,6 +448,30 @@ class TestMergeDataSourcesView:
         assert "2019 police statistics" in page.text
         assert "Police statistics 2019" in page.text
 
+    def test_data_sources_ordered_lexicographically_by_title(self, test_app_client, logged_in_admin_user):
+        DataSourceFactory.create(title="Police statistics 2019")
+        DataSourceFactory.create(title="2011 Census of England and Wales")
+
+        response = test_app_client.get("/admin/data-sources")
+        page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+
+        main = page.find("main")
+        assert main.text.index("2011 Census of England and Wales") < main.text.index("Police statistics 2019")
+
+    def test_form_has_checkbox_for_each_data_source(self, test_app_client, logged_in_admin_user):
+        ds1 = DataSourceFactory.create(title="Police statistics 2019")
+        ds2 = DataSourceFactory.create(title="2011 Census of England and Wales")
+
+        response = test_app_client.get("/admin/data-sources")
+        page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+
+        # TODO: Update to `admin.merge_data_sources`
+        form = page.find_all("form", action=url_for("admin.data_sources"))[1]
+        assert form
+
+        assert find_input_for_label_with_text(form, "Police statistics 2019").get("value") == str(ds1.id)
+        assert find_input_for_label_with_text(form, "2011 Census of England and Wales").get("value") == str(ds2.id)
+
 
 class TestActuallyMergeDataSourcesView:
     def test_merging_two_data_sources(self, test_app_client, logged_in_admin_user):

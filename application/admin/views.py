@@ -7,6 +7,7 @@ from application import db
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm, DataSourceSearchForm, DataSourceMergeForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS, MANAGE_DATA_SOURCES
+from application.cms.forms import SelectMultipleDataSourcesForm
 from application.cms.models import user_measure, DataSource
 from application.cms.page_service import page_service
 from application.utils import create_and_send_activation_email, user_can
@@ -206,18 +207,22 @@ def site_build():
 @login_required
 @user_can(MANAGE_DATA_SOURCES)
 def data_sources():
-
     q = request.args.get("q", "")
-
-    data_source_search_form = DataSourceSearchForm(data={"q": q})
 
     if q:
         data_sources = DataSource.search(q)
     else:
         data_sources = DataSource.query.order_by(DataSource.title).all()
 
+    data_source_search_form = DataSourceSearchForm(data={"q": q})
+    data_source_selection_form = SelectMultipleDataSourcesForm(data_sources=data_sources)
+
     return render_template(
-        "admin/data_sources.html", data_sources=data_sources, q=q, data_source_search_form=data_source_search_form
+        "admin/data_sources.html",
+        data_sources=data_sources,
+        q=q,
+        data_source_search_form=data_source_search_form,
+        data_source_selection_form=data_source_selection_form,
     )
 
 
