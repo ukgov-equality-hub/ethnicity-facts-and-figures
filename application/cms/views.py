@@ -1232,6 +1232,9 @@ def link_existing_data_source(topic_slug, subtopic_slug, measure_slug, version):
             db.session.commit()
             flash(f"Successfully added the data source ’{data_source.title}’")
 
+        else:
+            flash(f"The data source ‘{data_source.title}’ is already linked to this page.", "error")
+
         return redirect(
             url_for(
                 "cms.edit_measure_version",
