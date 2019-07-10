@@ -155,7 +155,9 @@ class _RDUChoiceInput(_FormFieldTemplateRenderer):
         super().__init__(*args, **kwargs)
         self.field_type = field_type
 
-    def __call__(self, field, class_="", diffs=None, disabled=False, conditional_question=None, **kwargs):
+    def __call__(
+        self, field, class_="", diffs=None, disabled=False, conditional_question=None, label_class=None, **kwargs
+    ):
         if getattr(field, "checked", field.data):
             kwargs["checked"] = True
 
@@ -170,6 +172,7 @@ class _RDUChoiceInput(_FormFieldTemplateRenderer):
                 "value": field.data,
                 "field_type": self.field_type.value,
                 "conditional_question": conditional_question,
+                "label_class": label_class,
             },
             field_params={**kwargs},
         )
@@ -190,6 +193,7 @@ class _FormGroup(_FormFieldTemplateRenderer):
         fieldset_class="",
         legend_class="",
         field_class="",
+        label_class="",
         diffs=None,
         disabled=False,
         inline=False,
@@ -211,6 +215,7 @@ class _FormGroup(_FormFieldTemplateRenderer):
                 "fieldset_class": fieldset_class,
                 "legend_class": legend_class,
                 "field_class": field_class,
+                "label_class": label_class,
                 "field_type": self.field_type.value,
                 "inline": inline,
                 "conditional_questions": conditional_questions,

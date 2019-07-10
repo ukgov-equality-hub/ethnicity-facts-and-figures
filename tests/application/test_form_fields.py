@@ -132,6 +132,12 @@ class TestRDUCheckboxField:
         assert len(doc.xpath("//input[@type='checkbox']")) == 3
         assert doc.xpath("//input[@type='checkbox']/following-sibling::label/text()") == ["one", "two", "three"]
 
+    def test_label_class_is_rendered(self):
+        doc = html.fromstring(self.form.checkbox_field(label_class="govuk-!-font-weight-bold"))
+
+        assert doc.xpath("//label")
+        assert "govuk-!-font-weight-bold" in doc.xpath("//label/@class")[0].split()
+
     def test_checkbox_enum_choices_have_correct_values(self):
         doc = html.fromstring(self.form.checkbox_field_enum())
 
@@ -212,6 +218,12 @@ class TestRDURadioField:
 
         assert doc.xpath("//legend")
         assert doc.xpath("//legend/@class")[0] == "govuk-fieldset__legend govuk-!-font-weight-bold"
+
+    def test_label_class_is_rendered(self):
+        doc = html.fromstring(self.form.radio_field(label_class="govuk-!-font-weight-bold"))
+
+        assert doc.xpath("//label")
+        assert "govuk-!-font-weight-bold" in doc.xpath("//label/@class")[0].split()
 
     def test_radio_choices_are_rendered(self):
         doc = html.fromstring(self.form.radio_field())

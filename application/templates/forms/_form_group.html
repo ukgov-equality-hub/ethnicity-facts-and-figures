@@ -1,4 +1,4 @@
-{# Required parameters: id_, name, class_, fieldset_class, field_class, field_type, legend, fields, errors, label_class, disabled, inline #}
+{# Required parameters: id_, name, class_, fieldset_class, field_class, field_type, fields, errors, legend_class, disabled, inline, label_class #}
 
 {% set baseFieldType = ('checkboxes' if field_type == 'checkbox' else 'radios') %}
 {% set govukBaseClass = 'govuk-' + baseFieldType %}
@@ -20,7 +20,7 @@
            {% if conditional_questions %} data-module="{{ baseFieldType }}"{% endif %}
       >
         {% for subfield in fields %}
-            {% set field_options = {"disabled": disabled, "class_": field_class} %}
+            {% set field_options = {"disabled": disabled, "class_": field_class, "label_class": label_class} %}
             {% if loop.last and other_field %}
               {% do field_options.update({"aria-controls": other_field.id + "-wrapper", "aria-expanded": "false"}) %}
             {% endif %}
