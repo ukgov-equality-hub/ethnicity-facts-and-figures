@@ -1,4 +1,4 @@
-{# Required parameters: field, id_, name, class, value, field_params #}
+{# Required parameters: field, id_, name, class_, value, field_params, label_class #}
 
 {% set govukBaseClass = 'govuk-' + ('checkboxes' if field_type == 'checkbox' else 'radios') %}
 {% set conditionalId = 'conditional-' + field.id %}
@@ -9,7 +9,7 @@
          {{ field_params }}
          {% if conditional_question %} data-aria-controls="{{ conditionalId }}"{% endif %}
   >
-  <label class="govuk-label {{ govukBaseClass }}__label" for="{{ field.id }}">{{ field.label.text }}</label>
+  <label class="govuk-label {{ govukBaseClass }}__label {{ label_class | default('') }}" for="{{ field.id }}">{{ field.label.text }}</label>
   {% if field.description %}
   <span id="{{ field.id }}-hint" class="govuk-hint {{ govukBaseClass }}__hint">{{ field.description }}</span>
   {% endif %}
