@@ -235,6 +235,9 @@ def merge_data_sources():
 
     data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
 
+    if data_sources.count() != len(data_source_ids):
+        abort(400)
+
     data_source_merge_form = DataSourceMergeForm(data_sources=data_sources)
 
     return render_template(

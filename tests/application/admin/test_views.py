@@ -473,6 +473,20 @@ class TestMergeDataSourcesView:
         assert "2019 police statistics" in page.text
         assert "Police statistics 2019" in page.text
 
+    def test_admin_user_attempting_to_merge_non_existent_ids(self, test_app_client, logged_in_admin_user):
+
+        organisation = OrganisationFactory.create(name="Home Office")
+
+        data_source_1 = DataSourceFactory.create(
+            title="2019 police statistics",
+            source_url="https://www.gov.uk/statistics/police/2019",
+            publisher=organisation,
+        )
+
+        response = test_app_client.get(f"/admin/data-sources/merge?data_sources={data_source_1.id}&data_sources=9999")
+
+        assert response.status_code == 400
+
 
 class TestActuallyMergeDataSourcesView:
     def test_merging_two_data_sources(self, test_app_client, logged_in_admin_user):
