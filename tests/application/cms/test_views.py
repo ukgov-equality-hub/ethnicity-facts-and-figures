@@ -1119,7 +1119,7 @@ class TestLinkExistingDataSource:
         )
 
         assert parse.urlparse(res.location).path == url_for(
-            "cms.search_data_sources",
+            "cms.edit_measure_version",
             topic_slug=measure_version.measure.subtopic.topic.slug,
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_slug=measure_version.measure.slug,

@@ -1205,12 +1205,11 @@ def link_existing_data_source(topic_slug, subtopic_slug, measure_slug, version):
 
         return redirect(
             url_for(
-                "cms.search_data_sources",
+                "cms.edit_measure_version",
                 topic_slug=topic_slug,
                 subtopic_slug=subtopic_slug,
                 measure_slug=measure_slug,
                 version=measure_version.version,
-                q=form.search_query.data,
             )
         )
 
