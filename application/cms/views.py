@@ -1089,7 +1089,7 @@ def search_data_sources(topic_slug, subtopic_slug, measure_slug, version):
     )
 
     q = request.args.get("q", "")
-    data_sources = DataSource.search(q, limit=100) if q else []
+    data_sources = DataSource.search(q, limit=100, exclude_data_sources=measure_version.data_sources) if q else []
     form = SelectOrCreateDataSourceForm(data_sources=data_sources, search_query=q)
 
     # If the user POSTs the SelectOrCreateDataSourceForm without picking a source, it will error and redirect back to

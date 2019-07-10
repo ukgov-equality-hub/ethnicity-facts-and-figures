@@ -1,3 +1,4 @@
+import pytest
 from bs4 import BeautifulSoup
 from lxml import html
 
@@ -49,12 +50,19 @@ class TestSearchDataSourceView:
         assert "Annual population survey" in page.text
         assert "25 October 2018" in page.text
 
-    def test_data_source_form_has_csrf_protection(self, test_app_client, logged_in_rdu_user, stub_measure_data):
-        # assert doc.xpath("//*[@id='csrf_token']")
-        pass
-
     def test_data_sources_already_linked_to_measure_version_are_excluded(self, test_app_client, logged_in_admin_user):
-        pass
+        measure_version = MeasureVersionFactory(data_sources__title="Data source 1")
+        DataSourceFactory(title="Data source 2")
+        DataSourceFactory(title="Data source 3")
+
+        response = test_app_client.get(self.__search_url(measure_version) + "?q=data")
+        page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+
+        with pytest.raises(Exception):
+            find_input_for_label_with_text(page, "Data source 1")
+
+        assert find_input_for_label_with_text(page, "Data source 2")
+        assert find_input_for_label_with_text(page, "Data source 3")
 
     def test_search_returning_zero_results_shows_no_results_message_and_link_to_create_data_source(
         self, test_app_client, logged_in_admin_user

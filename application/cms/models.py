@@ -191,7 +191,7 @@ class DataSource(db.Model, CopyableModel):
     )
 
     @staticmethod
-    def search(query, limit=False):
+    def search(query, limit=False, exclude_data_sources=None):
 
         raw_sql = """
 plainto_tsquery('english', :q)
@@ -223,6 +223,11 @@ plainto_tsquery('english', :q)
             .group_by(DataSource.id)
             .order_by(desc(func.count(DataSourceInMeasureVersion.measure_version_id)), desc(DataSource.id))
         )
+
+        if exclude_data_sources:
+            data_source_query = data_source_query.filter(
+                ~DataSource.id.in_([data_source.id for data_source in exclude_data_sources])
+            )
 
         if limit:
             data_source_query = data_source_query.limit(limit)
