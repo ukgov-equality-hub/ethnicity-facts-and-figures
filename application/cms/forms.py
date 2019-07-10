@@ -413,7 +413,7 @@ class NewVersionForm(FlaskForm):
 
 
 class SelectMultipleDataSourcesForm(FlaskForm):
-    data_sources = RDUCheckboxField(label="Choose data source to merge")
+    data_sources = RDUCheckboxField(label="Select all options that represent the same data source")
 
     def _build_data_source_hint(self, data_source):
         return Markup(render_template("forms/labels/_data_source_choice_label.html", data_source=data_source))

@@ -15,25 +15,38 @@
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">Data sources</h1>
 
-
       <form method="GET" action="{{ url_for('admin.data_sources' )}}">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+            {{ data_source_search_form.q }}
+          </div>
 
-        {{ data_source_search_form.q() }}
-
-        <button class="govuk-button">Search</button>
-
+          <div class="govuk-grid-column-one-third">
+            <button class="govuk-button govuk-button--secondary">Filter</button>
+          </div>
+        </div>
       </form>
 
-      <p class="govuk-body">{% if data_sources|length == 1 %}1 result{% else %}{{ '{:,}'.format(data_sources|length) }} results{% endif %}</p>
+      <p class="govuk-body">
+        Showing
+        {% if data_source_search_form.q.data == "" %}
+          all data sources.
+        {% elif data_sources|length == 1 %}
+          1 result
+        {% else %}
+          {{ '{:,}'.format(data_sources|length) }} results
+        {% endif %}
+      </p>
 
-          <ul class="govuk-list">
-            <form method="GET" action="{{ url_for('admin.data_sources') }}">  {# TODO: Update to `merge_data_sources` URL when it's added #}
-              {{ data_source_selection_form.data_sources }}
+      {% if data_source_selection_form.data_sources.choices|length > 0 %}
+        <ul class="govuk-list">
+          <form method="GET" action="{{ url_for('admin.data_sources') }}">  {# TODO: Update to `merge_data_sources` URL when it's added #}
+            {{ data_source_selection_form.data_sources }}
 
-              <button type="submit" class="govuk-button">Submit</button>
-            </form>
-          </ul>
-
+            <button type="submit" class="govuk-button">Continue</button>
+          </form>
+        </ul>
+      {% endif %}
     </div>
   </div>
 {% endblock %}
