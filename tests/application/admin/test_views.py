@@ -10,6 +10,8 @@ from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory, 
 
 from tests.utils import find_input_for_label_with_text
 
+from werkzeug import ImmutableMultiDict
+
 
 def test_standard_user_cannot_view_admin_urls(test_app_client, logged_in_rdu_user):
     resp = test_app_client.get(url_for("admin.index"), follow_redirects=True)
@@ -457,7 +459,7 @@ class TestActuallyMergeDataSourcesView:
 
         response = test_app_client.post(
             "/admin/data-sources/merge",
-            data={"ids": [data_source_1.id, data_source_2.id], "keep": data_source_1.id},
+            data=ImmutableMultiDict((("ids", data_source_1.id), ("ids", data_source_2.id), ("keep", data_source_1.id))),
             follow_redirects=False,
         )
 
@@ -470,5 +472,5 @@ class TestActuallyMergeDataSourcesView:
         assert response_2.status_code == 200
         page = BeautifulSoup(response_2.data.decode("utf-8"), "html.parser")
 
-        assert "Police Statistics 2019" not in page.find("main").text
+        assert "Police Statistics 2019" in page.find("main").text
         assert "Police Stats 2019" not in page.find("main").text

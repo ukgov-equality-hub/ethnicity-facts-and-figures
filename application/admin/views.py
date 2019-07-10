@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
 from application.admin import admin_blueprint
-from application.admin.forms import AddUserForm, DataSourceSearchForm
+from application.admin.forms import AddUserForm, DataSourceSearchForm, DataSourceMergeForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS, MANAGE_DATA_SOURCES
 from application.cms.models import user_measure, DataSource
 from application.cms.page_service import page_service
@@ -231,6 +231,11 @@ def merge_data_sources():
     data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
 
     return render_template("admin/merge_data_sources.html", data_sources=data_sources)
+    data_source_merge_form = DataSourceMergeForm()
+
+    return render_template(
+        "admin/merge_data_sources.html", data_sources=data_sources, data_source_merge_form=data_source_merge_form
+    )
 
 
 @admin_blueprint.route("/data-sources/merge", methods=["POST"])
@@ -238,9 +243,10 @@ def merge_data_sources():
 @user_can(MANAGE_USERS)  # TODO: update to MANAGE_DATA_SOURCES
 def merge_data_sources_post():
 
-    data_source_ids = request.form.get("ids")
+    data_source_ids = request.form.getlist("ids")
     data_source_to_keep = DataSource.query.get(request.form.get("keep"))
-    data_source_ids_to_merge = list(set(data_source_ids) - set([data_source_to_keep]))
+
+    data_source_ids_to_merge = list(set(data_source_ids) - set([str(data_source_to_keep.id)]))
 
     data_source_to_keep.merge(data_source_ids=data_source_ids_to_merge)
 
