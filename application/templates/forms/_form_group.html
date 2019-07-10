@@ -19,7 +19,7 @@
            {% if conditional_questions %} data-module="{{ baseFieldType }}"{% endif %}
       >
         {% for subfield in fields %}
-            {% set field_options = {"disabled": disabled, "class_": field_class, "label_class": label_class | default('')} %}
+            {% set field_options = {"disabled": disabled, "class_": field_class, "label_class": label_class} %}
             {% if loop.last and other_field %}
               {% do field_options.update({"aria-controls": other_field.id + "-wrapper", "aria-expanded": "false"}) %}
             {% endif %}

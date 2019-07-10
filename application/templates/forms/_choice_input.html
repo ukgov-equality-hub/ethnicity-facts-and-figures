@@ -9,7 +9,7 @@
          {{ field_params }}
          {% if conditional_question %} data-aria-controls="{{ conditionalId }}"{% endif %}
   >
-  <label class="govuk-label {{ govukBaseClass }}__label {{ label_class | default('') }}" for="{{ field.id }}">{{ field.label.text }}</label>
+  <label class="govuk-label {{ govukBaseClass }}__label {{ label_class }}" for="{{ field.id }}">{{ field.label.text }}</label>
   {% if field.description %}
   <span id="{{ field.id }}-hint" class="govuk-hint {{ govukBaseClass }}__hint">{{ field.description }}</span>
   {% endif %}
