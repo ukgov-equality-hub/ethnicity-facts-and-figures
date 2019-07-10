@@ -1,4 +1,5 @@
 import datetime
+
 import json
 import re
 from urllib import parse
@@ -25,12 +26,6 @@ from tests.utils import multidict_from_measure_version_and_kwargs, page_displays
 
 
 class TestGetCreateMeasurePage:
-    def setup(self):
-        self.saved_config = {**current_app.config}
-
-    def teardown(self):
-        current_app.config = {**self.saved_config}
-
     def test_create_measure_page(self, test_app_client, logged_in_rdu_user, stub_measure_data):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
@@ -49,7 +44,9 @@ class TestGetCreateMeasurePage:
             == "Created page %s" % stub_measure_data["title"]
         )
 
-    def test_measure_pages_have_csrf_protection(self, test_app_client, logged_in_rdu_user, stub_measure_data):
+    def test_measure_pages_have_csrf_protection(
+        self, test_app_client, logged_in_rdu_user, stub_measure_data, isolated_app_config
+    ):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
         current_app.config["WTF_CSRF_ENABLED"] = True
@@ -952,12 +949,6 @@ class TestTableBuilder(_TestVisualisationBuilder):
 
 
 class TestRemoveDataSourceView:
-    def setup(self):
-        self.saved_config = {**current_app.config}
-
-    def teardown(self):
-        current_app.config = {**self.saved_config}
-
     def test_login_required(self, test_app_client):
         measure_version = MeasureVersionFactory()
 
@@ -1045,7 +1036,7 @@ class TestRemoveDataSourceView:
 
         assert res.status_code == 200
 
-    def test_csrf_protection(self, test_app_client, logged_in_rdu_user):
+    def test_csrf_protection(self, test_app_client, logged_in_rdu_user, isolated_app_config):
         current_app.config["WTF_CSRF_ENABLED"] = True
         measure_version = MeasureVersionFactory(data_sources=[])
         data_source = DataSourceFactory()
