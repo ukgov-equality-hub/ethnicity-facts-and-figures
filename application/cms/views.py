@@ -1250,7 +1250,7 @@ def link_existing_data_source(topic_slug, subtopic_slug, measure_slug, version):
             subtopic_slug=subtopic_slug,
             measure_slug=measure_slug,
             version=measure_version.version,
-            q=form.q.data,
+            q=form.search_query.data,
             revalidate=True,
         )
     )
