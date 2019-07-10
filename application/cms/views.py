@@ -1213,7 +1213,7 @@ def link_existing_data_source(topic_slug, subtopic_slug, measure_slug, version):
             )
         )
 
-    if form.data_sources.data == CREATE_NEW_DATA_SOURCE:
+    if form.data_source.data == CREATE_NEW_DATA_SOURCE:
         return redirect(
             url_for(
                 "cms.create_data_source",
@@ -1224,8 +1224,8 @@ def link_existing_data_source(topic_slug, subtopic_slug, measure_slug, version):
             )
         )
 
-    elif form.data_sources.data:
-        data_source = DataSource.query.get(form.data_sources.data)
+    elif form.data_source.data:
+        data_source = DataSource.query.get(form.data_source.data)
 
         if data_source not in measure_version.data_sources:
             measure_version.data_sources.append(data_source)
