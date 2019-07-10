@@ -230,7 +230,6 @@ def merge_data_sources():
 
     data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
 
-    return render_template("admin/merge_data_sources.html", data_sources=data_sources)
     data_source_merge_form = DataSourceMergeForm()
 
     return render_template(
