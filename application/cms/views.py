@@ -1137,6 +1137,7 @@ def new_data_source(topic_slug, subtopic_slug, measure_slug, version):
         subtopic=subtopic,
         measure=measure,
         measure_version=measure_version,
+        from_search_query=request.args.get("from_search_query"),
     )
 
 
@@ -1187,6 +1188,7 @@ def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
             subtopic=subtopic,
             measure=measure,
             measure_version=measure_version,
+            from_search_query=request.args.get("from_search_query"),
         )
 
 
@@ -1221,6 +1223,7 @@ def link_existing_data_source(topic_slug, subtopic_slug, measure_slug, version):
                 subtopic_slug=subtopic_slug,
                 measure_slug=measure_slug,
                 version=version,
+                from_search_query=form.search_query.data,
             )
         )
 

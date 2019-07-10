@@ -1,6 +1,10 @@
+import pytest
 from bs4 import BeautifulSoup
 
 import re
+
+from flask import url_for
+from lxml import html
 
 from application.cms.models import DataSource, MeasureVersion
 
@@ -71,6 +75,43 @@ class TestAddDataSourceView:
 
         response = test_app_client.get(url)
         assert response.status_code == 200
+
+    @pytest.mark.parametrize("from_search_query", (None, "foo"))
+    def test_back_link_goes_to_measure_version_or_search_results_based_on_url_param(
+        self, test_app_client, logged_in_rdu_user, from_search_query
+    ):
+        measure_version = MeasureVersionFactory.create()
+
+        url = f"{self.__measure_edit_url(measure_version)}/data-sources/new"
+        if from_search_query:
+            url += f"?from_search_query={from_search_query}"
+
+        response = test_app_client.get(url)
+        doc = html.fromstring(response.get_data(as_text=True))
+
+        back_links = doc.xpath("//a[text()='Back']")
+        assert len(back_links) == 1
+
+        if from_search_query:
+            expected_url = url_for(
+                "cms.search_data_sources",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+                q=from_search_query,
+            )
+
+        else:
+            expected_url = url_for(
+                "cms.edit_measure_version",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+            )
+
+        assert back_links[0].get("href") == expected_url
 
 
 class TestCreateDataSource:

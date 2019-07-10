@@ -42,7 +42,7 @@
           <p class="govuk-body">No results found. Try again with different words or a less specific search, or create a new data source.</p>
 
           <p class="govuk-body">
-            <a class="govuk-link" href="{{ url_for('cms.new_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Create a new data source</a>
+            <a class="govuk-link" href="{{ url_for('cms.new_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, from_search_query=q) }}">Create a new data source</a>
           </p>
         {% else %}
           <form action="{{ url_for('cms.link_existing_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}" method="POST">
