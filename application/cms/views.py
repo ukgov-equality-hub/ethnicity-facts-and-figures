@@ -1198,10 +1198,21 @@ def link_existing_data_source(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    if len(measure_version.data_sources) >= 2:
-        abort(400, "Only two data sources can currently be linked to a measure version.")
-
     form = SelectOrCreateDataSourceForm(data_sources=[])
+
+    if len(measure_version.data_sources) >= 2:
+        flash("Only two data sources can currently be linked to a measure version.", "error")
+
+        return redirect(
+            url_for(
+                "cms.search_data_sources",
+                topic_slug=topic_slug,
+                subtopic_slug=subtopic_slug,
+                measure_slug=measure_slug,
+                version=measure_version.version,
+                q=form.search_query.data,
+            )
+        )
 
     if form.data_sources.data == CREATE_NEW_DATA_SOURCE:
         return redirect(

@@ -1098,8 +1098,11 @@ class TestLinkExistingDataSource:
         assert res.status_code == 400
         assert "The CSRF token is missing." in res.get_data(as_text=True)
 
-    def test_400_if_measure_version_has_two_data_sources_already(self, test_app_client, logged_in_rdu_user, db):
+    def test_redirect_with_flash_if_measure_version_has_two_data_sources_already(
+        self, test_app_client, logged_in_rdu_user, db
+    ):
         measure_version = MeasureVersionFactory()
+
         DataSourceFactory(measure_versions=[measure_version])
         third_data_source = DataSourceFactory()
 
@@ -1111,9 +1114,20 @@ class TestLinkExistingDataSource:
                 measure_slug=measure_version.measure.slug,
                 version=measure_version.version,
             ),
-            follow_redirects=True,
+            follow_redirects=False,
             data=ImmutableMultiDict((("data_sources", third_data_source.id),)),
         )
 
-        assert res.status_code == 400
-        assert "Only two data sources can currently be linked to a measure version." in res.get_data(as_text=True)
+        assert parse.urlparse(res.location).path == url_for(
+            "cms.search_data_sources",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+
+        redirected_response = test_app_client.get(res.location, follow_redirects=True)
+
+        assert "Only two data sources can currently be linked to a measure version." in redirected_response.get_data(
+            as_text=True
+        )
