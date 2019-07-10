@@ -436,7 +436,9 @@ class TestMergeDataSourcesView:
             title="Police statistics 2019", source_url="https://statistics.gov.uk/police/2019", publisher=organisation
         )
 
-        response = test_app_client.get(f"/admin/data-sources/merge?ids={data_source_1.id},{data_source_2.id}")
+        response = test_app_client.get(
+            f"/admin/data-sources/merge?data_sources={data_source_1.id}&data_sources={data_source_2.id}"
+        )
 
         assert response.status_code == 200
 
@@ -465,8 +467,7 @@ class TestMergeDataSourcesView:
         response = test_app_client.get("/admin/data-sources")
         page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
-        # TODO: Update to `admin.merge_data_sources`
-        form = page.find_all("form", action=url_for("admin.data_sources"))[1]
+        form = page.find("form", action=url_for("admin.merge_data_sources_post"))
         assert form
 
         assert find_input_for_label_with_text(form, "Police statistics 2019").get("value") == str(ds1.id)
