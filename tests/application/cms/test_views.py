@@ -1063,6 +1063,7 @@ class TestRemoveDataSourceView:
         )
 
         assert res.status_code == 400
+        assert "The CSRF token is missing." in res.get_data(as_text=True)
 
     def test_data_source_unlinked_from_measure_version_but_not_deleted_entirely(
         self, test_app_client, logged_in_rdu_user
@@ -1085,3 +1086,43 @@ class TestRemoveDataSourceView:
         assert res.status_code == 200
         assert measure_version.data_sources == []
         assert DataSource.query.get(data_source.id)
+
+
+class TestLinkExistingDataSource:
+    def test_csrf_protection(self, test_app_client, logged_in_rdu_user, isolated_app_config):
+        current_app.config["WTF_CSRF_ENABLED"] = True
+        measure_version = MeasureVersionFactory(data_sources=[])
+
+        res = test_app_client.post(
+            url_for(
+                "cms.link_existing_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+            ),
+            follow_redirects=True,
+        )
+
+        assert res.status_code == 400
+        assert "The CSRF token is missing." in res.get_data(as_text=True)
+
+    def test_400_if_measure_version_has_two_data_sources_already(self, test_app_client, logged_in_rdu_user, db):
+        measure_version = MeasureVersionFactory()
+        DataSourceFactory(measure_versions=[measure_version])
+        third_data_source = DataSourceFactory()
+
+        res = test_app_client.post(
+            url_for(
+                "cms.link_existing_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+            ),
+            follow_redirects=True,
+            data=ImmutableMultiDict((("data_sources", third_data_source.id),)),
+        )
+
+        assert res.status_code == 400
+        assert "Only two data sources can currently be linked to a measure version." in res.get_data(as_text=True)

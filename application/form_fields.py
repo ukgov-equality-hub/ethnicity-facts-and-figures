@@ -226,7 +226,8 @@ class _RDUSelectMixin:
     """Mixin for checkbox/radio fields to provide support for per-input hint text and dividers.
 
     WTForm checkbox/radio fields are populated from a `choices` variable on the field. This class wraps the provided
-    field and extends it with a `choices_hints` variable that maps choice values to hint text for that choice.
+    field and extends it with `choices_hints` and `dividers` that maps individual choice values to their (optional)
+    hints and dividers.
     """
 
     def __init__(self, *args, choices_hints=None, dividers=None, **kwargs):

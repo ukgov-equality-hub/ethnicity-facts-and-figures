@@ -37,37 +37,28 @@
         </div>
       </form>
 
-      {% if not data_sources == None %}
+      {% if request.args.q is defined and request.args.q != "" %}
+        {% if data_sources|length == 0 %}
+          <p class="govuk-body">No results found. Try again with different words or a less specific search, or create a new data source.</p>
 
-        {% if data_sources|length > 0 %}
-
-          {% if data_sources|length == 100 %}
-
-            <p class="govuk-body">Only the first 100 results are shown.</p>
-          {% endif %}
-
-          <ul class="govuk-list">
-            {% for data_source in data_sources %}
-
-              <li>
-                <div class="govuk-heading-s govuk-!-margin-bottom-2">{{ data_source.title }}</div>
-                <div class="govuk-body">
-                  {% if data_source.publication_date %}
-                    <span class="eff-!-grey-1">Published on {{ data_source.publication_date }}</span>
-                  {% endif %}
-                  {% if data_source.source_url %}
-                    <a class="govuk-link" href="{{ data_source.source_url }}">View publication</a>
-                  {% endif %}
-                </div>
-              </li>
-
-            {% endfor %}
-          </ul>
+          <p class="govuk-body">
+            <a class="govuk-link" href="{{ url_for('cms.new_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Create a new data source</a>
+          </p>
         {% else %}
-          <p class="govuk-body">No results found. Try again with different words or a less specific search.</p>
+          <form action="{{ url_for('cms.link_existing_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}" method="POST">
+            {{ form.csrf_token | default('') }}
+            {{ form.search_query }}
+
+            {% if data_sources|length >= 100 %}
+              <p class="govuk-body">Only the first 100 results are shown.</p>
+            {% endif %}
+
+            {{ form.data_sources }}
+
+            <button type="submit" class="govuk-button">Select</button>
+          </form>
         {% endif %}
       {% endif %}
-
     </div>
   </div>
 

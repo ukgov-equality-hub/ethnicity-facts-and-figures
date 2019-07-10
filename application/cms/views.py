@@ -33,6 +33,8 @@ from application.cms.forms import (
     NewVersionForm,
     UploadForm,
     DataSourceForm,
+    SelectOrCreateDataSourceForm,
+    CREATE_NEW_DATA_SOURCE,
 )
 from application.cms.models import NewVersionType, MeasureVersion, Measure
 from application.cms.models import Organisation, DataSource
@@ -1087,11 +1089,21 @@ def search_data_sources(topic_slug, subtopic_slug, measure_slug, version):
     )
 
     q = request.args.get("q", "")
+    data_sources = DataSource.search(q, limit=100) if q else []
+    form = SelectOrCreateDataSourceForm(data_sources=data_sources, search_query=q)
 
-    if q:
-        data_sources = DataSource.search(q, limit=100)
-    else:
-        data_sources = None
+    # If the user POSTs the SelectOrCreateDataSourceForm without picking a source, it will error and redirect back to
+    # this URL as a GET. In doing so, we lose the form that performed the initial validation and contains the errors.
+    # The presence of the `validate` query param indicates this we're on this page as the result of that
+    # Post-Redirect-Get flow, so we need to work out what went wrong and display those errors to the end user.
+    # We do this by running the validation again, and displaying the errors we find.
+    errors = []
+    validate = get_bool(request.args.get("revalidate"))
+    if validate:
+        form_without_csrf = SelectOrCreateDataSourceForm(data_sources=data_sources, meta={"csrf": False})
+        form_without_csrf.validate()
+        errors = get_form_errors(forms=[form_without_csrf])
+        copy_form_errors(from_form=form_without_csrf, to_form=form)
 
     return render_template(
         "cms/search_data_source.html",
@@ -1101,6 +1113,8 @@ def search_data_sources(topic_slug, subtopic_slug, measure_slug, version):
         measure_version=measure_version,
         q=q,
         data_sources=data_sources,
+        form=form,
+        errors=errors,
     )
 
 
@@ -1174,6 +1188,61 @@ def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
             measure=measure,
             measure_version=measure_version,
         )
+
+
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/link", methods=["POST"])
+@login_required
+@user_has_access
+def link_existing_data_source(topic_slug, subtopic_slug, measure_slug, version):
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
+
+    if len(measure_version.data_sources) >= 2:
+        abort(400, "Only two data sources can currently be linked to a measure version.")
+
+    form = SelectOrCreateDataSourceForm(data_sources=[])
+
+    if form.data_sources.data == CREATE_NEW_DATA_SOURCE:
+        return redirect(
+            url_for(
+                "cms.create_data_source",
+                topic_slug=topic_slug,
+                subtopic_slug=subtopic_slug,
+                measure_slug=measure_slug,
+                version=version,
+            )
+        )
+
+    elif form.data_sources.data:
+        data_source = DataSource.query.get(form.data_sources.data)
+
+        if data_source not in measure_version.data_sources:
+            measure_version.data_sources.append(data_source)
+            db.session.commit()
+            flash(f"Successfully added the data source ’{data_source.title}’")
+
+        return redirect(
+            url_for(
+                "cms.edit_measure_version",
+                topic_slug=topic_slug,
+                subtopic_slug=subtopic_slug,
+                measure_slug=measure_slug,
+                version=measure_version.version,
+            )
+        )
+
+    return redirect(
+        url_for(
+            "cms.search_data_sources",
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
+            version=measure_version.version,
+            q=form.q.data,
+            revalidate=True,
+        )
+    )
 
 
 @cms_blueprint.route(
