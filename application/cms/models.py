@@ -225,8 +225,6 @@ class DataSource(db.Model, CopyableModel):
 
         db.session.commit()
 
-        return True
-
     @staticmethod
     def search(query, limit=False):
 
