@@ -228,7 +228,7 @@ def data_sources():
 
 @admin_blueprint.route("/data-sources/merge", methods=["GET"])
 @login_required
-@user_can(MANAGE_USERS)  # TODO: update to MANAGE_DATA_SOURCES
+@user_can(MANAGE_DATA_SOURCES)
 def merge_data_sources():
 
     data_source_ids = request.args.getlist("data_sources")
