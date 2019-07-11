@@ -254,13 +254,16 @@ def merge_data_sources_post():
 
     data_source_to_keep_id = request.form.get("keep")
 
-    if not data_source_to_keep_id:
+    data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
+    data_source_merge_form = DataSourceMergeForm(data_sources=data_sources)
 
-        data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
-        data_source_merge_form = DataSourceMergeForm(data_sources=data_sources)
+    if not data_source_merge_form.validate_on_submit():
 
         return render_template(
-            "admin/merge_data_sources.html", data_sources=data_sources, data_source_merge_form=data_source_merge_form
+            "admin/merge_data_sources.html",
+            data_sources=data_sources,
+            data_source_merge_form=data_source_merge_form,
+            errors=get_form_errors(forms=[data_source_merge_form]),
         )
 
     data_source_to_keep = DataSource.query.get(data_source_to_keep_id)
