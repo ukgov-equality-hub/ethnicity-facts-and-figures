@@ -111,7 +111,7 @@ class TestDataSourceModel:
 
         measure_version_associated_with_data_source_2 = MeasureVersionFactory.create(data_sources=[data_source_2])
 
-        measure_version_associated_with_data_source_3 = MeasureVersionFactory.create(data_sources=[data_source_2])
+        measure_version_associated_with_data_source_3 = MeasureVersionFactory.create(data_sources=[data_source_3])
 
         data_source_1.merge(data_source_ids=[data_source_2.id, data_source_3.id])
 
