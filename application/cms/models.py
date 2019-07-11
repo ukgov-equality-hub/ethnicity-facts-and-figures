@@ -191,6 +191,15 @@ class DataSource(db.Model, CopyableModel):
     )
 
     def merge(self, data_source_ids=[]):
+        """This merges the data sources with the IDs specified into this data source,
+        by first updating any references to those data source to this one, and then
+        deleting those data sources. This is irreversible.
+
+        Note: this makes no attempt to merge the metadata fields associated with the
+        specified data sources.
+
+        Will raise an error no IDs specified, if any of the IDs specified don’t exist,
+        or if one of the IDs is the ID for this data source."""
 
         if self.id in data_source_ids:
             raise ValueError("Can’t merge with self")
