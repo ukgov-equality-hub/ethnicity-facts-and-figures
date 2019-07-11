@@ -217,11 +217,14 @@ class DataSource(db.Model, CopyableModel):
 
         for data_source_to_delete in data_sources_to_delete:
 
-            DataSourceInMeasureVersion.query.filter(
-                DataSourceInMeasureVersion.data_source_id == data_source_to_delete.id
-            ).update({"data_source_id": self.id})
+            for measure_version in data_source_to_delete.measure_versions:
+
+                measure_version.data_sources.remove(data_source_to_delete)
+                measure_version.data_sources.append(self)
 
             db.session.delete(data_source_to_delete)
+
+        db.session.flush()
 
     @staticmethod
     def search(query, limit=False):
