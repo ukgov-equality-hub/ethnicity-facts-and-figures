@@ -529,3 +529,18 @@ class TestActuallyMergeDataSourcesView:
 
         assert "Police Statistics 2019" in page.find("main").text
         assert "Police Stats 2019" not in page.find("main").text
+
+    def test_failing_to_select_one_to_keep(self, test_app_client, logged_in_admin_user):
+
+        DataSourceFactory.create()
+
+        data_source_1 = DataSourceFactory.create(title="Police Statistics 2019")
+        data_source_2 = DataSourceFactory.create(title="Police Stats 2019")
+
+        response = test_app_client.post(
+            self.__path,
+            data=ImmutableMultiDict((("ids", data_source_1.id), ("ids", data_source_2.id))),
+            follow_redirects=False,
+        )
+
+        assert response.status_code == 200

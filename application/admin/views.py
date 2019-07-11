@@ -251,7 +251,19 @@ def merge_data_sources():
 def merge_data_sources_post():
 
     data_source_ids = request.form.getlist("ids")
-    data_source_to_keep = DataSource.query.get(request.form.get("keep"))
+
+    data_source_to_keep_id = request.form.get("keep")
+
+    if not data_source_to_keep_id:
+
+        data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
+        data_source_merge_form = DataSourceMergeForm(data_sources=data_sources)
+
+        return render_template(
+            "admin/merge_data_sources.html", data_sources=data_sources, data_source_merge_form=data_source_merge_form
+        )
+
+    data_source_to_keep = DataSource.query.get(data_source_to_keep_id)
 
     data_source_ids_to_merge = list(set(data_source_ids) - set([str(data_source_to_keep.id)]))
 
