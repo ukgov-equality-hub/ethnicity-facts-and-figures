@@ -3,7 +3,7 @@ from typing import Sequence
 from flask_wtf import FlaskForm
 from flask import abort, render_template
 from markupsafe import Markup
-from wtforms import StringField, TextAreaField, FileField, IntegerField
+from wtforms import StringField, TextAreaField, FileField, IntegerField, HiddenField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length, StopValidation, InputRequired
 
@@ -21,6 +21,9 @@ from application.cms.models import (
     DataSource,
 )
 from application.utils import get_bool
+
+
+CREATE_NEW_DATA_SOURCE = "new"
 
 
 class TypeOfDataRequiredValidator:
@@ -416,7 +419,7 @@ class SelectMultipleDataSourcesForm(FlaskForm):
     data_sources = RDUCheckboxField(label="Select all options that represent the same data source")
 
     def _build_data_source_hint(self, data_source):
-        return Markup(render_template("forms/labels/_data_source_choice_label.html", data_source=data_source))
+        return Markup(render_template("forms/labels/_data_source_choice_hint.html", data_source=data_source))
 
     def __init__(self, data_sources: Sequence[DataSource], *args, **kwargs):
         super(SelectMultipleDataSourcesForm, self).__init__(*args, **kwargs)
@@ -425,3 +428,28 @@ class SelectMultipleDataSourcesForm(FlaskForm):
 
         hints = {data_source.id: self._build_data_source_hint(data_source) for data_source in data_sources}
         self.data_sources.choices_hints = hints
+
+
+class SelectOrCreateDataSourceForm(FlaskForm):
+    search_query = HiddenField()  # Retain the original query for the redirect flow when form was submitted with errors
+    data_source = RDURadioField(
+        label="Select a data source or create a new one", validators=[InputRequired(message="Select a data source")]
+    )
+
+    def _build_data_source_hint(self, data_source):
+        return Markup(render_template("forms/labels/_data_source_choice_hint.html", data_source=data_source))
+
+    def __init__(self, data_sources: Sequence[DataSource], *args, **kwargs):
+        super(SelectOrCreateDataSourceForm, self).__init__(data_sources=data_sources, *args, **kwargs)
+
+        # If there are some data sources as options, we also need to include an option for users to create a
+        # new data source if none of those are appropriate. This is a hard-coded choice provided by this form.
+        if data_sources:
+            self.data_source.choices = [(data_source.id, data_source.title) for data_source in data_sources]
+
+            hints = {data_source.id: self._build_data_source_hint(data_source) for data_source in data_sources}
+            self.data_source.choices_hints = hints
+
+            self.data_source.dividers = {CREATE_NEW_DATA_SOURCE: "or"}
+
+            self.data_source.choices.append((CREATE_NEW_DATA_SOURCE, "Create a new data source"))
