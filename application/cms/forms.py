@@ -419,7 +419,7 @@ class SelectMultipleDataSourcesForm(FlaskForm):
     data_sources = RDUCheckboxField(label="Select all options that represent the same data source")
 
     def _build_data_source_hint(self, data_source):
-        return Markup(render_template("forms/labels/_data_source_choice_label.html", data_source=data_source))
+        return Markup(render_template("forms/labels/_data_source_choice_hint.html", data_source=data_source))
 
     def __init__(self, data_sources: Sequence[DataSource], *args, **kwargs):
         super(SelectMultipleDataSourcesForm, self).__init__(*args, **kwargs)
@@ -437,7 +437,7 @@ class SelectOrCreateDataSourceForm(FlaskForm):
     )
 
     def _build_data_source_hint(self, data_source):
-        return Markup(render_template("forms/labels/_data_source_choice_label.html", data_source=data_source))
+        return Markup(render_template("forms/labels/_data_source_choice_hint.html", data_source=data_source))
 
     def __init__(self, data_sources: Sequence[DataSource], *args, **kwargs):
         super(SelectOrCreateDataSourceForm, self).__init__(data_sources=data_sources, *args, **kwargs)
