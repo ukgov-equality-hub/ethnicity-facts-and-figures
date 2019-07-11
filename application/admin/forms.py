@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms.validators import DataRequired, Length, Email
+from wtforms.validators import DataRequired, Length, Email, InputRequired
 
 from typing import Sequence
 from markupsafe import Markup
@@ -35,7 +35,9 @@ class DataSourceSearchForm(FlaskForm):
 
 class DataSourceMergeForm(FlaskForm):
 
-    keep = RDURadioField(label="Which one would you like to keep?")
+    keep = RDURadioField(
+        label="Which one would you like to keep?", validators=[InputRequired(message="Select one to keep")]
+    )
 
     def _build_data_source_hint(self, data_source):
         return Markup(render_template("forms/labels/_merge_data_source_choice_hint.html", data_source=data_source))
