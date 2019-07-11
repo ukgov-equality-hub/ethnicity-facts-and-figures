@@ -7,7 +7,7 @@ from typing import Optional, Iterable
 import sqlalchemy
 from bidict import bidict
 from dictalchemy import DictableModel
-from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, asc, text, func, desc
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, text, func, desc
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -191,7 +191,7 @@ class DataSource(db.Model, CopyableModel):
     )
 
     @staticmethod
-    def search(query, limit=False):
+    def search(query, limit=False, exclude_data_sources=None):
 
         raw_sql = """
 plainto_tsquery('english', :q)
@@ -223,6 +223,11 @@ plainto_tsquery('english', :q)
             .group_by(DataSource.id)
             .order_by(desc(func.count(DataSourceInMeasureVersion.measure_version_id)), desc(DataSource.id))
         )
+
+        if exclude_data_sources:
+            data_source_query = data_source_query.filter(
+                ~DataSource.id.in_([data_source.id for data_source in exclude_data_sources])
+            )
 
         if limit:
             data_source_query = data_source_query.limit(limit)
@@ -352,10 +357,7 @@ class MeasureVersion(db.Model, CopyableModel):
         cascade="all, delete-orphan",
     )
     data_sources = db.relationship(
-        "DataSource",
-        secondary="data_source_in_measure_version",
-        back_populates="measure_versions",
-        order_by=asc(DataSource.id),
+        "DataSource", secondary="data_source_in_measure_version", back_populates="measure_versions"
     )
     corrected_by_measure_version = db.relationship(
         "MeasureVersion",
