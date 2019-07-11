@@ -13,3 +13,25 @@
     width: 33.33%;
   }
 }
+
+
+.eff-header__site-name {
+  display: block;
+  clear: both;
+  float: left;
+  width: 100%;
+
+  @media(min-width: 641px) {
+    clear: none;
+    display: inline-block;
+  }
+
+  @media(min-width: 769px) {
+    width: 66.66%;
+  }
+}
+
+.eff-header__service-name {
+  font-weight: normal;
+  margin-left: 5px;
+}
