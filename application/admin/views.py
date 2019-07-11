@@ -247,7 +247,7 @@ def merge_data_sources():
 
 @admin_blueprint.route("/data-sources/merge", methods=["POST"])
 @login_required
-@user_can(MANAGE_USERS)  # TODO: update to MANAGE_DATA_SOURCES
+@user_can(MANAGE_DATA_SOURCES)
 def merge_data_sources_post():
 
     data_source_ids = request.form.getlist("ids")
