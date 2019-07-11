@@ -77,4 +77,4 @@ def html_line_breaks(string):
 
 
 def url_with_line_breaks(string):
-    return string.replace("/", "/​")  # Adds a zero-width space after the /
+    return string.replace("/", "/​\u200B")  # Adds a zero-width space after the /
