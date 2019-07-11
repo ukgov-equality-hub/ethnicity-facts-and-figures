@@ -223,8 +223,6 @@ class DataSource(db.Model, CopyableModel):
 
             db.session.delete(data_source_to_delete)
 
-        db.session.commit()
-
     @staticmethod
     def search(query, limit=False):
 
