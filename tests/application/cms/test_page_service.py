@@ -5,7 +5,7 @@ import pytest
 from application.auth.models import TypeOfUser
 from application.cms.exceptions import PageNotFoundException, InvalidPageHierarchy, PageExistsException, PageUnEditable
 from application.cms.forms import MeasureVersionForm
-from application.cms.models import Measure, NewVersionType
+from application.cms.models import Measure, NewVersionType, DataSource
 from application.cms.page_service import PageService
 from tests.models import (
     TopicFactory,
@@ -427,6 +427,25 @@ class TestPageService:
 
         assert len(measure_version.uploads) == 1
         assert len(new_version.uploads) == 0
+
+    @pytest.mark.parametrize("version_type", [t for t in NewVersionType])
+    def test_create_measure_version_creates_associations_rather_than_copies_of_existing_data_sources(
+        self, version_type
+    ):
+        measure_version = MeasureVersionFactory(version="1.0")
+        user = UserFactory(user_type=TypeOfUser.RDU_USER)
+
+        assert len(measure_version.data_sources) == 1
+        assert DataSource.query.count() == 1
+
+        new_version = page_service.create_measure_version(measure_version, version_type, user=user)
+
+        assert DataSource.query.count() == 1
+
+        if version_type == NewVersionType.MAJOR_UPDATE:
+            assert new_version.data_sources == []
+        else:
+            assert measure_version.data_sources == new_version.data_sources
 
     def test_create_copy_of_page(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
