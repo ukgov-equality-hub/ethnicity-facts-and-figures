@@ -1,13 +1,18 @@
 from functools import partial
+from typing import Set
 
 
 class TestRoutes:
     @classmethod
-    def get_flask_url(cls, endpoint, routes=None, **kwargs):
+    def get_flask_url(cls, endpoint, routes: Set, **kwargs):
         from flask import url_for
 
         routes.add(endpoint)
         return url_for(endpoint, **kwargs)
+
+    @staticmethod
+    def get_endpoints_for_blueprint(app, blueprint_name):
+        return set(rule.endpoint for rule in app.url_map.iter_rules() if rule.endpoint.split(".")[0] == blueprint_name)
 
     def test_admin_routes(self, app):
         routes = set()
@@ -32,8 +37,10 @@ class TestRoutes:
 
         # Make sure that the routes we've tested above are all of the routes that our app has registered with Flask
         # i.e. that we haven't added a new view and not updated this test to lock the URL path in place.
-        assert routes == set(
-            rule.endpoint for rule in app.url_map.iter_rules() if rule.endpoint.split(".")[0] == "admin"
+        all_admin_endpoints = self.get_endpoints_for_blueprint(app, "admin")
+        assert routes == all_admin_endpoints, (
+            f"Missing assertions for routes in the admin blueprint: "
+            f"{routes.symmetric_difference(all_admin_endpoints)}. Please update this test."
         )
 
     def test_cms_routes(self, app):
@@ -313,4 +320,8 @@ class TestRoutes:
 
         # Make sure that the routes we've tested above are all of the routes that our app has registered with Flask
         # i.e. that we haven't added a new view and not updated this test to lock the URL path in place.
-        assert routes == set(rule.endpoint for rule in app.url_map.iter_rules() if rule.endpoint.split(".")[0] == "cms")
+        all_cms_endpoints = self.get_endpoints_for_blueprint(app, "cms")
+        assert routes == all_cms_endpoints, (
+            f"Missing assertions for routes in the cms blueprint: "
+            f"{routes.symmetric_difference(all_cms_endpoints)}. Please update this test."
+        )
