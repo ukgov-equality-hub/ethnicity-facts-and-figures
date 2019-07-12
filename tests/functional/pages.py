@@ -152,7 +152,7 @@ class BasePage:
             self.wait_for_element(wait_for_new_element_selector)
 
     def set_text_field(self, locator, value):
-        element = self.wait_for_element(locator)
+        element = self.driver.find_element(*locator)
         element.clear()
         element.send_keys(value)
 
