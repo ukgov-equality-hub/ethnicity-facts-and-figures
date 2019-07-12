@@ -1325,6 +1325,9 @@ def update_data_source(topic_slug, subtopic_slug, measure_slug, version, data_so
         message = "Saved"
         flash(message, "info")
 
+        if data_source.associated_with_published_measure_versions:
+            build_service.request_build()
+
         return redirect(
             url_for(
                 "cms.edit_data_source",
