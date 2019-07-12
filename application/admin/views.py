@@ -257,7 +257,9 @@ def merge_data_sources_post():
     data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
     data_source_merge_form = DataSourceMergeForm(data_sources=data_sources)
 
-    if not data_source_merge_form.validate_on_submit():
+    # TODO: use form validation here
+    if not data_source_to_keep_id:
+        data_source_merge_form.validate_on_submit()
 
         return render_template(
             "admin/merge_data_sources.html",
