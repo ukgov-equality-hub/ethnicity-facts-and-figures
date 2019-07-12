@@ -221,7 +221,7 @@ class HomePage(BasePage):
         element.click()
 
     def click_topic_link(self, topic):
-        element = self.driver.find_element(*PageLinkLocators.page_link(topic.title))
+        element = self.driver.find_element_by_link_text(topic.title)
         element.click()
 
 
