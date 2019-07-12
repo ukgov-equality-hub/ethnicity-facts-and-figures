@@ -6,13 +6,13 @@
       {% if loop.index0 == 0 %}M{% else %}L{% endif %}
       {{ (loop.index0 * x_scale) + start_index_scaled + 0.5 }} {{ (graph_height) - (value * y_scale) }}
   {% endfor %}
-  " stroke-width="2" stroke="{{ colour }}" fill="none" />
+  " stroke-width="2.5" stroke="{{ colour }}" fill="none" />
 {% endmacro %}
 
 {% macro render_value_circles(values, x_scale, y_scale, graph_height, colour="#2B8CC4", start_index=0) %}
   {% set start_index_scaled = (start_index * x_scale) %}
   {% for value in values[start_index:] %}
-    <circle cx="{{ (loop.index0 * x_scale) + start_index_scaled + 0.5 }}" cy="{{ graph_height - (value * y_scale) }}" r="3" fill="{{ colour }}" />
+    <circle cx="{{ (loop.index0 * x_scale) + start_index_scaled + 0.5 }}" cy="{{ graph_height - (value * y_scale) }}" r="2.5" fill="{{ colour }}" />
   {% endfor %}
 {% endmacro %}
 
@@ -46,20 +46,23 @@
 
       {{ render_value_line(data.total_page_count_each_week, x_scale, y_scale, graph_height, colour="#2B8CC4") }}
 
-      {{ render_value_circles(data.total_page_count_each_week, x_scale, y_scale, graph_height) }}
 
       {{ render_value_label(data.total_page_count_each_week|first, 0, x_scale, y_scale, graph_height, unit='pages')  }}
 
-      {{ render_value_label(data.total_page_count_each_week|last, (data.total_page_count_each_week|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=-13, unit='pages')  }}
+      {{ render_value_label(data.total_page_count_each_week|last, (data.total_page_count_each_week|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=-13, unit='published')  }}
 
 
       {# Cumulative number of major updates (starting with the first one) #}
 
       {{ render_value_line(data.total_major_updates_count_each_week, x_scale, y_scale, graph_height, colour='#28A197', start_index=data.total_major_updates_count_each_week|index_of_last_initial_zero) }}
 
-      {{ render_value_circles(data.total_major_updates_count_each_week, x_scale, y_scale, graph_height, colour='#28A197', start_index=data.total_major_updates_count_each_week|index_of_last_initial_zero) }}
 
-      {{ render_value_label(data.total_major_updates_count_each_week|last, (data.total_major_updates_count_each_week|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=-13, unit='updates')  }}
+      {{ render_value_label(data.total_major_updates_count_each_week|last, (data.total_major_updates_count_each_week|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=-13, unit='first updates')  }}
+
+
+      {{ render_value_line(data.total_second_updates_count_each_week, x_scale, y_scale, graph_height, colour='#f47738', start_index=data.total_second_updates_count_each_week|index_of_last_initial_zero) }}
+
+      {{ render_value_label(data.total_second_updates_count_each_week|last, (data.total_second_updates_count_each_week|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=-13, unit='second updates')  }}
 
     </g>
 

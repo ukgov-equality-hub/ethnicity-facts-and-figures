@@ -413,6 +413,12 @@ class MeasureVersion(db.Model, CopyableModel):
     def published_updates_first_versions(cls):
         return cls.query.filter(cls.published_at.isnot(None), cls.version.endswith(".0"), not_(cls.version == "1.0"))
 
+    # Returns an array of published subsequent (major) updates at their initial
+    # release (eg 2.0, 3.0, 4.0 and so on...)
+    @classmethod
+    def published_updates_at_version_number(cls, version_number):
+        return cls.query.filter(cls.published_at.isnot(None), cls.version == f"{version_number}.0")
+
     def get_dimension(self, guid):
         try:
             dimension = Dimension.query.filter_by(guid=guid, measure_version=self).one()

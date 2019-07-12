@@ -48,7 +48,13 @@ def get_published_dashboard_data():
 
     # get measures at their 2.0, 3.0 major update dates
     major_updates = (
-        MeasureVersion.published_updates_first_versions()
+        MeasureVersion.published_updates_at_version_number(2)
+        .order_by(MeasureVersion.published_at.desc(), MeasureVersion.title)
+        .all()
+    )
+
+    second_annual_updates = (
+        MeasureVersion.published_updates_at_version_number(3)
         .order_by(MeasureVersion.published_at.desc(), MeasureVersion.title)
         .all()
     )
@@ -71,6 +77,7 @@ def get_published_dashboard_data():
     weeks = []
     cumulative_number_of_pages = []
     cumulative_number_of_major_updates = []
+    cumulative_number_of_second_updates = []
 
     # week by week rows
     for d in _from_month_to_month(first_publication.published_at, date.today()):
@@ -80,6 +87,10 @@ def get_published_dashboard_data():
 
                 publications = [page for page in original_publications if _page_in_week(page, week)]
                 updates = [updated_page for updated_page in major_updates if _page_in_week(updated_page, week)]
+                second_updates = [
+                    updated_page for updated_page in second_annual_updates if _page_in_week(updated_page, week)
+                ]
+
                 weeks.append({"week": week[0], "publications": publications, "major_updates": updates})
 
                 if not cumulative_number_of_major_updates:
@@ -94,10 +105,17 @@ def get_published_dashboard_data():
                     last_total = cumulative_number_of_pages[-1]
                     cumulative_number_of_pages.append(last_total + len(publications))
 
+                if not cumulative_number_of_second_updates:
+                    cumulative_number_of_second_updates.append(len(second_updates))
+                else:
+                    last_total = cumulative_number_of_second_updates[-1]
+                    cumulative_number_of_second_updates.append(last_total + len(second_updates))
+
     weeks.reverse()
     data["weeks"] = weeks
     data["total_page_count_each_week"] = cumulative_number_of_pages
     data["total_major_updates_count_each_week"] = cumulative_number_of_major_updates
+    data["total_second_updates_count_each_week"] = cumulative_number_of_second_updates
 
     return data
 
