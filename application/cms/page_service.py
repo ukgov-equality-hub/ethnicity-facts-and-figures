@@ -269,7 +269,7 @@ class PageService(Service):
         new_version.dimensions = [dimension.copy() for dimension in measure_version.dimensions]
         new_version.latest = True
 
-        # We don't copy uploads for major updates, as major updates should always have new data
+        # We don't copy uploads or data sources for major updates, as major updates should always have new data
         if update_type != NewVersionType.MAJOR_UPDATE:
             for upload in measure_version.uploads:
                 new_upload = upload.copy()
