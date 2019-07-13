@@ -428,8 +428,20 @@ class TestPageService:
         assert len(measure_version.uploads) == 1
         assert len(new_version.uploads) == 0
 
-    @pytest.mark.parametrize("version_type", [t for t in NewVersionType])
-    def test_create_measure_version_creates_associations_rather_than_copies_of_existing_data_sources(
+    def test_major_version_update_has_no_linked_data_sourceS(self):
+        measure_version = MeasureVersionFactory(version="1.0")
+        user = UserFactory(user_type=TypeOfUser.RDU_USER)
+
+        assert len(measure_version.data_sources) == 1
+        assert DataSource.query.count() == 1
+
+        new_version = page_service.create_measure_version(measure_version, NewVersionType.MAJOR_UPDATE, user=user)
+
+        assert DataSource.query.count() == 1
+        assert new_version.data_sources == []
+
+    @pytest.mark.parametrize("version_type", [t for t in NewVersionType if t is not NewVersionType.MAJOR_UPDATE])
+    def test_create_measure_version_other_than_major_creates_associations_rather_than_copies_of_existing_data_sources(
         self, version_type
     ):
         measure_version = MeasureVersionFactory(version="1.0")
@@ -441,11 +453,7 @@ class TestPageService:
         new_version = page_service.create_measure_version(measure_version, version_type, user=user)
 
         assert DataSource.query.count() == 1
-
-        if version_type == NewVersionType.MAJOR_UPDATE:
-            assert new_version.data_sources == []
-        else:
-            assert measure_version.data_sources == new_version.data_sources
+        assert measure_version.data_sources == new_version.data_sources
 
     def test_create_copy_of_page(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
