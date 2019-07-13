@@ -14,6 +14,7 @@ from tests.models import (
     MeasureVersionFactory,
     MeasureVersionWithDimensionFactory,
     UserFactory,
+    DataSourceFactory,
 )
 
 page_service = PageService()
@@ -429,30 +430,34 @@ class TestPageService:
         assert len(new_version.uploads) == 0
 
     def test_major_version_update_has_no_linked_data_sourceS(self):
-        measure_version = MeasureVersionFactory(version="1.0")
+        data_source_1 = DataSourceFactory()
+        data_source_2 = DataSourceFactory()
+        measure_version = MeasureVersionFactory(version="1.0", data_sources=[data_source_1, data_source_2])
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
 
-        assert len(measure_version.data_sources) == 1
-        assert DataSource.query.count() == 1
+        assert len(measure_version.data_sources) == 2
+        assert DataSource.query.count() == 2
 
         new_version = page_service.create_measure_version(measure_version, NewVersionType.MAJOR_UPDATE, user=user)
 
-        assert DataSource.query.count() == 1
+        assert DataSource.query.count() == 2
         assert new_version.data_sources == []
 
     @pytest.mark.parametrize("version_type", [t for t in NewVersionType if t is not NewVersionType.MAJOR_UPDATE])
     def test_create_measure_version_other_than_major_creates_associations_rather_than_copies_of_existing_data_sources(
         self, version_type
     ):
-        measure_version = MeasureVersionFactory(version="1.0")
+        data_source_1 = DataSourceFactory()
+        data_source_2 = DataSourceFactory()
+        measure_version = MeasureVersionFactory(version="1.0", data_sources=[data_source_1, data_source_2])
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
 
-        assert len(measure_version.data_sources) == 1
-        assert DataSource.query.count() == 1
+        assert len(measure_version.data_sources) == 2
+        assert DataSource.query.count() == 2
 
         new_version = page_service.create_measure_version(measure_version, version_type, user=user)
 
-        assert DataSource.query.count() == 1
+        assert DataSource.query.count() == 2
         assert measure_version.data_sources == new_version.data_sources
 
     def test_create_copy_of_page(self):
