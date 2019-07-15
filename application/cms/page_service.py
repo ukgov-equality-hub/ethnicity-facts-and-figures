@@ -265,18 +265,18 @@ class PageService(Service):
         new_version.published_at = None
         new_version.internal_edit_summary = None
         new_version.external_edit_summary = None
+        new_version.uploads = []
         new_version.dimensions = [dimension.copy() for dimension in measure_version.dimensions]
-        new_version.data_sources = [data_source.copy() for data_source in measure_version.data_sources]
         new_version.latest = True
 
-        new_version.uploads = []
-
-        # We don't copy uploads for major updates, as major updates should always have new data
+        # We don't copy uploads or data sources for major updates, as major updates should always have new data
         if update_type != NewVersionType.MAJOR_UPDATE:
             for upload in measure_version.uploads:
                 new_upload = upload.copy()
                 new_upload.guid = create_guid(upload.file_name)
                 new_version.uploads.append(new_upload)
+
+            new_version.data_sources = measure_version.data_sources
 
         db.session.add(new_version)
         db.session.flush()
