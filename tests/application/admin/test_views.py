@@ -451,7 +451,8 @@ class TestMergeDataSourcesView:
     def __path(self):
         return url_for("admin.merge_data_sources")
 
-    def __path_with_data_source_ids(self, data_source_ids):
+    @staticmethod
+    def __path_with_data_source_ids(data_source_ids):
         return url_for("admin.merge_data_sources", data_sources=data_source_ids)
 
     def test_rdu_user_cannot_see_data_source_merge(self, test_app_client, logged_in_rdu_user):
@@ -499,12 +500,6 @@ class TestMergeDataSourcesView:
 
         assert response.status_code == 400
 
-
-class TestActuallyMergeDataSourcesView:
-    @property
-    def __path(self):
-        return url_for("admin.merge_data_sources_post")
-
     def test_merging_two_data_sources(self, test_app_client, logged_in_admin_user):
 
         DataSourceFactory.create()
@@ -513,7 +508,7 @@ class TestActuallyMergeDataSourcesView:
         data_source_2 = DataSourceFactory.create(title="Police Stats 2019")
 
         response = test_app_client.post(
-            f"/admin/data-sources/merge?data_sources={data_source_1.id}&data_sources={data_source_2.id}",
+            self.__path_with_data_source_ids(data_source_ids=[data_source_1.id, data_source_2.id]),
             data=ImmutableMultiDict((("ids", data_source_1.id), ("ids", data_source_2.id), ("keep", data_source_1.id))),
             follow_redirects=False,
         )
@@ -538,7 +533,7 @@ class TestActuallyMergeDataSourcesView:
         data_source_2 = DataSourceFactory.create(title="Police Stats 2019")
 
         response = test_app_client.post(
-            self.__path,
+            self.__path_with_data_source_ids(data_source_ids=[data_source_1.id, data_source_2.id]),
             data=ImmutableMultiDict((("ids", data_source_1.id), ("ids", data_source_2.id))),
             follow_redirects=False,
         )
