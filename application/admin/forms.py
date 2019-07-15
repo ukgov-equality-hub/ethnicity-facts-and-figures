@@ -36,7 +36,7 @@ class DataSourceSearchForm(FlaskForm):
 class DataSourceMergeForm(FlaskForm):
 
     keep = RDURadioField(
-        label="Which one would you like to keep?", validators=[InputRequired(message="Select one to keep")]
+        label="Which one would you like to keep?", validators=[InputRequired(message="Select one to keep")], coerce=int
     )
 
     def _build_data_source_hint(self, data_source):

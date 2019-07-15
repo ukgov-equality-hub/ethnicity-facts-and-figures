@@ -439,7 +439,7 @@ class TestDataSourcesView:
         response = test_app_client.get(self.__path)
         page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
-        form = page.find("form", action=url_for("admin.merge_data_sources_post"))
+        form = page.find("form", action=url_for("admin.merge_data_sources"))
         assert form
 
         assert find_input_for_label_with_text(form, "Police statistics 2019").get("value") == str(ds1.id)
@@ -513,7 +513,7 @@ class TestActuallyMergeDataSourcesView:
         data_source_2 = DataSourceFactory.create(title="Police Stats 2019")
 
         response = test_app_client.post(
-            self.__path,
+            f"/admin/data-sources/merge?data_sources={data_source_1.id}&data_sources={data_source_2.id}",
             data=ImmutableMultiDict((("ids", data_source_1.id), ("ids", data_source_2.id), ("keep", data_source_1.id))),
             follow_redirects=False,
         )

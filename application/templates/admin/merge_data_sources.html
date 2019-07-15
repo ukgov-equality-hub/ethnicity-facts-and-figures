@@ -17,7 +17,7 @@
 
       <p class="govuk-body">All of the following data sources will be merged together.</p>
 
-      <form action="{{ url_for('admin.merge_data_sources_post') }}" method="POST">
+      <form action="{{ url_for('admin.merge_data_sources', data_sources=request.args.getlist('data_sources')) }}" method="POST">
         {{ data_source_merge_form.csrf_token | default('') }}
 
         {{ data_source_merge_form.keep(label_class="govuk-label--s") }}

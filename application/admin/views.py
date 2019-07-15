@@ -226,52 +226,28 @@ def data_sources():
     )
 
 
-@admin_blueprint.route("/data-sources/merge", methods=["GET"])
+@admin_blueprint.route("/data-sources/merge", methods=["GET", "POST"])
 @login_required
 @user_can(MANAGE_DATA_SOURCES)
 def merge_data_sources():
-
-    data_source_ids = request.args.getlist("data_sources")
-
+    data_source_ids = request.args.getlist("data_sources", type=int)
     data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
 
     if data_sources.count() != len(data_source_ids):
         abort(400)
 
     data_source_merge_form = DataSourceMergeForm(data_sources=data_sources)
+    if data_source_merge_form.validate_on_submit():
+        data_source_to_keep = DataSource.query.get(data_source_merge_form.keep.data)
+        data_source_ids.remove(data_source_to_keep.id)
+        data_source_to_keep.merge(data_source_ids=data_source_ids)
+
+        db.session.commit()
+        return redirect(url_for("admin.data_sources"))
 
     return render_template(
-        "admin/merge_data_sources.html", data_sources=data_sources, data_source_merge_form=data_source_merge_form
+        "admin/merge_data_sources.html",
+        data_sources=data_sources,
+        data_source_merge_form=data_source_merge_form,
+        errors=get_form_errors(forms=[data_source_merge_form]),
     )
-
-
-@admin_blueprint.route("/data-sources/merge", methods=["POST"])
-@login_required
-@user_can(MANAGE_DATA_SOURCES)
-def merge_data_sources_post():
-
-    data_source_ids = request.form.getlist("ids")
-
-    data_source_to_keep_id = request.form.get("keep")
-
-    data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
-    data_source_merge_form = DataSourceMergeForm(data_sources=data_sources)
-
-    # TODO: use form validation here
-    if not data_source_to_keep_id:
-        data_source_merge_form.validate_on_submit()
-
-        return render_template(
-            "admin/merge_data_sources.html",
-            data_sources=data_sources,
-            data_source_merge_form=data_source_merge_form,
-            errors=get_form_errors(forms=[data_source_merge_form]),
-        )
-
-    data_source_to_keep = DataSource.query.get(data_source_to_keep_id)
-
-    data_source_ids_to_merge = list(set(data_source_ids) - set([str(data_source_to_keep.id)]))
-
-    data_source_to_keep.merge(data_source_ids=data_source_ids_to_merge)
-
-    return redirect(url_for("admin.data_sources"))

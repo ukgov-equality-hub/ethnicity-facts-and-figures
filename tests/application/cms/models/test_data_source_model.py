@@ -90,7 +90,7 @@ class TestDataSourceModel:
             data_source_associated_with_1_measure_version == search[1]
         ), "Expected data source associated with 1 measure version to be second"
 
-    def test_merge_from_single_other_data_source(self):
+    def test_merge_from_single_other_data_source(self, db_session):
 
         data_source_1 = DataSourceFactory.create()
         data_source_2 = DataSourceFactory.create()
@@ -98,12 +98,13 @@ class TestDataSourceModel:
         measure_version_associated_with_data_source_2 = MeasureVersionFactory.create(data_sources=[data_source_2])
 
         data_source_1.merge(data_source_ids=[data_source_2.id])
+        db_session.session.commit()
 
         assert DataSource.query.get(data_source_2.id) is None
 
         assert measure_version_associated_with_data_source_2.data_sources == [data_source_1]
 
-    def test_merge_from_two_other_data_sources(self):
+    def test_merge_from_two_other_data_sources(self, db_session):
 
         data_source_1 = DataSourceFactory.create()
         data_source_2 = DataSourceFactory.create()
@@ -118,6 +119,7 @@ class TestDataSourceModel:
         measure_version_associated_with_data_source_3 = MeasureVersionFactory.create(data_sources=[data_source_3])
 
         data_source_1.merge(data_source_ids=[data_source_2.id, data_source_3.id])
+        db_session.session.commit()
 
         assert DataSource.query.get(data_source_2.id) is None
         assert DataSource.query.get(data_source_3.id) is None
