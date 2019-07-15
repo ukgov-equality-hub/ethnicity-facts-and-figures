@@ -1,8 +1,13 @@
+import pytest
 from bs4 import BeautifulSoup
 
 import re
 
+from flask import url_for
+from lxml import html
+
 from application.cms.models import DataSource, MeasureVersion
+from application.sitebuilder.models import Build
 
 from tests.models import (
     DataSourceFactory,
@@ -72,6 +77,43 @@ class TestAddDataSourceView:
         response = test_app_client.get(url)
         assert response.status_code == 200
 
+    @pytest.mark.parametrize("from_search_query", (None, "foo"))
+    def test_back_link_goes_to_measure_version_or_search_results_based_on_url_param(
+        self, test_app_client, logged_in_rdu_user, from_search_query
+    ):
+        measure_version = MeasureVersionFactory.create()
+
+        url = f"{self.__measure_edit_url(measure_version)}/data-sources/new"
+        if from_search_query:
+            url += f"?from_search_query={from_search_query}"
+
+        response = test_app_client.get(url)
+        doc = html.fromstring(response.get_data(as_text=True))
+
+        back_links = doc.xpath("//a[text()='Back']")
+        assert len(back_links) == 1
+
+        if from_search_query:
+            expected_url = url_for(
+                "cms.search_data_sources",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+                q=from_search_query,
+            )
+
+        else:
+            expected_url = url_for(
+                "cms.edit_measure_version",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+            )
+
+        assert back_links[0].get("href") == expected_url
+
 
 class TestCreateDataSource:
     def __edit_measure_version_url(self, measure_version):
@@ -86,7 +128,7 @@ class TestCreateDataSource:
 
         edit_measure_url = self.__edit_measure_version_url(measure_version)
 
-        return f"{edit_measure_url}/data-sources"
+        return f"{edit_measure_url}/data-sources/new"
 
     def test_post_with_a_title_redirects_to_edit_measure(self, test_app_client, logged_in_rdu_user, db_session):
 
@@ -354,3 +396,42 @@ class TestUpdateDataSource:
             },
         )
         assert response.status_code == 302
+
+    def test_pending_build_is_added_to_database(self, test_app_client, logged_in_rdu_user):
+        data_source = DataSourceFactory.create(title="Police stats 2019")
+        measure_version = MeasureVersionFactory.create(status="DRAFT", data_sources=[data_source])
+        assert Build.query.count() == 0
+
+        test_app_client.post(
+            self.__update_data_source_url(data_source, measure_version),
+            data={
+                "title": "Police statistics 2019",
+                "type_of_data": "ADMINISTRATIVE",
+                "type_of_statistic_id": data_source.type_of_statistic_id,
+                "publisher_id": data_source.publisher_id,
+                "source_url": data_source.source_url,
+                "frequency_of_release_id": data_source.frequency_of_release_id,
+                "purpose": data_source.purpose,
+            },
+        )
+
+        # No build is created if there isn't a published (approved) measure version associated with the data source
+        assert Build.query.count() == 0
+
+        # Toggle the measure version to published (approved)
+        measure_version.status = "APPROVED"
+        test_app_client.post(
+            self.__update_data_source_url(data_source, measure_version),
+            data={
+                "title": "Police statistics 2019",
+                "type_of_data": "ADMINISTRATIVE",
+                "type_of_statistic_id": data_source.type_of_statistic_id,
+                "publisher_id": data_source.publisher_id,
+                "source_url": data_source.source_url,
+                "frequency_of_release_id": data_source.frequency_of_release_id,
+                "purpose": data_source.purpose,
+            },
+        )
+
+        # There's an approved measure version, so we should log a build request.
+        assert Build.query.count() == 1
