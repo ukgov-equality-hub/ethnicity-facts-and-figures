@@ -5,14 +5,20 @@ from tests.functional.pages import (
     HomePage,
     TopicPage,
     MeasureEditPage,
-    MeasureCreatePage,
     MeasurePreviewPage,
     RandomDimension,
     DimensionAddPage,
     DimensionEditPage,
     TableBuilderPage,
 )
-from tests.functional.utils import driver_login, click_link_with_text, fill_in, click_button_with_text
+from tests.functional.utils import (
+    driver_login,
+    click_link_with_text,
+    fill_in,
+    click_button_with_text,
+    assert_page_contains,
+    create_measure,
+)
 from tests.models import (
     MeasureVersionFactory,
     UserFactory,
@@ -193,19 +199,3 @@ def test_adding_an_existing_data_source(driver, app, live_server):
     click_link_with_text(driver, "Preview this version")
 
     assert "Police statistics 2019" in driver.page_source
-
-
-def go_to_page(page):
-    page.get()
-    assert page.is_current()
-    return page
-
-
-def assert_page_contains(page, text):
-    return page.source_contains(text)
-
-
-def create_measure(driver, live_server, page, topic, subtopic):
-    create_measure_page = MeasureCreatePage(driver, live_server, topic, subtopic)
-    create_measure_page.set_title(page.title)
-    create_measure_page.click_save()
