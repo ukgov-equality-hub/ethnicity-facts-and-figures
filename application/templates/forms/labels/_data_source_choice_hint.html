@@ -1,8 +1,9 @@
 <div class="govuk-body">
   {% if data_source.publication_date %}
     <span class="eff-!-grey-1">Published on {{ data_source.publication_date }}</span>
+    {% if data_source.source_url %}<br>{% endif %}
   {% endif %}
   {% if data_source.source_url %}
-    <a class="govuk-link" href="{{ data_source.source_url }}">View publication</a>
+    <a class="govuk-link" href="{{ data_source.source_url }}">{{ data_source.source_url }}</a>
   {% endif %}
 </div>
