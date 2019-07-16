@@ -46,7 +46,7 @@ def test_adding_an_existing_data_source(driver, app, live_server):
 
     click_button_with_text(driver, "Select")
 
-    assert "Successfully added the data source ’Police statistics 2019’" in driver.page_source
+    assert "Successfully added the data source ‘Police statistics 2019’" in driver.page_source
 
     click_link_with_text(driver, "Preview this version")
 
