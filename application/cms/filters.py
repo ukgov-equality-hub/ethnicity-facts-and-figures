@@ -77,4 +77,4 @@ def html_line_breaks(string):
 
 
 def url_with_line_breaks(string):
-    return string.replace("/", "/\N{ZERO WIDTH SPACE}").replace("&", "&\N{ZERO WIDTH SPACE}")
+    return string.replace("/", "/\N{ZERO WIDTH SPACE}").replace("&", "&\N{ZERO WIDTH SPACE}") if string else string
