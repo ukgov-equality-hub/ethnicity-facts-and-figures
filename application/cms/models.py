@@ -225,7 +225,7 @@ class DataSource(db.Model, CopyableModel):
 
         db.session.commit()
 
-        @property
+    @property
     def associated_with_published_measure_versions(self):
 
         return self.measure_versions.filter(MeasureVersion.status == "APPROVED").count() > 0
