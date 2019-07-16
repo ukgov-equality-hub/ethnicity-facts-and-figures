@@ -4,6 +4,8 @@ import sys
 
 sys.path.insert(0, ".")  # noqa
 
+from sqlalchemy import func
+
 from application import db
 from application.config import Config
 from application.factory import create_app
@@ -13,6 +15,8 @@ from application.cms.models import DataSource
 def merge_identical_duplicate_data_sources(app):
     with app.app_context():
         count = 0
+
+        DataSource.query.update({DataSource.purpose: func.rtrim(DataSource.purpose, " \r")}, synchronize_session=False)
 
         try:
             all_data_source_ids = DataSource.query.with_entities(DataSource.id).all()
