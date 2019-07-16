@@ -5,7 +5,7 @@
 
   <div class="govuk-body">{% if data_source.publication_date %}Published on {{ data_source.publication_date }}{% else %}No publication date{% endif %}</div>
 
-  <div class="govuk-body">Linked to {{ data_source.measure_versions.count() }} measure version{% if plural %}s{% endif %} ({% for mv in data_source.measure_versions.all() %}{{ mv.time_covered }}{% if not loop.last %}, {% endif %}{% endfor %})</div>
+  <div class="govuk-body">Linked to {{ data_source.measure_versions.count() }} measure version{% if plural %}s{% endif %} ({{ data_source.measure_versions.all() | map(attribute='time_covered') | unique | join(', ') }})</div>
 
   <div class="govuk-body"><a class="govuk-link" href="{{ data_source.source_url }}">{{ data_source.source_url | url_with_line_breaks }}</a></div>
 
