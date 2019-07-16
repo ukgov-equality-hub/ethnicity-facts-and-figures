@@ -718,7 +718,7 @@
         var subtitle = 'Title:' +  chartTitle
                                 + '. Location: ' + '{{ measure_version.format_area_covered() }}'
                                 + '. Time period: '  + dimension.time_period
-                                + '. Source:  {{ measure_version.primary_data_source.publisher.name if measure_version.primary_data_source and measure_version.primary_data_source.publisher else "" }}'
+                                + '. Source:  {{ measure_version.primary_data_source.title if measure_version.primary_data_source else "" }}'
                                 + '| Ethnicity Facts and Figures GOV.UK';
 
         chart.highcharts().options.subtitle.text = subtitle;

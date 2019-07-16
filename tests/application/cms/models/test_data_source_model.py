@@ -149,3 +149,14 @@ class TestDataSourceModel:
 
         with pytest.raises(ValueError):
             data_source_1.merge(data_source_ids=[data_source_1.id])
+
+    def test_data_source_associated_with_published_measure_versions(self):
+
+        data_source_1 = DataSourceFactory.create()
+        MeasureVersionFactory.create(data_sources=[data_source_1], status="APPROVED")
+
+        data_source_2 = DataSourceFactory.create()
+        MeasureVersionFactory.create(data_sources=[data_source_2], status="DRAFT")
+
+        assert data_source_1.associated_with_published_measure_versions is True
+        assert data_source_2.associated_with_published_measure_versions is False

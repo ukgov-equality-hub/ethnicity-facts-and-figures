@@ -187,7 +187,7 @@ class DataSource(db.Model, CopyableModel):
         "FrequencyOfRelease", foreign_keys=[frequency_of_release_id], back_populates="data_sources"
     )
     measure_versions = db.relationship(
-        "MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources"
+        "MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources", lazy="dynamic"
     )
 
     def merge(self, data_source_ids=[]):
@@ -224,6 +224,11 @@ class DataSource(db.Model, CopyableModel):
             db.session.delete(data_source_to_delete)
 
         db.session.commit()
+
+        @property
+    def associated_with_published_measure_versions(self):
+
+        return self.measure_versions.filter(MeasureVersion.status == "APPROVED").count() > 0
 
     @staticmethod
     def search(query, limit=False, exclude_data_sources=None):
