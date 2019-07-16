@@ -8,12 +8,13 @@
   ]
 %}
 
-{% block pageTitle %}Merge data sources{% endblock %}
+{% set data_source_count = data_sources.count() %}
+{% block pageTitle %}Merge {{ data_source_count }} data source{% if data_source_count != 1 %}s{% endif %}{% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <h1 class="govuk-heading-xl">Merge data sources</h1>
+      <h1 class="govuk-heading-xl">Merge {{ data_source_count }} data source{% if data_source_count != 1 %}s{% endif %}</h1>
 
       <p class="govuk-body">All of the following data sources will be merged together.</p>
 

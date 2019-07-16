@@ -50,7 +50,7 @@ def test_merging_two_data_sources(driver, live_server):
 
     # Then I should be on the merge data sources page
 
-    assert "Merge data sources" == driver.find_element_by_tag_name("h1").text
+    assert "Merge 2 data sources" == driver.find_element_by_tag_name("h1").text
     assert "Which one would you like to keep?" == driver.find_element_by_tag_name("legend").text
 
     data_source_1_label = driver.find_element_by_xpath("//label[text() = 'Police statistics 2019']")

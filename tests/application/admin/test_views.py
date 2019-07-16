@@ -480,8 +480,8 @@ class TestMergeDataSourcesView:
 
         page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
-        assert "Merge data sources" == page.find("h1").text
-        assert "Merge data sources" == page.find("title").text
+        assert "Merge 2 data sources" == page.find("h1").text
+        assert "Merge 2 data sources" == page.find("title").text
 
         assert "2019 police statistics" in page.text
         assert "Police statistics 2019" in page.text
