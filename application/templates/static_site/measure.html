@@ -21,7 +21,7 @@
 {% block headEnd %}
     {{ super() }}
 
-    {% if not measure_version.has_no_later_published_versions() %}
+    {% if not latest_url %}
         <meta name="robots" content="noindex">
     {% endif %}
 {% endblock %}
