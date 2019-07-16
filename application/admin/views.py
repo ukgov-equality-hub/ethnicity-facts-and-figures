@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
 from application.admin import admin_blueprint
-from application.admin.forms import AddUserForm, DataSourceSearchForm
+from application.admin.forms import AddUserForm, DataSourceSearchForm, DataSourceMergeForm
 from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS, MANAGE_DATA_SOURCES
 from application.cms.forms import SelectMultipleDataSourcesForm
 from application.cms.models import user_measure, DataSource
@@ -223,4 +223,50 @@ def data_sources():
         q=q,
         data_source_search_form=data_source_search_form,
         data_source_selection_form=data_source_selection_form,
+    )
+
+
+@admin_blueprint.route("/data-sources/merge", methods=["GET", "POST"])
+@login_required
+@user_can(MANAGE_DATA_SOURCES)
+def merge_data_sources():
+    data_source_ids = request.args.getlist("data_sources", type=int)
+    data_sources = DataSource.query.filter(DataSource.id.in_(data_source_ids))
+
+    if data_sources.count() != len(data_source_ids):
+        abort(400)
+
+    data_source_merge_form = DataSourceMergeForm(data_sources=data_sources)
+    if data_source_merge_form.validate_on_submit():
+        data_source_to_keep = DataSource.query.get(data_source_merge_form.keep.data)
+        data_source_ids.remove(data_source_to_keep.id)
+        data_source_to_keep.merge(data_source_ids=data_source_ids)
+
+        db.session.commit()
+
+        if data_source_to_keep.measure_versions.count():
+            measure_version = data_source_to_keep.measure_versions[0]
+            edit_data_source_url = url_for(
+                "cms.edit_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+                data_source_id=data_source_to_keep.id,
+            )
+
+            data_source_name = f"‘<a class='govuk-link' href='{edit_data_source_url}'>{data_source_to_keep.title}</a>’"
+
+        else:
+            data_source_name = data_source_to_keep.title
+
+        flash(f"Successfully merged {len(data_source_ids)} data sources into {data_source_name}")
+
+        return redirect(url_for("admin.data_sources"))
+
+    return render_template(
+        "admin/merge_data_sources.html",
+        data_sources=data_sources,
+        data_source_merge_form=data_source_merge_form,
+        errors=get_form_errors(forms=[data_source_merge_form]),
     )

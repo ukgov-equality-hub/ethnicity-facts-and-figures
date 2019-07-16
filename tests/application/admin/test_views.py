@@ -6,9 +6,11 @@ from application.cms.models import publish_status
 
 from application.utils import generate_token
 
-from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory
+from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory, OrganisationFactory
 
 from tests.utils import find_input_for_label_with_text
+
+from werkzeug import ImmutableMultiDict
 
 
 def test_standard_user_cannot_view_admin_urls(test_app_client, logged_in_rdu_user):
@@ -370,14 +372,21 @@ def test_admin_user_can_delete_non_admin_user_account(test_app_client, logged_in
 
 
 class TestDataSourcesView:
+    @property
+    def __path(self):
+        return url_for("admin.data_sources")
+
+    def __path_with_query(self, query):
+        return url_for("admin.data_sources", q=query)
+
     def test_department_user_cannot_see_page(self, test_app_client, logged_in_dept_user):
 
-        response = test_app_client.get("/admin/data-sources")
+        response = test_app_client.get(self.__path)
         assert response.status_code == 403
 
     def test_rdu_user_cannot_see_page(self, test_app_client, logged_in_rdu_user):
 
-        response = test_app_client.get("/admin/data-sources")
+        response = test_app_client.get(self.__path)
         assert response.status_code == 403
 
     def test_admin_user_can_see_all_data_sources(self, test_app_client, logged_in_admin_user):
@@ -385,7 +394,7 @@ class TestDataSourcesView:
         DataSourceFactory.create(title="Police statistics 2019")
         DataSourceFactory.create(title="2011 Census of England and Wales")
 
-        response = test_app_client.get("/admin/data-sources")
+        response = test_app_client.get(self.__path)
         page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
         assert response.status_code == 200
@@ -400,7 +409,7 @@ class TestDataSourcesView:
         DataSourceFactory.create(title="Police statistics 2019")
         DataSourceFactory.create(title="2011 Census of England and Wales")
 
-        response = test_app_client.get("/admin/data-sources?q=police")
+        response = test_app_client.get(self.__path_with_query("police"))
         page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
         assert response.status_code == 200
@@ -417,7 +426,7 @@ class TestDataSourcesView:
         DataSourceFactory.create(title="Police statistics 2019")
         DataSourceFactory.create(title="2011 Census of England and Wales")
 
-        response = test_app_client.get("/admin/data-sources")
+        response = test_app_client.get(self.__path)
         page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
         main = page.find("main")
@@ -427,12 +436,106 @@ class TestDataSourcesView:
         ds1 = DataSourceFactory.create(title="Police statistics 2019")
         ds2 = DataSourceFactory.create(title="2011 Census of England and Wales")
 
-        response = test_app_client.get("/admin/data-sources")
+        response = test_app_client.get(self.__path)
         page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
-        # TODO: Update to `admin.merge_data_sources`
-        form = page.find_all("form", action=url_for("admin.data_sources"))[1]
+        form = page.find("form", action=url_for("admin.merge_data_sources"))
         assert form
 
         assert find_input_for_label_with_text(form, "Police statistics 2019").get("value") == str(ds1.id)
         assert find_input_for_label_with_text(form, "2011 Census of England and Wales").get("value") == str(ds2.id)
+
+
+class TestMergeDataSourcesView:
+    @property
+    def __path(self):
+        return url_for("admin.merge_data_sources")
+
+    @staticmethod
+    def __path_with_data_source_ids(data_source_ids):
+        return url_for("admin.merge_data_sources", data_sources=data_source_ids)
+
+    def test_rdu_user_cannot_see_data_source_merge(self, test_app_client, logged_in_rdu_user):
+
+        response = test_app_client.get(self.__path)
+
+        assert response.status_code == 403
+
+    def test_admin_user_viewing_two_data_source_to_merge(self, test_app_client, logged_in_admin_user):
+
+        organisation = OrganisationFactory.create(name="Home Office")
+
+        data_source_1 = DataSourceFactory.create(
+            title="2019 police statistics",
+            source_url="https://www.gov.uk/statistics/police/2019",
+            publisher=organisation,
+        )
+        data_source_2 = DataSourceFactory.create(
+            title="Police statistics 2019", source_url="https://statistics.gov.uk/police/2019", publisher=organisation
+        )
+
+        response = test_app_client.get(self.__path_with_data_source_ids([data_source_1.id, data_source_2.id]))
+
+        assert response.status_code == 200
+
+        page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+
+        assert "Merge 2 data sources" == page.find("h1").text
+        assert "Merge 2 data sources" == page.find("title").text
+
+        assert "2019 police statistics" in page.text
+        assert "Police statistics 2019" in page.text
+
+    def test_admin_user_attempting_to_merge_non_existent_ids(self, test_app_client, logged_in_admin_user):
+
+        organisation = OrganisationFactory.create(name="Home Office")
+
+        data_source_1 = DataSourceFactory.create(
+            title="2019 police statistics",
+            source_url="https://www.gov.uk/statistics/police/2019",
+            publisher=organisation,
+        )
+
+        response = test_app_client.get(self.__path_with_data_source_ids([data_source_1.id, 9999]))
+
+        assert response.status_code == 400
+
+    def test_merging_two_data_sources(self, test_app_client, logged_in_admin_user):
+
+        DataSourceFactory.create()
+
+        data_source_1 = DataSourceFactory.create(title="Police Statistics 2019")
+        data_source_2 = DataSourceFactory.create(title="Police Stats 2019")
+
+        response = test_app_client.post(
+            self.__path_with_data_source_ids(data_source_ids=[data_source_1.id, data_source_2.id]),
+            data=ImmutableMultiDict((("ids", data_source_1.id), ("ids", data_source_2.id), ("keep", data_source_1.id))),
+            follow_redirects=False,
+        )
+
+        assert response.status_code == 302
+        assert response.location == url_for("admin.data_sources", _external=True)
+
+        # Now follow the redirect
+        response_2 = test_app_client.get(response.location)
+
+        assert response_2.status_code == 200
+        page = BeautifulSoup(response_2.data.decode("utf-8"), "html.parser")
+
+        assert "Police Statistics 2019" in page.find("main").text
+        assert "Police Stats 2019" not in page.find("main").text
+
+    def test_failing_to_select_one_to_keep(self, test_app_client, logged_in_admin_user):
+
+        DataSourceFactory.create()
+
+        data_source_1 = DataSourceFactory.create(title="Police Statistics 2019")
+        data_source_2 = DataSourceFactory.create(title="Police Stats 2019")
+
+        response = test_app_client.post(
+            self.__path_with_data_source_ids(data_source_ids=[data_source_1.id, data_source_2.id]),
+            data=ImmutableMultiDict((("ids", data_source_1.id), ("ids", data_source_2.id))),
+            follow_redirects=False,
+        )
+
+        assert response.status_code == 200

@@ -1,0 +1,7 @@
+.eff-link--warning:link {
+  color: govuk-colour("red");
+
+  &:visited, &:hover {
+    color: darken(govuk-colour("red"), 15%);
+  }
+}

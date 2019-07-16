@@ -96,6 +96,15 @@ def create_measure_starting_at_topic_page(
     return measure_edit_page, created_measure_version
 
 
+def add_primary_data_source_to_measure(driver, sample_data_source):
+    measure_edit_page = MeasureEditPage(driver)
+    measure_edit_page.click_add_primary_data_source()
+    data_source_page = CreateDataSourcePage(driver)
+    data_source_page.fill_data_source(sample_data_source)
+    data_source_page.click_save()
+    data_source_page.click_back()
+
+
 def navigate_to_topic_page(driver, live_server, topic_page):
     """
     ENTRY 1: Home page

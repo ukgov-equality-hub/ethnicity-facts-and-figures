@@ -7,6 +7,7 @@ from flask import url_for
 from lxml import html
 
 from application.cms.models import DataSource, MeasureVersion
+from application.sitebuilder.models import Build
 
 from tests.models import (
     DataSourceFactory,
@@ -395,3 +396,42 @@ class TestUpdateDataSource:
             },
         )
         assert response.status_code == 302
+
+    def test_pending_build_is_added_to_database(self, test_app_client, logged_in_rdu_user):
+        data_source = DataSourceFactory.create(title="Police stats 2019")
+        measure_version = MeasureVersionFactory.create(status="DRAFT", data_sources=[data_source])
+        assert Build.query.count() == 0
+
+        test_app_client.post(
+            self.__update_data_source_url(data_source, measure_version),
+            data={
+                "title": "Police statistics 2019",
+                "type_of_data": "ADMINISTRATIVE",
+                "type_of_statistic_id": data_source.type_of_statistic_id,
+                "publisher_id": data_source.publisher_id,
+                "source_url": data_source.source_url,
+                "frequency_of_release_id": data_source.frequency_of_release_id,
+                "purpose": data_source.purpose,
+            },
+        )
+
+        # No build is created if there isn't a published (approved) measure version associated with the data source
+        assert Build.query.count() == 0
+
+        # Toggle the measure version to published (approved)
+        measure_version.status = "APPROVED"
+        test_app_client.post(
+            self.__update_data_source_url(data_source, measure_version),
+            data={
+                "title": "Police statistics 2019",
+                "type_of_data": "ADMINISTRATIVE",
+                "type_of_statistic_id": data_source.type_of_statistic_id,
+                "publisher_id": data_source.publisher_id,
+                "source_url": data_source.source_url,
+                "frequency_of_release_id": data_source.frequency_of_release_id,
+                "purpose": data_source.purpose,
+            },
+        )
+
+        # There's an approved measure version, so we should log a build request.
+        assert Build.query.count() == 1
