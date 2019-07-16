@@ -8,7 +8,7 @@
 
   <div class="govuk-body">{% if data_source.publication_date %}Published on {{ data_source.publication_date }}{% else %}No publication date{% endif %}</div>
 
-  <div class="govuk-body">Linked to {{ published_measure_versions_count }} published measure version{% if plural %}s{% endif %}{% if formatted_time_covered %} from {{ formatted_time_covered }}{% endif %}</div>
+  <div class="govuk-body">Linked to {{ published_measure_versions_count }} published measure version{% if plural %}s{% endif %}{% if formatted_time_covered %} for {{ formatted_time_covered }}{% endif %}</div>
 
   <div class="govuk-body"><a class="govuk-link" href="{{ data_source.source_url }}">{{ data_source.source_url | url_with_line_breaks }}</a></div>
 
