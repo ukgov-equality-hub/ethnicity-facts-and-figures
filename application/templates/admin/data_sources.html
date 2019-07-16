@@ -40,7 +40,7 @@
 
       {% if data_source_selection_form.data_sources.choices|length > 0 %}
         <ul class="govuk-list">
-          <form method="GET" action="{{ url_for('admin.data_sources') }}">  {# TODO: Update to `merge_data_sources` URL when it's added #}
+          <form method="GET" action="{{ url_for('admin.merge_data_sources') }}">
             {{ data_source_selection_form.data_sources }}
 
             <button type="submit" class="govuk-button">Continue</button>

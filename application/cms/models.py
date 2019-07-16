@@ -190,6 +190,41 @@ class DataSource(db.Model, CopyableModel):
         "MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources", lazy="dynamic"
     )
 
+    def merge(self, data_source_ids=[]):
+        """This merges the data sources with the IDs specified into this data source,
+        by first updating any references to those data source to this one, and then
+        deleting those data sources. This is irreversible.
+
+        Note: this makes no attempt to merge the metadata fields associated with the
+        specified data sources.
+
+        Will raise an error no IDs specified, if any of the IDs specified don’t exist,
+        or if one of the IDs is the ID for this data source."""
+
+        if self.id in data_source_ids:
+            raise ValueError("Can’t merge with self")
+
+        if len(data_source_ids) == 0:
+            raise ValueError("No data source IDs specified")
+
+        data_sources_to_delete = DataSource.query.filter(DataSource.id.in_(data_source_ids))
+
+        if (data_sources_to_delete.count()) != len(data_source_ids):
+
+            difference = len(data_source_ids) - data_sources_to_delete.count()
+
+            raise ValueError(f"#{difference} data sources not found")
+
+        for data_source_to_delete in data_sources_to_delete:
+
+            DataSourceInMeasureVersion.query.filter(
+                DataSourceInMeasureVersion.data_source_id == data_source_to_delete.id
+            ).update({"data_source_id": self.id})
+
+            db.session.delete(data_source_to_delete)
+
+        db.session.commit()
+
     @property
     def associated_with_published_measure_versions(self):
 
