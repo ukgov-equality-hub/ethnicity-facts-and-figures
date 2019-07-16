@@ -4,6 +4,6 @@
     {% if data_source.source_url %}<br>{% endif %}
   {% endif %}
   {% if data_source.source_url %}
-    <a class="govuk-link" href="{{ data_source.source_url }}">{{ data_source.source_url }}</a>
+    <a class="govuk-link" href="{{ data_source.source_url }}">{{ data_source.source_url | url_with_line_breaks }}</a>
   {% endif %}
 </div>
