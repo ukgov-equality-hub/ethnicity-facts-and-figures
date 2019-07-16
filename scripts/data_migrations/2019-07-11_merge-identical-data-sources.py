@@ -16,7 +16,16 @@ def merge_identical_duplicate_data_sources(app):
     with app.app_context():
         count = 0
 
-        DataSource.query.update({DataSource.purpose: func.rtrim(DataSource.purpose, " \r")}, synchronize_session=False)
+        DataSource.query.update(
+            {
+                DataSource.purpose: func.replace(DataSource.purpose, "\r", ""),
+                DataSource.note_on_corrections_or_updates: func.replace(
+                    DataSource.note_on_corrections_or_updates, "\r", ""
+                ),
+                DataSource.frequency_of_release_other: func.replace(DataSource.frequency_of_release_other, "\r", ""),
+            },
+            synchronize_session=False,
+        )
 
         try:
             all_data_source_ids = DataSource.query.with_entities(DataSource.id).all()
