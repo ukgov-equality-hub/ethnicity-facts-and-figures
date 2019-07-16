@@ -243,6 +243,25 @@ def merge_data_sources():
         data_source_to_keep.merge(data_source_ids=data_source_ids)
 
         db.session.commit()
+
+        if data_source_to_keep.measure_versions.count():
+            measure_version = data_source_to_keep.measure_versions[0]
+            edit_data_source_url = url_for(
+                "cms.edit_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+                data_source_id=data_source_to_keep.id,
+            )
+
+            data_source_name = f"‘<a class='govuk-link' href='{edit_data_source_url}'>{data_source_to_keep.title}</a>’"
+
+        else:
+            data_source_name = data_source_to_keep.title
+
+        flash(f"Successfully merged {len(data_source_ids)} data sources into {data_source_name}")
+
         return redirect(url_for("admin.data_sources"))
 
     return render_template(
