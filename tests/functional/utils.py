@@ -166,12 +166,6 @@ def spaceless(string_list):
     return [despace(s) for s in string_list]
 
 
-def go_to_page(page):
-    page.get()
-    assert page.is_current()
-    return page
-
-
 def assert_page_contains(page, text):
     return page.source_contains(text)
 
