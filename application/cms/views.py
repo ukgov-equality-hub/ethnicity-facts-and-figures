@@ -1233,7 +1233,7 @@ def link_existing_data_source(topic_slug, subtopic_slug, measure_slug, version):
         if data_source not in measure_version.data_sources:
             measure_version.data_sources.append(data_source)
             db.session.commit()
-            flash(f"Successfully added the data source ’{data_source.title}’")
+            flash(f"Successfully added the data source ‘{data_source.title}’")
 
         else:
             flash(f"The data source ‘{data_source.title}’ is already linked to this page.", "error")
