@@ -733,25 +733,20 @@ def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_a
         )
 
 
-def test_latest_published_version_does_not_add_noindex_for_robots(test_app_client, logged_in_admin_user):
+def test_latest_version_url_does_not_add_noindex_for_robots(test_app_client, logged_in_admin_user):
     # GIVEN the latest published version of a page with later draft created
     measure = MeasureFactory()
-    # Outdated version
-    MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="1.0")
-    # Latest published version
-    latest_published_version = MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="2.0")
-    # Newer draft version
-    MeasureVersionFactory(measure=measure, status="DRAFT", latest=True, version="2.1")
+    measure_version = MeasureVersionFactory(measure=measure, status="APPROVED", latest=True, version="1.0")
 
     # WHEN we get the rendered template
 
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
-            topic_slug=latest_published_version.measure.subtopic.topic.slug,
-            subtopic_slug=latest_published_version.measure.subtopic.slug,
-            measure_slug=latest_published_version.measure.slug,
-            version=latest_published_version.version,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version="latest",
         )
     )
     # THEN it should not contain a noindex tag
@@ -761,32 +756,27 @@ def test_latest_published_version_does_not_add_noindex_for_robots(test_app_clien
     assert len(robots_tags) == 0
 
 
-def test_previous_version_adds_noindex_for_robots(test_app_client, logged_in_admin_user):
+def test_versioned_urls_add_noindex_for_robots(test_app_client, logged_in_admin_user):
     # GIVEN a page with a later published version
     measure = MeasureFactory()
     # Outdated version
-    outdated_version = MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="1.0")
-    # Latest published version
-    MeasureVersionFactory(measure=measure, status="APPROVED", latest=False, version="2.0")
-    # Newer draft version
-    MeasureVersionFactory(measure=measure, status="DRAFT", latest=True, version="2.1")
+    measure_version = MeasureVersionFactory(measure=measure, status="APPROVED", latest=True, version="1.0")
 
     # WHEN we get the rendered template
 
     resp = test_app_client.get(
         url_for(
             "static_site.measure_version",
-            topic_slug=outdated_version.measure.subtopic.topic.slug,
-            subtopic_slug=outdated_version.measure.subtopic.slug,
-            measure_slug=outdated_version.measure.slug,
-            version=outdated_version.version,
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version="1.0",
         )
     )
     # THEN it should contain a noindex tag
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
-    robots_tags = page.find_all("meta", attrs={"name": "robots"}, content=lambda value: value and "noindex" in value)
-    assert len(robots_tags) == 1
+    assert "noindex" == page.find("meta", attrs={"name": "robots"})["content"]
 
 
 class TestMeasurePage:
