@@ -4,7 +4,7 @@
   {% set unique_time_covered = data_source.measure_versions.all() | map(attribute='time_covered') | unique | reject("none") %}
   {% set formatted_time_covered = (unique_time_covered | join(', ')) if unique_time_covered else '123' %}
 
-  <div class="govuk-body">{{ data_source.publisher.name }}</div>
+  <div class="govuk-body">{{ data_source.publisher.name if data_source.publisher else "No publisher" }}</div>
 
   <div class="govuk-body">{% if data_source.publication_date %}Published on {{ data_source.publication_date }}{% else %}No publication date{% endif %}</div>
 
