@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Ethnicity facts and figures"},
+    {"url": url_for('admin.index'), "text": "Admin"},
+  ]
+%}
+
+{% block pageTitle %}{% if q %}{{ q }} - Search data sources{% else %}Data sources{% endif %}{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">Data sources</h1>
+
+      <form method="GET" action="{{ url_for('admin.data_sources' )}}">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+            {{ data_source_search_form.q(label_class='govuk-visually-hidden') }}
+          </div>
+
+          <div class="govuk-grid-column-one-third">
+            <button class="govuk-button govuk-button--secondary">Filter</button>
+          </div>
+        </div>
+      </form>
+
+      <p class="govuk-body">
+        Showing
+        {% if data_source_search_form.q.data == "" %}
+          all data sources.
+        {% elif data_sources|length == 1 %}
+          1 result
+        {% else %}
+          {{ '{:,}'.format(data_sources|length) }} results
+        {% endif %}
+      </p>
+
+      {% if data_source_selection_form.data_sources.choices|length > 0 %}
+        <ul class="govuk-list">
+          <form method="GET" action="{{ url_for('admin.merge_data_sources') }}">
+            {{ data_source_selection_form.data_sources }}
+
+            <button type="submit" class="govuk-button">Continue</button>
+          </form>
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

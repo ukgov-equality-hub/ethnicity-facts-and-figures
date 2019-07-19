@@ -5,7 +5,7 @@ import pytest
 from application.auth.models import TypeOfUser
 from application.cms.exceptions import PageNotFoundException, InvalidPageHierarchy, PageExistsException, PageUnEditable
 from application.cms.forms import MeasureVersionForm
-from application.cms.models import Measure, NewVersionType
+from application.cms.models import Measure, NewVersionType, DataSource
 from application.cms.page_service import PageService
 from tests.models import (
     TopicFactory,
@@ -14,6 +14,7 @@ from tests.models import (
     MeasureVersionFactory,
     MeasureVersionWithDimensionFactory,
     UserFactory,
+    DataSourceFactory,
 )
 
 page_service = PageService()
@@ -208,7 +209,6 @@ class TestPageService:
             measure_version_form=MeasureVersionForm(
                 is_minor_update=False, title="I care", published_at=datetime.now().date(), internal_reference="abc123"
             ),
-            data_source_forms=[],
             created_by_email=user.email,
         )
 
@@ -230,7 +230,6 @@ class TestPageService:
             measure_version_form=MeasureVersionForm(
                 is_minor_update=False, title="I care", published_at=datetime.now().date()
             ),
-            data_source_forms=[],
             created_by_email=user.email,
         )
 
@@ -242,7 +241,6 @@ class TestPageService:
                     title=created_measure_version.title,
                     published_at=created_measure_version.published_at,
                 ),
-                data_source_forms=[],
                 created_by_email=user.email,
             )
 
@@ -258,7 +256,6 @@ class TestPageService:
                 methodology="\n\n\n\n\n\n",
             ),
             created_by_email=user.email,
-            data_source_forms=[],
         )
 
         assert created_measure_version.title == "I care"
@@ -273,7 +270,6 @@ class TestPageService:
                 is_minor_update=False, title="the title", published_at=datetime.now().date()
             ),
             created_by_email=user.email,
-            data_source_forms=[],
         )
 
         assert "the title" == created_measure_version.title
@@ -300,7 +296,6 @@ class TestPageService:
                 is_minor_update=False, title="the title", published_at=datetime.now().date()
             ),
             created_by_email=user.email,
-            data_source_forms=[],
         )
 
         assert "the title" == created_measure_version.title
@@ -433,6 +428,37 @@ class TestPageService:
 
         assert len(measure_version.uploads) == 1
         assert len(new_version.uploads) == 0
+
+    def test_major_version_update_has_no_linked_data_sourceS(self):
+        data_source_1 = DataSourceFactory()
+        data_source_2 = DataSourceFactory()
+        measure_version = MeasureVersionFactory(version="1.0", data_sources=[data_source_1, data_source_2])
+        user = UserFactory(user_type=TypeOfUser.RDU_USER)
+
+        assert len(measure_version.data_sources) == 2
+        assert DataSource.query.count() == 2
+
+        new_version = page_service.create_measure_version(measure_version, NewVersionType.MAJOR_UPDATE, user=user)
+
+        assert DataSource.query.count() == 2
+        assert new_version.data_sources == []
+
+    @pytest.mark.parametrize("version_type", [t for t in NewVersionType if t is not NewVersionType.MAJOR_UPDATE])
+    def test_create_measure_version_other_than_major_creates_associations_rather_than_copies_of_existing_data_sources(
+        self, version_type
+    ):
+        data_source_1 = DataSourceFactory()
+        data_source_2 = DataSourceFactory()
+        measure_version = MeasureVersionFactory(version="1.0", data_sources=[data_source_1, data_source_2])
+        user = UserFactory(user_type=TypeOfUser.RDU_USER)
+
+        assert len(measure_version.data_sources) == 2
+        assert DataSource.query.count() == 2
+
+        new_version = page_service.create_measure_version(measure_version, version_type, user=user)
+
+        assert DataSource.query.count() == 2
+        assert measure_version.data_sources == new_version.data_sources
 
     def test_create_copy_of_page(self):
         user = UserFactory(user_type=TypeOfUser.RDU_USER)

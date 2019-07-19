@@ -32,20 +32,19 @@ from application.cms.forms import (
     NewUploadForm,
     NewVersionForm,
     UploadForm,
+    DataSourceForm,
+    SelectOrCreateDataSourceForm,
+    CREATE_NEW_DATA_SOURCE,
 )
 from application.cms.models import NewVersionType, MeasureVersion, Measure
-from application.cms.models import Organisation
+from application.cms.models import Organisation, DataSource
 from application.cms.page_service import page_service
 from application.cms.upload_service import upload_service
-from application.cms.utils import (
-    copy_form_errors,
-    get_data_source_forms,
-    get_form_errors,
-    ErrorSummaryMessage,
-    TextFieldDiff,
-)
+from application.cms.utils import copy_form_errors, get_form_errors, ErrorSummaryMessage, TextFieldDiff
 from application.sitebuilder import build_service
 from application.utils import get_bool, user_can, user_has_access
+
+from application import db
 
 
 @cms_blueprint.route("")
@@ -70,15 +69,11 @@ def create_measure(topic_slug, subtopic_slug):
         external_edit_summary="First published",
         previous_minor_versions=tuple(),
     )
-    data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=None)
 
-    if form.validate_on_submit() and data_source_form.validate_on_submit() and data_source_2_form.validate_on_submit():
+    if form.validate_on_submit():
         try:
             new_measure_version = page_service.create_measure(
-                subtopic=subtopic,
-                measure_version_form=form,
-                data_source_forms=(data_source_form, data_source_2_form),
-                created_by_email=current_user.email,
+                subtopic=subtopic, measure_version_form=form, created_by_email=current_user.email
             )
 
             message = "Created page {}".format(new_measure_version.title)
@@ -104,8 +99,6 @@ def create_measure(topic_slug, subtopic_slug):
     return render_template(
         "cms/edit_measure_version.html",
         form=form,
-        data_source_form=data_source_form,
-        data_source_2_form=data_source_2_form,
         topic=topic,
         subtopic=subtopic,
         measure=Measure(),
@@ -113,8 +106,9 @@ def create_measure(topic_slug, subtopic_slug):
         new=True,
         organisations_by_type=Organisation.select_options_by_type(),
         topics=page_service.get_topics(include_testing_space=True),
-        errors=get_form_errors(forms=(form, data_source_form, data_source_2_form)),
+        errors=get_form_errors(forms=(form,)),
         data_not_uploaded_error=False,
+        data_sources_not_added=False,
         dimensions_not_complete_error=False,
     )
 
@@ -287,8 +281,6 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
 
     diffs = {}
 
-    data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=measure_version)
-
     if request.method == "GET":
         measure_version_form = MeasureVersionForm(
             is_minor_update=measure_version.is_minor_version(), obj=measure_version
@@ -301,11 +293,7 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
 
     saved = False
     errors_preamble = None
-    if (
-        measure_version_form.validate_on_submit()
-        and data_source_form.validate_on_submit()
-        and data_source_2_form.validate_on_submit()
-    ):
+    if measure_version_form.validate_on_submit():
         additional_kwargs_from_request = {
             "status": request.form.get("status", None),
             "subtopic_id": request.form.get("subtopic", None),
@@ -314,7 +302,6 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             page_service.update_measure_version(
                 measure_version,
                 measure_version_form=measure_version_form,
-                data_source_forms=(data_source_form, data_source_2_form),
                 last_updated_by_email=current_user.email,
                 **additional_kwargs_from_request,
             )
@@ -371,15 +358,14 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "subtopic": measure_version.measure.subtopic,
         "measure": measure_version.measure,
         "measure_version": measure_version,
-        "data_source_form": data_source_form,
-        "data_source_2_form": data_source_2_form,
         "diffs": diffs,
         "organisations_by_type": Organisation.select_options_by_type(),
         "topics": page_service.get_topics(include_testing_space=True),
         "errors_preamble": errors_preamble,
-        "errors": get_form_errors(forms=[measure_version_form, data_source_form, data_source_2_form]),
+        "errors": get_form_errors(forms=[measure_version_form]),
         "new": False,
         "data_not_uploaded_error": False,
+        "data_sources_not_added": False,
         "dimensions_not_complete_error": False,
     }
 
@@ -466,25 +452,13 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             sending_to_review=True,
         )
 
-        data_source_form_to_validate, data_source_2_form_to_validate = get_data_source_forms(
-            request, measure_version=measure_version, sending_to_review=True
-        )
-
         invalid_dimensions = []
-
         for dimension in measure_version.dimensions:
             dimension_form = DimensionRequiredForm(obj=dimension, meta={"csrf": False})
             if not dimension_form.validate():
                 invalid_dimensions.append(dimension)
 
         measure_version_form_validated = measure_version_form_to_validate.validate()
-        data_source_form_validated = data_source_form_to_validate.validate()
-
-        # We only want to validate the secondary source if some data has been provided, in which case we ensure that the
-        # full data source is given.
-        data_source_2_form_validated = (
-            data_source_2_form_to_validate.validate() if any(data_source_2_form_to_validate.data.values()) else True
-        )
 
         # Measure versions should have a data file uploaded before sending to review
         data_file_uploaded = len(measure_version.uploads) > 0
@@ -492,9 +466,8 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
         if (
             not measure_version_form_validated
             or invalid_dimensions
-            or not data_source_form_validated
-            or not data_source_2_form_validated
             or not data_file_uploaded
+            or not measure_version.data_sources
         ):
             # don't need to show user page has been saved when
             # required field validation failed.
@@ -508,18 +481,14 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             # If the page was saved before sending to review form's db_version_id will be out of sync, so update it
             measure_version_form.db_version_id.raw_data = [str(measure_version.db_version_id)]
 
-            data_source_form, data_source_2_form = get_data_source_forms(request, measure_version=measure_version)
-
             copy_form_errors(from_form=measure_version_form_to_validate, to_form=measure_version_form)
-            copy_form_errors(from_form=data_source_form_to_validate, to_form=data_source_form)
-            copy_form_errors(from_form=data_source_2_form_to_validate, to_form=data_source_2_form)
 
-            non_form_error_messages = []
-            data_not_uploaded_error = dimensions_not_complete_error = False
+            additional_errors = []
+            data_not_uploaded_error = dimensions_not_complete_error = data_sources_not_added = False
             if invalid_dimensions:
                 dimensions_not_complete_error = True
                 for invalid_dimension in invalid_dimensions:
-                    non_form_error_messages.append(
+                    additional_errors.append(
                         ErrorSummaryMessage(
                             text="Your dimension is missing a title. Enter a title.",
                             href=f"./{invalid_dimension.guid}/edit?validate=true",
@@ -528,23 +497,23 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
 
             if not data_file_uploaded:
                 data_not_uploaded_error = True
-                non_form_error_messages.append(ErrorSummaryMessage(text="Upload the source data", href="#source-data"))
+                additional_errors.append(ErrorSummaryMessage(text="Upload the source data", href="#source-data"))
+
+            if not measure_version.data_sources:
+                data_sources_not_added = True
+                additional_errors.append(ErrorSummaryMessage(text="Add at least one data source", href="#data-sources"))
 
             context = {
                 "form": measure_version_form,
-                "data_source_form": data_source_form,
-                "data_source_2_form": data_source_2_form,
                 "topic": topic,
                 "subtopic": subtopic,
                 "measure": measure_version.measure,
                 "measure_version": measure_version,
                 "organisations_by_type": Organisation.select_options_by_type(),
                 "topics": page_service.get_topics(include_testing_space=True),
-                "errors": get_form_errors(
-                    forms=[measure_version_form, data_source_form, data_source_2_form],
-                    extra_non_form_errors=non_form_error_messages,
-                ),
+                "errors": get_form_errors(forms=[measure_version_form], extra_non_form_errors=additional_errors),
                 "data_not_uploaded_error": data_not_uploaded_error,
+                "data_sources_not_added": data_sources_not_added,
                 "dimensions_not_complete_error": dimensions_not_complete_error,
                 "new": False,
             }
@@ -1106,6 +1075,316 @@ def view_measure_version_by_measure_version_id(measure_version_id):
             topic_slug=measure_version.measure.subtopic.topic.slug,
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+    )
+
+
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources", methods=["GET"])
+@login_required
+@user_has_access
+def search_data_sources(topic_slug, subtopic_slug, measure_slug, version):
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
+
+    q = request.args.get("q", "")
+    data_sources = DataSource.search(q, limit=100, exclude_data_sources=measure_version.data_sources) if q else []
+    form = SelectOrCreateDataSourceForm(data_sources=data_sources, search_query=q)
+
+    # If the user POSTs the SelectOrCreateDataSourceForm without picking a source, it will error and redirect back to
+    # this URL as a GET. In doing so, we lose the form that performed the initial validation and contains the errors.
+    # The presence of the `validate` query param indicates this we're on this page as the result of that
+    # Post-Redirect-Get flow, so we need to work out what went wrong and display those errors to the end user.
+    # We do this by running the validation again, and displaying the errors we find.
+    errors = []
+    validate = get_bool(request.args.get("revalidate"))
+    if validate:
+        form_without_csrf = SelectOrCreateDataSourceForm(data_sources=data_sources, meta={"csrf": False})
+        form_without_csrf.validate()
+        errors = get_form_errors(forms=[form_without_csrf])
+        copy_form_errors(from_form=form_without_csrf, to_form=form)
+
+    return render_template(
+        "cms/search_data_source.html",
+        topic=topic,
+        subtopic=subtopic,
+        measure=measure,
+        measure_version=measure_version,
+        q=q,
+        data_sources=data_sources,
+        form=form,
+        errors=errors,
+    )
+
+
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/new", methods=["GET"])
+@login_required
+@user_has_access
+def new_data_source(topic_slug, subtopic_slug, measure_slug, version):
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
+
+    data_source_form = DataSourceForm()
+    organisations_by_type = Organisation.select_options_by_type()
+
+    return render_template(
+        "cms/new_data_source.html",
+        data_source_form=data_source_form,
+        organisations_by_type=organisations_by_type,
+        topic=topic,
+        subtopic=subtopic,
+        measure=measure,
+        measure_version=measure_version,
+        from_search_query=request.args.get("from_search_query"),
+    )
+
+
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/new", methods=["POST"])
+@login_required
+@user_has_access
+def create_data_source(topic_slug, subtopic_slug, measure_slug, version):
+
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
+
+    data_source_form = DataSourceForm()
+
+    data_source = DataSource()
+    data_source_form.populate_obj(data_source)
+
+    if data_source_form.validate_on_submit():
+
+        db.session.add(data_source)
+        measure_version.data_sources.append(data_source)
+        db.session.commit()
+
+        message = "Saved"
+        flash(message, "info")
+
+        return redirect(
+            url_for(
+                "cms.edit_data_source",
+                topic_slug=topic.slug,
+                subtopic_slug=subtopic.slug,
+                measure_slug=measure.slug,
+                version=measure_version.version,
+                data_source_id=data_source.id,
+            )
+        )
+
+    else:
+
+        errors = get_form_errors(forms=[data_source_form])
+
+        return render_template(
+            "cms/new_data_source.html",
+            data_source_form=data_source_form,
+            organisations_by_type=Organisation.select_options_by_type(),
+            errors=errors,
+            topic=topic,
+            subtopic=subtopic,
+            measure=measure,
+            measure_version=measure_version,
+            from_search_query=request.args.get("from_search_query"),
+        )
+
+
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/link", methods=["POST"])
+@login_required
+@user_has_access
+def link_existing_data_source(topic_slug, subtopic_slug, measure_slug, version):
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
+
+    form = SelectOrCreateDataSourceForm(data_sources=[])
+
+    if len(measure_version.data_sources) >= 2:
+        flash("Only two data sources can currently be linked to a measure version.", "error")
+
+        return redirect(
+            url_for(
+                "cms.edit_measure_version",
+                topic_slug=topic_slug,
+                subtopic_slug=subtopic_slug,
+                measure_slug=measure_slug,
+                version=measure_version.version,
+            )
+        )
+
+    if form.data_source.data == CREATE_NEW_DATA_SOURCE:
+        return redirect(
+            url_for(
+                "cms.create_data_source",
+                topic_slug=topic_slug,
+                subtopic_slug=subtopic_slug,
+                measure_slug=measure_slug,
+                version=version,
+                from_search_query=form.search_query.data,
+            )
+        )
+
+    elif form.data_source.data:
+        data_source = DataSource.query.get(form.data_source.data)
+
+        if data_source not in measure_version.data_sources:
+            measure_version.data_sources.append(data_source)
+            db.session.commit()
+            flash(f"Successfully added the data source ‘{data_source.title}’")
+
+        else:
+            flash(f"The data source ‘{data_source.title}’ is already linked to this page.", "error")
+
+        return redirect(
+            url_for(
+                "cms.edit_measure_version",
+                topic_slug=topic_slug,
+                subtopic_slug=subtopic_slug,
+                measure_slug=measure_slug,
+                version=measure_version.version,
+            )
+        )
+
+    return redirect(
+        url_for(
+            "cms.search_data_sources",
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
+            version=measure_version.version,
+            q=form.search_query.data,
+            revalidate=True,
+        )
+    )
+
+
+@cms_blueprint.route(
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<int:data_source_id>", methods=["GET"]
+)
+@login_required
+@user_has_access
+def edit_data_source(topic_slug, subtopic_slug, measure_slug, version, data_source_id):
+
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
+
+    data_source = DataSource.query.get(data_source_id)
+
+    if data_source is None:
+        raise PageNotFoundException()
+
+    if data_source not in measure_version.data_sources:
+        raise PageNotFoundException()
+
+    data_source_form = DataSourceForm(obj=data_source)
+    organisations_by_type = Organisation.select_options_by_type()
+
+    return render_template(
+        "cms/edit_data_source.html",
+        data_source=data_source,
+        data_source_form=data_source_form,
+        organisations_by_type=organisations_by_type,
+        topic=topic,
+        subtopic=subtopic,
+        measure=measure,
+        measure_version=measure_version,
+    )
+
+
+@cms_blueprint.route(
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<int:data_source_id>", methods=["POST"]
+)
+@login_required
+@user_has_access
+def update_data_source(topic_slug, subtopic_slug, measure_slug, version, data_source_id):
+
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
+
+    data_source = DataSource.query.get(data_source_id)
+
+    if data_source is None:
+        raise PageNotFoundException()
+
+    if data_source not in measure_version.data_sources:
+        raise PageNotFoundException()
+
+    data_source_form = DataSourceForm()
+
+    # TODO: remove check on data_source.title and validate this within form.
+    if data_source_form.validate_on_submit():
+        data_source_form.populate_obj(data_source)
+
+        db.session.commit()
+
+        message = "Saved"
+        flash(message, "info")
+
+        if data_source.associated_with_published_measure_versions:
+            build_service.request_build()
+
+        return redirect(
+            url_for(
+                "cms.edit_data_source",
+                topic_slug=topic.slug,
+                subtopic_slug=subtopic.slug,
+                measure_slug=measure.slug,
+                version=measure_version.version,
+                data_source_id=data_source.id,
+            )
+        )
+
+    errors = get_form_errors(forms=[data_source_form])
+
+    return render_template(
+        "cms/edit_data_source.html",
+        data_source=data_source,
+        data_source_form=data_source_form,
+        organisations_by_type=Organisation.select_options_by_type(),
+        errors=errors,
+        topic=topic,
+        subtopic=subtopic,
+        measure=measure,
+        measure_version=measure_version,
+    )
+
+
+@cms_blueprint.route(
+    "/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/edit/data-sources/<int:data_source_id>/remove",
+    methods=["POST"],
+)
+@login_required
+@user_has_access
+def remove_data_source(topic_slug, subtopic_slug, measure_slug, version, data_source_id):
+    topic, subtopic, measure, measure_version = page_service.get_measure_version_hierarchy(
+        topic_slug, subtopic_slug, measure_slug, version
+    )
+
+    data_source = DataSource.query.get(data_source_id)
+
+    if data_source is None:
+        raise PageNotFoundException()
+
+    if data_source not in measure_version.data_sources:
+        raise PageNotFoundException()
+
+    measure_version.data_sources.remove(data_source)
+    db.session.commit()
+
+    message = 'Removed data source "{}"'.format(data_source.title)
+    flash(message, "error")
+
+    return redirect(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=topic.slug,
+            subtopic_slug=subtopic.slug,
+            measure_slug=measure.slug,
             version=measure_version.version,
         )
     )

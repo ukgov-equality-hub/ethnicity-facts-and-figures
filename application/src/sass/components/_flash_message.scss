@@ -8,6 +8,7 @@
 @import "node_modules/govuk-frontend/core/lists";
 
 $eff-flash-colour: #00833F;
+$eff-flash-error-colour: govuk-colour('red');
 
 .eff-flash-message {
   @include govuk-text-colour;
@@ -19,6 +20,14 @@ $eff-flash-colour: #00833F;
 
   @include govuk-media-query($from: tablet) {
     border: $govuk-border-width solid $eff-flash-colour;
+  }
+}
+
+.eff-flash-message--error {
+  border: $govuk-border-width-mobile solid $eff-flash-error-colour;
+
+  @include govuk-media-query($from: tablet) {
+    border: $govuk-border-width solid $eff-flash-error-colour;
   }
 }
 

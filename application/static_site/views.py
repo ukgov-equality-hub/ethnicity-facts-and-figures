@@ -125,12 +125,14 @@ def measure_version(topic_slug, subtopic_slug, measure_slug, version):
     try:
         if version == "latest":
 
+            latest_url = True
             if current_user.can_access_measure(measure):
                 measure_version = measure.latest_version
             else:
                 measure_version = measure.latest_published_version
 
         else:
+            latest_url = False
             *_, measure_version = page_service.get_measure_version_hierarchy(
                 topic_slug, subtopic_slug, measure_slug, version
             )
@@ -142,7 +144,11 @@ def measure_version(topic_slug, subtopic_slug, measure_slug, version):
         abort(404)
 
     return render_template(
-        "static_site/measure.html", topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_version=measure_version
+        "static_site/measure.html",
+        topic_slug=topic_slug,
+        subtopic_slug=subtopic_slug,
+        measure_version=measure_version,
+        latest_url=latest_url,
     )
 
 

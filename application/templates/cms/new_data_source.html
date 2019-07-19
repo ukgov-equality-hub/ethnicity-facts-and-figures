@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
+{% from "cms/_data_source_form.html" import render_data_source_form %}
+{% from "_macros/_back.html" import govukBackLink %}
+
+{% block pageTitle %}Add data source{% endblock %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for('static_site.topic', topic_slug=topic.slug), "text": topic.title}
+  ]
+%}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      {% if from_search_query %}
+        {{ govukBackLink(href=url_for('cms.search_data_sources', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, q=from_search_query), text="Back") }}
+      {% else %}
+        {{ govukBackLink(href=url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version), text="Back") }}
+      {% endif %}
+
+      <span class="govuk-caption-xl">{{ measure_version.title }}</span>
+
+      <h1 class="govuk-heading-xl">Add data source</h1>
+
+      <form method="POST" action="{{ url_for('cms.create_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, from_search_query=from_search_query )}}">
+
+        {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=False, diffs=[]) }}
+
+        <button class="govuk-button">Save</button>
+
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  {% include "cms/_initialize_publisher_autocomplete.html" %}
+{% endblock %}

@@ -8,6 +8,7 @@ from tests.functional.utils import (
     navigate_to_topic_page,
     navigate_to_edit_page,
     driver_login,
+    add_primary_data_source_to_measure,
 )
 from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory
 from tests.functional.pages import MeasureCreateVersionPage, AddSourceDataPage
@@ -150,6 +151,10 @@ def test_create_a_measure_as_editor(driver, live_server, government_departments,
 
     # AND provide an edit summary
     measure_edit_page.fill_measure_page_major_edit_fields(sample_measure_version)
+    measure_edit_page.click_save()
+
+    # AND add a new primary data source
+    add_primary_data_source_to_measure(driver, sample_data_source)
 
     # AND approve the major edit
     measure_edit_page.click_save_and_send_to_review()

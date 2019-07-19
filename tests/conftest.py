@@ -282,3 +282,10 @@ def upload_service(app):
     upload_service.init_app(app)
     upload_service.enabled = True
     return upload_service
+
+
+@pytest.fixture(scope="function")
+def isolated_app_config(app):
+    saved_config = {**app.config}
+    yield app
+    app.config = {**saved_config}

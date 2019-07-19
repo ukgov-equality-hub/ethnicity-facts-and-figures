@@ -104,7 +104,7 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
     TEMPLATE = "forms/_text_input.html"
     input_type = "text"
 
-    def __call__(self, field, class_="", diffs=None, disabled=False, textarea=False, **kwargs):
+    def __call__(self, field, class_="", diffs=None, disabled=False, textarea=False, label_class="", **kwargs):
         value = {"value": field.data}
 
         field_params = {} if textarea else {"type": self.input_type}
@@ -117,7 +117,7 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
             class_=class_,
             diffs=diffs,
             disabled=disabled,
-            render_params={"textarea": textarea, **value},
+            render_params={"textarea": textarea, **value, "label_class": label_class},
             field_params=field_params,
         )
 
@@ -144,6 +144,10 @@ class _RDUURLInput(_RDUTextInput):
     input_type = "url"
 
 
+class _RDUSearchInput(_RDUTextInput):
+    input_type = "search"
+
+
 class _RDUChoiceInput(_FormFieldTemplateRenderer):
     TEMPLATE = "forms/_choice_input.html"
 
@@ -151,7 +155,9 @@ class _RDUChoiceInput(_FormFieldTemplateRenderer):
         super().__init__(*args, **kwargs)
         self.field_type = field_type
 
-    def __call__(self, field, class_="", diffs=None, disabled=False, conditional_question=None, **kwargs):
+    def __call__(
+        self, field, class_="", diffs=None, disabled=False, conditional_question=None, label_class="", **kwargs
+    ):
         if getattr(field, "checked", field.data):
             kwargs["checked"] = True
 
@@ -166,6 +172,7 @@ class _RDUChoiceInput(_FormFieldTemplateRenderer):
                 "value": field.data,
                 "field_type": self.field_type.value,
                 "conditional_question": conditional_question,
+                "label_class": label_class,
             },
             field_params={**kwargs},
         )
@@ -186,6 +193,7 @@ class _FormGroup(_FormFieldTemplateRenderer):
         fieldset_class="",
         legend_class="",
         field_class="",
+        label_class="",
         diffs=None,
         disabled=False,
         inline=False,
@@ -207,6 +215,7 @@ class _FormGroup(_FormFieldTemplateRenderer):
                 "fieldset_class": fieldset_class,
                 "legend_class": legend_class,
                 "field_class": field_class,
+                "label_class": label_class,
                 "field_type": self.field_type.value,
                 "inline": inline,
                 "conditional_questions": conditional_questions,
@@ -218,7 +227,27 @@ class _FormGroup(_FormFieldTemplateRenderer):
         self.other_field = other_field
 
 
-class RDUCheckboxField(SelectMultipleField):
+class _RDUSelectMixin:
+    """Mixin for checkbox/radio fields to provide support for per-input hint text and dividers.
+
+    WTForm checkbox/radio fields are populated from a `choices` variable on the field. This class wraps the provided
+    field and extends it with `choices_hints` and `dividers` that maps individual choice values to their (optional)
+    hints and dividers.
+    """
+
+    def __init__(self, *args, choices_hints=None, dividers=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.choices_hints = choices_hints or {}
+        self.dividers = dividers or {}
+
+    def __iter__(self):
+        for opt in super().__iter__():
+            opt.hint = self.choices_hints.get(opt.data, "")
+            opt.divider = self.dividers.get(opt.data, "")
+            yield opt
+
+
+class RDUCheckboxField(_RDUSelectMixin, SelectMultipleField):
     widget = _FormGroup(field_type=_ChoiceInputs.CHECKBOX)
     option_widget = _RDUChoiceInput(field_type=widget.field_type)
 
@@ -235,7 +264,7 @@ class RDUCheckboxField(SelectMultipleField):
         super().__init__(label, validators, **kwargs)
 
 
-class RDURadioField(RadioField):
+class RDURadioField(_RDUSelectMixin, RadioField):
     """
     A radio-button field that supports showing/hiding a different field based on whether the last radio has been
     selected - the current limitation/expectation being that the last field is an "other" selection.
@@ -309,3 +338,7 @@ class RDUEmailField(RDUStringField):
 
 class RDUURLField(RDUStringField):
     widget = _RDUURLInput()
+
+
+class RDUSearchField(RDUStringField):
+    widget = _RDUSearchInput()

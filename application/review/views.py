@@ -31,6 +31,7 @@ def review_page(review_token):
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_version=measure_version,
             preview=True,
+            latest_url=False,
         )
 
     except SignatureExpired as e:

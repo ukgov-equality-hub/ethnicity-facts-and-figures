@@ -29,6 +29,7 @@ from application.cms.filters import (
     index_of_last_initial_zero,
     yesno,
     models_to_dicts,
+    url_with_line_breaks,
 )
 from application.cms.dimension_service import dimension_service
 from application.cms.models import TESTING_SPACE_SLUG
@@ -153,6 +154,7 @@ def create_app(config_object):
     app.add_template_filter(yesno)
     app.add_template_filter(models_to_dicts)
     app.add_template_filter(html_line_breaks)
+    app.add_template_filter(url_with_line_breaks)
 
     # There is a CSS caching problem in chrome
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 10
@@ -184,6 +186,7 @@ def create_app(config_object):
             DELETE_MEASURE,
             MANAGE_SYSTEM,
             MANAGE_USERS,
+            MANAGE_DATA_SOURCES,
             ORDER_MEASURES,
             PUBLISH,
             READ,
@@ -198,6 +201,7 @@ def create_app(config_object):
             DELETE_MEASURE=DELETE_MEASURE,
             MANAGE_SYSTEM=MANAGE_SYSTEM,
             MANAGE_USERS=MANAGE_USERS,
+            MANAGE_DATA_SOURCES=MANAGE_DATA_SOURCES,
             ORDER_MEASURES=ORDER_MEASURES,
             PUBLISH=PUBLISH,
             READ=READ,

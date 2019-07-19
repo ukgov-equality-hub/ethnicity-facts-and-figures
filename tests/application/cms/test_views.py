@@ -1,7 +1,8 @@
 import datetime
+
 import json
-from unittest import mock
 import re
+from urllib import parse
 
 import pytest
 from bs4 import BeautifulSoup
@@ -11,8 +12,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 
 from application.auth.models import TypeOfUser
 from application.cms.forms import MeasureVersionForm
-from application.cms.models import DataSource, TESTING_SPACE_SLUG, MeasureVersion
-from application.cms.utils import get_data_source_forms
+from application.cms.models import TESTING_SPACE_SLUG, MeasureVersion, DataSource
 from application.sitebuilder.models import Build
 from tests.models import (
     MeasureVersionFactory,
@@ -26,12 +26,6 @@ from tests.utils import multidict_from_measure_version_and_kwargs, page_displays
 
 
 class TestGetCreateMeasurePage:
-    def setup(self):
-        self.saved_config = {**current_app.config}
-
-    def teardown(self):
-        current_app.config = {**self.saved_config}
-
     def test_create_measure_page(self, test_app_client, logged_in_rdu_user, stub_measure_data):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
@@ -50,36 +44,9 @@ class TestGetCreateMeasurePage:
             == "Created page %s" % stub_measure_data["title"]
         )
 
-    def test_create_measure_page_creates_data_source_entries(
-        self, test_app_client, logged_in_rdu_user, stub_measure_data
+    def test_measure_pages_have_csrf_protection(
+        self, test_app_client, logged_in_rdu_user, stub_measure_data, isolated_app_config
     ):
-        LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
-        subtopic = SubtopicFactory()
-        form = MeasureVersionForm(is_minor_update=False, **stub_measure_data)
-        request_mock = mock.Mock()
-        request_mock.method = "POST"
-        data_source_form, data_source_2_form = get_data_source_forms(request_mock, None)
-        data_source_form.title.data = "test"
-        data_source_2_form.title.data = "test 2"
-        form_data = ImmutableMultiDict(
-            {
-                **form.data,
-                **{field.name: field.data for field in data_source_form},
-                **{field.name: field.data for field in data_source_2_form},
-            }
-        )
-        assert DataSource.query.count() == 0
-
-        res = test_app_client.post(
-            url_for("cms.create_measure", topic_slug=subtopic.topic.slug, subtopic_slug=subtopic.slug),
-            data=form_data,
-            follow_redirects=True,
-        )
-
-        assert res.status_code == 200
-        assert DataSource.query.count() == 2
-
-    def test_measure_pages_have_csrf_protection(self, test_app_client, logged_in_rdu_user, stub_measure_data):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
         current_app.config["WTF_CSRF_ENABLED"] = True
@@ -90,11 +57,9 @@ class TestGetCreateMeasurePage:
         doc = html.fromstring(res.get_data(as_text=True))
 
         assert doc.xpath("//*[@id='csrf_token']")
-        assert doc.xpath("//*[@id='data-source-1-csrf_token']")
-        assert doc.xpath("//*[@id='data-source-2-csrf_token']")
 
 
-def test_can_not_send_to_review_without_a_data_source_uploaded(test_app_client, logged_in_rdu_user):
+def test_can_not_send_to_review_without_uploaded_data(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(status="DRAFT", uploads=[])
     response = test_app_client.post(
         url_for(
@@ -110,6 +75,24 @@ def test_can_not_send_to_review_without_a_data_source_uploaded(test_app_client, 
     assert response.status_code == 400
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert "Upload the source data" in page.find("div", class_="govuk-error-summary").text
+
+
+def test_cannot_send_to_review_with_no_data_sources(test_app_client, logged_in_rdu_user):
+    measure_version = MeasureVersionFactory(status="DRAFT", data_sources=[])
+    response = test_app_client.post(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        ),
+        data=ImmutableMultiDict({"measure-action": "send-to-department-review"}),
+        follow_redirects=True,
+    )
+    assert response.status_code == 400
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert "Add at least one data source" in page.find("div", class_="govuk-error-summary").text
 
 
 @pytest.mark.parametrize("cannot_reject_status", ("DRAFT", "APPROVED"))
@@ -234,7 +217,7 @@ def test_admin_user_can_see_publish_buttons_on_edit_page(test_app_client, logged
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("button")[-1].text.strip().lower() == "approve for publishing"
+    assert page.find_all("button", text=re.compile("Approve for publishing"))
 
 
 def test_internal_user_can_not_see_publish_buttons_on_edit_page(test_app_client, logged_in_rdu_user):
@@ -251,7 +234,7 @@ def test_internal_user_can_not_see_publish_buttons_on_edit_page(test_app_client,
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("button")[-1].text.strip().lower() == "reject"
+    assert page.find_all("button", text=re.compile("Reject"))
 
     measure_version = MeasureVersionFactory(status="APPROVED")
 
@@ -267,7 +250,7 @@ def test_internal_user_can_not_see_publish_buttons_on_edit_page(test_app_client,
     )
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    assert page.find_all("a", class_="govuk-button")[-1].text.strip() == "Update"
+    assert page.find_all("a", text=re.compile("Update"))
 
 
 def test_order_measures_in_subtopic(test_app_client, logged_in_rdu_user):
@@ -416,41 +399,9 @@ def test_view_edit_measure_page(test_app_client, logged_in_rdu_user, stub_measur
     assert rounding_label.text.strip() == "Rounding (optional)"
     assert rounding.text == "X people are unemployed"
 
-    # Data sources
-
     # TODO publisher/dept source
 
-    sources = page.find("fieldset", class_="source")
-    data_source_title_label = sources.find("label", attrs={"for": "data-source-1-title"})
-    data_source_title_input = sources.find("input", attrs={"id": "data-source-1-title"})
-
-    assert data_source_title_label.text.strip() == "Title of data source"
-    assert data_source_title_input.attrs.get("value") == "DWP Stats"
-
-    source_url = sources.find("input", attrs={"id": "data-source-1-source_url"})
-    assert source_url.attrs.get("value") == "http://dwp.gov.uk"
-
-    publication_date = page.find("input", attrs={"id": "data-source-1-publication_date"})
-    assert publication_date
-    assert publication_date.attrs.get("value") == "15th May 2017"
-
-    note_on_corrections_or_updates_label = sources.find(
-        "label", attrs={"for": "data-source-1-note_on_corrections_or_updates"}
-    )
-    note_on_corrections_or_updates = sources.find(
-        "textarea", attrs={"id": "data-source-1-note_on_corrections_or_updates"}
-    )
-
-    assert note_on_corrections_or_updates_label.text.strip() == "Corrections or updates (optional)"
-    assert note_on_corrections_or_updates.text == "Note on corrections or updates"
-
     # TODO frequency of release
-
-    data_source_purpose_label = sources.find("label", attrs={"for": "data-source-1-purpose"})
-    data_source_purpose = sources.find("textarea", attrs={"id": "data-source-1-purpose"})
-
-    assert data_source_purpose_label.text.strip() == "Purpose of data source"
-    assert data_source_purpose.text == "Purpose of data source"
 
     summary = page.find("textarea", attrs={"id": "summary"})
     assert summary
@@ -995,3 +946,188 @@ class TestChartBuilder(_TestVisualisationBuilder):
 
 class TestTableBuilder(_TestVisualisationBuilder):
     ROUTE_NAME = "cms.create_table"
+
+
+class TestRemoveDataSourceView:
+    def test_login_required(self, test_app_client):
+        measure_version = MeasureVersionFactory()
+
+        res = test_app_client.post(
+            url_for(
+                "cms.remove_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+                data_source_id=measure_version.data_sources[0].id,
+            ),
+            follow_redirects=False,
+        )
+
+        assert res.status_code == 302
+        assert parse.urlparse(res.location).path == url_for("security.login")
+
+    def test_department_user_needs_specific_access_to_measure(self, test_app_client, logged_in_dept_user):
+        measure_version = MeasureVersionFactory()
+
+        res = test_app_client.post(
+            url_for(
+                "cms.remove_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+                data_source_id=measure_version.data_sources[0].id,
+            ),
+            follow_redirects=True,
+        )
+
+        assert res.status_code == 403
+
+    @pytest.mark.parametrize("data_source_id", [-1, 123])
+    def test_404_on_invalid_data_source_id(self, test_app_client, logged_in_rdu_user, data_source_id):
+        measure_version = MeasureVersionFactory(data_sources=[])
+
+        res = test_app_client.post(
+            url_for(
+                "cms.remove_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+                data_source_id=data_source_id,
+            ),
+            follow_redirects=True,
+        )
+
+        assert res.status_code == 404
+
+    def test_404_if_data_source_not_associated_with_measure_version(self, test_app_client, logged_in_rdu_user):
+        measure_version = MeasureVersionFactory(data_sources=[])
+        data_source = DataSourceFactory()
+
+        res = test_app_client.post(
+            url_for(
+                "cms.remove_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+                data_source_id=data_source.id,
+            ),
+            follow_redirects=True,
+        )
+
+        assert res.status_code == 404
+
+        measure_version.data_sources = [data_source]
+
+        res = test_app_client.post(
+            url_for(
+                "cms.remove_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+                data_source_id=data_source.id,
+            ),
+            follow_redirects=True,
+        )
+
+        assert res.status_code == 200
+
+    def test_csrf_protection(self, test_app_client, logged_in_rdu_user, isolated_app_config):
+        current_app.config["WTF_CSRF_ENABLED"] = True
+        measure_version = MeasureVersionFactory(data_sources=[])
+        data_source = DataSourceFactory()
+
+        res = test_app_client.post(
+            url_for(
+                "cms.remove_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+                data_source_id=data_source.id,
+            ),
+            follow_redirects=True,
+        )
+
+        assert res.status_code == 400
+        assert "The CSRF token is missing." in res.get_data(as_text=True)
+
+    def test_data_source_unlinked_from_measure_version_but_not_deleted_entirely(
+        self, test_app_client, logged_in_rdu_user
+    ):
+        measure_version = MeasureVersionFactory()
+        data_source = measure_version.data_sources[0]
+
+        res = test_app_client.post(
+            url_for(
+                "cms.remove_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+                data_source_id=data_source.id,
+            ),
+            follow_redirects=True,
+        )
+
+        assert res.status_code == 200
+        assert measure_version.data_sources == []
+        assert DataSource.query.get(data_source.id)
+
+
+class TestLinkExistingDataSource:
+    def test_csrf_protection(self, test_app_client, logged_in_rdu_user, isolated_app_config):
+        current_app.config["WTF_CSRF_ENABLED"] = True
+        measure_version = MeasureVersionFactory(data_sources=[])
+
+        res = test_app_client.post(
+            url_for(
+                "cms.link_existing_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+            ),
+            follow_redirects=True,
+        )
+
+        assert res.status_code == 400
+        assert "The CSRF token is missing." in res.get_data(as_text=True)
+
+    def test_redirect_with_flash_if_measure_version_has_two_data_sources_already(
+        self, test_app_client, logged_in_rdu_user, db
+    ):
+        measure_version = MeasureVersionFactory()
+
+        DataSourceFactory(measure_versions=[measure_version])
+        third_data_source = DataSourceFactory()
+
+        res = test_app_client.post(
+            url_for(
+                "cms.link_existing_data_source",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+            ),
+            follow_redirects=False,
+            data=ImmutableMultiDict((("data_sources", third_data_source.id),)),
+        )
+
+        assert parse.urlparse(res.location).path == url_for(
+            "cms.edit_measure_version",
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+
+        redirected_response = test_app_client.get(res.location, follow_redirects=True)
+
+        assert "Only two data sources can currently be linked to a measure version." in redirected_response.get_data(
+            as_text=True
+        )

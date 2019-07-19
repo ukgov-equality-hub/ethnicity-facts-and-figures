@@ -73,7 +73,7 @@ SortableTable.prototype.createHeadingButton = function(heading, i, disabled) {
     var button = document.createElement('button')
     button.setAttribute('type', 'button')
     button.setAttribute('data-index', i)
-    button.setAttribute('class', 'govuk-button eff-button--link eff-button--sort')
+    button.setAttribute('class', 'govuk-button eff-button-link eff-button--sort')
     button.textContent = text
     button.addEventListener('click', this.sortButtonClicked.bind(this))
     heading.textContent = '';

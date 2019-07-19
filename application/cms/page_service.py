@@ -20,7 +20,6 @@ from application.cms.exceptions import (
     CannotChangeSubtopicOncePublished,
 )
 from application.cms.models import (
-    DataSource,
     Measure,
     MeasureVersion,
     Subtopic,
@@ -194,33 +193,7 @@ class PageService(Service):
                         return True
         return False
 
-    def _set_data_sources(self, measure_version, data_source_forms):
-        current_data_sources = measure_version.data_sources
-        measure_version.data_sources = []
-
-        for i, data_source_form in enumerate(data_source_forms):
-            existing_source = len(current_data_sources) > i
-
-            if data_source_form.remove_data_source.data or not any(
-                value for key, value in data_source_form.data.items() if key != "csrf_token"
-            ):
-                if existing_source:
-                    db.session.delete(current_data_sources[i])
-
-            else:
-                data_source = current_data_sources[i] if existing_source else DataSource()
-                data_source_form.populate_obj(data_source)
-
-                source_has_truthy_values = any(
-                    getattr(getattr(data_source_form, column.name), "data")
-                    for column in DataSource.__table__.columns
-                    if column.name != "id"
-                )
-
-                if existing_source or source_has_truthy_values:
-                    measure_version.data_sources.append(data_source)
-
-    def create_measure(self, subtopic, measure_version_form, data_source_forms, created_by_email):
+    def create_measure(self, subtopic, measure_version_form, created_by_email):
         title = measure_version_form.data.pop("title", "").strip()
         slug = slugify(title)
 
@@ -243,8 +216,6 @@ class PageService(Service):
         )
 
         measure_version_form.populate_obj(measure_version)
-
-        self._set_data_sources(measure_version=measure_version, data_source_forms=data_source_forms)
 
         db.session.add(measure_version)
         db.session.commit()
@@ -294,18 +265,18 @@ class PageService(Service):
         new_version.published_at = None
         new_version.internal_edit_summary = None
         new_version.external_edit_summary = None
+        new_version.uploads = []
         new_version.dimensions = [dimension.copy() for dimension in measure_version.dimensions]
-        new_version.data_sources = [data_source.copy() for data_source in measure_version.data_sources]
         new_version.latest = True
 
-        new_version.uploads = []
-
-        # We don't copy uploads for major updates, as major updates should always have new data
+        # We don't copy uploads or data sources for major updates, as major updates should always have new data
         if update_type != NewVersionType.MAJOR_UPDATE:
             for upload in measure_version.uploads:
                 new_upload = upload.copy()
                 new_upload.guid = create_guid(upload.file_name)
                 new_version.uploads.append(new_upload)
+
+            new_version.data_sources = measure_version.data_sources
 
         db.session.add(new_version)
         db.session.flush()
@@ -324,7 +295,7 @@ class PageService(Service):
         return new_version
 
     def update_measure_version(  # noqa: C901 (complexity)
-        self, measure_version, measure_version_form, data_source_forms, last_updated_by_email, **kwargs
+        self, measure_version, measure_version_form, last_updated_by_email, **kwargs
     ):
         if measure_version.not_editable():
             message = "Error updating '{}': Versions not in DRAFT, REJECT can't be edited".format(measure_version.title)
@@ -369,7 +340,6 @@ class PageService(Service):
 
         # Update main fields of MeasureVersion
         measure_version_form.populate_obj(measure_version)
-        self._set_data_sources(measure_version=measure_version, data_source_forms=data_source_forms)
 
         # Update fields in the parent Measure
         if "internal_reference" in measure_version_form.data:

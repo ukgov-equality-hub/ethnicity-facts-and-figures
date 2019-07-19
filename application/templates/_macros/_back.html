@@ -1,0 +1,4 @@
+{# Adapted from https://github.com/alphagov/govuk-frontend/blob/master/src/govuk/components/back-link/template.njk #}
+{% macro govukBackLink(href=None,html=None,text=None,classes=None,attributes={}) %}
+  <a href="{%- if href %}{{ href }}{% else %}#{% endif -%}" class="govuk-back-link{%- if classes %} {{ classes }}{% endif %}" {{ attributes | html_params | safe }}>{{ html if html else text }}</a>
+{% endmacro %}

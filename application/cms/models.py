@@ -7,7 +7,7 @@ from typing import Optional, Iterable
 import sqlalchemy
 from bidict import bidict
 from dictalchemy import DictableModel
-from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, asc, text
+from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, text, func, desc
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import NoResultFound
@@ -187,8 +187,92 @@ class DataSource(db.Model, CopyableModel):
         "FrequencyOfRelease", foreign_keys=[frequency_of_release_id], back_populates="data_sources"
     )
     measure_versions = db.relationship(
-        "MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources"
+        "MeasureVersion", secondary="data_source_in_measure_version", back_populates="data_sources", lazy="dynamic"
     )
+
+    def merge(self, data_source_ids=[]):
+        """This merges the data sources with the IDs specified into this data source,
+        by first updating any references to those data source to this one, and then
+        deleting those data sources. This is irreversible.
+
+        Note: this makes no attempt to merge the metadata fields associated with the
+        specified data sources.
+
+        Will raise an error no IDs specified, if any of the IDs specified don’t exist,
+        or if one of the IDs is the ID for this data source."""
+
+        if self.id in data_source_ids:
+            raise ValueError("Can’t merge with self")
+
+        if len(data_source_ids) == 0:
+            raise ValueError("No data source IDs specified")
+
+        data_sources_to_delete = DataSource.query.filter(DataSource.id.in_(data_source_ids))
+
+        if (data_sources_to_delete.count()) != len(data_source_ids):
+
+            difference = len(data_source_ids) - data_sources_to_delete.count()
+
+            raise ValueError(f"#{difference} data sources not found")
+
+        for data_source_to_delete in data_sources_to_delete:
+
+            DataSourceInMeasureVersion.query.filter(
+                DataSourceInMeasureVersion.data_source_id == data_source_to_delete.id
+            ).update({"data_source_id": self.id})
+
+            db.session.delete(data_source_to_delete)
+
+        db.session.commit()
+
+    @property
+    def associated_with_published_measure_versions(self):
+
+        return self.measure_versions.filter(MeasureVersion.status == "APPROVED").count() > 0
+
+    @staticmethod
+    def search(query, limit=False, exclude_data_sources=None):
+
+        raw_sql = """
+plainto_tsquery('english', :q)
+@@
+(
+    to_tsvector(
+        'english',
+        title
+        ||  ' '
+        ||  coalesce(organisation.name, '')
+        || ' '
+        || coalesce(source_url, '')
+        || ' '
+        || to_tsvector(
+            'english',
+            array_to_string(organisation.abbreviations, ' ')
+        )
+    )
+)
+ """
+
+        query_sql = text(raw_sql)
+        query_sql = query_sql.bindparams(q=query)
+
+        data_source_query = (
+            DataSource.query.join(DataSource.publisher, isouter=True)
+            .join(DataSourceInMeasureVersion, isouter=True)
+            .filter(query_sql)
+            .group_by(DataSource.id)
+            .order_by(desc(func.count(DataSourceInMeasureVersion.measure_version_id)), desc(DataSource.id))
+        )
+
+        if exclude_data_sources:
+            data_source_query = data_source_query.filter(
+                ~DataSource.id.in_([data_source.id for data_source in exclude_data_sources])
+            )
+
+        if limit:
+            data_source_query = data_source_query.limit(limit)
+
+        return data_source_query.all()
 
 
 class DataSourceInMeasureVersion(db.Model):
@@ -313,10 +397,7 @@ class MeasureVersion(db.Model, CopyableModel):
         cascade="all, delete-orphan",
     )
     data_sources = db.relationship(
-        "DataSource",
-        secondary="data_source_in_measure_version",
-        back_populates="measure_versions",
-        order_by=asc(DataSource.id),
+        "DataSource", secondary="data_source_in_measure_version", back_populates="measure_versions"
     )
     corrected_by_measure_version = db.relationship(
         "MeasureVersion",

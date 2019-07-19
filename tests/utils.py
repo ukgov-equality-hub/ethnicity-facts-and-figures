@@ -75,3 +75,28 @@ def details_tag_with_summary(dom_node, summary_text):
 def find_link_with_text(dom_node, link_text):
 
     return dom_node.find("a", string=link_text)
+
+
+def find_input_for_label_with_text(dom_node, label_text):
+
+    label_tags = dom_node.find_all("label")
+
+    label_tags_with_matching_text = list(filter(lambda x: x.get_text().strip() == label_text, label_tags))
+
+    number_of_matching_label_tags = len(label_tags_with_matching_text)
+
+    if number_of_matching_label_tags == 1:
+
+        id_label_is_for = label_tags_with_matching_text[0]["for"]
+
+        input_element = dom_node.select('input[id="' + id_label_is_for + '"]')
+
+        if len(input_element) == 1:
+            return input_element[0]
+        else:
+            raise Exception(f"No input found with the id '{id_label_is_for}'")
+
+    elif number_of_matching_label_tags > 1:
+        raise Exception(f"{number_of_matching_label_tags} labels found with the text '{label_text}'")
+    else:
+        raise Exception(f"No label not found with the text '{label_text}'")

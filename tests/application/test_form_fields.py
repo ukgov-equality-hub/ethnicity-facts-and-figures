@@ -96,6 +96,11 @@ class TestRDUCheckboxField:
         )
         checkbox_field_enum = RDUCheckboxField(label="checkbox_field", enum=EnumForTest)
         other_field = RDUStringField(label="other_field")
+        checkbox_field_with_hints = RDUCheckboxField(
+            label="checkbox_field_with_hints",
+            choices=[(1, 1), (2, 2), (3, 3)],
+            choices_hints={1: "Hint 1", 2: "Hint 2"},
+        )
 
     def setup(self):
         self.form = self.FormForTest()
@@ -126,6 +131,12 @@ class TestRDUCheckboxField:
 
         assert len(doc.xpath("//input[@type='checkbox']")) == 3
         assert doc.xpath("//input[@type='checkbox']/following-sibling::label/text()") == ["one", "two", "three"]
+
+    def test_label_class_is_rendered(self):
+        doc = html.fromstring(self.form.checkbox_field(label_class="govuk-!-font-weight-bold"))
+
+        assert doc.xpath("//label")
+        assert "govuk-!-font-weight-bold" in doc.xpath("//label/@class")[0].split()
 
     def test_checkbox_enum_choices_have_correct_values(self):
         doc = html.fromstring(self.form.checkbox_field_enum())
@@ -160,6 +171,18 @@ class TestRDUCheckboxField:
         checkboxes_div = doc.xpath("//div[contains(@class, 'govuk-checkboxes')]")[0]
         assert "govuk-checkboxes--inline" in checkboxes_div.attrib["class"]
 
+    def test_can_render_hints_for_each_choice(self):
+        doc = html.fromstring(self.form.checkbox_field_with_hints())
+
+        assert len(doc.xpath("//input[@type='checkbox']")) == 3
+
+        radios_with_hints = doc.xpath(
+            "//input[@type='checkbox']/following-sibling::span[@class='govuk-hint govuk-checkboxes__hint']"
+        )
+        assert len(radios_with_hints) == 2
+        assert radios_with_hints[0].text == "Hint 1"
+        assert radios_with_hints[1].text == "Hint 2"
+
 
 class TestRDURadioField:
     class FormForTest(FlaskForm):
@@ -170,6 +193,12 @@ class TestRDURadioField:
             validators=[DataRequired(message="failed validation")],
         )
         other_field = RDUStringField(label="other_field")
+        radio_field_with_hints = RDURadioField(
+            label="radio_field_with_hints", choices=[(1, 1), (2, 2), (3, 3)], choices_hints={1: "Hint 1", 2: "Hint 2"}
+        )
+        radio_field_with_dividers = RDURadioField(
+            label="radio_field_with_dividers", choices=[(1, 1), (2, 2), (3, 3)], dividers={3: "or"}
+        )
 
     def setup(self):
         self.form = self.FormForTest()
@@ -189,6 +218,12 @@ class TestRDURadioField:
 
         assert doc.xpath("//legend")
         assert doc.xpath("//legend/@class")[0] == "govuk-fieldset__legend govuk-!-font-weight-bold"
+
+    def test_label_class_is_rendered(self):
+        doc = html.fromstring(self.form.radio_field(label_class="govuk-!-font-weight-bold"))
+
+        assert doc.xpath("//label")
+        assert "govuk-!-font-weight-bold" in doc.xpath("//label/@class")[0].split()
 
     def test_radio_choices_are_rendered(self):
         doc = html.fromstring(self.form.radio_field())
@@ -238,6 +273,31 @@ class TestRDURadioField:
         doc = html.fromstring(self.form.radio_field(inline=True))
         radios_div = doc.xpath("//div[contains(@class, 'govuk-radios')]")[0]
         assert "govuk-radios--inline" in radios_div.attrib["class"]
+
+    def test_can_render_hints_for_each_choice(self):
+        doc = html.fromstring(self.form.radio_field_with_hints())
+
+        assert len(doc.xpath("//input[@type='radio']")) == 3
+
+        radios_with_hints = doc.xpath(
+            "//input[@type='radio']/following-sibling::span[@class='govuk-hint govuk-radios__hint']"
+        )
+        assert len(radios_with_hints) == 2
+        assert radios_with_hints[0].text == "Hint 1"
+        assert radios_with_hints[1].text == "Hint 2"
+
+    def test_can_render_dividers_before_choices(self):
+        doc = html.fromstring(self.form.radio_field_with_dividers())
+
+        assert len(doc.xpath("//input[@type='radio']")) == 3
+
+        div_classes = doc.xpath("//div[@class='govuk-radios']/child::div/@class")
+        assert div_classes == [
+            "govuk-radios__item",
+            "govuk-radios__item",
+            "govuk-radios__divider",
+            "govuk-radios__item",
+        ]
 
 
 class TestRDUStringField:
@@ -306,6 +366,12 @@ class TestRDUStringField:
         self.form.process(formdata=formdata)
 
         assert self.form.string_field.data == "blah   \n\n   blah"
+
+    def test_label_class_is_rendered(self):
+        doc = html.fromstring(self.form.string_field(label_class="govuk-!-font-weight-bold"))
+
+        assert doc.xpath("//label")
+        assert "govuk-!-font-weight-bold" in doc.xpath("//label/@class")[0].split()
 
 
 class TestRDUPasswordField:

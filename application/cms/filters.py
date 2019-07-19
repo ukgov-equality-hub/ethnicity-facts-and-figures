@@ -74,3 +74,7 @@ def models_to_dicts(items):
 # (e.g. bullet points) copy-and-pasteable from the exported version back into the form fields
 def html_line_breaks(string):
     return Markup(bleach.clean(string).replace("\n", "<br />") if string else "")
+
+
+def url_with_line_breaks(string):
+    return string.replace("/", "/\N{ZERO WIDTH SPACE}").replace("&", "&\N{ZERO WIDTH SPACE}") if string else string

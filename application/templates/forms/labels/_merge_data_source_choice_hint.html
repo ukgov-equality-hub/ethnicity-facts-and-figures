@@ -1,0 +1,20 @@
+<div class="govuk-body">
+  {% set published_measure_versions_count = data_source.measure_versions.all() | map(attribute='status') | select('equalto', 'APPROVED') | list | length  %}
+  {% set plural = published_measure_versions_count != 1 %}
+  {% set unique_time_covered = data_source.measure_versions.all() | map(attribute='time_covered') | unique | reject("none") %}
+  {% set formatted_time_covered = (unique_time_covered | join(', ')) if unique_time_covered else '123' %}
+
+  <div class="govuk-body">{{ data_source.publisher.name if data_source.publisher else "No publisher" }}</div>
+
+  <div class="govuk-body">{% if data_source.publication_date %}Published on {{ data_source.publication_date }}{% else %}No publication date{% endif %}</div>
+
+  <div class="govuk-body">Linked to {{ published_measure_versions_count }} published measure version{% if plural %}s{% endif %}{% if formatted_time_covered %} for {{ formatted_time_covered }}{% endif %}</div>
+
+  <div class="govuk-body"><a class="govuk-link" href="{{ data_source.source_url }}">{{ data_source.source_url | url_with_line_breaks }}</a></div>
+
+  <div class="govuk-body">{{ data_source.purpose  }}</div>
+
+  {% set other_data_sources = request.args.getlist('data_sources') %}
+  {% do other_data_sources.remove(data_source.id | string) %}
+  <a class="govuk-link eff-link--warning" href="{{ url_for('admin.merge_data_sources', data_sources=other_data_sources) }}">Remove data source from comparison</a>
+</div>

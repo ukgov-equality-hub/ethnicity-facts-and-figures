@@ -158,17 +158,17 @@ def write_measure_versions(measure, build_dir, local_build=False):
             build_dir, measure.subtopic.topic.slug, measure.subtopic.slug, measure.slug, measure_version.version
         )
 
-        write_measure_vesion_at_slug(measure, measure_version, slug, local_build)
+        write_measure_vesion_at_slug(measure, measure_version, slug, latest_url=False, local_build=local_build)
 
         # ALSO publish the same version at a '/latest' URL if it’s the latest one.
         if measure_version == measure.latest_published_version:
 
             slug = os.path.join(build_dir, measure.subtopic.topic.slug, measure.subtopic.slug, measure.slug, "latest")
 
-            write_measure_vesion_at_slug(measure, measure_version, slug, local_build)
+            write_measure_vesion_at_slug(measure, measure_version, slug, latest_url=True, local_build=local_build)
 
 
-def write_measure_vesion_at_slug(measure, measure_version, slug, local_build=False):
+def write_measure_vesion_at_slug(measure, measure_version, slug, latest_url, local_build=False):
     os.makedirs(slug, exist_ok=True)
 
     process_dimensions(measure_version, slug)
@@ -178,6 +178,7 @@ def write_measure_vesion_at_slug(measure, measure_version, slug, local_build=Fal
         topic_slug=measure.subtopic.topic.slug,
         subtopic_slug=measure.subtopic.slug,
         measure_version=measure_version,
+        latest_url=latest_url,
     )
 
     file_path = os.path.join(slug, "index.html")
