@@ -88,7 +88,7 @@
                                                             subtopic_slug=page.measure.subtopic.slug,
                                                             measure_slug=page.measure.slug,
                                                             version='latest') }}">{{ page.title }}</a>
-                                        <span class="source">{{ page.primary_data_source.publisher.name }}</span>{{ page.published_at | format_friendly_short_date}}</li>
+                                        <span class="source">{% if page.primary_data_source.publisher %}{{ page.primary_data_source.publisher.name }}{% endif %}</span>{{ page.published_at | format_friendly_short_date}}</li>
                                 {% endfor %}
                               </ul>
                           {% endif %}
