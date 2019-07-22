@@ -1,4 +1,13 @@
 
+/*
+  Back to Top
+
+  This makes a 'back to top' link appear fixed to the bottom
+  of the screen when either the content it's linked to (eg a table
+  of contents) or the link itself would not otherwise be visible.
+
+  Inspired by https://github.com/alphagov/static/blob/master/app/assets/javascripts/modules/sticky-element-container.js
+*/
 
 function BackToTop($module) {
   this.$module = $module;
