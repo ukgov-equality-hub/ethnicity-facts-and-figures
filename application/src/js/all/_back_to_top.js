@@ -2,8 +2,9 @@
 
 function BackToTop($module) {
   this.$module = $module;
-  this._has_scrolled = false
-  this._has_resized = false
+  this.hasScrolled = false
+  this.hasResized = false
+  this.fixed = false
 }
 
 
@@ -35,18 +36,18 @@ BackToTop.prototype.init = function () {
 }
 
 BackToTop.prototype.onScroll = function() {
-  this._has_scrolled = true
+  this.hasScrolled = true
 }
 
 BackToTop.prototype.onResize = function() {
-  this._has_resized = true
+  this.hasResized = true
 }
 
 BackToTop.prototype.checkScrollOrResize = function() {
 
-  if (this._has_scrolled || this._has_resized) {
-    this._has_scrolled = false
-    this._has_resized = false
+  if (this.hasScrolled || this.hasResized) {
+    this.hasScrolled = false
+    this.hasResized = false
     this.update()
   }
 }
