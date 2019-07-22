@@ -10,7 +10,7 @@ function BackToTop($module) {
 
 BackToTop.prototype.update = function() {
 
-  var distanceFromEnd = document.body.scrollHeight - (window.scrollY + window.innerHeight)
+  var distanceFromEnd = document.body.scrollHeight - (window.pageYOffset + window.innerHeight)
 
   if (!this.fixed) {
     var linkNotInView = (distanceFromEnd > this.linkDistanceFromBottom)
@@ -18,7 +18,7 @@ BackToTop.prototype.update = function() {
     var linkNotInView = ((distanceFromEnd + this.$moduleHeight) > this.linkDistanceFromBottom)
   }
 
-  var linkTargetNotInView = window.scrollY > this.linkTargetDistanceFromTop
+  var linkTargetNotInView = window.pageYOffset > this.linkTargetDistanceFromTop
 
   if (linkTargetNotInView && linkNotInView) {
     this.$module.classList.add('app-back-to-top--fixed')
@@ -51,16 +51,16 @@ BackToTop.prototype.init = function () {
 
   this.$moduleHeight = this.$module.getBoundingClientRect().height
 
-  var windowScrollY = window.scrollY
+  var windowScrollY = window.pageYOffset
   var documentHeight = document.body.getBoundingClientRect().height
 
   var moduleClientRect = this.$module.getBoundingClientRect()
 
-  this.linkDistanceFromBottom = documentHeight - (moduleClientRect.y + windowScrollY)
+  this.linkDistanceFromBottom = documentHeight - (moduleClientRect.top + windowScrollY)
 
   var linkTargetBoundingClientRect = this.$linkTarget.getBoundingClientRect()
   var linkTargetHeight = linkTargetBoundingClientRect.height
-  var linkTargetY = linkTargetBoundingClientRect.y
+  var linkTargetY = linkTargetBoundingClientRect.top
 
   this.linkTargetDistanceFromTop = linkTargetHeight + linkTargetY + windowScrollY
 
