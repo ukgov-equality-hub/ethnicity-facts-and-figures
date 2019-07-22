@@ -124,24 +124,26 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
-      <ol class="eff-table-of-contents" id="toc">
-        <li><a class="govuk-link" href="#main-facts-and-figures" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Main facts and figures" data-event-label=""><span class="eff-table-of-contents__number">1. </span><span class="eff-table-of-contents__content">Main facts and figures</span></a></li>
+      <div id="toc">
+        <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+        <ol class="eff-table-of-contents">
+          <li><a class="govuk-link" href="#main-facts-and-figures" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Main facts and figures" data-event-label=""><span class="eff-table-of-contents__number">1. </span><span class="eff-table-of-contents__content">Main facts and figures</span></a></li>
 
 
-        {% for dimension in measure_version.dimensions %}
+          {% for dimension in measure_version.dimensions %}
 
-          <li><a class="govuk-link" href="#{{ dimension.title|slugify_value }}" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Dimension" data-event-label="{{ dimension.title }}"><span class="eff-table-of-contents__number">{{ loop.index + 1 }}. </span><span class="eff-table-of-contents__content">{{ dimension.title }}</span></a></li>
+            <li><a class="govuk-link" href="#{{ dimension.title|slugify_value }}" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Dimension" data-event-label="{{ dimension.title }}"><span class="eff-table-of-contents__number">{{ loop.index + 1 }}. </span><span class="eff-table-of-contents__content">{{ dimension.title }}</span></a></li>
 
-        {% endfor %}
+          {% endfor %}
 
-        {% set dimensions_count = measure_version.dimensions.all()|length %}
+          {% set dimensions_count = measure_version.dimensions.all()|length %}
 
-        <li><a class="govuk-link" href="#methodology" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Methodology" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 2 }}. </span><span class="eff-table-of-contents__content">Methodology</span></a></li>
-        <li><a class="govuk-link" href="#data-sources" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Data sources" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 3 }}. </span><span class="eff-table-of-contents__content">Data sources</span></a></li>
-        <li><a class="govuk-link" href="#download-the-data" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Download the data" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 4 }}. </span><span class="eff-table-of-contents__content">Download the data</span></a></li>
+          <li><a class="govuk-link" href="#methodology" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Methodology" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 2 }}. </span><span class="eff-table-of-contents__content">Methodology</span></a></li>
+          <li><a class="govuk-link" href="#data-sources" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Data sources" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 3 }}. </span><span class="eff-table-of-contents__content">Data sources</span></a></li>
+          <li><a class="govuk-link" href="#download-the-data" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Download the data" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 4 }}. </span><span class="eff-table-of-contents__content">Download the data</span></a></li>
 
-      </ol>
+        </ol>
+      </div>
     </div>
   </div>
 
