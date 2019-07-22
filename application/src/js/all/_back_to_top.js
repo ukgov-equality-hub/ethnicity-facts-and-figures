@@ -2,6 +2,8 @@
 
 function BackToTop($module) {
   this.$module = $module;
+  this._has_scrolled = false
+  this._has_resized = false
 }
 
 
@@ -26,8 +28,27 @@ BackToTop.prototype.init = function () {
 
   this.$footer = document.querySelector('footer')
 
-  setInterval(this.update.bind(this), 500)
+  window.addEventListener('scroll', this.onScroll.bind(this))
+  window.addEventListener('resize', this.onResize.bind(this))
+  setInterval(this.checkScrollOrResize.bind(this), 50)
 
+}
+
+BackToTop.prototype.onScroll = function() {
+  this._has_scrolled = true
+}
+
+BackToTop.prototype.onResize = function() {
+  this._has_resized = true
+}
+
+BackToTop.prototype.checkScrollOrResize = function() {
+
+  if (this._has_scrolled || this._has_resized) {
+    this._has_scrolled = false
+    this._has_resized = false
+    this.update()
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
