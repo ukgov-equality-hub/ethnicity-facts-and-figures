@@ -104,7 +104,7 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
     TEMPLATE = "forms/_text_input.html"
     input_type = "text"
 
-    def __call__(self, field, class_="", diffs=None, disabled=False, textarea=False, **kwargs):
+    def __call__(self, field, class_="", diffs=None, disabled=False, textarea=False, label_class="", **kwargs):
         value = {"value": field.data}
 
         field_params = {} if textarea else {"type": self.input_type}
@@ -117,7 +117,7 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
             class_=class_,
             diffs=diffs,
             disabled=disabled,
-            render_params={"textarea": textarea, **value},
+            render_params={"textarea": textarea, **value, "label_class": label_class},
             field_params=field_params,
         )
 
@@ -156,7 +156,7 @@ class _RDUChoiceInput(_FormFieldTemplateRenderer):
         self.field_type = field_type
 
     def __call__(
-        self, field, class_="", diffs=None, disabled=False, conditional_question=None, label_class=None, **kwargs
+        self, field, class_="", diffs=None, disabled=False, conditional_question=None, label_class="", **kwargs
     ):
         if getattr(field, "checked", field.data):
             kwargs["checked"] = True

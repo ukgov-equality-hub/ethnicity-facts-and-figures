@@ -367,6 +367,12 @@ class TestRDUStringField:
 
         assert self.form.string_field.data == "blah   \n\n   blah"
 
+    def test_label_class_is_rendered(self):
+        doc = html.fromstring(self.form.string_field(label_class="govuk-!-font-weight-bold"))
+
+        assert doc.xpath("//label")
+        assert "govuk-!-font-weight-bold" in doc.xpath("//label/@class")[0].split()
+
 
 class TestRDUPasswordField:
     class FormForTest(FlaskForm):

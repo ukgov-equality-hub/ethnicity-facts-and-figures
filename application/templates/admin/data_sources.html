@@ -18,7 +18,7 @@
       <form method="GET" action="{{ url_for('admin.data_sources' )}}">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-two-thirds">
-            {{ data_source_search_form.q }}
+            {{ data_source_search_form.q(label_class='govuk-visually-hidden') }}
           </div>
 
           <div class="govuk-grid-column-one-third">
