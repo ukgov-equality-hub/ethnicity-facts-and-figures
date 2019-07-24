@@ -10,6 +10,7 @@ from tests.functional.pages import (
     TopicPage,
     AddSourceDataPage,
     CreateDataSourcePage,
+    DataSourceSearchPage,
 )
 from tests.utils import get_page_with_title
 
@@ -99,6 +100,13 @@ def create_measure_starting_at_topic_page(
 def add_primary_data_source_to_measure(driver, sample_data_source):
     measure_edit_page = MeasureEditPage(driver)
     measure_edit_page.click_add_primary_data_source()
+
+    data_source_search_page = DataSourceSearchPage(driver)
+    data_source_search_page.search_for("abc123")
+    data_source_search_page.click_search()
+
+    data_source_search_page.click_create_new_data_source()
+
     data_source_page = CreateDataSourcePage(driver)
     data_source_page.fill_data_source(sample_data_source)
     data_source_page.click_save()
