@@ -88,60 +88,12 @@
 }
 
 
-/* Styles to keep measure page tables constrained to a fixed height */
 
-
-/* Hide the main table header content (in case it peeks through
-   when bouncing back from momentum scroll) */
-.eff-table__head--transparent, .eff-table__caption--transparent {
-  opacity: 0;
-  border-color: transparent;
-}
-
-/* Outer container is max-width */
-.table-container-outer {
-  width: 100%;
-  overflow-x: hidden;
-  overflow-y: hidden;
-}
-
-/* Middle container scrolls horizontally */
-.table-container-middle {
-  overflow-x: scroll;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Inner container needs to have relative position so that
-   the fixed inner table can be absolutely positioned relative
-   to it*/
-.table-container-inner {
-  position: relative;
-}
-
-/* Table container scrolls vertically */
+/* Table container scrolls horizontally */
 .table-container {
   overflow-y: scroll;
-  max-height: 400px;
 }
 
-.fixed-header-container {
-  position: absolute;
-  top: 0px;
-  overflow-x: visible;
-}
-
-/* Show the fixed table (which just contains a header)
-   and fix its position to the top of the containing element */
-.fixed-headers table.fixed {
-  width: auto;
-}
-
-/* Set a maximum height with overflow scrolling on table container */
-.fixed-headers .table-container {
-  max-height: 400px;
-  overflow-y: scroll;
-}
 
 .chart-footer {
   font-size: 16px;

@@ -1,4 +1,4 @@
-function SortableTable(table, header_table, options) {
+function SortableTable(table, options) {
 
   // First do feature detection for required API methods
   if (
@@ -8,7 +8,6 @@ function SortableTable(table, header_table, options) {
     ) {
 
       this.table = table;
-      this.header_table = header_table;
       this.setupOptions(options);
       this.createHeadingButtons();
       this.createStatusBox();
@@ -28,7 +27,6 @@ SortableTable.prototype.createHeadingButtons = function() {
 
   var header_rows = this.table.querySelectorAll('thead tr')
 
-  var disabled_buttons = this.header_table ? true : false
 
   for (var j = 0; j < header_rows.length; j++) {
 
@@ -38,37 +36,15 @@ SortableTable.prototype.createHeadingButtons = function() {
     for(var i = 0; i < headings.length; i++) {
         heading = headings[i];
         if(heading.getAttribute('aria-sort')) {
-            this.createHeadingButton(heading, i, disabled_buttons);
+            this.createHeadingButton(heading, i);
         }
     }
 
   };
 
-  if (this.header_table) {
-
-    var header_rows = this.header_table.querySelectorAll('thead tr')
-
-    for (var j = 0; j < header_rows.length; j++) {
-
-
-      var headings = header_rows[j].querySelectorAll('th')
-      var heading;
-
-      for(var i = 0; i < headings.length; i++) {
-          heading = headings[i];
-          if(heading.getAttribute('aria-sort')) {
-              this.createHeadingButton(heading, i, false);
-          }
-      }
-
-
-    };
-
-
-  }
 };
 
-SortableTable.prototype.createHeadingButton = function(heading, i, disabled) {
+SortableTable.prototype.createHeadingButton = function(heading, i) {
     var text = heading.textContent;
     var button = document.createElement('button')
     button.setAttribute('type', 'button')
@@ -83,10 +59,6 @@ SortableTable.prototype.createHeadingButton = function(heading, i, disabled) {
       button.setAttribute('data-event-category', 'Table column sorted')
       button.setAttribute('data-event-action', 'Descending')
       button.setAttribute('data-event-label', text.trim())
-    }
-
-    if (disabled) {
-      button.setAttribute('disabled', 'disabled')
     }
 
     heading.appendChild(button);
@@ -230,34 +202,6 @@ SortableTable.prototype.removeButtonStates = function() {
       buttons[i].classList.remove('eff-button--sort-descending')
       buttons[i].classList.add('eff-button--sort')
     };
-
-    if (this.header_table) {
-
-      var tableHeaders = this.header_table.querySelectorAll('thead th')
-
-      for (var i = tableHeaders.length - 1; i >= 0; i--) {
-        tableHeaders[i].setAttribute('aria-sort', 'none')
-      };
-
-      var buttons = this.header_table.querySelectorAll('thead button')
-
-      for (var i = buttons.length - 1; i >= 0; i--) {
-        buttons[i].classList.remove('eff-button--sort-ascending')
-        buttons[i].classList.remove('eff-button--sort-descending')
-        buttons[i].classList.add('eff-button--sort')
-      };
-
-
-      if ('ga' in window) {
-
-        // Reset event actions to default sort order ('Descending')
-        var buttons = this.header_table.querySelectorAll('thead button')
-        for (var i = buttons.length - 1; i >= 0; i--) {
-          buttons[i].setAttribute('data-event-action', 'Descending')
-        };
-      }
-
-    }
 
 };
 
