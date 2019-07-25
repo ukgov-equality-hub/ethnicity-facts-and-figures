@@ -4,6 +4,22 @@
  * and should be used in addition to those classes.
  */
 
+
+/* Table with sticky header */
+
+.eff-table--sticky thead {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+
+.eff-table--sticky thead th,
+.eff-table--sticky thead td {
+  background-color: white;
+  background-clip: padding-box;
+}
+
+
 /* Dense header and table cells
  *
  * This is for use with tables that contain a lot of data.
@@ -85,13 +101,6 @@
 .eff-table__header--child {
   @include govuk-typography-weight-regular();
   padding-left: 10px;
-}
-
-
-
-/* Table container scrolls horizontally */
-.table-container {
-  overflow-y: scroll;
 }
 
 
