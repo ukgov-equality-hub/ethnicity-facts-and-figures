@@ -23,6 +23,13 @@
   background-clip: padding-box;  /* Required for Safari, as otherwise the background covers the borders when the header is drawn in a sticky position. */
 }
 
+/* This overrides the Design System default of having no padding on the
+   right of the last cell in each row. */
+.eff-table--padding-right-on-last-cell .govuk-table__header:last-child,
+.eff-table--padding-right-on-last-cell .govuk-table__cell:last-child {
+  padding-right: 10px;
+}
+
 /* Truncated table (with only 20 rows shown) */
 .eff-table--truncated tbody tr:nth-child(n+21) {
   display: none;
