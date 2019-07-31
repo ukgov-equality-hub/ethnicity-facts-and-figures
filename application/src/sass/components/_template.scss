@@ -1,0 +1,8 @@
+
+/* Override the GOV.UK Design system default to have a
+   white background instead of grey, so that overflowing
+   elements display on a white background.
+*/
+.app-template--white {
+  background-color: govuk-colour("white");
+}
