@@ -247,7 +247,7 @@
               {% set chart_and_downloadable = (dimension.dimension_chart.chart_object.type not in ['panel_bar_chart', 'panel_line_chart']) %}
               <div class="chart-and-footer hidden">
                 <div class="govuk-grid-row">
-                  <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
+                  <div class="rd_chart" aria-hidden="true" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
                 </div>
 
                 <div class="govuk-grid-row">
