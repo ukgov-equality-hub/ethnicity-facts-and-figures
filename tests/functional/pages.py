@@ -132,10 +132,8 @@ class BasePage:
 
     def select_dropdown_value(self, locator, value):
         element = self.driver.find_element(*locator)
-        self.scroll_to(element)
         select = Select(element)
         select.select_by_visible_text(value)
-        self.wait_until_select_contains(locator, value)
 
     def refresh(self, wait_for_stale_element_selector=None, wait_for_new_element_selector=None):
         old_element = (

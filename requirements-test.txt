@@ -16,7 +16,7 @@ pytest-cov==2.5.1
 pytest-flask==0.10.0
 pytest-mock==1.10.0
 requests-mock==1.5.2
-selenium==3.8.0       # Deliberately pinned to version known to work on Heroku
+selenium==3.141.0
 stopit==1.1.2
 testfixtures==6.3.0
 text-unidecode==1.2   # Required by Faker
