@@ -30,10 +30,10 @@ TruncatedTable.prototype.init = function() {
 
 document.addEventListener('DOMContentLoaded', function() {
 
-  var tableElements = document.getElementsByTagName('table')
+  var $truncatedTables = document.querySelectorAll('[data-module*="eff-truncated-table"]')
 
-  for (var i = tableElements.length - 1; i >= 0; i--) {
-    new TruncatedTable(tableElements[i]).init()
+  for (var i = $truncatedTables.length - 1; i >= 0; i--) {
+    new TruncatedTable($truncatedTables[i]).init()
   }
 
 })
