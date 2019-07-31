@@ -30,6 +30,9 @@
     "DEPLOY_SITE": {
       "required": true
     },
+    "CHROMEDRIVER_VERSION": {
+      "required": true
+    },
     "ENVIRONMENT": {
       "required": true
     },
