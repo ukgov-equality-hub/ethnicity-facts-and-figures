@@ -19,6 +19,10 @@ TruncatedTable.prototype.init = function() {
     this.showAllRowsButton.textContent = 'Show ' + (rowCount - 20) + ' more rows'
     this.showAllRowsButton.classList.add('eff-button-link')
     this.showAllRowsButton.classList.add('govuk-!-margin-top-3')
+    this.showAllRowsButton.setAttribute('data-on', 'click')
+    this.showAllRowsButton.setAttribute('data-event-category', 'Show more rows')
+    this.showAllRowsButton.setAttribute('data-event-action', 'Clicked')
+    this.showAllRowsButton.setAttribute('data-event-label', this.showAllRowsButton.textContent)
 
     this.showAllRowsButton.addEventListener('click', this.showAllRows.bind(this))
 
