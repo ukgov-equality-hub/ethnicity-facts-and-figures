@@ -101,7 +101,7 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2" itemprop="headline">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2" itemprop="headline" id="title">
         {{ measure_version.title }}
       </h1>
 
@@ -653,7 +653,7 @@
 
       </div>
 
-      {{ appBackToTop(anchor="toc",text="Contents") }}
+      {{ appBackToTop(anchor="title",text="Contents") }}
 
       {% include "static_site/_share.html" %}
 
