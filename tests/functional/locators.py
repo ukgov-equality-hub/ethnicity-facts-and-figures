@@ -123,6 +123,11 @@ class DimensionPageLocators:
     CREATE_TABLE = (By.ID, "create_table")
 
 
+class DataSourceSearchPageLocations:
+    SEARCH_BUTTON = (By.XPATH, "//button[normalize-space(.)='Search']")
+    SELECT_BUTTON = (By.XPATH, "//button[normalize-space(.)='Select']")
+
+
 class CreateDataSourcePageLocators:
     SAVE_BUTTON = (By.XPATH, "//button[normalize-space(.)='Save']")
     TITLE_TEXTAREA = (By.NAME, "title")

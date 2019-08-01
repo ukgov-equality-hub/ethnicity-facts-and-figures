@@ -34,6 +34,7 @@ from tests.functional.locators import (
     TopicPageLocators,
     SourceDataPageLocators,
     CreateDataSourcePageLocators,
+    DataSourceSearchPageLocations,
 )
 
 
@@ -150,7 +151,7 @@ class BasePage:
             self.wait_for_element(wait_for_new_element_selector)
 
     def set_text_field(self, locator, value):
-        element = self.wait_for_element(locator)
+        element = self.driver.find_element(*locator)
         element.clear()
         element.send_keys(value)
 
@@ -219,7 +220,7 @@ class HomePage(BasePage):
         element.click()
 
     def click_topic_link(self, topic):
-        element = self.driver.find_element(*PageLinkLocators.page_link(topic.title))
+        element = self.driver.find_element_by_link_text(topic.title)
         element.click()
 
 
@@ -563,6 +564,31 @@ class MeasureEditPage(BasePage):
 
     def fill_measure_page_major_edit_fields(self, measure_version):
         self.set_text_field(EditMeasureLocators.EXTERNAL_EDIT_SUMMARY, measure_version.external_edit_summary)
+
+
+class DataSourceSearchPage(BasePage):
+    def __init__(self, driver):
+        super().__init__(driver=driver, base_url=driver.current_url)
+
+    def search_for(self, value):
+
+        label = self.driver.find_element_by_xpath(f"//label[text()='Search for an existing data source']")
+        for_id = label.get_attribute("for")
+        input_element = self.driver.find_element_by_id(for_id)
+        input_element.send_keys(value)
+
+    def click_search(self):
+        self.driver.find_element(*DataSourceSearchPageLocations.SEARCH_BUTTON).click()
+
+    def select_option(self, label_text):
+        self.driver.find_element_by_xpath(f"//label[normalize-space(.)='{label_text}']").click()
+
+    def click_create_new_data_source(self):
+        print(self.driver.find_element_by_tag_name("main").get_attribute("innerHTML"))
+        self.driver.find_element_by_link_text("Create a new data source").click()
+
+    def click_select(self):
+        self.driver.find_element(*DataSourceSearchPageLocations.SELECT_BUTTON).click()
 
 
 class CreateDataSourcePage(BasePage):
