@@ -141,7 +141,8 @@ def navigate_to_edit_page(driver, live_server, topic, subtopic, measure):
         driver.find_element_by_xpath(f"//button[normalize-space(text())='{subtopic.title}']").click()
         driver.find_element_by_link_text(measure.title).click()
 
-    driver.find_element_by_link_text("Edit").click()
+    driver.find_element_by_xpath(f"//a[contains(., 'Edit')]").click()
+    # driver.find_element_by_link_text("Edit").click()
 
 
 def navigate_to_view_form(driver, live_server, topic, subtopic, measure):
