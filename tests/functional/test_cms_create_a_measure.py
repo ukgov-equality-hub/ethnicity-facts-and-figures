@@ -5,14 +5,13 @@ from tests.functional.pages import (
     HomePage,
     TopicPage,
     MeasureEditPage,
-    MeasureCreatePage,
     MeasurePreviewPage,
     RandomDimension,
     DimensionAddPage,
     DimensionEditPage,
     TableBuilderPage,
 )
-from tests.functional.utils import driver_login
+from tests.functional.utils import driver_login, assert_page_contains, create_measure
 from tests.models import MeasureVersionFactory, UserFactory
 
 
@@ -143,19 +142,3 @@ def test_can_create_a_measure_page(driver, app, live_server):
     table_builder_page.select_column(2, "Gender")
 
     table_builder_page.click_save()
-
-
-def go_to_page(page):
-    page.get()
-    assert page.is_current()
-    return page
-
-
-def assert_page_contains(page, text):
-    return page.source_contains(text)
-
-
-def create_measure(driver, live_server, page, topic, subtopic):
-    create_measure_page = MeasureCreatePage(driver, live_server, topic, subtopic)
-    create_measure_page.set_title(page.title)
-    create_measure_page.click_save()

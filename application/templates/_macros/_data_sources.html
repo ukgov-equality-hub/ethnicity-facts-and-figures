@@ -21,7 +21,7 @@
   </div>
 {% else %}
   <p class="govuk-body">
-    <a class="govuk-link" href="{{ url_for('cms.new_data_source', topic_slug=measure_version.measure.subtopic.topic.slug, subtopic_slug=measure_version.measure.subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Add <span class="govuk-visually-hidden">{{ description }}</span> data source information</a>
+    <a class="govuk-link" href="{{ url_for('cms.search_data_sources', topic_slug=measure_version.measure.subtopic.topic.slug, subtopic_slug=measure_version.measure.subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Add <span class="govuk-visually-hidden">{{ description }}</span> data source information</a>
   </p>
 {% endif %}
 {% endmacro %}
