@@ -1,22 +1,4 @@
 
-if ('addEventListener' in document &&
-    document.querySelectorAll
-  ) {
-
-  document.addEventListener('DOMContentLoaded', function() {
-
-    var fixedTableContainers = document.querySelectorAll('.table-container-outer.fixed-headers')
-
-    for (var i = 0; i < fixedTableContainers.length; i++) {
-
-      var tableContainer = fixedTableContainers[i]
-      new TableWithFixedHeader(tableContainer)
-
-    };
-
-  })
-
-}
 
 if ('addEventListener' in document &&
     document.querySelectorAll
@@ -24,14 +6,13 @@ if ('addEventListener' in document &&
 
   document.addEventListener('DOMContentLoaded', function() {
 
-    var tables = document.querySelectorAll('.table-container-outer')
+    var tables = document.querySelectorAll('[data-module*="eff-sortable-headers"]')
 
     for (var i = tables.length - 1; i >= 0; i--) {
 
-      var table = tables[i].querySelector('table')
-      var header_table = tables[i].querySelector('table.fixed')
+      var table = tables[i]
 
-      new SortableTable(table, header_table, {})
+      new SortableTable(table, {})
     };
 
   })

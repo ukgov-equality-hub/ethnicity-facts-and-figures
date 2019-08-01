@@ -4,6 +4,33 @@
  * and should be used in addition to those classes.
  */
 
+
+/* Table with sticky header */
+
+.eff-table--sticky thead {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+
+.eff-table--sticky thead th,
+.eff-table--sticky thead td {
+  background-color: govuk-colour("white");
+  background-clip: padding-box;  /* Required for Safari, as otherwise the background covers the borders when the header is drawn in a sticky position. */
+}
+
+/* This overrides the Design System default of having no padding on the
+   right of the last cell in each row. */
+.eff-table--padding-right-on-last-cell .govuk-table__header:last-child,
+.eff-table--padding-right-on-last-cell .govuk-table__cell:last-child {
+  padding-right: 10px;
+}
+
+/* Truncated table (with only 20 rows shown) */
+.eff-table--truncated tbody tr:nth-child(n+21) {
+  display: none;
+}
+
 /* Dense header and table cells
  *
  * This is for use with tables that contain a lot of data.
@@ -87,61 +114,6 @@
   padding-left: 10px;
 }
 
-
-/* Styles to keep measure page tables constrained to a fixed height */
-
-
-/* Hide the main table header content (in case it peeks through
-   when bouncing back from momentum scroll) */
-.eff-table__head--transparent, .eff-table__caption--transparent {
-  opacity: 0;
-  border-color: transparent;
-}
-
-/* Outer container is max-width */
-.table-container-outer {
-  width: 100%;
-  overflow-x: hidden;
-  overflow-y: hidden;
-}
-
-/* Middle container scrolls horizontally */
-.table-container-middle {
-  overflow-x: scroll;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Inner container needs to have relative position so that
-   the fixed inner table can be absolutely positioned relative
-   to it*/
-.table-container-inner {
-  position: relative;
-}
-
-/* Table container scrolls vertically */
-.table-container {
-  overflow-y: scroll;
-  max-height: 400px;
-}
-
-.fixed-header-container {
-  position: absolute;
-  top: 0px;
-  overflow-x: visible;
-}
-
-/* Show the fixed table (which just contains a header)
-   and fix its position to the top of the containing element */
-.fixed-headers table.fixed {
-  width: auto;
-}
-
-/* Set a maximum height with overflow scrolling on table container */
-.fixed-headers .table-container {
-  max-height: 400px;
-  overflow-y: scroll;
-}
 
 .chart-footer {
   font-size: 16px;

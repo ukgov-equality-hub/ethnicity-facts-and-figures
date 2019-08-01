@@ -35,6 +35,7 @@ $govuk-assets-path: '/static/assets/';
 @import 'components/status_banner';
 @import 'components/table';
 @import 'components/table_of_contents';
+@import 'components/template';
 @import 'components/numbered_sections';
 
 /* Import other custom styles that need converting, with care and consideration, to components in the future */
