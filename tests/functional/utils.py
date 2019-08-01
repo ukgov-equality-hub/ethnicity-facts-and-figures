@@ -10,6 +10,7 @@ from tests.functional.pages import (
     TopicPage,
     AddSourceDataPage,
     CreateDataSourcePage,
+    DataSourceSearchPage,
 )
 from tests.utils import get_page_with_title
 
@@ -72,6 +73,11 @@ def create_measure_starting_at_topic_page(
     CREATE v1 5: Add a data source
     """
     measure_edit_page.click_add_primary_data_source()
+
+    fill_in(driver, label_text="Search for an existing data source", with_text="My data source")
+    click_button_with_text(driver, "Search")
+    click_link_with_text(driver, "Create a new data source")
+
     data_source_page = CreateDataSourcePage(driver)
     data_source_page.fill_data_source(sample_data_source)
     data_source_page.click_save()
@@ -94,6 +100,13 @@ def create_measure_starting_at_topic_page(
 def add_primary_data_source_to_measure(driver, sample_data_source):
     measure_edit_page = MeasureEditPage(driver)
     measure_edit_page.click_add_primary_data_source()
+
+    data_source_search_page = DataSourceSearchPage(driver)
+    data_source_search_page.search_for("abc123")
+    data_source_search_page.click_search()
+
+    data_source_search_page.click_create_new_data_source()
+
     data_source_page = CreateDataSourcePage(driver)
     data_source_page.fill_data_source(sample_data_source)
     data_source_page.click_save()
@@ -170,12 +183,6 @@ def spaceless(string_list):
     return [despace(s) for s in string_list]
 
 
-def go_to_page(page):
-    page.get()
-    assert page.is_current()
-    return page
-
-
 def assert_page_contains(page, text):
     return page.source_contains(text)
 
@@ -205,3 +212,19 @@ def driver_login(driver, live_server, user):
     login_page.get()
     if login_page.is_current():
         login_page.login(user.email, user.password)
+
+
+def fill_in(driver, label_text, with_text):
+
+    label = driver.find_element_by_xpath(f"//label[text()='{label_text}']")
+    for_id = label.get_attribute("for")
+    input_element = driver.find_element_by_id(for_id)
+    input_element.send_keys(with_text)
+
+
+def click_link_with_text(driver, with_text):
+    driver.find_element_by_link_text(with_text).click()
+
+
+def click_button_with_text(driver, with_text):
+    driver.find_element_by_xpath(f"//button[text()='{with_text}']").click()
