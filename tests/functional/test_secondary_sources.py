@@ -3,7 +3,14 @@ import random
 from application.auth.models import TypeOfUser
 
 from tests.functional.pages import CreateDataSourcePage
-from tests.functional.utils import create_measure_starting_at_topic_page, navigate_to_topic_page, driver_login
+from tests.functional.utils import (
+    create_measure_starting_at_topic_page,
+    navigate_to_topic_page,
+    driver_login,
+    fill_in,
+    click_link_with_text,
+    click_button_with_text,
+)
 from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory
 
 
@@ -36,6 +43,13 @@ def test_secondary_source_can_be_added_and_removed(driver, live_server, governme
 
     # Add and save a secondary data source
     measure_edit_page.click_add_secondary_data_source()
+
+    fill_in(driver, label_text="Search for an existing data source", with_text="My data source")
+
+    click_button_with_text(driver, "Search")
+
+    click_link_with_text(driver, "Create a new data source")
+
     data_source_page = CreateDataSourcePage(driver)
     data_source_page.fill_data_source(sample_data_source)
     data_source_page.click_save()

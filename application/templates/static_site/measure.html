@@ -101,7 +101,7 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2" itemprop="headline">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2" itemprop="headline" id="title">
         {{ measure_version.title }}
       </h1>
 
@@ -247,7 +247,7 @@
               {% set chart_and_downloadable = (dimension.dimension_chart.chart_object.type not in ['panel_bar_chart', 'panel_line_chart']) %}
               <div class="chart-and-footer hidden">
                 <div class="govuk-grid-row">
-                  <div class="rd_chart" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
+                  <div class="rd_chart" aria-hidden="true" id="chart_{{ dimension.guid }}" style="clear: both; overflow: hidden"></div>
                 </div>
 
                 <div class="govuk-grid-row">
@@ -297,14 +297,14 @@
                                    measure_slug=measure_version.measure.slug,
                                    version=version,
                                    filename=dimension.static_table_file_name) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.dimension_table.table_object.header}}"
-                                 download="{{ dimension.static_table_file_name }}">Download table data (CSV)</a>
+                                 download="{{ dimension.static_table_file_name }}">Download table data <span class="govuk-visually-hidden">for ‘{{ dimension.title }}’</span> (CSV)</a>
                           {% else %}
                               <a class="govuk-link" href="{{ url_for('static_site.dimension_file_table_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
                                    measure_slug=measure_version.measure.slug,
                                    version=measure_version.version,
-                                   dimension_guid=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.dimension_table.table_object.header}}">Download table data (CSV)</a>
+                                   dimension_guid=dimension.guid) }}"  data-on="click"  data-event-category="CSV downloaded" data-event-action="Table as spreadsheet" data-event-label="{{dimension.dimension_table.table_object.header}}">Download table data <span class="govuk-visually-hidden">for ‘{{ dimension.title }}’</span> (CSV)</a>
                           {% endif %}
 
                           {% if static_mode %}
@@ -313,14 +313,14 @@
                                    measure_slug=measure_version.measure.slug,
                                    version=version,
                                    filename=dimension.static_file_name) }}" data-on="click"
-                                 data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.dimension_table.table_object.header}}">Source data (CSV)</a>
+                                 data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.dimension_table.table_object.header}}">Source data <span class="govuk-visually-hidden">for ‘{{ dimension.title }}’</span> (CSV)</a>
                           {% else %}
                               <a class="govuk-link" href="{{ url_for('static_site.dimension_file_download',
                                    topic_slug=topic_slug,
                                    subtopic_slug=subtopic_slug,
                                    measure_slug=measure_version.measure.slug,
                                    version=measure_version.version,
-                                   dimension_guid=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.dimension_table.table_object.header}}">Source data (CSV)</a>
+                                   dimension_guid=dimension.guid) }}" data-on="click" data-event-category="CSV downloaded" data-event-action="Table source data" data-event-label="{{dimension.dimension_table.table_object.header}}">Source data <span class="govuk-visually-hidden">for ‘{{ dimension.title }}’</span> (CSV)</a>
                           {% endif %}
                       </p>
               </div>
@@ -653,7 +653,8 @@
 
       </div>
 
-      {{ appBackToTop(anchor="toc",text="Contents") }}
+
+      {{ appBackToTop(anchor="title",text="Contents",attributes={"data-on": "click", "data-event-category":"Back to Top", "data-event-action": "Clicked", "data-event-label": "Contents"}) }}
 
       {% include "static_site/_share.html" %}
 
@@ -702,6 +703,7 @@
             link.id = 'download-' + chartDownloadLinkContainer.getAttribute('data-chart-guid');
             link.href = '#';
             link.className = 'govuk-link download-png';
+            link.setAttribute('aria-hidden', 'true');
             link.setAttribute('data-on', 'click');
             link.setAttribute('data-event-category', 'Image downloaded');
             link.setAttribute('data-event-action', "Image of the chart");

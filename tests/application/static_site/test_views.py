@@ -808,9 +808,8 @@ class TestMeasurePage:
         resp = test_app_client.get(f"/topic/subtopic/measure/latest?static_mode={static_mode}", follow_redirects=False)
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
-        data_links = page.findAll("a", href=True, text="Download table data (CSV)")
+        data_links = page.findAll("a", href=expected_url)
         assert len(data_links) == 1
-        assert data_links[0].attrs["href"] == expected_url
 
     @pytest.mark.parametrize(
         "static_mode, expected_url",
@@ -839,9 +838,8 @@ class TestMeasurePage:
         resp = test_app_client.get(f"/topic/subtopic/measure/latest?static_mode={static_mode}", follow_redirects=False)
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
-        data_links = page.findAll("a", href=True, text="Source data (CSV)")
+        data_links = page.findAll("a", href=expected_url)
         assert len(data_links) == 1
-        assert data_links[0].attrs["href"] == expected_url
 
     @pytest.mark.parametrize(
         "static_mode, expected_url",
