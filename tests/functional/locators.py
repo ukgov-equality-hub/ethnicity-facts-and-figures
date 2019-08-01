@@ -234,7 +234,7 @@ class TopicPageLocators:
 
     @staticmethod
     def get_add_measure_link(link_text):
-        return By.LINK_TEXT, "Create a new page"
+        return By.XPATH, "//a[contains(., 'Create a new page')]"
 
     @staticmethod
     def get_measure_link(measure):
