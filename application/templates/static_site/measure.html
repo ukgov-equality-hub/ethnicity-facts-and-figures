@@ -702,6 +702,7 @@
             link.id = 'download-' + chartDownloadLinkContainer.getAttribute('data-chart-guid');
             link.href = '#';
             link.className = 'govuk-link download-png';
+            link.setAttribute('aria-hidden', 'true');
             link.setAttribute('data-on', 'click');
             link.setAttribute('data-event-category', 'Image downloaded');
             link.setAttribute('data-event-action', "Image of the chart");
