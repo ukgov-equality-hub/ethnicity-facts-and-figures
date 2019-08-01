@@ -43,7 +43,7 @@
                                     <div id="accordion-{{ topic.slug }}-content-{{ loop.index }}" class="govuk-accordion__section-content {% if not static_mode %} govuk-!-padding-bottom-4{% endif %}">
                                         {% if not static_mode %}
                                             {% if current_user.is_authenticated and current_user.can(CREATE_MEASURE) %}
-                                                <a href="{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}" class="govuk-button">Create a new page</a>
+                                                <a href="{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}" class="govuk-button">Create a new page <span class="govuk-visually-hidden">within {{ topic.title }}</span></a>
                                             {% endif %}
                                         {% endif %}
                                         {% if measures_by_subtopic[subtopic.id] %}
