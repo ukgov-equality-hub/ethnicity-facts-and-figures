@@ -86,7 +86,7 @@ class TestDimensionModel:
 
     def test_update_dimension_with_invalid_data(self, test_app_client, logged_in_rdu_user):
 
-        measure_version = MeasureVersionWithDimensionFactory()
+        measure_version = MeasureVersionWithDimensionFactory(title="Stop and search", dimensions__title="By ethnicity")
 
         data = {"title": ""}
 
@@ -102,7 +102,7 @@ class TestDimensionModel:
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
         assert resp.status_code == 400
-        assert page.find("title").string == "Error: Edit dimension"
+        assert page.find("title").string == "Error: Edit dimension – Stop and search: By ethnicity"
 
     def test_classification_source_string_is_none_if_no_dimension_classification(self):
         measure_version = MeasureVersionWithDimensionFactory(dimensions__classification_links=[])
