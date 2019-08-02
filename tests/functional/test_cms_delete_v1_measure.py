@@ -42,7 +42,7 @@ def test_delete_a_draft_1_0_measure(driver, live_server):
     driver.find_element_by_link_text(measure.title).click()
 
     # WHEN we walk through the delete process
-    driver.find_element_by_xpath(f"//a[contains(., 'Delete {measure.title}')]").click()
+    driver.find_element_by_xpath(f"//a[contains(., 'Delete page: {measure.title}')]").click()
 
     driver.find_element_by_xpath('//button[text()="Yes, delete"]').click()
 
