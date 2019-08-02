@@ -20,6 +20,9 @@
   </script>
 {% endblock %}
 
+{% block pageTitle %}{% if settings_and_source_data %}Edit{% else %}Create a{% endif %} chart – {{ measure_version.title }}: {{ dimension.title }}{% endblock %}
+
+
 {% block content %}
     <div class="govuk-grid-row eff-numbered-sections">
         <div class="govuk-grid-column-full">
