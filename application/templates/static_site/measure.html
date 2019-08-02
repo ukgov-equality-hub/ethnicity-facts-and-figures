@@ -65,7 +65,7 @@
              topic_slug=topic_slug,
              subtopic_slug=subtopic_slug,
              measure_slug=measure_version.measure.slug,
-             version=measure_version.version) }}" class="govuk-link">Export <span class="govuk-visually-hidden">{{ measure_version.title }}</a>
+             version=measure_version.version) }}" class="govuk-link">Export page: <span class="govuk-visually-hidden">{{ measure_version.title }}</a>
         </span>
 
         <span class="info">
@@ -74,7 +74,7 @@
             {% if measure_version.status == 'APPROVED' %}
               {% if current_user.is_authenticated and current_user.can(CREATE_VERSION) %}
                 <a class="govuk-button" href="{{ url_for('cms.new_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">
-                  Update <span class="govuk-visually-hidden">{{ measure_version.title }}
+                  Update page: <span class="govuk-visually-hidden">{{ measure_version.title }}
                 </a>
               {% endif %}
             {% else %}
@@ -82,7 +82,7 @@
            topic_slug=topic_slug,
            subtopic_slug=subtopic_slug,
            measure_slug=measure_version.measure.slug,
-           version=measure_version.version) }}" class="govuk-button">Edit  <span class="govuk-visually-hidden">{{ measure_version.title }}</a>
+           version=measure_version.version) }}" class="govuk-button">Edit page:  <span class="govuk-visually-hidden">{{ measure_version.title }}</a>
             {% endif %}
           {% endif %}
         </span>
@@ -90,7 +90,7 @@
         {% if measure_version.status == 'DRAFT' %}
 
 
-          <a class="govuk-button eff-button--warning" href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Delete <span class="govuk-visually-hidden">{{ measure_version.title }}</a>
+          <a class="govuk-button eff-button--warning" href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Delete page: <span class="govuk-visually-hidden">{{ measure_version.title }}</a>
 
         {% endif %}
       </div>
