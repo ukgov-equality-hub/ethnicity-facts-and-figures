@@ -1,7 +1,11 @@
 {% from "_macros/_details.html" import govukDetails %}
 
+{% set summaryHtml %}
+  Example <span class="govuk-visually-hidden">suppression rules and disclosure control</span>
+{% endset %}
+
 {{ govukDetails(
-  summaryText="Examples",
+  summaryText=summaryHtml,
   text="Estimates based on fewer than 30 households have not been included in these statistics, because small numbers of households make it impossible to draw meaningful conclusions.",
   classes="govuk-!-margin-bottom-4"
 ) }}

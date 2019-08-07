@@ -13,8 +13,12 @@
   <p class="govuk-body">Find example wording in the <a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z" target="_blank" class="govuk-link">style guide</a> (this will open a new page).</p>
 {% endset %}
 
+{% set summaryHtml %}
+  Examples <span class="govuk-visually-hidden">for methodology</span>
+{% endset %}
+
 {{ govukDetails(
-  summaryText="Examples",
+  summaryText=summaryHtml,
   html=html,
   classes="govuk-!-margin-bottom-4"
 ) }}
