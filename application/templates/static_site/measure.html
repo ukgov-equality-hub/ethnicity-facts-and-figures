@@ -142,6 +142,10 @@
           <li><a class="govuk-link" href="#data-sources" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Data sources" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 3 }}. </span><span class="eff-table-of-contents__content">Data sources</span></a></li>
           <li><a class="govuk-link" href="#download-the-data" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Download the data" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 4 }}. </span><span class="eff-table-of-contents__content">Download the data</span></a></li>
 
+          {% if measure_version.measure.slug == "stop-and-search" or measure_version.measure.slug == "confidence-in-the-local-police" %}
+            <li><a class="govuk-link" href="#related-links" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Related links" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 5 }}. </span><span class="eff-table-of-contents__content">Related links</span></a></li>
+          {% endif %}
+
         </ol>
       </div>
     </div>
@@ -545,6 +549,11 @@
             <meta itemprop="url" content="{{ url_for('static_site.index') }}">
           </div>
 
+        {% if measure_version.measure.slug == "stop-and-search" %}
+          {% include "static_site/related_links/_stop_and_search.html" %}
+        {% elif measure_version.measure.slug == "confidence-in-the-local-police" %}
+          {% include "static_site/related_links/_confidence_in_the_local_police.html" %}
+        {% endif %}
 
       <div class="eff-document-footer">
 
