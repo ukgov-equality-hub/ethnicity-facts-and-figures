@@ -1,0 +1,18 @@
+<h2 class="govuk-heading-l govuk-!-margin-top-5" id="related-links">
+    {{ dimensions_count + 5 }}. Related links
+</h2>
+
+<p class="govuk-body">
+<a class="govuk-link" href=“https://www.ethnicity-facts-figures.service.gov.uk/work-pay-and-benefits/employment/employment-by-occupation/latest”>Employment by occupation</a><br />
+In 2017, 20% of workers in the UK were employed in ‘professional’ jobs, the highest percentage out of all types of occupation; 14% were employed in ‘associate professional and technical’ jobs, 11% in ‘elementary’ jobs, 11% as ‘managers, directors and senior officials’, 11% in ‘skilled trades’, 10% in ‘administrative and secretarial’ jobs, 9% in ‘caring, leisure and other services’, 8% in ‘sales and consumer service’ jobs, and 6% as ‘process, plant and machine operatives’
+</p>
+
+<p class="govuk-body">
+<a class="govuk-link" href="https://www.ethnicity-facts-figures.service.gov.uk/work-pay-and-benefits/unemployment-and-economic-inactivity/unemployment/latest">Unemployment</a><br />
+In 2017, just under 4% of White people were unemployed, compared with 8% of people from all other ethnic groups combined.
+</p>
+
+<p class="govuk-body">
+<a class="govuk-link" href="https://www.ethnicity-facts-figures.service.gov.uk/work-pay-and-benefits/employment/employment-by-sector/latest">Employment by sector</a>
+Overall in 2017, 29.7% of workers in the UK were employed in the public administration, education and health sector (the highest percentage out of all sectors); 18.7% were employed in distribution, hotels and restaurants, 17.3% in banking, finance and insurance, 9.3% in manufacturing, 9.0% in transport and communications, 7.4% in construction, 5.9% in other services, 1.7% in energy and water, and 1.1% in agriculture and fishing.
+</p>
