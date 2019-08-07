@@ -94,7 +94,7 @@ class Config:
     TRELLO_API_TOKEN = os.environ.get("TRELLO_API_TOKEN", "")
 
     GOOGLE_CUSTOM_SEARCH_ENDPOINT = "https://cse.google.com/cse/publicurl"
-    GOOGLE_CUSTOM_SEARCH_ID = "013520531703188648524:9giiejumedo"
+    GOOGLE_CUSTOM_SEARCH_ID = "018356501072542209775:85_lddxwwh4"
 
     REDIRECT_HTTP_CODE = os.environ.get("REDIRECT_HTTP_CODE", 301)
     REDIRECT_PROTOCOL = os.environ.get("REDIRECT_PROTOCOL", "http")
