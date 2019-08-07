@@ -1,7 +1,11 @@
 {% from "_macros/_details.html" import govukDetails %}
 
+{% set summaryHtml %}
+  Example <span class="govuk-visually-hidden">search engine description</span>
+{% endset %}
+
 {{ govukDetails(
-  summaryText="Example",
+  summaryHtml=summaryHtml,
   text="As at 31 March 2018, 93.4% of police officers were White, and 6.6% came from all other ethnic groups.",
   classes="govuk-!-margin-bottom-4"
 ) }}

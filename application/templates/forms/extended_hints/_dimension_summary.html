@@ -9,8 +9,12 @@
   </ul>
 {% endset %}
 
+{% set summaryHtml %}
+  Examples <span class="govuk-visually-hidden">for summary</span>
+{% endset %}
+
 {{ govukDetails(
-  summaryText="Examples",
+  summaryText=summaryHtml,
   html=html,
   classes="govuk-!-margin-bottom-4"
 ) }}

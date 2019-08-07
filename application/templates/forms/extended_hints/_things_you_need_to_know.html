@@ -10,8 +10,12 @@
   </ul>
 {% endset %}
 
+{% set summaryHtml %}
+  What to include <span class="govuk-visually-hidden">within ‘things you need to know’</span>
+{% endset %}
+
 {{ govukDetails(
-  summaryText="What to include",
+  summaryText=summaryHtml,
   html=html,
   classes="govuk-!-margin-bottom-4"
 ) }}

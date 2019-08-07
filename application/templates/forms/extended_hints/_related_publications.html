@@ -8,8 +8,12 @@
   </ul>
 {% endset %}
 
+{% set summaryHtml %}
+  Examples <span class="govuk-visually-hidden">for related publications</span>
+{% endset %}
+
 {{ govukDetails(
-  summaryText="Example",
+  summaryText=summaryHtml,
   html=html,
   classes="govuk-!-margin-bottom-4"
 ) }}
