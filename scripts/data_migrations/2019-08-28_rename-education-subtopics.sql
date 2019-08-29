@@ -1,7 +1,7 @@
 /* Rename "A-levels" to "A-levels, apprenticeships and further education" */
 UPDATE subtopic
 SET    slug = 'a-levels-apprenticeships-further-education',
-       title='A-levels, apprenticeships and further education'
+       title='A levels, apprenticeships and further education'
 WHERE  slug = 'a-levels';
 
 /* Rename "Apprenticeships, further and higher education" to "Higher education" */
