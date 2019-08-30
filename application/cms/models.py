@@ -729,7 +729,7 @@ class Dimension(db.Model):
 
     measure_version_id = db.Column(db.Integer, nullable=False)
 
-    position = db.Column(db.Integer)
+    position = db.Column(db.Integer, nullable=False)
 
     chart_id = db.Column(db.Integer, ForeignKey("dimension_chart.id", name="dimension_chart_id_fkey"))
     table_id = db.Column(db.Integer, ForeignKey("dimension_table.id", name="dimension_table_id_fkey"))
