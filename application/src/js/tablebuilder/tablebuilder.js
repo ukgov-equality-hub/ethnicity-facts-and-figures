@@ -74,16 +74,35 @@ document.addEventListener('DOMContentLoaded', function() {
      */
 
     function setTableData(evt) {
-        handleNewData(function () {
-            if (current_settings) {
-                setupTablebuilderWithSettings(current_settings)
-            }
-            preview()
-        });
 
-        document.getElementById('data-panel').classList.add('hidden')
-        document.getElementById('edit-panel').classList.remove('hidden')
-        document.getElementById('builder-title').innerHTML = 'Format and view table';
+        var data_text_area = document.getElementById('data_text_area')
+        var data_error_message = document.getElementById('data-error')
+        var data_form_group = document.getElementById('data-form-group')
+
+        if (data_text_area.value != '') {
+
+            handleNewData(function () {
+                if (current_settings) {
+                    setupTablebuilderWithSettings(current_settings)
+                }
+                preview()
+            });
+
+            document.getElementById('data-panel').classList.add('hidden')
+            document.getElementById('edit-panel').classList.remove('hidden')
+            document.getElementById('builder-title').innerHTML = 'Format and view table';
+
+            data_text_area.classList.remove('govuk-textarea--error')
+            data_form_group.classList.remove('govuk-form-group--error')
+            data_error_message.textContent = ''
+
+        } else {
+            data_text_area.classList.add('govuk-textarea--error')
+            data_form_group.classList.add('govuk-form-group--error')
+            data_error_message.textContent = 'Enter some data'
+        }
+
+
     }
 
     function editTableData(evt) {

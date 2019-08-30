@@ -48,8 +48,12 @@
 
                 <div class="govuk-form-group">
                   <form onsubmit="return false;">
-                          <textarea class="govuk-textarea" id="data_text_area" rows="10"
+
+                        <div class="govuk-form-group" id="data-form-group">
+                            <span id="data-error" class="govuk-error-message"></span>
+                            <textarea class="govuk-textarea" id="data_text_area" rows="10"
                                     {% if form_disabled %}disabled="disabled"{% endif %}></textarea>
+                        </div>
                       <button class="btn govuk-button btn-primary" id="confirm-data">Next</button>
                   </form>
                 </div>
