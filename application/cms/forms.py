@@ -106,7 +106,7 @@ class DataSourceForm(FlaskForm):
             "Link to a web page where the data was originally published. "
             "Don’t link directly to a spreadsheet or a PDF. "
             '<a href="https://www.gov.uk/government/statistics/youth-justice-annual-statistics-2016-to-2017" '
-            'target="_blank" class="govuk-link">View example</a> (this will open a new page).'
+            'target="_blank" class="govuk-link">View example (this will open a new page)</a>.'
         ),
         validators=[InputRequired(message="Enter a link to the data source"), Length(max=255)],
     )
