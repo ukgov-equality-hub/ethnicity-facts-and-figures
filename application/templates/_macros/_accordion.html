@@ -3,7 +3,7 @@
 
   {% set headingLevel = headingLevel | default(2) %}
 
-  <div class="govuk-accordion {%- if classes %} {{ classes }}{% endif %}" data-module="accordion" {%- if id %} id="{{id}}"{% endif %} {{ attributes | html_params | safe }}>
+  <div class="govuk-accordion {%- if classes %} {{ classes }}{% endif %}" data-module="govuk-accordion" {%- if id %} id="{{id}}"{% endif %} {{ attributes | html_params | safe }}>
 
     {% for item in items %}
 
