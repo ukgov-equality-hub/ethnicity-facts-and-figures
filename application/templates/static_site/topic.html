@@ -19,12 +19,27 @@
                 <h1 class="govuk-heading-xl">
                     {{ topic.title }}
                 </h1>
+            </div>
+
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+
                 {% if topic.additional_description  %}
                     <div class="govuk-body">
                         {{ topic.additional_description | render_markdown  }}
                     </div>
                 {% endif %}
             </div>
+
+            {% if topic.slug == 'workforce-and-business' %}
+            <div class="govuk-grid-column-one-third">
+                    <hr style="border-style: solid; border-width: 1px; border-color: #005ea5;">
+                    <h2 class="govuk-heading-s">Research and analysis</h2>
+                    <p class="govuk-body-s"><a href="https://www.gov.uk/government/publications/ethnic-diversity-of-public-sector-workforces/ethnic-diversity-of-public-sector-workforces">Ethnic diversity of public sector workforces</a><br>
+    An overview of facts and figures about ethnic diversity in the public sector, including the police, teachers and the NHS.</p>
+                </div>
+            {% endif %}
         </div>
 
         <div class="govuk-grid-row">
