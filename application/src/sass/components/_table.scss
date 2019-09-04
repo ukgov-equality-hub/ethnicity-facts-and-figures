@@ -128,7 +128,7 @@
 
 .table-footer .missing-data-explanation,
 .chart-footer .missing-data-explanation {
-  color: govuk-colour("grey-1");
+  color: govuk-colour("dark-grey");
 }
 
 .missing-data-explanation .explanation {
@@ -138,7 +138,7 @@
 
 /* Used for showing N/A in tables */
 .not-applicable {
-  color: govuk-colour("grey-1");
+  color: govuk-colour("dark-grey");
 }
 
 
@@ -180,7 +180,7 @@
     right: 10px;
     font-size: 19px;
     font-weight: bold;
-    color: govuk-colour("grey-1");
+    color: govuk-colour("dark-grey");
   }
 
   tbody .week.empty td:last-child:after {
