@@ -22,6 +22,10 @@ and also of providing access to some publisher-only navigation features such as 
   color: inherit;
 }
 
+.cms-banner .govuk-link:focus {
+  @include govuk-focused-text;
+}
+
 .cms-banner .eff-button-link {
   text-decoration: underline;
 }
