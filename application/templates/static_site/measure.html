@@ -657,7 +657,7 @@
                             topic_slug=topic_slug,
                             subtopic_slug=subtopic_slug,
                             measure_slug=page_version.measure.slug,
-                            version=page_version.version) }}">{{ page_version.published_at|format_friendly_date }}</a>
+                            version=page_version.version) }}"><span class="govuk-visually-hidden">Edition published on </span>{{ page_version.published_at|format_friendly_date }}</a>
                     </li>
                 {% endfor %}
               </ol>
