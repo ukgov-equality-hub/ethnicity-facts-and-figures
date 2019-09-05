@@ -24,7 +24,7 @@
       <h1 class="govuk-heading-xl">Edit data source</h1>
 
       <form method="POST" action="{{ url_for('cms.update_data_source', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version,
-      data_source_id=data_source.id )}}">
+      data_source_id=data_source.id )}}" novalidate>
 
         {{ render_data_source_form(data_source_form=data_source_form, organisations_by_type=organisations_by_type, form_disabled=False, diffs=[]) }}
 
