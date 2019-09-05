@@ -1,11 +1,11 @@
 // Minimal adapted copy of the GOV.UK Frontend error-summary component:
 // https://github.com/alphagov/govuk-frontend/blob/master/src/components/error-summary/_error-summary.scss
 
-@import "node_modules/govuk-frontend/settings/all";
-@import "node_modules/govuk-frontend/tools/all";
-@import "node_modules/govuk-frontend/helpers/all";
+@import "node_modules/govuk-frontend/govuk/settings/all";
+@import "node_modules/govuk-frontend/govuk/tools/all";
+@import "node_modules/govuk-frontend/govuk/helpers/all";
 
-@import "node_modules/govuk-frontend/core/lists";
+@import "node_modules/govuk-frontend/govuk/core/lists";
 
 $eff-flash-colour: #00833F;
 $eff-flash-error-colour: govuk-colour('red');
@@ -14,17 +14,20 @@ $eff-flash-error-colour: govuk-colour('red');
   @include govuk-text-colour;
   @include govuk-responsive-padding(4);
   @include govuk-responsive-margin(8, "bottom");
-  @include govuk-focusable;
 
-  border: $govuk-border-width-mobile solid $eff-flash-colour;
+  border: $govuk-border-width-narrow solid $eff-flash-colour;
 
   @include govuk-media-query($from: tablet) {
     border: $govuk-border-width solid $eff-flash-colour;
   }
 }
 
+.eff-flash-message:focus {
+  @include govuk-focused-text;
+}
+
 .eff-flash-message--error {
-  border: $govuk-border-width-mobile solid $eff-flash-error-colour;
+  border: $govuk-border-width-narrow solid $eff-flash-error-colour;
 
   @include govuk-media-query($from: tablet) {
     border: $govuk-border-width solid $eff-flash-error-colour;

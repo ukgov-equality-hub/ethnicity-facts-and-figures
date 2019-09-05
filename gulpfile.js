@@ -18,7 +18,7 @@ gulp.task('copy-static', function () {
 
 // Copy assets from GOV.UK Frontend
 gulp.task('copy-govuk-frontend-assets', function () {
-  return gulp.src(['./node_modules/govuk-frontend/assets/**'])
+  return gulp.src(['./node_modules/govuk-frontend/govuk/assets/**'])
     .pipe(gulp.dest('./application/static/assets'))
 })
 
@@ -32,7 +32,7 @@ gulp.task('compile-css', function () {
 
 gulp.task('compile-js-all', function () {
   return gulp.src([
-    './node_modules/govuk-frontend/all.js',
+    './node_modules/govuk-frontend/govuk/all.js',
     './application/src/js/all/vendor/jquery.min.js',
     './application/src/js/all/vendor/polyfills/*.js',
     './application/src/js/all/vendor/govuk-template.js',

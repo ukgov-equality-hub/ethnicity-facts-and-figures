@@ -1,6 +1,6 @@
-{# Adapted from https://github.com/alphagov/govuk-frontend/blob/master/src/components/details/template.njk #}
+{# Adapted from https://github.com/alphagov/govuk-frontend/blob/master/src/govuk/components/details/template.njk #}
 {% macro govukDetails(summaryHtml=None,summaryText=None,text=None,html=None,id=None,attributes={},open=False,classes=None) %}
-  <details {%- if id %} id="{{id}}"{% endif %} class="govuk-details {%- if classes %} {{ classes }}{% endif %}" {{ attributes | html_params | safe }} {{- " open" if open else "" }}>
+  <details {%- if id %} id="{{id}}"{% endif %} class="govuk-details {%- if classes %} {{ classes }}{% endif %}" data-module="govuk-details" {{ attributes | html_params | safe }} {{- " open" if open else "" }}>
   <summary class="govuk-details__summary">
     <span class="govuk-details__summary-text">
       {{ summaryHtml if summaryHtml else summaryText }}

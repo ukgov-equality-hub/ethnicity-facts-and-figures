@@ -5,7 +5,7 @@
 .missing-data-explanation,
 .missing-data-explanation {
   @include govuk-font(16);
-  color: govuk-colour("grey-1");
+  color: govuk-colour("dark-grey");
 }
 
 .missing-data-explanation .explanation {
@@ -15,7 +15,7 @@
 
 /* Used for showing N/A in tables */
 .not-applicable {
-  color: govuk-colour("grey-1");
+  color: govuk-colour("dark-grey");
 }
 
 /* Asterisk – positioned as inline-block with negative margin

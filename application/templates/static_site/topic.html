@@ -31,7 +31,7 @@
 
             <div class="govuk-grid-column-two-thirds">
 
-                <div class="govuk-accordion" data-module="accordion" id="accordion-{{ topic.slug }}">
+                <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-{{ topic.slug }}">
                         {% for subtopic in (subtopics|selectattr('has_published_measures') if static_mode else subtopics) %}
                             {% if measures_by_subtopic[subtopic.id]|length > 0 or (current_user.is_authenticated and current_user.can(CREATE_MEASURE)) %}
                                 <div class="govuk-accordion__section">

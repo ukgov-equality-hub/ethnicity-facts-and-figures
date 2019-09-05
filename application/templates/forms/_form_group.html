@@ -17,7 +17,7 @@
     <span class="govuk-hint">{{ field.hint or hint }}</span>
     {% endif %}
       <div class="{{ govukBaseClass }}{% if inline %} {{ govukBaseClass }}--inline{% endif %}{% if conditional_questions %} {{ govukBaseClass }}--conditional{% endif %}"
-           {% if conditional_questions %} data-module="{{ baseFieldType }}"{% endif %}
+           {% if conditional_questions %} data-module="govuk-{{ baseFieldType }}"{% endif %}
       >
         {% for subfield in fields %}
             {% set field_options = {"disabled": disabled, "class_": field_class, "label_class": label_class} %}
