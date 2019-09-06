@@ -916,7 +916,7 @@ class TestMeasurePage:
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
         measure_1_1_links = page.find_all("a", attrs={"href": measure_1_1_url})
         assert len(measure_1_1_links) == 1
-        assert measure_1_1_links[0].text == "29 March 2019"
+        assert measure_1_1_links[0].text == "Edition published on 29 March 2019"
 
         # AND should not contain a link to the superseded earlier version
         measure_1_0_links = page.find_all("a", attrs={"href": measure_1_0_url})
