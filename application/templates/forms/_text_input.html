@@ -3,7 +3,7 @@
 <div class="govuk-form-group {% if field.errors %}govuk-form-group--error{% endif %}">
 
 {% if field.character_count_limit %}
-<div class="govuk-character-count" data-module="character-count" data-maxlength="{{ field.character_count_limit }}">
+<div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="{{ field.character_count_limit }}">
 {% endif %}
 
 {{ field.label(id=field.id + '-label', class_='govuk-label ' + label_class) }}
@@ -32,7 +32,7 @@
 {{ field.extended_hint if field.extended_hint is defined and field.extended_hint else '' }}
 
 {% if textarea %}
-  <textarea id="{{ id_ }}" name="{{ name }}" class="govuk-textarea {{ class_ }}{% if field.errors %} govuk-textarea--error{% endif %}{% if field.character_count_limit %} js-character-count{% endif %}" {% if field.hint or hint | default(false) %}aria-describedby="{{ id_ }}-hint"{% endif %} {{ field_params }} >{{ value or "" }}</textarea>
+  <textarea id="{{ id_ }}" name="{{ name }}" class="govuk-textarea {{ class_ }}{% if field.errors %} govuk-textarea--error{% endif %}{% if field.character_count_limit %} govuk-js-character-count{% endif %}" {% if field.hint or hint | default(false) %}aria-describedby="{{ id_ }}-hint"{% endif %} {{ field_params }} >{{ value or "" }}</textarea>
 {% else %}
   <input id="{{ id_ }}" name="{{ name }}" class="govuk-input {{ class_ }}{% if field.errors %} govuk-input--error{% endif %}" value="{{ value }}" {% if field.hint or hint | default(false) %}aria-describedby="{{ id_ }}-hint"{% endif %} {{ field_params }}>
 {% endif %}
