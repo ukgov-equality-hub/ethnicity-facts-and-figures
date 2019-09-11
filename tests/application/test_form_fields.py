@@ -561,11 +561,11 @@ class TestRDUTextAreaField:
 
         govuk_char_count_element = doc.xpath("//*[@class='govuk-character-count']")
         assert len(govuk_char_count_element) == 1
-        assert govuk_char_count_element[0].get("data-module") == "character-count"
+        assert govuk_char_count_element[0].get("data-module") == "govuk-character-count"
         assert govuk_char_count_element[0].get("data-maxlength") == "130"
 
         textarea = doc.xpath("//textarea")[0]
-        assert {"govuk-textarea", "js-character-count"} <= set(textarea.get("class", "").split())
+        assert {"govuk-textarea", "govuk-js-character-count"} <= set(textarea.get("class", "").split())
 
     def test_strips_whitespace_from_start_and_end_of_text_and_start_of_each_line(self):
         formdata = ImmutableMultiDict({"textarea_field": "   blah   \n\n   blah   "})
