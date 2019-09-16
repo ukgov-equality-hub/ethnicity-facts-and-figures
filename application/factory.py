@@ -268,6 +268,7 @@ def harden_app(response):
     response.headers.add(
         "Content-Security-Policy", get_content_security_policy(allow_google_custom_search=allow_google_custom_search)
     )
+    response.headers.add("X-Permitted-Cross-Domain-Policies", "none")
 
     return response
 
