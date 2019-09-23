@@ -23,6 +23,18 @@ class TestRenderMarkdown:
     def test_html_is_escaped(self, input_text, expected_output):
         assert render_markdown(input_text) == expected_output
 
+    @pytest.mark.parametrize(
+        "input_text, expected_output",
+        (
+            (
+                "[text to display](javascript:alert(1))",
+                '<p class="govuk-body"><a class="govuk-link" href="#">text to display</a></p>',
+            ),
+        ),
+    )
+    def test_js_links_stripped(self, input_text, expected_output):
+        assert render_markdown(input_text) == expected_output
+
 
 class TestHtmlParams:
     """
