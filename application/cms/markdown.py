@@ -21,7 +21,7 @@ class DesignSystemMarkdownProcessor(Treeprocessor):
 class MarkdownCleanerProcessor(Treeprocessor):
     def run(self, root):
         for a in root.iter("a"):
-            if "javascript" in a.get("href"):
+            if "javascript:" in a.get("href"):
                 a.set("href", "#")
 
 

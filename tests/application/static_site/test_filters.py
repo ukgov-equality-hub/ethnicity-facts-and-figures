@@ -30,6 +30,14 @@ class TestRenderMarkdown:
                 "[text to display](javascript:alert(1))",
                 '<p class="govuk-body"><a class="govuk-link" href="#">text to display</a></p>',
             ),
+            (
+                "[text to display](https://gov.uk)",
+                '<p class="govuk-body"><a class="govuk-link" href="https://gov.uk">text to display</a></p>',
+            ),
+            (
+                "[text to display](https://javascript.co.uk)",
+                '<p class="govuk-body"><a class="govuk-link" href="https://javascript.co.uk">text to display</a></p>',
+            ),
         ),
     )
     def test_js_links_stripped(self, input_text, expected_output):
