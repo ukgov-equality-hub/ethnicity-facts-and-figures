@@ -18,9 +18,17 @@ class DesignSystemMarkdownProcessor(Treeprocessor):
             ol.set("class", "govuk-list govuk-list--number eff-list--sparse")
 
 
+class MarkdownCleanerProcessor(Treeprocessor):
+    def run(self, root):
+        for a in root.iter("a"):
+            if "javascript:" in a.get("href"):
+                a.set("href", "#")
+
+
 class DesignSystemMarkdownExtension(Extension):
     def extendMarkdown(self, md):
         md.treeprocessors.register(item=DesignSystemMarkdownProcessor(md), name="design-system-markdown", priority=0)
+        md.treeprocessors.register(item=MarkdownCleanerProcessor(md), name="cleaner-markdown", priority=0)
 
 
 def markdown(text):
