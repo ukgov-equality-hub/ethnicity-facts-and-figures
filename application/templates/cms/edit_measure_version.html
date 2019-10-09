@@ -79,10 +79,6 @@
                 </div>
             {% endif %}
 
-            {%  if new or measure_version.status == 'DRAFT' %}
-                 <button class="govuk-button" type="submit" name="save">Save</button>
-            {% endif %}
-
             {% if "REJECT" in measure_version.available_actions %}
                 <button id="reject-measure" name="measure-action" value="reject-measure" class="govuk-button eff-button--warning">Reject</button>
             {% endif %}
@@ -189,6 +185,10 @@
                     {% if new or measure_version.version == '1.0' %}</div>{% endif %}
 
                     {{ form.internal_reference(disabled=form_disabled, diffs=diffs, class_='short') }}
+
+                {%  if new or measure_version.status == 'DRAFT' %}
+                     <button class="govuk-button" type="submit" name="save">Save</button>
+                {% endif %}
 
             </div>
         </div>
