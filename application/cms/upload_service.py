@@ -66,6 +66,17 @@ class UploadService(Service):
 
         return encoding.upper()
 
+    def sanitise_file(self, filename):
+        with open(filename, "r+") as to_sanitise:
+            contents = to_sanitise.read()
+
+        contents = contents.replace("@", "")
+        contents = contents.replace("|", "")
+        contents = contents.replace("=", "")
+
+        with open(filename, "w") as to_sanitise:
+            to_sanitise.write(contents)
+
     def delete_upload_files(self, measure_version, file_name):
         try:
             page_file_system = self.app.file_service.page_system(measure_version)
@@ -93,6 +104,7 @@ class UploadService(Service):
             tmp_file = "%s/%s" % (tmpdirname, filename)
             file.save(tmp_file)
             self.validate_file(tmp_file)
+            self.sanitise_file(tmp_file)
 
             try:
                 scanner_service.scan_file(filename=tmp_file, fileobj=open(tmp_file, "rb"))

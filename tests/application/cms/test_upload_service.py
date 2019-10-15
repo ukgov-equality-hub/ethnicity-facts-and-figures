@@ -8,7 +8,7 @@ from application.cms.exceptions import UploadCheckError
 
 class TestUploadService:
     def setup(self):
-        self.temp_file = NamedTemporaryFile(mode="wb", delete=False)
+        self.temp_file = NamedTemporaryFile(mode="wb+", delete=False)
 
     def teardown(self):
         try:
@@ -45,3 +45,13 @@ class TestUploadService:
             upload_service.validate_file(tempfile.name)
 
         assert e.match(expected_error_message)
+
+    @pytest.mark.parametrize(
+        "contents, sanitised_output", ((b'"a","b","c"\n"@a","|b|","===c=c"', b'"a","b","c"\n"a","b","cc"'))
+    )
+    def test_sanitise_file(self, app, upload_service, contents, sanitised_output):
+        with self.temp_file as tempfile:
+            tempfile.write(contents)
+            tempfile.seek(0)
+            upload_service.sanitise_file(self.temp_file.name)
+            assert tempfile.read() == sanitised_output
