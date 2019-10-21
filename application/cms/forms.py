@@ -354,7 +354,10 @@ class UploadForm(FlaskForm):
     """
 
     guid = StringField()
-    upload = FileField(label="File in CSV format", validators=[])
+    upload = FileField(
+        label="Upload a CSV file. If your file contains any of the following symbols, they’ll be removed for security reasons: @ | =",  # noqa
+        validators=[],
+    )
     title = RDUStringField(
         label="Title",
         hint="For example, ‘Household income data’",
@@ -376,7 +379,8 @@ class NewUploadForm(UploadForm):
     """
 
     upload = FileField(
-        label="File in CSV format", validators=[DataRequired(message="Please choose a file for users to download.")]
+        label="Upload a CSV file. If your file contains any of the following symbols, they’ll be removed for security reasons: @ | =",  # noqa
+        validators=[DataRequired(message="Please choose a file for users to download.")],
     )
 
 

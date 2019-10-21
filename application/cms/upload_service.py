@@ -52,7 +52,7 @@ class UploadService(Service):
                     break
             detector.close()
             encoding = detector.result.get("encoding")
-        valid_encodings = ["ASCII", "ISO-8859-1", "UTF-8", "UTF-8-SIG"]
+        valid_encodings = ["ASCII", "UTF-8"]
 
         if encoding is None:
             message = "Please check that you are uploading a CSV file."
@@ -65,6 +65,17 @@ class UploadService(Service):
             raise UploadCheckError(message)
 
         return encoding.upper()
+
+    def sanitise_file(self, filename):
+        with open(filename, "r+") as to_sanitise:
+            contents = to_sanitise.read()
+
+        contents = contents.replace("@", "")
+        contents = contents.replace("|", "")
+        contents = contents.replace("=", "")
+
+        with open(filename, "w") as to_sanitise:
+            to_sanitise.write(contents)
 
     def delete_upload_files(self, measure_version, file_name):
         try:
@@ -93,6 +104,7 @@ class UploadService(Service):
             tmp_file = "%s/%s" % (tmpdirname, filename)
             file.save(tmp_file)
             self.validate_file(tmp_file)
+            self.sanitise_file(tmp_file)
 
             try:
                 scanner_service.scan_file(filename=tmp_file, fileobj=open(tmp_file, "rb"))

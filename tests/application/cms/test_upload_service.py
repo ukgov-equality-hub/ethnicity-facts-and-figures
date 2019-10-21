@@ -8,7 +8,7 @@ from application.cms.exceptions import UploadCheckError
 
 class TestUploadService:
     def setup(self):
-        self.temp_file = NamedTemporaryFile(mode="wb", delete=False)
+        self.temp_file = NamedTemporaryFile(mode="wb+", delete=False)
 
     def teardown(self):
         try:
@@ -19,11 +19,7 @@ class TestUploadService:
 
     @pytest.mark.parametrize(
         "contents, expected_encoding",
-        (
-            (b"ascii", "ASCII"),
-            (b"\xa5 \xa9 \xb5 \xbc", "ISO-8859-1"),  # "¥ © µ ¼" in ISO-8859-1 (latin1) encoding
-            (b"\xc2\xa5 \xc2\xa9 \xc2\xb5 \xc2\xbc", "UTF-8"),  # "¥ © µ ¼" in UTF-8 encoding
-        ),
+        ((b"ascii", "ASCII"), (b"\xc2\xa5 \xc2\xa9 \xc2\xb5 \xc2\xbc", "UTF-8")),  # "¥ © µ ¼" in UTF-8 encoding
     )
     def test_validate_file(self, app, upload_service, contents, expected_encoding):
         with self.temp_file as tempfile:
@@ -37,7 +33,7 @@ class TestUploadService:
             (b"", "Please check that you are uploading a CSV file."),
             (
                 b"\xff\xfe\x00\x00\xa5\x00\x00\x00",  # "¥" in UTF-32 encoding
-                "File encoding UTF-32 not valid. Valid encodings: ASCII, ISO-8859-1, UTF-8",
+                "File encoding UTF-32 not valid. Valid encodings: ASCII, UTF-8",
             ),
         ),
     )
@@ -49,3 +45,13 @@ class TestUploadService:
             upload_service.validate_file(tempfile.name)
 
         assert e.match(expected_error_message)
+
+    @pytest.mark.parametrize(
+        "contents, sanitised_output", ((b'"a","b","c"\n"@a","|b|","===c=c"', b'"a","b","c"\n"a","b","cc"'),)
+    )
+    def test_sanitise_file(self, app, upload_service, contents, sanitised_output):
+        with self.temp_file as tempfile:
+            tempfile.write(contents)
+            tempfile.seek(0)
+            upload_service.sanitise_file(self.temp_file.name)
+            assert tempfile.read() == sanitised_output
