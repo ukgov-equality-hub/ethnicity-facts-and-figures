@@ -54,7 +54,7 @@ new_grouping = {
         "hiv-infection-with-late-diagnosis",
     ],
     "patient-experience": [
-        "patient-satisfaction-with-nhs-dental-services",
+        "access-to-nhs-dental-services",
         "inpatient-satisfaction-with-hospital-care",
         "patient-experience-of-primary-care-gp-services",
         "patient-satisfaction-with-gp-out-of-hours-services",
