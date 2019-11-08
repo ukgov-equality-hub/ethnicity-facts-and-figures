@@ -38,7 +38,13 @@ function ukCountriesSelect(element) {
       return;
     }
 
-    this.element.querySelector('.govuk-checkboxes').appendChild(ukInputContainer)
+    var overseasNode = Array.prototype.slice.apply(
+                          document.querySelectorAll('.govuk-checkboxes .govuk-checkboxes__item'))
+                                      .filter(function (x){
+                                        return x.textContent.match("Overseas")
+                                      })[0];
+
+    this.element.querySelector('.govuk-checkboxes').insertBefore(ukInputContainer, overseasNode);
 
     if (ukInput) {
       ukInput.addEventListener('change', ukChanged)
@@ -66,15 +72,15 @@ function ukCountriesSelect(element) {
       }
 
     }
-
-    ukInput.checked = (checkedCountries == countryInputs.length);
+    // Modified for Overseas
+    ukInput.checked = (checkedCountries == countryInputs.length-1);
 
   }
 
   function ukChanged() {
-
     for (var i = countryInputs.length - 1; i >= 0; i--) {
-      countryInputs[i].checked = ukInput.checked;
+      if( countryInputs[i].value !== "OVERSEAS" )
+        countryInputs[i].checked = ukInput.checked;
     }
 
   }

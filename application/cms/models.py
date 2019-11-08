@@ -44,6 +44,7 @@ class UKCountry(enum.Enum):
     WALES = "Wales"
     SCOTLAND = "Scotland"
     NORTHERN_IRELAND = "Northern Ireland"
+    OVERSEAS = "Overseas"
 
 
 class TypeOfOrganisation(enum.Enum):
