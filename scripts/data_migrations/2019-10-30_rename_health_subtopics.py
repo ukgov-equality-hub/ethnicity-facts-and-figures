@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from datetime import datetime
 import sys
 
 sys.path.insert(0, ".")  # noqa
@@ -10,6 +11,7 @@ from application import db
 from application.config import Config
 from application.factory import create_app
 from application.cms.models import Measure, Subtopic, Topic
+from application.redirects.models import Redirect
 
 new_grouping = {
     "alcohol-smoking-and-drug-use": [
@@ -83,6 +85,15 @@ subtopic_new_order = [
     "Social care",
 ]
 
+redirects = {
+    "health/access-to-treatment": "health/social-care",
+    "health/exercise-and-activity": "health/diet-and-exercise",
+    "health/patient-experiences": "health/patient-experience",
+    "health/patient-outcomes": "health/physical-health",
+    "health/physical-and-mental-health": "health/mental-health",
+    "health/preventing-illness": "health/alcohol-smoking-and-drug-use",
+}
+
 
 def create_wellbeing_subtopic():
     print("+ Creating 'Wellbeing' subtopic")
@@ -135,6 +146,15 @@ def reorder_measures_in_subtopics():
     db.session.flush()
 
 
+def add_redirects():
+    print("+ Adding redirects")
+    for from_uri, to_uri in redirects.items():
+        new_redirect = Redirect(created=datetime.utcnow(), from_uri=from_uri, to_uri=to_uri)
+        db.session.add(new_redirect)
+
+    db.session.flush()
+
+
 if __name__ == "__main__":
     app = create_app(Config())
     with app.app_context():
@@ -143,4 +163,5 @@ if __name__ == "__main__":
         reorder_subtopics()
         redistribute_measures()
         reorder_measures_in_subtopics()
+        add_redirects()
         db.session.commit()
