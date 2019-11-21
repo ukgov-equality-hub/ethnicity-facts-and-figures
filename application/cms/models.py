@@ -641,7 +641,7 @@ class MeasureVersion(db.Model, CopyableModel):
         if len(self.area_covered) == 0:
             return ""
 
-        if set(self.area_covered) == {e for e in UKCountry}:
+        if set(self.area_covered) == {e for e in UKCountry if e is not UKCountry.OVERSEAS}:
             return "United Kingdom"
 
         if len(self.area_covered) == 1:
