@@ -31,7 +31,7 @@ upgrade_lowest_level_of_geography = """
     UPDATE lowest_level_of_geography SET position =  7 WHERE name = 'Police force area';
     UPDATE lowest_level_of_geography SET position =  8 WHERE name = 'Clinical commissioning group';
     UPDATE lowest_level_of_geography SET position =  9 WHERE name = 'Fire and rescue service area';
-    INSERT INTO lowest_level_of_geography (name, position) VALUES ('UK and Overseas', 1);
+    INSERT INTO lowest_level_of_geography (name, position) VALUES ('UK and overseas', 1);
 """
 
 downgrade_lowest_level_of_geography = """
