@@ -4,6 +4,9 @@ function ukCountriesSelect(element) {
 
   this.element = element;
 
+  UKCountries = ['ENGLAND', 'WALES', 'SCOTLAND', 'NORTHERN_IRELAND'];
+  Overseas = 'OVERSEAS';
+
   var countryInputs, ukInput;
   setup();
 
@@ -62,19 +65,15 @@ function ukCountriesSelect(element) {
   }
 
   function countryChanged(event) {
+    checkedCountries = Array.prototype.slice.apply(countryInputs).filter(function (x){
+      return x.checked && x.value != Overseas;
+    }).map(function (x){
+      return x.value;
+    });
 
-    var checkedCountries = 0;
-
-    for (var i = countryInputs.length - 1; i >= 0; i--) {
-
-      if (countryInputs[i].checked) {
-        checkedCountries += 1;
-      }
-
-    }
-    // Modified for Overseas
-    ukInput.checked = (checkedCountries == countryInputs.length-1);
-
+    ukInput.checked = UKCountries.filter(function (x){
+      return !(checkedCountries.indexOf(x) > -1);
+    }).length === 0;
   }
 
   function ukChanged() {
