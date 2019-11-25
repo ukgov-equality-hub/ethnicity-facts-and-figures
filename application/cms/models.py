@@ -44,6 +44,7 @@ class UKCountry(enum.Enum):
     WALES = "Wales"
     SCOTLAND = "Scotland"
     NORTHERN_IRELAND = "Northern Ireland"
+    OVERSEAS = "Overseas"
 
 
 class TypeOfOrganisation(enum.Enum):
@@ -640,8 +641,11 @@ class MeasureVersion(db.Model, CopyableModel):
         if len(self.area_covered) == 0:
             return ""
 
-        if set(self.area_covered) == {e for e in UKCountry}:
+        if set(self.area_covered) == {e for e in UKCountry if e is not UKCountry.OVERSEAS}:
             return "United Kingdom"
+
+        if set(self.area_covered) == {e for e in UKCountry}:
+            return "UK and overseas"
 
         if len(self.area_covered) == 1:
             return self.area_covered[0].value
@@ -649,7 +653,10 @@ class MeasureVersion(db.Model, CopyableModel):
             last = self.area_covered[-1]
             first = self.area_covered[:-1]
             comma_separated = ", ".join([item.value for item in first])
-            return "%s and %s" % (comma_separated, last.value)
+            formatted = "%s and %s" % (comma_separated, last.value)
+            if self.area_covered[0] != UKCountry.OVERSEAS:
+                formatted = formatted.replace("Overseas", "overseas")
+            return formatted
 
     def to_dict(self, with_dimensions=False):
         page_dict = {

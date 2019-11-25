@@ -4,6 +4,9 @@ function ukCountriesSelect(element) {
 
   this.element = element;
 
+  UKCountries = ['ENGLAND', 'WALES', 'SCOTLAND', 'NORTHERN_IRELAND'];
+  Overseas = 'OVERSEAS';
+
   var countryInputs, ukInput;
   setup();
 
@@ -38,7 +41,13 @@ function ukCountriesSelect(element) {
       return;
     }
 
-    this.element.querySelector('.govuk-checkboxes').appendChild(ukInputContainer)
+    var overseasNode = Array.prototype.slice.apply(
+                          document.querySelectorAll('.govuk-checkboxes .govuk-checkboxes__item'))
+                                      .filter(function (x){
+                                        return x.textContent.match("Overseas")
+                                      })[0];
+
+    this.element.querySelector('.govuk-checkboxes').insertBefore(ukInputContainer, overseasNode);
 
     if (ukInput) {
       ukInput.addEventListener('change', ukChanged)
@@ -56,25 +65,21 @@ function ukCountriesSelect(element) {
   }
 
   function countryChanged(event) {
+    checkedCountries = Array.prototype.slice.apply(countryInputs).filter(function (x){
+      return x.checked && x.value != Overseas;
+    }).map(function (x){
+      return x.value;
+    });
 
-    var checkedCountries = 0;
-
-    for (var i = countryInputs.length - 1; i >= 0; i--) {
-
-      if (countryInputs[i].checked) {
-        checkedCountries += 1;
-      }
-
-    }
-
-    ukInput.checked = (checkedCountries == countryInputs.length);
-
+    ukInput.checked = UKCountries.filter(function (x){
+      return !(checkedCountries.indexOf(x) > -1);
+    }).length === 0;
   }
 
   function ukChanged() {
-
     for (var i = countryInputs.length - 1; i >= 0; i--) {
-      countryInputs[i].checked = ukInput.checked;
+      if( countryInputs[i].value !== "OVERSEAS" )
+        countryInputs[i].checked = ukInput.checked;
     }
 
   }

@@ -833,6 +833,20 @@ class TestMeasureVersionModel:
             ([UKCountry.ENGLAND], "England"),
             ([UKCountry.ENGLAND, UKCountry.WALES], "England and Wales"),
             ([UKCountry.ENGLAND, UKCountry.WALES, UKCountry.SCOTLAND, UKCountry.NORTHERN_IRELAND], "United Kingdom"),
+            ([UKCountry.OVERSEAS], "Overseas"),
+            ([UKCountry.OVERSEAS, UKCountry.ENGLAND], "Overseas and England"),
+            ([UKCountry.ENGLAND, UKCountry.OVERSEAS], "England and overseas"),
+            ([UKCountry.ENGLAND, UKCountry.SCOTLAND, UKCountry.OVERSEAS], "England, Scotland and overseas"),
+            (
+                [
+                    UKCountry.ENGLAND,
+                    UKCountry.WALES,
+                    UKCountry.SCOTLAND,
+                    UKCountry.NORTHERN_IRELAND,
+                    UKCountry.OVERSEAS,
+                ],
+                "UK and overseas",
+            ),
         ),
     )
     def test_area_covered_formatter(self, countries, formatted_string):

@@ -377,7 +377,7 @@ def test_view_edit_measure_page(test_app_client, logged_in_rdu_user, stub_measur
     assert time_covered
     assert time_covered.attrs.get("value") == "4 months"
 
-    assert len(page.find_all("input", class_="country")) == 4
+    assert len(page.find_all("input", class_="country")) == 5
 
     # TODO lowest level of geography
 
