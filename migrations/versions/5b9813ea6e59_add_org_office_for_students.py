@@ -26,12 +26,13 @@ def upgrade():
     ofs_org = Organisation(
         id="PB1253",
         name="Office for Students",
-        other_names="{}",
-        abbreviations="{OfS}",
+        other_names=[],
+        abbreviations=["OfS"],
         organisation_type=TypeOfOrganisation.EXECUTIVE_NON_DEPARTMENTAL_PUBLIC_BODY,
     )
 
     session.add(ofs_org)
+    session.flush()
 
 
 def downgrade():
