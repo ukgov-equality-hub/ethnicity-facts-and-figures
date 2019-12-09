@@ -204,7 +204,7 @@
             <div id="data-source-2-type_of_statistic_id">
                 <p class="govuk-heading-s govuk-!-margin-bottom-1">Type of statistic</p>
                 <p class="govuk-body">
-                    {% if measure_version.secondary_data_source and measure_version.secondary_data_source.type_of_statistic.external %}
+                    {% if measure_version.secondary_data_source and measure_version.secondary_data_source.type_of_statistic and measure_version.secondary_data_source.type_of_statistic.external %}
                         {{ measure_version.secondary_data_source.type_of_statistic.external }}
                     {% else %}
                         {{ field_empty_string }}
