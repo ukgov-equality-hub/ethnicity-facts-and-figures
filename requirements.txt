@@ -42,7 +42,7 @@ MarkupSafe==1.0
 passlib==1.7.1
 passwordmeter==0.1.8
 psycopg2-binary==2.7.5
-py-mini-racer==0.1.15
+py-mini-racer==0.1.18
 py-trello==0.13.0
 pycparser==2.19
 python-dateutil==2.7.5  # Required by alembic

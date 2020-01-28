@@ -1,0 +1,31 @@
+version: "3"
+services:
+  publisher_db:
+    image: "postgres:10.10"
+    container_name: "publisher_db"
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=rdcms
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=
+      - POSTGRES_HOST=publisher_db
+
+  publisher:
+    container_name: "publisher"
+    build:
+      context: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    env_file: .env.dev
+    entrypoint: dockerize -wait tcp://publisher_db:5432
+    depends_on:
+      - publisher_db
+    command: /app/docker/run.sh
+
+volumes:
+  dbdata:

@@ -34,7 +34,12 @@ else:
     app = create_app(Config)
 
 manager = Manager(app)
-manager.add_command("server", Server())
+# manager.add_command("server", Server())
+if os.environ.get("FLASK_ENV") == "docker":
+    manager.add_command("server", Server(host="0.0.0.0", port=5000))
+else:
+    manager.add_command("server", Server())
+
 
 migrate = Migrate(app, db)
 manager.add_command("db", MigrateCommand)
@@ -213,7 +218,6 @@ def _create_default_users_with_password(password_for_default_users):
     }
 
     whitelisted_accounts = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "{}"))
-
     for email in whitelisted_accounts:
         default_accounts[email] = getattr(TypeOfUser, whitelisted_accounts[email])
 
