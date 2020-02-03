@@ -102,6 +102,9 @@
             {{ render_flash_messages(get_flashed_messages(with_categories=true)) }}
           {% endblock %}
 
+          {% block displayNavigationLinkOnMessage %}
+          {% endblock %}
+
           {% block errorSummary %}
             {% include '_shared/_error_summary.html' %}
           {% endblock %}
