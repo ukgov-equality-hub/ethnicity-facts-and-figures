@@ -12,3 +12,9 @@ psql -U postgres
 exit;
 
 docker exec publisher ./docker/import_db.sh
+
+
+
+py.test tests/functional
+
+py.test tests/functional -k 'test_add_existing_data_source'
