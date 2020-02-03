@@ -1,0 +1,64 @@
+aadict==0.2.3
+alembic==1.0.1
+asset==0.6.12
+Babel==2.6.0
+bcrypt==3.1.4
+beautifulsoup4==4.6.3
+bidict==0.17.3
+bleach==3.0.2
+blinker==1.4
+boto3==1.9.34
+botocore==1.12.34       # Required by boto3
+certifi==2018.10.15      # Required by requests
+cffi==1.11.5
+chardet==3.0.4
+Click==7.0
+dictalchemy==0.1.2.7
+docutils==0.14
+Flask==1.0.2
+Flask-BabelEx==0.9.3
+Flask-Login==0.4.1
+Flask-Mail==0.9.1
+Flask-Migrate==2.3.0
+Flask-Principal==0.4.0
+Flask-Script==2.0.6
+Flask-Security==3.0.0
+Flask-SQLAlchemy==2.3.2
+Flask-SSLify==0.1.5
+Flask-WTF==0.14.2
+gitdb2==2.0.5
+GitPython==2.1.11
+globre==0.1.5
+gunicorn==19.9.0
+hurry.filesize==0.9
+idna==2.7
+itsdangerous==1.1.0
+Jinja2==2.10.1
+jmespath==0.9.3
+lxml==4.2.5
+Mako==1.0.7
+Markdown==3.0.1
+MarkupSafe==1.0
+passlib==1.7.1
+passwordmeter==0.1.8
+psycopg2-binary==2.7.5
+py-mini-racer==0.1.18
+py-trello==0.13.0
+pycparser==2.19
+python-dateutil==2.7.5  # Required by alembic
+python-dotenv==0.9.1
+python-editor==1.0.3
+python-slugify==1.2.6
+pytz==2018.7            # Required by Babel
+raven==6.9.0            # Client for Sentry, which does app monitoring
+requests==2.20.0
+s3transfer==0.1.13
+six==1.11.0             # Required by aadict
+smmap2==2.0.5
+speaklater==1.3
+SQLAlchemy==1.3.0
+sqreen>=1.13,<2.0
+Unidecode==1.0.22       # Required by python-slugify
+urllib3==1.24.2
+Werkzeug==0.15.3
+WTForms==2.2.1

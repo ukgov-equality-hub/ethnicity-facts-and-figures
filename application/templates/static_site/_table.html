@@ -30,7 +30,6 @@
               {% endif %}
           {% endfor %}
         </tr>
-
       {% endif %}
 
 
@@ -68,7 +67,6 @@
             {% endfor %}
 
           {% else %}
-
             {% for group_column in dimension.dimension_table.table_object.group_columns %}
                 {% set group_loop = loop %}
                 {% if group_column %}
@@ -77,7 +75,7 @@
                       <th role="columnheader"
                           scope="col"
                           class="govuk-table__header govuk-table__header--numeric govuk-!-font-weight-regular eff-table__header--dense eff-table__header--align-top  eff-table__cell--padding-left {{ th_class }}"
-                          aria-sort="none">{{ column }}</th>
+                          aria-sort="none"><span class="govuk-visually-hidden">{{group_column}} </span>{{ column }}</th>
                     {% endfor %}
                 {% endif %}
             {% endfor %}
@@ -156,6 +154,7 @@
   </table>
   </div></div></div>
 </div>
+
 <div class="table-footer">
 
     <p class="missing-data-explanation govuk-body govuk-!-margin-bottom-0">
