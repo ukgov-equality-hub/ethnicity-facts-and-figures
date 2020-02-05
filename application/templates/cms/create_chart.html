@@ -20,6 +20,20 @@
   </script>
 {% endblock %}
 
+<!-- On save success display back to link -->
+{% block displayNavigationLinkOnMessage %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category == "info" %}
+                    <a href="{{url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid)}}" class="govuk-back-link">Back to dimension</a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+
 {% block pageTitle %}{% if settings_and_source_data %}Edit{% else %}Create a{% endif %} chart – {{ measure_version.title }}: {{ dimension.title }}{% endblock %}
 
 
@@ -412,16 +426,16 @@
                     <h2 class="govuk-heading-m eff-numbered-sections__item">Preview</h2>
                     <div id="container" class="chart-container"></div>
 
-                    {% if 'UPDATE' in measure_version.available_actions %}
-                    <br>
-                    <div id="save_section" class="chart-builder-section hidden">
-                        <div class="govuk-!-padding-left-8">
-                            <button class="govuk-button" id="save">Save</button>
-                        </div>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
+
+            {% if 'UPDATE' in measure_version.available_actions %}
+                <div class="govuk-grid-column-one-third">
+                    <div id="save_section" class="chart-builder-section hidden">
+                        <button class="govuk-button" id="save">Save</button>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

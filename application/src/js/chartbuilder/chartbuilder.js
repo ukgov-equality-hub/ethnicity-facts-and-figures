@@ -361,6 +361,7 @@ $(document).ready(function () {
                     'ethnicityValues': getEthnicityValues(chart_data)}),
                 contentType: 'application/json',
                 success: function () {
+                    document.getElementById("breadcrumb").scrollIntoView();
                     location.reload();
                 }
             });

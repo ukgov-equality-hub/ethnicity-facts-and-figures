@@ -380,6 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }),
                 contentType: 'application/json',
                 success: function () {
+                    document.getElementById("breadcrumb").scrollIntoView();
                     location.reload();
                 }
             });

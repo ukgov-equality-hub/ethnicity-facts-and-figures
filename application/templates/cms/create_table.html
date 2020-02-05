@@ -22,6 +22,19 @@
 
 {% block pageTitle %}{% if settings_and_source_data %}Edit{% else %}Create a{% endif %} table – {{ measure_version.title }}: {{ dimension.title }}{% endblock %}
 
+<!-- On save success display back to link -->
+{% block displayNavigationLinkOnMessage %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category == "info" %}
+                    <a href="{{url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid)}}" class="govuk-back-link">Back to dimension</a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
 {% block content %}
     <div class="govuk-grid-row eff-numbered-sections">
         <div class="govuk-grid-column-full">
@@ -276,17 +289,16 @@
                     <div class="chart-builder-section">
                     </div>
                     <div id="container"></div>
-
-                    {% if 'UPDATE' in measure_version.available_actions %}
-                    <br>
-                    <div id="save_section" class="chart-builder-section" class="hidden">
-                        <div>
-                            <button class="govuk-button" id="save">Save</button>
-                        </div>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
+
+            {% if 'UPDATE' in measure_version.available_actions %}
+                <div id="save_section" class="chart-builder-section" class="hidden">
+                    <div>
+                        <button class="govuk-button" id="save">Save</button>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
