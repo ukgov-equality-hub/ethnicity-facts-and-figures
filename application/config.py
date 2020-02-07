@@ -102,6 +102,11 @@ class Config:
 
     NEWSLETTER_SUBSCRIBE_URL = os.environ.get("NEWSLETTER_SUBSCRIBE_URL")
 
+    # For RECAPTCHA
+    RECAPTCHA_USE_SSL = True
+    RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
+    RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
+
 
 class DevConfig(Config):
     DEBUG = True

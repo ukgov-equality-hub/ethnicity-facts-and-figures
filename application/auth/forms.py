@@ -1,6 +1,6 @@
 from flask_security.forms import LoginForm as FlaskSecurityLoginForm, Required
 from flask_security.utils import verify_password
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from wtforms.validators import DataRequired, Email
 
 from application.form_fields import RDUStringField, RDUPasswordField, RDUEmailField, ValidPublisherEmailAddress
@@ -16,11 +16,20 @@ class ForgotPasswordForm(FlaskForm):
             ValidPublisherEmailAddress(),
         ],
     )
+    recaptcha = RecaptchaField("ReCaptcha", validators=[Required(message="Enter all required details")])
+
+    def validate(self):
+        result = super().validate()
+
+        if result is False:
+            self.email.errors = ["Check your email address"]
+        return result
 
 
 class LoginForm(FlaskSecurityLoginForm):
     email = RDUStringField("Email", validators=[Required(message="Enter your email address")])
     password = RDUPasswordField("Password", validators=[Required(message="Enter your password")])
+    recaptcha = RecaptchaField("ReCaptcha", validators=[Required(message="Enter all required details")])
 
     def validate(self):
         result = super().validate()

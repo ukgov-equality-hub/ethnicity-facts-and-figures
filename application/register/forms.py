@@ -1,5 +1,6 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from wtforms.validators import DataRequired, Length, EqualTo
+from flask_security.forms import Required
 
 from application.form_fields import RDUPasswordField
 
@@ -20,3 +21,5 @@ class SetPasswordForm(FlaskForm):
             EqualTo("password", message="The passwords you entered do not match"),
         ],
     )
+
+    recaptcha = RecaptchaField("ReCaptcha", validators=[Required(message="Enter all required details")])

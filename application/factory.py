@@ -223,11 +223,13 @@ def get_content_security_policy(allow_google_custom_search=False):
         "default-src 'self';"
         "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com "
         "https://ajax.googleapis.com https://www.google-analytics.com "
+        "https://www.gstatic.com/ https://www.google.com/recaptcha/"
         "{additional_script_src} data:;"
         "connect-src 'self' https://www.google-analytics.com;"
         "style-src 'self' 'unsafe-inline' {additional_style_src};"
         "img-src 'self' https://www.google-analytics.com {additional_img_src};"
         "font-src 'self' data:;"
+        "frame-src https://www.gstatic.com/ https://www.google.com/recaptcha/"
         "{additional_other_src}"
     )
 

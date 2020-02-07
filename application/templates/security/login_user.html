@@ -26,7 +26,12 @@ prefix does not get added there. #}
 
             {{ login_user_form.next }}
 
-            {#                    So that the button gets displayed on its own line #}
+            {# So that the button gets displayed on its own line #}
+
+            <div class="govuk-!-margin-bottom-5">
+                {{ login_user_form.recaptcha }}
+            </div>
+
             <div class="govuk-body">
                 <button type="submit"
                         class="govuk-button"
