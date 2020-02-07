@@ -1,4 +1,3 @@
-
 {{ dimension.header if dimension.header is defined and dimension.header else '' }}
 
 {% set missing_data_sort_order_values = {
@@ -13,173 +12,196 @@
     <div class="">
 
       <div class="">
-    <table class="govuk-table govuk-!-margin-bottom-0 eff-table--sticky eff-table--padding-right-on-last-cell"
-           data-module="eff-truncated-table eff-sortable-headers"
-           role="grid"
-           aria-readonly="true">
-      <caption class="govuk-table__caption govuk-!-padding-bottom-3">{{ dimension.dimension_table.table_object.header }}</caption>
-    <thead class="govuk-table__head">
-
-      {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length > 1) %}
-
-        <tr class="govuk-table__row">
-          <td class="govuk-table__header eff-table__header--border-bottom-0 eff-table__header--border-right"> </td>
-          {% for group_column in dimension.dimension_table.table_object.group_columns %}
-              {% if group_column %}
-                  <th colspan="{{ dimension.dimension_table.table_object.columns|length }}" class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--border-bottom-0  {{ '' if loop.last else 'eff-table__header--border-right' }}">{{ group_column|safe }}</th>
-              {% endif %}
-          {% endfor %}
-        </tr>
-      {% endif %}
+        <table class="govuk-table govuk-!-margin-bottom-0 eff-table--sticky eff-table--padding-right-on-last-cell"
+               data-module="eff-truncated-table eff-sortable-headers"
+               role="grid"
+               aria-readonly="true">
+          <caption class="govuk-table__caption govuk-!-padding-bottom-3">
+            {{ dimension.dimension_table.table_object.header }}</caption>
 
 
-      {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length == 1) %}
-        {% set th_class = "eff-table__header--border-bottom-0 eff-table__header--align-top " %}
-      {% endif %}
+            {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length > 1) %}
+              <col>
+              {% for group_column in dimension.dimension_table.table_object.group_columns %}
+                  {% if group_column %}
+                  <colgroup span="{{ dimension.dimension_table.table_object.columns|length }}"></colgroup>
+                {% endif %}
+              {% endfor %}
 
-      <tr role="row">
-        <th role="columnheader"
-            scope="col"
-            class="govuk-table__header eff-table__header--border-right eff-table__header--dense eff-table__header--align-top
-                 {{ th_class | default('') }}"
-            aria-sort="none">
-            {% if dimension.dimension_table.table_object.category_caption is defined and dimension.dimension_table.table_object.category_caption %}
-                {{ dimension.dimension_table.table_object.category_caption }}
+              <thead class="govuk-table__head">
+
+              <tr class="govuk-table__row">
+                <td class="govuk-table__header eff-table__header--border-bottom-0 eff-table__header--border-right"> </td>
+                {% for group_column in dimension.dimension_table.table_object.group_columns %}
+                  {% if group_column %}
+                  <th colspan="{{ dimension.dimension_table.table_object.columns|length }}"
+                      scope='colgroup'
+                      class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--border-bottom-0  {{ '' if loop.last else 'eff-table__header--border-right' }}">
+                    {{ group_column|safe }}</th>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+
             {% else %}
-                {{ dimension.dimension_table.table_object.category }}
+              <thead class="govuk-table__head">
             {% endif %}
-        </th>
 
-        {% if dimension.dimension_table.table_object.type == "grouped" %}
 
-          {% if (dimension.dimension_table.table_object.columns|length == 1) %}
+            {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length == 1) %}
+              {% set th_class = "eff-table__header--border-bottom-0 eff-table__header--align-top " %}
+            {% endif %}
 
-            {% for group_column in dimension.dimension_table.table_object.group_columns %}
+            <tr role="row">
+              <th role="columnheader"
+                  scope="col"
+                  class="govuk-table__header eff-table__header--border-right eff-table__header--dense eff-table__header--align-top
+                 {{ th_class | default('') }}"
+                  aria-sort="none">
+                {% if dimension.dimension_table.table_object.category_caption is defined and dimension.dimension_table.table_object.category_caption %}
+                  {{ dimension.dimension_table.table_object.category_caption }}
+                {% else %}
+                  {{ dimension.dimension_table.table_object.category }}
+                {% endif %}
+              </th>
 
-                {% set th_class = "eff-table__header--border-right" if (loop.index != loop.length) else "" %}
+              {% if dimension.dimension_table.table_object.type == "grouped" %}
 
-                {% if group_column %}
+                {% if (dimension.dimension_table.table_object.columns|length == 1) %}
+
+                  {% for group_column in dimension.dimension_table.table_object.group_columns %}
+
+                    {% set th_class = "eff-table__header--border-right" if (loop.index != loop.length) else "" %}
+
+                    {% if group_column %}
                     <th role="columnheader"
                         scope="col"
                         class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--border-bottom-0   {{th_class}}"
                         aria-sort="none"> {{ group_column|safe }}</th>
-                {% endif %}
-            {% endfor %}
+                    {% endif %}
+                  {% endfor %}
 
-          {% else %}
-            {% for group_column in dimension.dimension_table.table_object.group_columns %}
-                {% set group_loop = loop %}
-                {% if group_column %}
-                    {% for column in dimension.dimension_table.table_object.columns %}
-                      {% set th_class = "eff-table__header--border-right" if loop.last and (group_loop.index != group_loop.length) else "" %}
-                      <th role="columnheader"
-                          scope="col"
-                          class="govuk-table__header govuk-table__header--numeric govuk-!-font-weight-regular eff-table__header--dense eff-table__header--align-top  eff-table__cell--padding-left {{ th_class }}"
-                          aria-sort="none"><span class="govuk-visually-hidden">{{group_column}} </span>{{ column }}</th>
+                {% else %}
+                  {% for group_column in dimension.dimension_table.table_object.group_columns %}
+                    {% set group_loop = loop %}
+                    {% if group_column %}
+                      {% for column in dimension.dimension_table.table_object.columns %}
+                        {% set th_class = "eff-table__header--border-right" if loop.last and (group_loop.index != group_loop.length) else "" %}
+                        <th role="columnheader"
+                            scope="col"
+                            class="govuk-table__header govuk-table__header--numeric govuk-!-font-weight-regular eff-table__header--dense eff-table__header--align-top  eff-table__cell--padding-left {{ th_class }}"
+                            aria-sort="none"><span class="sr-only">{{group_column}} </span>{{ column }}</th>
+                        {% endfor %}
+                      {% endif %}
                     {% endfor %}
                 {% endif %}
-            {% endfor %}
-          {% endif %}
-        {% else %}
-          {% for text in dimension.dimension_table.table_object.columns %}
-          <th role="columnheader"
-              scope="col"
-              aria-sort="none"
-              class="govuk-table__header govuk-table__header--numeric eff-table__cell--padding-left eff-table__header--dense">
-            {{ text|safe }}
-          </th>
-          {% endfor %}
-
-        {% endif %}
-      </tr>
-
-      {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length == 1) %}
-        {% for heading in dimension.dimension_table.table_object.columns %}
-          {% if heading != '' %}
-            <tr class="govuk-table__row">
-              <td class="govuk-table__cell eff-table__cell--border-right "></td>
-              {% for group_column in dimension.dimension_table.table_object.group_columns %}
-                {% set th_class = "eff-table__header--border-right" if (loop.index != loop.length) else "" %}
-
-                {% if group_column %}
-                  <th class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top  {{th_class}}"> {{ heading }}</th>
-                {% endif %}
-              {% endfor %}
-            </tr>
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-
-    </thead>
-    <tbody>
-      {% for data in dimension.dimension_table.table_object.data %}
-        {% set next_row = dimension.dimension_table.table_object.data[loop.index0 + 1] %}
-        <tr class="govuk-table__row">
-          {% set row_loop = loop %}
-          {% for value in data['values'] %}
-            {% set sort_value = value %}
-
-            {% if data.sort_values is defined and data.sort_values %}
-              {% if data.sort_values[loop.index0] in missing_data_sort_order_values %}
-                {% set sort_value = missing_data_sort_order_values[data.sort_values[loop.index0]] %}
-              {% elif data.sort_values[loop.index0] %}
-                {% set sort_value = data.sort_values[loop.index0] %}
+              {% else %}
+                {% for text in dimension.dimension_table.table_object.columns %}
+                <th role="columnheader"
+                    scope="col"
+                    aria-sort="none"
+                    class="govuk-table__header govuk-table__header--numeric eff-table__cell--padding-left eff-table__header--dense">
+                  {{ text|safe }}
+                </th>
+                {% endfor %}
               {% endif %}
+            </tr>
+
+            {% if (dimension.dimension_table.table_object.type == "grouped") and (dimension.dimension_table.table_object.columns|length == 1) %}
+              {% for heading in dimension.dimension_table.table_object.columns %}
+                {% if heading != '' %}
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell eff-table__cell--border-right "></td>
+                  {% for group_column in dimension.dimension_table.table_object.group_columns %}
+                    {% set th_class = "eff-table__header--border-right" if (loop.index != loop.length) else "" %}
+
+                    {% if group_column %}
+                    <th
+                        class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top  {{th_class}}">
+                      {{ heading }}</th>
+                    {% endif %}
+                  {% endfor %}
+                  </tr>
+                  {% endif %}
+                {% endfor %}
             {% endif %}
+          </thead>
 
-            {% if loop.first %}
-              {% set data_order = data.order if data.order is defined and data.order else row_loop.index0 %}
-              {% set row_scope = 'rowgroup' if data.relationships is defined and data.relationships.is_parent else 'row' %}
-
-              {% set th_class = 'eff-table__header--child' if dimension.dimension_table.table_object.parent_child is defined and dimension.dimension_table.table_object.parent_child and not data.relationships.is_parent else '' %}
-              <th class="govuk-table__header eff-table__header--border-right eff-table__header--dense {{ th_class }}"
-                  data-sort-value="{{ data_order }}"
-                  scope="{{ row_scope }}"
-                  role="rowheader">{% if data.category is defined %}{{ data.category }}{% endif %}</th>
-            {% endif %}
-
-            {# We only want the 'eff-table-__header-border-right' class on the last column within each group #}
-            {% set td_class = "eff-table__header--border-right" if ((loop.index != loop.length) and (loop.index % (dimension.dimension_table.table_object.columns|length) == 0)) else "" %}
-
-            <td role="gridcell" data-sort-value="{{sort_value}}" class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--padding-left eff-table__cell--dense {{ td_class }}">{{ value|value_filter|safe }}</td>
-          {% endfor %}
-        </tr>
-
-        {% if next_row is defined and next_row.relationships is defined and next_row.relationships.is_parent %}
-          </tbody>
           <tbody>
-        {% endif %}
-      {% endfor %}
-    </tbody>
-  </table>
-  </div></div></div>
+            {% for data in dimension.dimension_table.table_object.data %}
+              {% set next_row = dimension.dimension_table.table_object.data[loop.index0 + 1] %}
+              <tr class="govuk-table__row">
+                {% set row_loop = loop %}
+                {% for value in data['values'] %}
+                  {% set sort_value = value %}
+
+                  {% if data.sort_values is defined and data.sort_values %}
+                    {% if data.sort_values[loop.index0] in missing_data_sort_order_values %}
+                      {% set sort_value = missing_data_sort_order_values[data.sort_values[loop.index0]] %}
+                    {% elif data.sort_values[loop.index0] %}
+                      {% set sort_value = data.sort_values[loop.index0] %}
+                    {% endif %}
+                  {% endif %}
+
+                  {% if loop.first %}
+                    {% set data_order = data.order if data.order is defined and data.order else row_loop.index0 %}
+                    {% set row_scope = 'rowgroup' if data.relationships is defined and data.relationships.is_parent else 'row' %}
+
+                    {% set th_class = 'eff-table__header--child' if dimension.dimension_table.table_object.parent_child is defined and dimension.dimension_table.table_object.parent_child and not data.relationships.is_parent else '' %}
+                    <th class="govuk-table__header eff-table__header--border-right eff-table__header--dense {{ th_class }}"
+                        data-sort-value="{{ data_order }}"
+                        scope="{{ row_scope }}"
+                        role="rowheader">{% if data.category is defined %}{{ data.category }}{% endif %}</th>
+                  {% endif %}
+
+                  {# We only want the 'eff-table-__header-border-right' class on the last column within each group #}
+                  {% set td_class = "eff-table__header--border-right" if ((loop.index != loop.length) and (loop.index % (dimension.dimension_table.table_object.columns|length) == 0)) else "" %}
+
+                  <td role="gridcell"
+                      data-sort-value="{{sort_value}}"
+                      class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--padding-left eff-table__cell--dense {{ td_class }}">
+                    {{ value|value_filter|safe }}</td>
+                {% endfor %}
+              </tr>
+
+              {% if next_row is defined and next_row.relationships is defined and next_row.relationships.is_parent %}
+                </tbody>
+                <tbody>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="table-footer">
 
-    <p class="missing-data-explanation govuk-body govuk-!-margin-bottom-0">
-        {% set table_data = dimension.dimension_table.table_object.data | flatten %}
+  <p class="missing-data-explanation govuk-body govuk-!-margin-bottom-0">
+    {% set table_data = dimension.dimension_table.table_object.data | flatten %}
 
-        {% if "N/A" in table_data or "n/a" in table_data %}
-            <span class="explanation"><sup>*</sup> Not applicable</span>
-        {% endif %}
-
-        {% if "-" in table_data %}
-            <span class="explanation"><span class="missing-data not-collected"></span> Data not collected</span>
-        {% endif %}
-
-        {% if "!" in table_data %}
-            <span class="explanation"><span class="missing-data confidential"></span> Data withheld to protect confidentiality</span>
-        {% endif %}
-
-        {% if "?" in table_data %}
-            <span class="explanation"><span class="missing-data sample-too-small"></span> Data withheld because a small sample size makes it unreliable</span>
-        {% endif %}
-
-    </p>
-
-    {% if dimension.dimension_table.table_object.footer %}
-      <p>{{ dimension.dimension_table.table_object.footer }}</p>
+    {% if "N/A" in table_data or "n/a" in table_data %}
+      <span class="explanation"><sup>*</sup> Not applicable</span>
     {% endif %}
+
+    {% if "-" in table_data %}
+      <span class="explanation"><span class="missing-data not-collected"></span> Data not collected</span>
+    {% endif %}
+
+    {% if "!" in table_data %}
+      <span class="explanation"><span class="missing-data confidential"></span> Data withheld to protect
+        confidentiality</span>
+    {% endif %}
+
+    {% if "?" in table_data %}
+      <span class="explanation"><span class="missing-data sample-too-small"></span> Data withheld because a small sample
+        size makes it unreliable</span>
+    {% endif %}
+
+  </p>
+
+  {% if dimension.dimension_table.table_object.footer %}
+    <p>{{ dimension.dimension_table.table_object.footer }}</p>
+  {% endif %}
 
 </div>

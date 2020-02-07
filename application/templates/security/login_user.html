@@ -12,30 +12,34 @@ prefix does not get added there. #}
 {% block nav_home %}active{% endblock %}
 
 {% block content %}
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-half">
-                <h1 class="govuk-heading-xl">Login</h1>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <h1 class="govuk-heading-xl">Login</h1>
 
-                <form action="{{ url_for('security.login') }}" method="post">
-                    {{ login_user_form.csrf_token | default('') }}
+        <form action="{{ url_for('security.login') }}"
+              method="post">
+            {{ login_user_form.csrf_token | default('') }}
 
-                    {{ login_user_form.email }}
+            {{ login_user_form.email }}
 
-                    {{ login_user_form.password(autocomplete='off') }}
+            {{ login_user_form.password(autocomplete='off') }}
 
-                    {{ login_user_form.next }}
+            {{ login_user_form.next }}
 
-{#                    So that the button gets displayed on its own line #}
-                    <div class="govuk-body">
-                      <button type="submit" class="govuk-button" name="login">Login</button>
-                    </div>
-                </form>
+            {#                    So that the button gets displayed on its own line #}
+            <div class="govuk-body">
+                <button type="submit"
+                        class="govuk-button"
+                        name="login">Login</button>
+            </div>
+        </form>
 
-                <div class="govuk-body">
-                    <a class="govuk-link" href="{{ url_for('auth.forgot_password') }}">Forgotten password</a>
-                </div>
+        <div class="govuk-body">
+            <a class="govuk-link"
+               href="{{ url_for('auth.forgot_password') }}">Forgotten password</a>
+        </div>
 
 
-            </div><!-- columns -->
-        </div><!-- row -->
+    </div><!-- columns -->
+</div><!-- row -->
 {% endblock %}
