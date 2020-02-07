@@ -107,7 +107,14 @@
     },
     "TRELLO_API_TOKEN": {
       "required": true
+    },
+    "RECAPTCHA_PRIVATE_KEY": {
+      "required": true
+    },
+    "RECAPTCHA_PUBLIC_KEY": {
+      "required": true
     }
+
   },
   "formation": {
   },
