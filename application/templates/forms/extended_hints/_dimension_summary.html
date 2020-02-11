@@ -1,11 +1,32 @@
 {% from "_macros/_details.html" import govukDetails %}
 
+
+{% set summary %}
+  What to include <span class="govuk-visually-hidden">for summary</span>
+{% endset %}
+
+{% set details %}
+  <ul class="govuk-list govuk-list--bullet">
+    <li>the time period the data covers (in the first bullet point)</li>
+    <li>definitions of any terms users might not understand</li>
+    <li>details of any serious issues with data quality</li>
+  </ul>
+{% endset %}
+
+{{ govukDetails(
+  summaryText=summary,
+  html=details,
+  classes="govuk-!-margin-bottom-4"
+) }}
+
+
 {% set html %}
   <p class="govuk-body">This data shows that:</p>
   <ul class="govuk-list govuk-list--bullet">
-    <li>in 2014 to 2017, 680,000 (3%) of the 23 million households in England were overcrowded (that is, they had fewer bedrooms than they needed to avoid undesirable sharing)</li>
-    <li>Bangladeshi households had the highest rate of overcrowding, at 30% (around 37,000 households)</li>
-    <li>2% of White British households (around 306,000 households) lived in an overcrowded home</li>
+    <li>63% of households in England owned their own homes in the 2 years from 2016 to 2018</li>
+    <li>17% of households in England lived in social housing (they rented their home from a local authority or housing association)</li>
+    <li>Gypsy and Roma, and Traveller of Irish Heritage pupils had the highest school exclusion rates (both permanent and temporary) in the 2017 to 2018 school year</li>
+    <li>the percentage of prison officers who didn’t state their ethnicity went up from 9.8% to 30.1%, in part due to changes in data collection from new staff</li>
   </ul>
 {% endset %}
 

@@ -35,7 +35,10 @@
                 </form>
 
                     <div id="charts">
-                        <h2 class="govuk-heading-m">Charts & Tables</h2>
+                        <h2 class="govuk-heading-m">Charts and tables</h2>
+                        <span class="govuk-hint">Always include a table.</span>
+                        <p class="govuk-body govuk-hint">You should usually add a chart except for when the data is too complex (for example, data broken down by local authority).</p>
+
                         <table class="govuk-table">
                           <tbody class="govuk-table__body">
                             {% if dimension.dimension_chart and dimension.dimension_chart.chart_object is not none and dimension.dimension_chart.chart_object != '""' %}

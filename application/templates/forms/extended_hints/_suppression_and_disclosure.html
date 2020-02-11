@@ -1,11 +1,18 @@
 {% from "_macros/_details.html" import govukDetails %}
 
 {% set summaryHtml %}
-  Example <span class="govuk-visually-hidden">suppression rules and disclosure control</span>
+  Examples <span class="govuk-visually-hidden">suppression rules and disclosure control</span>
 {% endset %}
+
+
+{% set html %}
+  <p>Estimates based on fewer than 30 responses have been excluded to protect people’s confidentiality.</p>
+  <p>Figures for 12 Muslim and Sikh schools have been excluded. This is because the small number of pupils involved means we can’t make reliable generalisations about them.</p>
+{% endset %}
+
 
 {{ govukDetails(
   summaryText=summaryHtml,
-  text="Estimates based on fewer than 30 households have not been included in these statistics, because small numbers of households make it impossible to draw meaningful conclusions.",
+  html=html,
   classes="govuk-!-margin-bottom-4"
 ) }}
