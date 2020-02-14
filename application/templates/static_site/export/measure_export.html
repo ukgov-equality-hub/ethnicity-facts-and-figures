@@ -47,7 +47,7 @@
         <div id="data-source-1-title">
             <p class="govuk-heading-s govuk-!-margin-bottom-1">Title of data source</p>
             <p class="govuk-body">
-                {% if measure_version.primary_data_source %}
+                {% if measure_version.primary_data_source and measure_version.primary_data_source.title %}
                     {{ measure_version.primary_data_source.title }}
                 {% else %}
                     {{ field_empty_string }}
@@ -58,7 +58,7 @@
         <div id="data-source-1-publisher_id">
             <p class="govuk-heading-s govuk-!-margin-bottom-1">Source data published by</p>
             <p class="govuk-body">
-                {% if measure_version.primary_data_source.publisher %}
+                {% if measure_version.primary_data_source and measure_version.primary_data_source.publisher %}
                     {{ measure_version.primary_data_source.publisher.name }}
                 {% else %}
                     {{ field_empty_string }}
