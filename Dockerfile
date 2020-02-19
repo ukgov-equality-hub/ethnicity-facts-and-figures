@@ -32,18 +32,13 @@ EXPOSE 5000
 RUN mkdir -p /app/
 WORKDIR /app
 
+RUN pip install --upgrade pip
+
 ADD requirements.txt requirements.txt
 ADD requirements-test.txt requirements-test.txt
 RUN pip install --no-cache-dir -r requirements-test.txt
 
 ADD . /app/
-
-# Testing dependencies
-# RUN pip install black
-# RUN pip install flake8
-# RUN pip install -U pytest
-# RUN pip install coverage
-# RUN pip install coveralls
 
 RUN pip install pre-commit
 RUN pre-commit install --install-hooks

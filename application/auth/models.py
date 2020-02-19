@@ -55,6 +55,12 @@ class User(db.Model, RoleFreeUserMixin):
     confirmed_at = db.Column(db.DateTime())
     user_type = db.Column(db.Enum(TypeOfUser, name="type_of_user_types"), nullable=False)
     capabilities = db.Column(MutableList.as_mutable(ARRAY(db.String)), default=[])
+    last_login_at = db.Column(db.DateTime())
+    current_login_at = db.Column(db.DateTime())
+    last_login_ip = db.Column(db.String(16))
+    current_login_ip = db.Column(db.String(16))
+    login_count = db.Column(db.Integer)
+    failed_login_count = db.Column(db.Integer, default=0)
 
     # relationships
     measures = db.relationship(
@@ -98,3 +104,13 @@ class User(db.Model, RoleFreeUserMixin):
                 return True
             else:
                 return False
+
+
+class UserAttemptedToLogin(db.Model, RoleFreeUserMixin):
+    __tablename__ = "invalid_user_login_attempt"
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255))
+    password = db.Column(db.String(255))
+    ip = db.Column(db.String(16))
+    failed_login_count = db.Column(db.Integer, default=0)
