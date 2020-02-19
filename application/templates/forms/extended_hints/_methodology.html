@@ -1,20 +1,17 @@
-
 {% from "_macros/_details.html" import govukDetails %}
 
 {% set html %}
-  <p class="govuk-body">Give information about:</p>
-  <ul class="govuk-list govuk-list--bullet">
-      <li>sample sizes</li>
-      <li>sample selection and possible biases</li>
-      <li>collection methods</li>
-      <li>response rates</li>
-      <li>significance tests and age standardisation</li>
-  </ul>
-  <p class="govuk-body">Find example wording in the <a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z" target="_blank" class="govuk-link">style guide</a> (this will open a new page).</p>
+<ul class="govuk-list govuk-list--bullet">
+  <li>sample sizes</li>
+  <li>sample selection and possible biases</li>
+  <li>collection methods</li>
+  <li>response rates</li>
+  <li>significance tests and age standardisation</li>
+</ul>
 {% endset %}
 
 {% set summaryHtml %}
-  Examples <span class="govuk-visually-hidden">for methodology</span>
+What to include <span class="govuk-visually-hidden">for methodology</span>
 {% endset %}
 
 {{ govukDetails(
@@ -23,13 +20,35 @@
   classes="govuk-!-margin-bottom-4"
 ) }}
 
-<p class="govuk-body">Weighting (optional)<br><span class="govuk-hint">If weighting has been applied, explain how</span></p>
 
-<p class="govuk-body">
-    Confidence intervals (optional)<br>
-    <span class="govuk-hint">
-        If the data includes confidence intervals, explain them by adapting the
-        <a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z#confidence-intervals" target="_blank" class="govuk-link">example wording</a>
-        (this will open a new page)
-    </span>
-</p>
+{% set weightingHtml %}
+<p class="govuk-body">Give details of any weighting specific to this data source and measure.</p>
+<p class="govuk-body">Copy and paste this content if you need to:</p>
+<p class="govuk-body">[Download the data](#download-the-data) to see unweighted samples.</p>
+{% endset %}
+
+{% set weightingSummary %}
+Weighting (optional) <span class="govuk-visually-hidden">for methodology</span>
+{% endset %}
+
+{{ govukDetails(
+  summaryText=weightingSummary,
+  html=weightingHtml,
+  classes="govuk-!-margin-bottom-4"
+) }}
+
+
+{% set confidenceHtml %}
+<p class="govuk-body">Copy and paste this content if confidence intervals are available in the data download:</p>
+<p class="govuk-body">[Download the data](#download-the-data) to see confidence intervals for the estimates on this page. You can read more about [how confidence intervals are used](/methodology/reading-survey-data#confidence-intervals) to judge the reliability of survey data.</p>
+{% endset %}
+
+{% set confidenceSummary %}
+Confidence intervals (optional) <span class="govuk-visually-hidden">for methodology</span>
+{% endset %}
+
+{{ govukDetails(
+  summaryText=confidenceSummary,
+  html=confidenceHtml,
+  classes="govuk-!-margin-bottom-4"
+) }}

@@ -175,7 +175,7 @@ class MeasureVersionForm(FlaskForm):
     time_covered = RDUStringField(
         label="Time period covered",
         validators=[RequiredForReviewValidator(message="Enter the time period covered")],
-        hint="For example, ‘2016 to 2017’, or ‘2014/15 to 2016/17’",
+        extended_hint="_time_period_covered.html",
     )
 
     area_covered = RDUCheckboxField(
@@ -189,7 +189,7 @@ class MeasureVersionForm(FlaskForm):
     )
     suppression_and_disclosure = RDUTextAreaField(
         label="Suppression rules and disclosure control (optional)",
-        hint="If any data has been excluded from the analysis, explain why",
+        hint="If any data has been excluded from the analysis, explain why.",
         extended_hint="_suppression_and_disclosure.html",
     )
     estimation = RDUTextAreaField(
@@ -199,7 +199,23 @@ class MeasureVersionForm(FlaskForm):
     summary = RDUTextAreaField(
         label="Main points",
         validators=[RequiredForReviewValidator(message="Enter the main points")],
-        hint="Summarise the main findings and highlight any serious caveats in the quality of the data",
+        hint=Markup(
+            "<p class='govuk-body govuk-hint'>Summarise the main findings. Don’t include contextual information.</p>"
+            "<details class='govuk-details' data-module='govuk-details'>"
+            "<summary class='govuk-details__summary'>"
+            "<span class='govuk-details__summary-text'>"
+            "What to include"
+            "</span>"
+            "</summary>"
+            "<div class='govuk-details__text'>"
+            "<ul class='govuk-list govuk-list--bullet'>"
+            "<li>the time period the data covers (in the first bullet point)</li>"
+            "<li>definitions of any terms users might not understand</li>"
+            "<li>details of any serious issues with data quality</li>"
+            "</ul>"
+            "</div>"
+            "</details>"
+        ),
         extended_hint="_summary.html",
     )
 
@@ -234,17 +250,30 @@ class MeasureVersionForm(FlaskForm):
         label="The ethnic categories used in this data",
         validators=[RequiredForReviewValidator(message="List the ethnic categories used in the data")],
         hint=Markup(
-            "Say which ethnic groups are included in the data and why. "
-            "For the most common ethnic categorisations, see the "
-            '<a href="https://guide.ethnicity-facts-figures.service.gov.uk/a-z#ethnic-categories" target="_blank"'
-            'class="govuk-link">Style guide A to Z</a> (this will open a new page).'
+            "Only use this section to explain if:"
+            "<ul class='govuk-list govuk-list--bullet govuk-hint'>"
+            "<li>the standardised list of 18 ethnic groups isn’t being used (ONS 2011)</li>"
+            "<li>there's only data for broad ethnic groups, not specific groups</li>"
+            "<li>there are different ethnic classifications used in the same measure page</li>"
+            "</ul>"
+            "<details class='govuk-details' data-module='govuk-details'>"
+            "<summary class='govuk-details__summary'>"
+            "<span class='govuk-details__summary-text'>"
+            "Example"
+            "</span>"
+            "</summary>"
+            "<div class='govuk-details__text'>"
+            "The number of people surveyed was too small to make reliable generalisations about specific ethnic groups."
+            "So the data is broken down into [number] aggregated ethnic groups."
+            "</div>"
+            "</details>"
         ),
     )
 
     methodology = RDUTextAreaField(
         label="Methodology",
         validators=[RequiredForReviewValidator(message="Enter the data’s methodology")],
-        hint="Explain your methods in clear, simple language",
+        hint="Explain in clear, simple language how the data was collected and processed.",
         extended_hint="_methodology.html",
     )
     related_publications = RDUTextAreaField(
@@ -341,7 +370,7 @@ class DimensionForm(FlaskForm):
         hint="For example, ‘By ethnicity and gender’",
         validators=[DataRequired(message="Enter the dimension title")],
     )
-    time_period = RDUStringField(label="Time period covered", hint="For example, ‘2015/16’")
+    time_period = RDUStringField(label="Time period covered", extended_hint="_time_period_covered.html")
     summary = RDUTextAreaField(label="Summary", extended_hint="_dimension_summary.html")
 
     def __init__(self, *args, **kwargs):
