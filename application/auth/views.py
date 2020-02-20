@@ -76,8 +76,7 @@ def reset_password(token):
         if strength < 0.7 or stats.length < 10 or stats.sequences_length > 1 or stats.weakness_factor:
             flash(
                 """Your password is too weak. It has to be at least 10 characters long and use a mix of numbers, special
-                characters as well as upper and lowercase letters. Avoid using common patterns and repeated characters.
-                """,
+ characters as well as upper and lowercase letters. Avoid using common patterns and repeated characters.""",
                 "error",
             )
             return render_template("auth/reset_password.html", form=SetPasswordForm(), token=token, user=user)
