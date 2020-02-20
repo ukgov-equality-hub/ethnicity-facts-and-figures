@@ -76,6 +76,8 @@ class LoginForm(FlaskSecurityLoginForm):
         if self.user.failed_login_count >= 3:
             self.user.active = False
             send_reactivation_email(self.user.email, current_app)
+            # limit failed counter to max 3 as aws kills the response in 30 seconds
+            self.user.failed_login_count = 3
 
         db.session.commit()
 
