@@ -198,7 +198,9 @@ def test_reset_password_rejects_easy_password(app, test_app_client):
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert (
         page.find("div", class_="eff-flash-message__body").text.strip()
-        == "Your password is too weak. Use a mix of numbers as well as upper and lowercase letters"
+        == """Your password is too weak. It has to be at least 10 characters long and use a mix of numbers, special
+                characters as well as upper and lowercase letters. Avoid using common patterns and repeated characters.
+                """
     )
 
 

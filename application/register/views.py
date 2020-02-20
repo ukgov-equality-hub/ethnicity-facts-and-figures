@@ -10,6 +10,7 @@ from application.auth.models import User
 from application.register import register_blueprint
 from application.register.forms import SetPasswordForm
 from application.utils import check_token
+from password_strength import PasswordStats
 
 
 @register_blueprint.route("/confirm-account/<token>", methods=["GET", "POST"])
@@ -36,8 +37,14 @@ def confirm_account(token):
 
         meter = passwordmeter.Meter(settings=dict(factors="length,variety,phrase,notword,casemix"))
         strength, improvements = meter.test(password)
-        if strength < 0.7:
-            flash("Your password is too weak. Use a mix of numbers as well as upper and lowercase letters", "error")
+        stats = PasswordStats(password)
+        if strength < 0.7 or stats.length < 10 or stats.sequences_length > 1 or stats.weakness_factor:
+            flash(
+                """Your password is too weak. It has to be at least 10 characters long and use a mix of numbers, special
+                characters as well as upper and lowercase letters. Avoid using common patterns and repeated characters.
+                """,
+                "error",
+            )
             return render_template("register/set_account_password.html", form=SetPasswordForm(), token=token, user=user)
 
         user.active = True

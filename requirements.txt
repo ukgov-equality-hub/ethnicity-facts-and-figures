@@ -62,3 +62,4 @@ Unidecode==1.0.22       # Required by python-slugify
 urllib3==1.24.2
 Werkzeug==0.15.3
 WTForms==2.2.1
+password-strength>=0.0.3.post2

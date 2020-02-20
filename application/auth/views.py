@@ -11,6 +11,7 @@ from application import mail, db
 from application.auth.models import User
 from application.register.forms import SetPasswordForm
 from application.utils import generate_token, check_token
+from password_strength import PasswordStats
 
 
 @auth_blueprint.route("/forgot", methods=["GET", "POST"])
@@ -71,8 +72,14 @@ def reset_password(token):
 
         meter = passwordmeter.Meter(settings=dict(factors="length,variety,phrase,notword,casemix"))
         strength, improvements = meter.test(password)
-        if strength < 0.7:
-            flash("Your password is too weak. Use a mix of numbers as well as upper and lowercase letters", "error")
+        stats = PasswordStats(password)
+        if strength < 0.7 or stats.length < 10 or stats.sequences_length > 1 or stats.weakness_factor:
+            flash(
+                """Your password is too weak. It has to be at least 10 characters long and use a mix of numbers, special
+                characters as well as upper and lowercase letters. Avoid using common patterns and repeated characters.
+                """,
+                "error",
+            )
             return render_template("auth/reset_password.html", form=SetPasswordForm(), token=token, user=user)
 
         user.password = hash_password(password)
