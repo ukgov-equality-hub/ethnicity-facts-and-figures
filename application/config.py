@@ -41,6 +41,7 @@ class Config:
     SECURITY_PASSWORD_HASH = "bcrypt"
     SECURITY_URL_PREFIX = "/auth"
     SECURITY_EMAIL_SENDER = "noreply@ethnicity-facts-figures.service.gov.uk"
+    SECURITY_TRACKABLE = True
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     RESEARCH = get_bool(os.environ.get("RESEARCH", False))

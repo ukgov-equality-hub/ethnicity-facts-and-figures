@@ -136,7 +136,7 @@ def create_and_send_activation_email(email, app, devmode=False):
     if devmode:
         return confirmation_url
 
-    html = render_template("admin/confirm_account.html", confirmation_url=confirmation_url, user=current_user)
+    html = render_template("admin/confirm_account.html", confirmation_url=confirmation_url, user=email)
     try:
         send_email(
             app.config["RDU_EMAIL"], email, html, "Access to the Ethnicity Facts and Figures content management system"
@@ -144,6 +144,22 @@ def create_and_send_activation_email(email, app, devmode=False):
         flash("User account invite sent to: %s." % email)
     except Exception as ex:
         flash("Failed to send invite to: %s" % email, "error")
+        app.logger.error(ex)
+
+
+def send_reactivation_email(email, app, devmode=False):
+    token = generate_token(email, app)
+    confirmation_url = url_for("register.confirm_account", token=token, _external=True)
+
+    if devmode:
+        return confirmation_url
+
+    html = render_template("admin/reactivate_account.html", confirmation_url=confirmation_url, user=email)
+    try:
+        send_email(
+            app.config["RDU_EMAIL"], email, html, "Your Ethnicity facts and figures account has been deactivated"
+        )
+    except Exception as ex:
         app.logger.error(ex)
 
 
