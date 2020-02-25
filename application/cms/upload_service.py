@@ -52,7 +52,7 @@ class UploadService(Service):
                     break
             detector.close()
             encoding = detector.result.get("encoding")
-        valid_encodings = ["ASCII", "UTF-8"]
+        valid_encodings = ["ASCII", "UTF-8", "UTF-8-SIG"]
 
         if encoding is None:
             message = "Please check that you are uploading a CSV file."
