@@ -50,7 +50,7 @@
 
       {{ render_value_label(data.total_page_count_each_week|first, 0, x_scale, y_scale, graph_height, unit='pages')  }}
 
-      {{ render_value_label(data.total_page_count_each_week|last, (data.total_page_count_each_week|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=-13, unit='pages')  }}
+      {{ render_value_label(data.total_page_count_each_week|last, (data.total_page_count_each_week|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=-5, unit='pages')  }}
 
 
       {# Cumulative number of major updates (starting with the first one) #}
@@ -59,7 +59,7 @@
 
       {{ render_value_circles(data.total_major_updates_count_each_week, x_scale, y_scale, graph_height, colour='#28A197', start_index=data.total_major_updates_count_each_week|index_of_last_initial_zero) }}
 
-      {{ render_value_label(data.total_major_updates_count_each_week|last, (data.total_major_updates_count_each_week|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=50, unit='updates')  }}
+      {{ render_value_label(data.total_major_updates_count_each_week|last, (data.total_major_updates_count_each_week|length - 1), x_scale, y_scale, graph_height, text_anchor='end', vertical_offset=2, unit='updates')  }}
 
     </g>
 
