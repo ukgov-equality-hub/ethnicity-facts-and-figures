@@ -104,7 +104,10 @@ function barchartHighchartObject(chartObject) {
             enabled: false
         },
         legend: {
-            enabled: (chartObject.series.length > 1)
+            enabled: (chartObject.series.length > 1),
+            itemHiddenStyle: {
+                color: '#767676'
+            }
         },
         plotOptions: {
             bar: {
@@ -275,7 +278,10 @@ function componentChart(container_id, chartObject) {
             max: 100
         },
         legend: {
-            reversed: true
+            reversed: true,
+            itemHiddenStyle: {
+                color: '#767676'
+            }
         },
         plotOptions: {
             series: {
@@ -436,7 +442,10 @@ function smallBarchart(container_id, chartObject, max) {
                 enabled: false
             },
             legend: {
-                enabled: (chartObject.series.length > 1)
+                enabled: (chartObject.series.length > 1),
+                itemHiddenStyle: {
+                    color: '#767676'
+                }
             },
             plotOptions: {
                 bar: {
@@ -597,7 +606,10 @@ function smallLinechart(container_id, chartObject, max, min) {
             useHTML: true
         },
         legend: {
-            enabled: false
+            enabled: false,
+            itemHiddenStyle: {
+                color: '#767676'
+            }
         },
         xAxis: {
             categories: chartObject.xAxis.categories,
