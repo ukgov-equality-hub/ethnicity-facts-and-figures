@@ -50,8 +50,10 @@ gulp.task('compile-js-charts', function (cb) {
   pump([
     gulp.src([
       './application/src/js/charts/vendor/underscore-min.js',
-      './application/src/js/charts/vendor/highcharts.js',
-      './application/src/js/charts/vendor/highcharts-exporting.js',
+      './application/src/js/charts/vendor/highcharts/v5/highcharts.js',
+      './application/src/js/charts/vendor/highcharts/v5/exporting.js',
+      './application/src/js/charts/vendor/highcharts/v5/export-data.js',
+      './application/src/js/charts/vendor/highcharts/v5/accessibility.js',
       './application/src/js/charts/rd-graph.js',
       './application/src/js/charts/rd-data-tools.js'
     ]),
