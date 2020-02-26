@@ -189,6 +189,7 @@ function linechartHighchartObject(chartObject) {
 
     for(var i = 0; i < chartObject.series.length; i++) {
         chartObject.series[i].marker = { symbol: 'circle' };
+        chartObject.series[i].dashStyle = 'longdash';
     }
 
     if(chartObject.number_format.min !== '') {
@@ -577,6 +578,7 @@ function smallLinechart(container_id, chartObject, max, min) {
 
     for(var i = 0; i < chartObject.series.length; i++) {
         chartObject.series[i].marker = { symbol: 'circle' };
+        chartObject.series[i].dashStyle = 'ShortDash';
     }
 
     if(chartObject.number_format.min !== '') {
