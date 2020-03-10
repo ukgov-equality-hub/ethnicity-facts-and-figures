@@ -245,3 +245,13 @@ def corrections():
     return render_template(
         "static_site/corrections.html", measure_versions_with_corrections=measure_versions_with_corrections
     )
+
+
+@static_site_blueprint.route("/understand-the-data")
+def understand_the_data():
+    return render_template("static_site/understand_the_data/index.html")
+
+
+@static_site_blueprint.route("/understand-the-data/reading-survey-data")
+def reading_survey_data():
+    return render_template("static_site/understand_the_data/reading_survey_data.html")
