@@ -106,11 +106,10 @@
       </h1>
 
       {%  if measure_version.first_published_date %}
-        <p class="govuk-body">Published <time itemprop="datePublished" datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
-          {% if measure_version.previous_minor_versions %}
-            <br/>Last updated <span class="updated definition"> {{ measure_version.published_at|format_friendly_date }}</span> - <a href="#full-page-history" class="govuk-link">see all updates</a>
-            {% endif %}
-        </p>
+        <p class="govuk-body-s govuk-!-margin-bottom-2">Published <time itemprop="datePublished" datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time></p>
+        {% if measure_version.previous_minor_versions %}
+          <p class="govuk-body-s">Last updated <span class="updated definition"> {{ measure_version.published_at|format_friendly_date }}</span> - <a href="#full-page-history" class="govuk-link">see all updates</a></p>
+        {% endif %}
       {%  endif %}
 
     </div>
