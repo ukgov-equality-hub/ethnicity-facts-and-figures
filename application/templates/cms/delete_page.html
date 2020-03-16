@@ -15,7 +15,7 @@
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">
         Delete
-        ‘{{ measure_version.title }}’?
+        ‘{{ measure_version.title }}’ draft version {{ measure_version.version }}?
       </h1>
 
       <form method="POST" action="{{ url_for('cms.delete_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">
