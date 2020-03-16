@@ -247,11 +247,11 @@ def corrections():
     )
 
 
-@static_site_blueprint.route("/understand-the-data")
-def understand_the_data():
-    return render_template("static_site/understand_the_data/index.html")
+@static_site_blueprint.route("/understanding-our-data")
+def understanding_our_data():
+    return render_template("static_site/understanding_our_data/index.html")
 
 
-@static_site_blueprint.route("/understand-the-data/reading-survey-data")
+@static_site_blueprint.route("/understanding-our-data/reading-survey-data")
 def reading_survey_data():
-    return render_template("static_site/understand_the_data/reading_survey_data.html")
+    return render_template("static_site/understanding_our_data/reading_survey_data.html")
