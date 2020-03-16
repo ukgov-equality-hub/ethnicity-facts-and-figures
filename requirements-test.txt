@@ -4,7 +4,7 @@ black==18.9b0         # Automatic code formatting (must also update `.pre-commit
 coverage==4.5.1       # Required by pytest-cov
 coveralls==1.5.1
 factory-boy==2.11.1
-Faker==0.9.2
+Faker==4.0.2
 flake8==3.6.0
 glob2==0.6
 pluggy==0.6.0         # Required by pytest
