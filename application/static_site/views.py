@@ -249,9 +249,9 @@ def corrections():
 
 @static_site_blueprint.route("/understanding-our-data")
 def understanding_our_data():
-    return render_template("static_site/understanding_our_data/index.html")
+    return render_template("static_site/static_pages/understanding_our_data/index.html")
 
 
-@static_site_blueprint.route("/understanding-our-data/reading-survey-data")
-def reading_survey_data():
-    return render_template("static_site/understanding_our_data/reading_survey_data.html")
+@static_site_blueprint.route("/understanding-our-data/how-to-read-survey-data")
+def how_to_read_survey_data():
+    return render_template("static_site/static_pages/understanding_our_data/how_to_read_survey_data.html")
