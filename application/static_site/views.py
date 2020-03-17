@@ -249,7 +249,7 @@ def corrections():
 
 @static_site_blueprint.route("/understanding-our-data")
 def understanding_our_data():
-    return render_template("static_site/static_pages/understanding_our_data/index.html")
+    return render_template("static_site/static_pages/understanding_our_data/understanding_our_data.html")
 
 
 @static_site_blueprint.route("/understanding-our-data/how-to-read-survey-data")
