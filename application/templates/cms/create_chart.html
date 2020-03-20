@@ -39,6 +39,56 @@
 
 {% block content %}
     <div class="govuk-grid-row eff-numbered-sections">
+
+        <div id="errors_container"
+             class="govuk-error-summary hidden"
+             aria-labelledby="error-summary-title"
+             role="alert"
+             tabindex="-1"
+             data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title"
+                id="error-summary-title">
+                There is an error
+            </h2>
+
+            <div class="govuk-error-summary__body">
+                <ul id="tip-list"
+                    class="govuk-list govuk-error-summary__list">
+                    <li class="tip hidden"
+                        id="tip__ethnicity-column">
+                        Your data is missing an ethnicity column.<br />
+                        <a href="#edit-data-error">Click ‘Edit’ to check and update your data.</a>
+                    </li>
+                    <li class="tip hidden"
+                        id="tip__value-column">
+                        Your data is missing a value column.<br />
+                        <a href="#edit-data-error">Click ‘Edit’ to check and update your data.</a>
+                    </li>
+                    <li class="tip hidden"
+                        id="tip__rectangular-data">Your data is not a table.<br />
+                        <a href="#edit-data-error">Click ‘Edit’ to check and update your data.</a>
+                    </li>
+                    <li class="tip hidden"
+                        id="tip__duplicate-data">There are duplicated rows  in your data.<br />
+                        <a href="#edit-data-error">Click ‘Edit’ to check and update your data</a>
+                    </li>
+                    <li class="tip hidden"
+                        id="tip__missing-data">There are rows missing from your data.<br />
+                        <a href="#edit-data-error">Click ‘Edit’ to check and update your data</a> or <br />
+                    </li>
+                    <li class="tip hidden"
+                        id="tip__complex-data">Your data has some repeating values, so please choose either grouped bar chart, component bar chart, panel bar chart or panel line chart.<br />
+                        <a href="#chart_type_selector-error">Select appropriate chart type.</a>
+                    </li>
+                    <li class="tip hidden"
+                        id="tip__required-settings">Please complete all required settings<br />
+                        <a id="settings-error-anchor-link"
+                           href="#table-options-error">Check required settings.</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <div class="govuk-grid-column-full">
             <h1 id="builder-title" class="govuk-heading-l">{% if settings_and_source_data %}Format and view{% else %}Create a{% endif %} chart</h1>
         </div>
@@ -85,7 +135,9 @@
                 #}
                 <div id="tab_seperated_content" class="chart-builder-section">
                       <h2 class="govuk-heading-m eff-numbered-sections__item">Data</h2>
-
+                      <span id="edit-data-error" class="govuk-error-message hidden">
+                        <span class="govuk-visually-hidden">Error:</span> Click ‘Edit’ to check and update your data
+                      </span>
                       <div>
                           <p class="govuk-body" id="data-description">(no data)</p>
                           <p class="govuk-body"><a class="govuk-link" id="edit-data" href="#">Edit</a></p>
@@ -103,6 +155,10 @@
                                 <label class="govuk-label" for="ethnicity_settings">
                                     <h2 class="govuk-heading-m eff-numbered-sections__item">Ethnicity classification</h2>
                                 </label>
+                                <span id="ethnicity_settings-error"
+                                        class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select id="ethnicity_settings" class="govuk-select"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
@@ -120,6 +176,9 @@
                     <label class="govuk-label" for="chart_type_selector">
                         <h2 class="govuk-heading-m eff-numbered-sections__item">Select chart type</h2>
                     </label>
+                    <span id="chart_type_selector-error" class="govuk-error-message hidden">
+                        <span class="govuk-visually-hidden">Error:</span> Select appropriate chart type
+                    </span>
                     <p class="govuk-hint">Choose the chart type that will make it easiest for the user to see and understand the data. See guidance on <a class="govuk-link" href="https://guide.ethnicity-facts-figures.service.gov.uk/data-style-guide#types-of-chart" target="_blank" rel="noopener noreferrer">which chart type to use</a> (this will open a new page).</p>
                     <select class="govuk-select eff-!-fill-width" id="chart_type_selector"
                             {% if form_disabled %}disabled="disabled"{% endif %}>
@@ -177,6 +236,10 @@
                         <div class="eff-select__conditional" id="grouped-bar__ethnicity_is_group">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="grouped-bar__bar_column">Sub-grouping</label>
+                                <span id="grouped-bar__bar_column-error"
+                                        class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select id="grouped-bar__bar_column" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
@@ -190,6 +253,10 @@
                         <div class="eff-select__conditional hidden" id="grouped-bar__ethnicity_is_bar">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="grouped-bar__groups_column">Major grouping</label>
+                                <span id="grouped-bar__groups_column-error"
+                                        class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select id="grouped-bar__groups_column" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
@@ -228,6 +295,10 @@
                         <div class="eff-select__conditional" id="panel-bar__ethnicity_as_bar">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="panel-bar__panel_column">Panels</label>
+                                <span id="panel-bar__panel_column-error"
+                                        class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select class="govuk-select eff-!-fill-width" id="panel-bar__panel_column"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
@@ -235,6 +306,10 @@
                             </div>
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="panel-bar__panel_order">Order</label>
+                                <span id="panel-bar__panel_order-error"
+                                        class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select class="govuk-select eff-!-fill-width" id="panel-bar__panel_order"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>[None]</option>
@@ -249,6 +324,10 @@
                         <div class="eff-select__conditional hidden" id="panel-bar__ethnicity_as_panels">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="panel-bar__bar_column">Bars</label>
+                                <span id="panel-bar__bar_column-error"
+                                        class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select id="panel-bar__bar_column" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>s
                                     <option>Please select</option>
@@ -324,6 +403,10 @@
                         <div class="eff-select__conditional" id="component__ethnicity_is_bar">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="component__section_column">Sections</label>
+                                <span id="component__section_column-error"
+                                        class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select id="component__section_column" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
@@ -345,6 +428,10 @@
                         <div class="eff-select__conditional hidden" id="component__ethnicity_is_sections">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="component__bar_column">Bars</label>
+                                <span id="component__bar_column-error"
+                                        class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select id="component__bar_column" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
@@ -396,25 +483,6 @@
             </div>
 
             <div class="govuk-grid-column-two-thirds">
-                <div id="tips_container" class="hidden">
-                    <div id="notes_container" class="hidden">
-                        <h2 class="govuk-heading-m">Note</h2>
-                        <ul class="govuk-list govuk-list--bullet">
-                            <li class="tip" id="tip__required-settings">Please complete all required settings</li>
-                        </ul>
-                    </div>
-                    <div id="errors_container" class="hidden">
-                        <h2 class="govuk-heading-m">Error</h2>
-                        <ul class="govuk-list govuk-list--bullet" id="tip-list">
-                            <li class="tip hidden" id="tip__ethnicity-column">Your data is missing an ethnicity column</li>
-                            <li class="tip hidden" id="tip__value-column">Your data is missing a value column</li>
-                            <li class="tip hidden" id="tip__rectangular-data">Your data is not a table</li>
-                            <li class="tip hidden" id="tip__complex-data">Your data has some repeating values, so please choose either grouped bar chart, component bar chart, panel bar chart or panel line chart</li>
-                            <li class="tip hidden" id="tip__duplicate-data">There are rows duplicated in your data</li>
-                            <li class="tip hidden" id="tip__missing-data">There are rows missing from your data</li>
-                        </ul>
-                    </div>
-                </div>
                 <div id="preview_container">
                     <h2 class="govuk-heading-m eff-numbered-sections__item"><label for="chart_title">Chart title</label></h2>
                     <div class="chart-builder-section">
@@ -427,16 +495,17 @@
                     <h2 class="govuk-heading-m eff-numbered-sections__item">Preview</h2>
                     <div id="container" class="chart-container"></div>
 
+                    {% if 'UPDATE' in measure_version.available_actions %}
+                        <div class="govuk-grid-column-one-third">
+                            <div id="save_section" class="chart-builder-section hidden">
+                                <button class="govuk-button" id="save">Save</button>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
-            {% if 'UPDATE' in measure_version.available_actions %}
-                <div class="govuk-grid-column-one-third">
-                    <div id="save_section" class="chart-builder-section hidden">
-                        <button class="govuk-button" id="save">Save</button>
-                    </div>
-                </div>
-            {% endif %}
+
         </div>
     </div>
 {% endblock %}
