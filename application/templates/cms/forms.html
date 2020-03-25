@@ -9,7 +9,7 @@
 
         {# Not using a wtforms select field as they do not support optgroups out of the box #}
         <div class="govuk-form-group {% if form_field.errors %}govuk-form-group--error{% endif %}">
-            <label class="govuk-label" for="{{ field_id }}" id="{{ field_id }}-label">
+            <label class="govuk-label" for="{{ field_id }}" id="{{ field_id }}-label" tabindex="-1">
                 {{ label }}
                 {% if hint %}
                     <span class="govuk-hint">{{ hint }}</span>
