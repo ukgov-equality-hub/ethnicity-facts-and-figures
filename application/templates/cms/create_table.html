@@ -37,6 +37,53 @@
 
 {% block content %}
     <div class="govuk-grid-row eff-numbered-sections">
+
+        <div id="errors_container"
+             class="govuk-error-summary hidden"
+             aria-labelledby="error-summary-title"
+             role="alert"
+             tabindex="-1"
+             data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title"
+                id="error-summary-title">
+                There is an error
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul id="tip-list"
+                    class="govuk-list govuk-error-summary__list">
+                    <li class="tip hidden"
+                        id="tip__ethnicity-column">
+                        We haven’t found a column for ethnicity in your data. The column should be headed ‘Ethnicity’.<br />
+                        If your data doesn’t include ethnicity, please contact the Race Disparity Unit team for help.<br />
+                        <a href="#data-edit-error">Click ‘Edit’ to check and update your data.</a>
+                    </li>
+                    <li class="tip hidden"
+                        id="tip__rectangular-data">Your data is not a table.<br />
+                        <a href="#data-edit-error">Click ‘Edit’ to check and update your data.</a>
+                    </li>
+                    <li class="tip hidden"
+                        id="tip__duplicate-data">There are rows duplicated in your data.<br />
+                        <a href="#data-edit-error">Click ‘Edit’ to check and update your data</a> or <br />
+                        <a href="#table-options-error">Check table options.</a>
+                    </li>
+                    <li class="tip hidden"
+                        id="tip__missing-data">There are rows missing from your data.<br />
+                        <a href="#data-edit-error">Click ‘Edit’ to check and update your data</a> or <br />
+                        <a href="#table-options-error">Check table options.</a>
+                    </li>
+                    <li class="tip hidden"
+                        id="tip__complex-data">Your data is complex.<br />
+                        <a href="#data-edit-error">Click ‘Edit’ to check and update your data</a> or <br />
+                        <a href="#table-options-error">Check table options.</a>
+                    </li>
+                    <li class="tip hidden"
+                        id="tip__required-settings">Please complete all required settings<br />
+                        <a id="settings-error-anchor-link"
+                           href="#table-options-error">Check required settings.</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <div class="govuk-grid-column-full">
             <h1 id="builder-title" class="govuk-heading-l">{% if settings_and_source_data %}Format and view{% else %}Create a{% endif %} table</h1>
         </div>
@@ -85,6 +132,9 @@
                       <h2 class="govuk-heading-m eff-numbered-sections__item">Data</h2>
                       <div>
                           <p class="govuk-body" id="data-description">(no data)</p>
+                          <span id="data-edit-error" class="govuk-error-message hidden">
+                            <span class="govuk-visually-hidden">Error:</span> Click ‘Edit’ to check and update your data
+                          </span>
                           <p class="govuk-body"><a class="govuk-link" id="edit-data" href="#">Edit</a></p>
                       </div>
                 </div>
@@ -124,6 +174,9 @@
                 #}
                 <div id="complex_table_options" class="chart-builder-section chart-option-group hidden">
                     <h2 class="govuk-heading-m eff-numbered-sections__item"><label for="complex-table__data-style">Table options</label></h2>
+                    <span id="table-options-error" class="govuk-error-message hidden">
+                        <span class="govuk-visually-hidden">Error:</span> Check table options
+                    </span>
                     <form>
                         {#
                             Select style
@@ -142,6 +195,9 @@
                         <div class="eff-select__conditional" id="complex-table__ethnicity-is-row">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="ethnicity-as-row__columns">Column groups</label>
+                                <span id="ethnicity-as-row__columns-error" class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select id="ethnicity-as-row__columns" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
@@ -149,6 +205,9 @@
                             </div>
                             <div class="govuk-form-group">
                                 <label for="ethnicity-as-row__column-order" class="govuk-label">Column group order</label>
+                                <span id="ethnicity-as-row__column-order-error" class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select id="ethnicity-as-row__column-order" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option value="[None]">[None]</option>
@@ -162,6 +221,9 @@
                         <div class="eff-select__conditional hidden" id="complex-table__ethnicity-is-column">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="ethnicity-as-column__rows">Rows</label>
+                                <span id="ethnicity-as-column__rows-error" class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select id="ethnicity-as-column__rows" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
@@ -169,6 +231,9 @@
                             </div>
                             <div class="govuk-form-group">
                                 <label for="ethnicity-as-column__row-order" class="govuk-label">Row order</label>
+                                <span id="ethnicity-as-column__row-order-error" class="govuk-error-message hidden">
+                                    <span class="govuk-visually-hidden">Error:</span> Check required settings
+                                </span>
                                 <select id="ethnicity-as-column__row-order" class="govuk-select eff-!-fill-width"
                                         {% if form_disabled %}disabled="disabled"{% endif %}>
                                     <option>Please select</option>
@@ -191,12 +256,20 @@
                   <h2 class="govuk-heading-m eff-numbered-sections__item">Columns</h2>
                   <form>
                       <div class="govuk-form-group">
-                          <div class="govuk-form-group govuk-!-margin-bottom-1">
-                              <label for="table_column_1" class="govuk-label">First column</label>
-                              <select id="table_column_1" class="govuk-select column_option_picker eff-!-fill-width" {% if form_disabled %}disabled="disabled"{% endif %}>
-                                  <option value="none">[None]</option>
-                              </select>
-                          </div>
+                        <div class="govuk-form-group govuk-!-margin-bottom-1">
+                            <label for="table_column_1"
+                                class="govuk-label">First column</label>
+                            <span id="table_column_1-error"
+                                class="govuk-error-message hidden">
+                                <span class="govuk-visually-hidden">Error:</span> Check required settings
+                            </span>
+                            <select id="table_column_1"
+                                    class="govuk-select column_option_picker eff-!-fill-width"
+                                    {% if form_disabled %}disabled="disabled"
+                                    {% endif %}>
+                                <option value="none">[None]</option>
+                            </select>
+                        </div>
 
                           <div class="govuk-form-group">
                               <label for="table_column_1_name" class="govuk-label">Heading <span class="govuk-visually-hidden"> for first column</span></label>
@@ -256,50 +329,38 @@
             </div>
 
             <div class="govuk-grid-column-two-thirds">
-                <div id="tips_container" class="hidden">
-                    <div id="notes_container" class="hidden">
-                        <h2 class="govuk-heading-m">Note</h2>
-                        <ul class="govuk-list govuk-list--bullet">
-                            <li class="tip" id="tip__required-settings">Please complete all required settings</li>
-                        </ul>
-                    </div>
-                    <div id="errors_container" class="hidden">
-                        <h2 class="govuk-heading-m">Error</h2>
-                        <ul id="tip-list" class="govuk-list govuk-list--bullet">
-                            <li class="tip" id="tip__ethnicity-column" class="hidden">
-                                We haven’t found a column for ethnicity in your data. The column should be headed ‘Ethnicity’.<br />
-                                Click ‘Edit’ to check and update your data.<br />
-                                If your data doesn’t include ethnicity, please contact the Race Disparity Unit team for help.
-                            </li>
-                            <li class="tip" id="tip__rectangular-data" class="hidden">Your data is not a table</li>
-                            <li class="tip" id="tip__duplicate-data" class="hidden">There are rows duplicated in your data</li>
-                            <li class="tip" id="tip__missing-data" class="hidden">There are rows missing from your data</li>
-                        </ul>
-                    </div>
-                </div>
                 <div id="preview_container">
                     <h2 class="govuk-heading-m eff-numbered-sections__item"><label for="table_title">Table title</label></h2>
                     <div class="chart-builder-section">
-                      <span class="govuk-hint">For example, ‘Percentage of households who own their home by ethnicity and socio-economic group’</span>
-                      {% include 'forms/extended_hints/_chart_and_table_title.html' %}
-                        <textarea id="table_title" class="govuk-textarea" rows="2" data-module="autoresize no-newlines"
-                               {% if form_disabled %}disabled="disabled"{% endif %}>{% if settings_and_source_data %}{{ settings_and_source_data.tableValues.table_title }}{% endif %}</textarea>
+                        <span class="govuk-hint">For example, ‘Percentage of households who own their home by ethnicity and
+                            socio-economic group’</span>
+                        {% include 'forms/extended_hints/_chart_and_table_title.html' %}
+                        <textarea id="table_title"
+                                  class="govuk-textarea"
+                                  rows="2"
+                                  data-module="autoresize no-newlines"
+                                  {% if form_disabled %}disabled="disabled"
+                                  {% endif %}>{% if settings_and_source_data %}{{ settings_and_source_data.tableValues.table_title }}{% endif %}</textarea>
                     </div>
 
                     <h2 class="govuk-heading-m eff-numbered-sections__item">Preview</h2>
                     <div class="chart-builder-section">
                     </div>
                     <div id="container"></div>
+
+                    {% if 'UPDATE' in measure_version.available_actions %}
+                    <div id="save_section"
+                         class="chart-builder-section"
+                         class="hidden">
+                        <div>
+                            <button class="govuk-button"
+                                    id="save">Save</button>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
-            {% if 'UPDATE' in measure_version.available_actions %}
-                <div id="save_section" class="chart-builder-section" class="hidden">
-                    <div>
-                        <button class="govuk-button" id="save">Save</button>
-                    </div>
-                </div>
-            {% endif %}
         </div>
     </div>
 {% endblock %}

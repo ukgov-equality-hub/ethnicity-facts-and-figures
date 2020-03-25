@@ -106,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function editTableData(evt) {
+        hideErrors()
         current_data = document.getElementById('data_text_area').value
         current_settings = getTablePageSettings();
 
@@ -274,6 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function preview(evt) {
+        hideErrors()
         var tips = getTips();
         if (tips.length > 0) {
             displayTips(tips);
@@ -283,37 +285,55 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayTips(tips) {
-        document.getElementById('tips_container').classList.remove('hidden')
         document.getElementById('preview_container').classList.add('hidden')
-
-        document.getElementById('notes_container').classList.add('hidden')
-        document.getElementById('errors_container').classList.add('hidden')
 
         var tip_list = document.getElementById('tip-list')
         for (var i = 0; i < tip_list.children.length; i++) {
             tip_list.children[i].classList.add('hidden')
         }
 
-        if (tipsOfType(tips, MISSING_FIELD_ERROR).length > 0) {
-            document.getElementById('notes_container').classList.remove('hidden')
-        }
+        document.getElementById('errors_container').classList.remove('hidden')
+
         if (tipsOfType(tips, ETHNICITY_ERROR).length > 0) {
-            document.getElementById('errors_container').classList.remove('hidden')
             document.getElementById('tip__ethnicity-column').classList.remove('hidden')
+            document.getElementById('tab_seperated_content').classList.add('govuk-form-group--error')
+            document.getElementById('data-edit-error').classList.remove('hidden')
         }
         if (tipsOfType(tips, RECTANGLE_ERROR).length > 0) {
-            document.getElementById('errors_container').classList.remove('hidden')
             document.getElementById('tip__rectangular-data').classList.remove('hidden')
+            document.getElementById('tab_seperated_content').classList.add('govuk-form-group--error')
+            document.getElementById('data-edit-error').classList.remove('hidden')
         }
         if (tipsOfType(tips, DATA_ERROR_DUPLICATION).length > 0) {
-            document.getElementById('errors_container').classList.remove('hidden')
             document.getElementById('tip__duplicate-data').classList.remove('hidden')
+            document.getElementById('tab_seperated_content').classList.add('govuk-form-group--error')
+            document.getElementById('data-edit-error').classList.remove('hidden')
+            document.getElementById('complex_table_options').classList.add('govuk-form-group--error')
+            document.getElementById('table-options-error').classList.remove('hidden')
         }
         if (tipsOfType(tips, DATA_ERROR_MISSING_DATA).length > 0) {
-            document.getElementById('errors_container').classList.remove('hidden')
             document.getElementById('tip__missing-data').classList.remove('hidden')
+            document.getElementById('tab_seperated_content').classList.add('govuk-form-group--error')
+            document.getElementById('data-edit-error').classList.remove('hidden')
+            document.getElementById('complex_table_options').classList.add('govuk-form-group--error')
+            document.getElementById('table-options-error').classList.remove('hidden')
         }
-
+        if (tipsOfType(tips, DATA_ERROR_COMPLEX_DATA).length > 0) {
+            document.getElementById('tip__complex-data').classList.remove('hidden')
+            document.getElementById('tab_seperated_content').classList.add('govuk-form-group--error')
+            document.getElementById('data-edit-error').classList.remove('hidden')
+            document.getElementById('complex_table_options').classList.add('govuk-form-group--error')
+            document.getElementById('table-options-error').classList.remove('hidden')
+        }
+        if (tipsOfType(tips, MISSING_FIELD_ERROR).length > 0) {
+            document.getElementById('tip__required-settings').classList.remove('hidden')
+            document.getElementById("settings-error-anchor-link").href = "#" + tips[0].field + "-error";
+            var el = document.getElementById(tips[0].field + "-error")
+            if (el) {
+                el.classList.remove('hidden')
+                el.closest(".chart-builder-section").classList.add('govuk-form-group--error')
+            }
+        }
     }
 
     function tipsOfType(tips, errorType) {
@@ -323,7 +343,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayTable() {
-        document.getElementById('tips_container').classList.add('hidden')
         document.getElementById('preview_container').classList.remove('hidden')
 
         var tableObject = innerBuildTableObject();
@@ -896,4 +915,10 @@ function pasteJson(json) {
         return row.join('\t');
     }).join('\n');
     data_text_area.dispatchEvent(new Event("keyup"));
+}
+
+function hideErrors() {
+    document.getElementById('errors_container').classList.add('hidden')
+    $('.govuk-error-message').addClass('hidden')
+    $('.govuk-form-group--error').removeClass('govuk-form-group--error')
 }
