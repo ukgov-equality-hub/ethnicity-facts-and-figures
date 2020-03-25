@@ -6,7 +6,7 @@
 <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="{{ field.character_count_limit }}">
 {% endif %}
 
-{{ field.label(id=field.id + '-label', class_='govuk-label ' + label_class) }}
+{{ field.label(id=field.id + '-label', class_='govuk-label ' + label_class, tabindex='-1') }}
 
 {% if field.hint or hint | default(false) %}
   <span class="govuk-hint" id="{{ id_ }}-hint">{{ field.hint or hint }}</span>

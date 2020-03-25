@@ -50,7 +50,7 @@
                     {{ form.csrf_token | default('') }}
                     {% block fields %}
                         <div class="govuk-form-group {% if form.upload.errors %}govuk-form-group--error{% endif %}">
-                        {{ form.upload.label(class='govuk-label') }}
+                        {{ form.upload.label(class='govuk-label', tabindex='-1' ) }}
                         {% if form.upload.errors %}
                             <span class="govuk-error-message">{{ form.upload.errors[0] }}</span>
                             {{ form.upload(class="govuk-file-upload error") }}
