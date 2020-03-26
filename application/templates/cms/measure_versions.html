@@ -56,7 +56,6 @@
                         <td class="govuk-table__cell">
                             {{ measure_version.internal_edit_summary if measure_version.internal_edit_summary else '' }}
                         </td>
-
                         <td class="govuk-table__cell">{{ measure_version.status | format_status | safe }}</td>
                         <td class="govuk-table__cell">{{ measure_version.published_at | format_friendly_date }}</td>
                         <td class="govuk-table__cell actions">

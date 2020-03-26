@@ -260,8 +260,13 @@
                 <div class="govuk-grid-column-full chart-footer">
                   {% set chart_text_data = dimension.dimension_chart.chart_object | flatten_chart %}
 
-                  {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data %}
+                  {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data or "~" in chart_text_data %}
                     <p class="missing-data-explanation">
+
+                        {% if "~0" in chart_text_data %}
+                            <span class="explanation"> ~0 The actual figure is greater than '0' but has been rounded down</span>
+                        {% endif %}
+
                         {% if "N/A" in chart_text_data %}
                             <span class="explanation"><sup>*</sup> Not applicable</span>
                         {% endif %}
