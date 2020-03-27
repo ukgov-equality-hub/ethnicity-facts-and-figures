@@ -181,7 +181,7 @@
     {% set table_data = dimension.dimension_table.table_object.data | flatten %}
 
     {% if "~" in table_data %}
-      <span class="explanation">~0 The actual figure is greater than '0' but has been rounded down</span>
+      <span class="explanation">~0 The actual figure is greater than zero but has been rounded down</span>
     {% endif %}
 
     {% if "N/A" in table_data or "n/a" in table_data %}
