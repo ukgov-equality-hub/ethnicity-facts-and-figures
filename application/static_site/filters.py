@@ -32,6 +32,7 @@ def value_filter(value):
         ),
         "!": __missing_data_icon("confidential") + __icon_explanation("withheld to protect confidentiality"),
         "-": __missing_data_icon("not-collected") + __icon_explanation("not collected"),
+        "~": "~0",
     }
 
     if value is not None and value.strip().lower() in icon_html:
