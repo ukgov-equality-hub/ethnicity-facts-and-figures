@@ -24,7 +24,7 @@
 
 {%  macro render_line_chart(data, graph_height, graph_width, left_margin, right_margin, top_margin, bottom_margin) %}
 
-  <svg class="eff-line-chart" viewbox="0 0 {{ graph_width }} {{ graph_height }}" style="width: 100%; margin-bottom: 10px;">
+  <svg focusable="false" class="eff-line-chart" viewbox="0 0 {{ graph_width }} {{ graph_height }}" style="width: 100%; margin-bottom: 10px;">
 
     <rect width="{{ graph_width }}" height="{{ graph_height }}" x="0" y="0" fill="#F5F5F5" />
 
