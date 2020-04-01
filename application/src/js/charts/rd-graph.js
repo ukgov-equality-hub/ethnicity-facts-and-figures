@@ -160,6 +160,9 @@ function barchartHighchartObject(chartObject) {
         states: {
           hover: {
             enabled: false
+          },
+          inactive: {
+            opacity: 1
           }
         }
       }
@@ -548,6 +551,9 @@ function smallBarchart(container_id, chartObject, max) {
         states: {
           hover: {
             enabled: false
+          },
+          inactive: {
+            opacity: 1
           }
         }
       }
