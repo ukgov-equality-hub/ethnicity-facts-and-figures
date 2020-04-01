@@ -91,6 +91,7 @@ function barchartHighchartObject(chartObject) {
         text: chartObject.xAxis.title.text
       },
       labels: {
+        staggerLines: 1,
         autoRotation: 'off',
         style: { color: 'black' },
         overflow: 'justify',
