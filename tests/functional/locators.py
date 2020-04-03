@@ -22,7 +22,7 @@ class FooterLinkLocators:
 
 
 class PageLinkLocators:
-    HOME_BREADCRUMB = (By.LINK_TEXT, "Ethnicity facts and figures")
+    HOME_BREADCRUMB = (By.LINK_TEXT, "Home")
     NEW_MEASURE = (By.LINK_TEXT, "Add a measure")
 
     @staticmethod
