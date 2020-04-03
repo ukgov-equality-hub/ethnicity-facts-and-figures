@@ -7,29 +7,36 @@
                                   field_name=none,
                                   hint=None) %}
 
-        {# Not using a wtforms select field as they do not support optgroups out of the box #}
-        <div class="govuk-form-group {% if form_field.errors %}govuk-form-group--error{% endif %}">
-            <label class="govuk-label" for="{{ field_id }}" id="{{ field_id }}-label" tabindex="-1">
-                {{ label }}
-                {% if hint %}
-                    <span class="govuk-hint">{{ hint }}</span>
-                {% endif %}
-            </label>
-
-            {% if form_field.errors %}
-                <span class="govuk-error-message">This field is required</span>
+    {# Not using a wtforms select field as they do not support optgroups out of the box #}
+    <div class="govuk-form-group {% if form_field.errors %}govuk-form-group--error{% endif %}">
+        <label class="govuk-label"
+            for="{{ field_id }}"
+            id="{{ field_id }}-label"
+            tabindex="-1">
+            {{ label }}
+            {% if hint %}
+            <span class="govuk-hint">{{ hint }}</span>
             {% endif %}
-            <select class="publisher govuk-select {% if form_field.errors %}govuk-select--error{% endif %}" id="{{ field_id }}" name="{{ field_name }}" {% if disabled %}disabled{% endif %}>
-              <option selected disabled>Please select</option>
-              {% for type_of_org in organisations_by_type %}
-                  <optgroup label="{{ type_of_org[0].pluralise() }}">
-                    {% for org in type_of_org[1] %}
-                        <option {% if org.id == current_selected_id %}selected{% endif %} value="{{ org.id }}"
-                                data-abbreviations="{{ org.abbreviations_data() }}"
-                                data-other-names="{{ org.other_names_data() }}">{{ org.name }}</option>
-                    {% endfor %}
-                  </optgroup>
-              {% endfor %}
+        </label>
+
+        {% if form_field.errors %}
+        <span class="govuk-error-message">This field is required</span>
+        {% endif %}
+        <select class="publisher govuk-select {% if form_field.errors %}govuk-select--error{% endif %}"
+                id="{{ field_id }}"
+                name="{{ field_name }}"
+                {% if disabled %}disabled{% endif %}>
+                <option selected disabled></option>
+            {% for type_of_org in organisations_by_type %}
+            <optgroup label="{{ type_of_org[0].pluralise() }}">
+                {% for org in type_of_org[1] %}
+                <option {% if org.id == current_selected_id %}selected{% endif %}
+                        value="{{ org.id }}"
+                        data-abbreviations="{{ org.abbreviations_data() }}"
+                        data-other-names="{{ org.other_names_data() }}">{{ org.name }}</option>
+                {% endfor %}
+            </optgroup>
+            {% endfor %}
         </select>
     </div>
 {%- endmacro %}
