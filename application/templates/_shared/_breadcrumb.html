@@ -1,25 +1,38 @@
 {% macro render_breadcrumbs(breadcrumbs) %}
-  {% if breadcrumbs is not defined or breadcrumbs %}
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full">
+{% if breadcrumbs is not defined or breadcrumbs %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
 
-        <div id="breadcrumb" class="govuk-breadcrumbs">
-          <ol class="govuk-breadcrumbs__list">
-            {% if breadcrumbs is defined %}
-              {% for breadcrumb in breadcrumbs %}
-              <li class="govuk-breadcrumbs__list-item">
-                  <a class="govuk-breadcrumbs__link" href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a>
-              </li>
-              {% endfor %}
-            {% else %}
-            <li>
-              <a class="govuk-breadcrumbs__list-item" href="{{ url_for('static_site.index') }}">Ethnicity facts and figures</a>
-            </li>
-            {% endif %}
-          </ol>
-        </div>
+    <div id="breadcrumb"
+         class="govuk-breadcrumbs">
+      <ol class="govuk-breadcrumbs__list">
+        {% if breadcrumbs is defined %}
+        {% for breadcrumb in breadcrumbs %}
+        <li class="govuk-breadcrumbs__list-item">
 
-      </div>
+          {% if breadcrumb.text == "Home" %}
+          <a class="govuk-breadcrumbs__link"
+             href="{{ breadcrumb.url }}">
+             <span class="sr-only">Ethnicity facts and figures homepage</span> Home
+          </a>
+          {% else %}
+          <a class="govuk-breadcrumbs__link"
+             href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a>
+          {% endif %}
+        </li>
+        {% endfor %}
+        {% else %}
+        <li>
+          <a class="govuk-breadcrumbs__list-item"
+             href="{{ url_for('static_site.index') }}">
+            <span class="sr-only">Ethnicity facts and figures homepage</span> Home
+          </a>
+        </li>
+        {% endif %}
+      </ol>
     </div>
-  {% endif %}
+
+  </div>
+</div>
+{% endif %}
 {% endmacro %}
