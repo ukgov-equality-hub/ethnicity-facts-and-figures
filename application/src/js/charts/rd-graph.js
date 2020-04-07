@@ -330,12 +330,16 @@ function componentChart(container_id, chartObject) {
 }
 
 function componentChartTooltip(chartObject) {
+  // in components manually set decimal places to be equal 2 if not set
+  // @see https://trello.com/c/VyspZX5I/1741-when-you-hover-over-some-charts-the-figures-that-appear-have-6-decimal-places-after-them
+  var decimalPlaces = chartObject.decimalPlaces ? chartObject.decimalPlaces : 2;
+
   if (chartObject.series.length > 1) {
     return {
       pointFormat:
         '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>' +
         chartObject.number_format.prefix +
-        decimalPointFormat('point.y', chartObject.decimalPlaces) +
+        decimalPointFormat('point.y', decimalPlaces) +
         chartObject.number_format.suffix +
         '</b><br/>'
     };
@@ -344,7 +348,7 @@ function componentChartTooltip(chartObject) {
       pointFormat:
         '<span style="color:{point.color}">\u25CF</span><b>' +
         chartObject.number_format.prefix +
-        decimalPointFormat('point.y', chartObject.decimalPlaces) +
+        decimalPointFormat('point.y', decimalPlaces) +
         chartObject.number_format.suffix +
         '</b><br/>'
     };
