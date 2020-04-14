@@ -11,99 +11,124 @@
 {% block pageTitle %}Published pages{% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-xl">
-          Published pages
-        </h1>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl">
+      Published pages
+    </h1>
 
-        <p class="govuk-body">The dashboard shows the new and updated pages we’ve published each week.
-          You can also find out what we have <a href="{{ url_for('dashboards.planned_pages') }}">planned and in progress</a>.</p>
-      </div>
+    <p class="govuk-body">The dashboard shows the new and updated pages we’ve published each week.
+      You can also find out what we have <a href="{{ url_for('dashboards.planned_pages') }}">planned and in
+        progress</a>.</p>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
+    <div class="eff-stat eff-!-background-light-blue">
+      <span class="eff-stat__figure">{{ data.number_of_publications }}</span>
+      <span class="eff-stat__description">{% if data.number_of_publications == 1 %}Page{% else %}Pages{% endif %}</span>
     </div>
 
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-one-third">
-        <div class="eff-stat eff-!-background-light-blue">
-          <span class="eff-stat__figure">{{ data.number_of_publications }}</span>
-          <span class="eff-stat__description">{% if data.number_of_publications == 1 %}Page{% else %}Pages{% endif %}</span>
-        </div>
+    <div class="eff-stat eff-!-background-turquoise">
+      <span class="eff-stat__figure">{{ data.number_of_major_updates }}</span>
+      <span
+            class="eff-stat__description">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
+    </div>
+  </div>
+  <div class="govuk-grid-column-two-thirds">
 
-        <div class="eff-stat eff-!-background-turquoise">
-          <span class="eff-stat__figure">{{ data.number_of_major_updates }}</span>
-          <span class="eff-stat__description">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
-        </div>
-      </div>
-      <div class="govuk-grid-column-two-thirds">
-
-          {{ render_line_chart(data=data,
+    {{ render_line_chart(data=data,
                                graph_height=220,
                                graph_width=630,
                                left_margin=10,
                                right_margin=10,
                                top_margin=60,
                                bottom_margin=40) }}
-      </div>
-    </div>
+  </div>
+</div>
 
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full">
-        <table class="govuk-table measures-by-week">
-            <thead class="govuk-table__head eff-table__head--reversed">
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header">Week beginning</th>
-                    <th class="govuk-table__header">Measures</th>
-                    <th class="govuk-table__header">Updates</th>
-                </tr>
-            </thead>
-            {% for week in data.weeks %}
-                <tbody class="govuk-table__body collapsed">
-                  <tr class="govuk-table__row week header week {% if not week['publications'] and not week['major_updates'] %}empty{% endif %}">
-                    <th class="govuk-table__header">{{ week['week'] | format_friendly_date }}</th>
-                    <td class="govuk-table__cell">{{ week['publications'] | count }}</td>
-                    <td class="govuk-table__cell">{{ week['major_updates'] | count }}</td>
-                  </tr>
-                  {% if week['publications'] or week['major_updates'] %}
-                      <tr class="govuk-table__row measure-titles">
-                        <td class="govuk-table__cell" colspan="3">
-                          {% if week['publications'] %}
-                              <p class="govuk-body-s">New measures:</p>
-                              <ul class="govuk-list">
-                                {% for page in week['publications'] %}
-                                    <li class="govuk-!-font-size-16"><a class="govuk-link" href="{{ url_for('static_site.measure_version',
-                                                            topic_slug=page.measure.subtopic.topic.slug,
-                                                            subtopic_slug=page.measure.subtopic.slug,
-                                                            measure_slug=page.measure.slug,
-                                                            version='latest') }}">{{ page.title }}</a>
-                                        {% if page.primary_data_source and page.primary_data_source.publisher %}<span class="source">{{ page.primary_data_source.publisher.name }}</span>{% endif %}{{ page.published_at | format_friendly_short_date}}</li>
-                                {% endfor %}
-                              </ul>
-                          {% endif %}
-                          {% if week['major_updates'] %}
-                              <p class="govuk-body-s">Updates:</p>
-                              <ul class="govuk-list">
-                                {% for page in week['major_updates'] %}
-                                    <li class="govuk-!-font-size-16"><a class="govuk-link" href="{{ url_for('static_site.measure_version',
-                                                            topic_slug=page.measure.subtopic.topic.slug,
-                                                            subtopic_slug=page.measure.subtopic.slug,
-                                                            measure_slug=page.measure.slug,
-                                                            version='latest') }}">{{ page.title }}</a>
-                                        {% if page.primary_data_source and page.primary_data_source.publisher %}<span class="source">{{ page.primary_data_source.publisher.name }}</span>{% endif %}{{ page.published_at | format_friendly_short_date}}</li>
-                                {% endfor %}
-                              </ul>
-                          {% endif %}
-                        </td>
-                      </tr>
-                  {% endif %}
-                </tbody>
-            {%  endfor %}
-        </table>
-      </div>
-    </div>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="govuk-accordion"
+         data-module="govuk-accordion"
+         id="accordion-default">
+      {% for week in data.weeks %}
+      {% if week['publications'] or week['major_updates'] %}
+      <div class="govuk-accordion__section ">
+        <div class="govuk-accordion__section-header">
+          <h2 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button"
+                  id="accordion-{{ week['week'].strftime("%d%b%Y") }}">
+              {{ week['week'] | format_friendly_date }}{% if week['publications'] %},
+              {{ week['publications'] | count }} {{ 'measures' if week['publications']|length > 1 else 'measure'}}{% endif %}
+              {% if week['major_updates'] %}, {{ week['major_updates'] | count }} {{ 'updates' if week['major_updates']|length > 1 else 'update'}} {% endif %}
+            </span>
+          </h2>
+        </div>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function(){
-        collapsibleTableBodies(document.querySelector('.measures-by-week'))
-      })
-    </script>
+
+        <div id="accordion-{{ week['week'].strftime("%d%b%Y") }}"
+             class="govuk-accordion__section-content"
+             aria-labelledby="accordion-{{ week['week'].strftime("%d%b%Y") }}">
+          <p class='govuk-body'>
+
+            {% if week['publications'] %}
+            <p class="govuk-body-s">New measures:</p>
+            <ul class="govuk-list">
+              {% for page in week['publications'] %}
+              <li class="govuk-!-font-size-16"><a class="govuk-link"
+                   href="{{ url_for('static_site.measure_version',
+                                                                      topic_slug=page.measure.subtopic.topic.slug,
+                                                                      subtopic_slug=page.measure.subtopic.slug,
+                                                                      measure_slug=page.measure.slug,
+                                                                      version='latest') }}">{{ page.title }}</a>
+                {% if page.primary_data_source and page.primary_data_source.publisher %}<span
+                      class="source">{{ page.primary_data_source.publisher.name }}</span>{% endif %}{{ page.published_at | format_friendly_short_date}}
+              </li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+            {% if week['major_updates'] %}
+            <p class="govuk-body-s">Updates:</p>
+            <ul class="govuk-list">
+              {% for page in week['major_updates'] %}
+              <li class="govuk-!-font-size-16"><a class="govuk-link"
+                   href="{{ url_for('static_site.measure_version',
+                                                                      topic_slug=page.measure.subtopic.topic.slug,
+                                                                      subtopic_slug=page.measure.subtopic.slug,
+                                                                      measure_slug=page.measure.slug,
+                                                                      version='latest') }}">{{ page.title }}</a>
+                {% if page.primary_data_source and page.primary_data_source.publisher %}<span
+                      class="source">{{ page.primary_data_source.publisher.name }}</span>{% endif %}{{ page.published_at | format_friendly_short_date}}
+              </li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+      {% else %}
+      <div>
+        <div class="govuk-accordion__section-header">
+          <h2 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button"
+                  id="accordion-{{ week['week'].strftime("%d%b%Y") }}">
+              {{ week['week'] | format_friendly_date }}, no updates or new pages
+            </span>
+          </h2>
+        </div>
+      </div>
+
+      {% endif %}
+      {%  endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener( 'DOMContentLoaded', function () {
+    collapsibleTableBodies( document.querySelector( '.measures-by-week' ) )
+  } )
+</script>
 {% endblock %}
