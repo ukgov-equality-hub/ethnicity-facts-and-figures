@@ -145,9 +145,13 @@
           <li><a class="govuk-link" href="#data-sources" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Data sources" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 3 }}. </span><span class="eff-table-of-contents__content">Data sources</span></a></li>
           <li><a class="govuk-link" href="#download-the-data" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Download the data" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 4 }}. </span><span class="eff-table-of-contents__content">Download the data</span></a></li>
 
-          {% if measure_version.measure.slug == "number-of-arrests" or measure_version.measure.slug == "household-income" or measure_version.measure.slug == "stop-and-search" or measure_version.measure.slug == "employment" or measure_version.measure.slug == "average-hourly-pay" %}
-            <li><a class="govuk-link" href="#related-content" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Related links" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 5 }}. </span><span class="eff-table-of-contents__content">Related content</span></a></li>
-          {% endif %}
+          {#  TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
+          {#  Temporarily disabled due to experimenting changes #}
+          {#
+            {% if measure_version.measure.slug == "number-of-arrests" or measure_version.measure.slug == "household-income" or measure_version.measure.slug == "stop-and-search" or measure_version.measure.slug == "employment" or measure_version.measure.slug == "average-hourly-pay" %}
+              <li><a class="govuk-link" href="#related-content" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Related links" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 5 }}. </span><span class="eff-table-of-contents__content">Related content</span></a></li>
+            {% endif %}
+          #}
 
         </ol>
       </div>
@@ -157,7 +161,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      <h2 class="govuk-heading-l" id="main-facts-and-figures">1. Main facts and figures</h2>
+      <h2 class="govuk-heading-l govuk-!-margin-top-4" id="main-facts-and-figures">1. Main facts and figures</h2>
 
         {% if measure_version.summary %}
             <div class="eff-summary--with-bullets-spaced-out">
@@ -215,6 +219,51 @@
 
       {% endif %}
     </div>
+
+    {#  TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
+    {# New design approach of related content #}
+
+
+    {% if
+      measure_version.measure.slug == "age-groups" or
+      measure_version.measure.slug == "population-of-england-and-wales" or
+      measure_version.measure.slug == "regional-ethnic-diversity" or
+      measure_version.measure.slug == "male-and-female-populations" or
+      measure_version.measure.slug == "stop-and-search" or
+      measure_version.measure.slug == "number-of-arrests" or
+      measure_version.measure.slug == "low-income" or
+      measure_version.measure.slug == "nhs-workforce" or
+      measure_version.measure.slug == "employment" %}
+
+    {# {% if measure_version.measure.slug == "number-of-arrests" or
+          measure_version.measure.slug == "household-income" or
+          measure_version.measure.slug == "stop-and-search" or
+          measure_version.measure.slug == "employment" or
+          measure_version.measure.slug == "average-hourly-pay" %} #}
+
+      <div class="govuk-grid-column-one-third">
+        {% if measure_version.measure.slug == "age-groups" %}
+          {% include "static_site/related_links/_age_groups.html" %}
+        {% elif measure_version.measure.slug == "population-of-england-and-wales" %}
+            {% include "static_site/related_links/_population_of_england_and_wales.html" %}
+        {% elif measure_version.measure.slug == "regional-ethnic-diversity" %}
+            {% include "static_site/related_links/_regional_ethnic_diversity.html" %}
+        {% elif measure_version.measure.slug == "male-and-female-populations" %}
+            {% include "static_site/related_links/_male_and_female_populations.html" %}
+        {% elif measure_version.measure.slug == "stop-and-search" %}
+            {% include "static_site/related_links/_stop_and_search.html" %}
+        {% elif measure_version.measure.slug == "number-of-arrests" %}
+            {% include "static_site/related_links/_number_of_arrests.html" %}
+        {% elif measure_version.measure.slug == "low-income" %}
+            {% include "static_site/related_links/_low_income.html" %}
+        {% elif measure_version.measure.slug == "nhs-workforce" %}
+            {% include "static_site/related_links/_nhs_workforce.html" %}
+        {% elif measure_version.measure.slug == "employment" %}
+          {% include "static_site/related_links/_employment.html" %}
+        {% endif %}
+      </div>
+    {% endif %}
+
   </div>
 
   <div class="govuk-grid-row">
@@ -557,18 +606,19 @@
             <meta itemprop="url" content="{{ url_for('static_site.index') }}">
           </div>
 
-        {% if measure_version.measure.slug == "number-of-arrests" %}
-          {% include "static_site/related_links/_number_of_arrests.html" %}
-        {% elif measure_version.measure.slug == "household-income" %}
-          {% include "static_site/related_links/_household_income.html" %}
-        {% elif measure_version.measure.slug == "stop-and-search" %}
-          {% include "static_site/related_links/_stop_and_search.html" %}
-        {% elif measure_version.measure.slug == "employment" %}
-          {% include "static_site/related_links/_employment.html" %}
-        {% elif measure_version.measure.slug == "average-hourly-pay" %}
-          {% include "static_site/related_links/_average_hourly_pay.html" %}
-        {% endif %}
-
+        {# TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1
+          {% if measure_version.measure.slug == "number-of-arrests" %}
+            {% include "static_site/related_links/_number_of_arrests.html" %}
+          {% elif measure_version.measure.slug == "household-income" %}
+            {% include "static_site/related_links/_household_income.html" %}
+          {% elif measure_version.measure.slug == "stop-and-search" %}
+            {% include "static_site/related_links/_stop_and_search.html" %}
+          {% elif measure_version.measure.slug == "employment" %}
+            {% include "static_site/related_links/_employment.html" %}
+          {% elif measure_version.measure.slug == "average-hourly-pay" %}
+            {% include "static_site/related_links/_average_hourly_pay.html" %}
+          {% endif %}
+        #}
       <div class="eff-document-footer">
 
         <div class="history-information" id="history">

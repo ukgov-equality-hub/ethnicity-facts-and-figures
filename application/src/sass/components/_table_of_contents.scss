@@ -3,7 +3,9 @@
 .eff-table-of-contents {
   padding-left: 0;
   margin-top: 0;
-  @include govuk-responsive-margin(9, "bottom");
+  padding-bottom: 60px;
+  margin-bottom: 0px;
+  border-bottom: 2px solid #b1b4b6;
   @include govuk-typography-responsive(16);
 }
 

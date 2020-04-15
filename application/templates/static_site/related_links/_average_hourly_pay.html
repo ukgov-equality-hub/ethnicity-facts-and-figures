@@ -1,4 +1,7 @@
-<h2 class="govuk-heading-l govuk-!-margin-top-5" id="related-content">
+{#  TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
+{#  Temporarily disabled due to experimenting changes #}
+{#
+<h2 class="govuk-heading-s govuk-!-margin-top-5" id="related-content">
     {{ dimensions_count + 5 }}. Related content
 </h2>
 
@@ -13,3 +16,51 @@
 <p class="govuk-body">
 <a class="govuk-link" href="/work-pay-and-benefits/employment/employment-by-occupation/latest" data-on="click" data-event-category="Related links" data-event-action="Clicked" data-event-label="Employment by occupation">Employment by occupation</a><br />The Indian ethnic group had the highest percentage of workers in professional occupations (31%) in 2017.
 </p>
+#}
+
+
+<div class="gem-c-contextual-sidebar">
+    <div class="gem-c-related-navigation">
+
+        <h2 id="related-nav-related_items"
+            class="govuk-heading-s govuk-!-padding-top-5">
+            Related content
+        </h2>
+
+        <nav role="navigation"
+             class="gem-c-related-navigation__nav-section"
+             aria-labelledby="related-nav-related_items">
+
+            <ul class="gem-c-related-navigation__link-list"
+                data-module="track-click">
+
+                <li class="gem-c-related-navigation__link">
+                    <a class="govuk-link"
+                       href="/work-pay-and-benefits/pay-and-income/household-income/latest"
+                       data-on="click"
+                       data-event-category="Related links"
+                       data-event-action="Clicked"
+                       data-event-label="Household income">Household income</a>
+                </li>
+
+                <li class="gem-c-related-navigation__link">
+                    <a class="govuk-link"
+                       href="/work-pay-and-benefits/pay-and-income/income-distribution/latest"
+                       data-on="click"
+                       data-event-category="Related links"
+                       data-event-action="Clicked"
+                       data-event-label="Income distribution">Income distribution</a>
+                </li>
+
+                <li class="gem-c-related-navigation__link">
+                    <a class="govuk-link"
+                       href="/work-pay-and-benefits/employment/employment-by-occupation/latest"
+                       data-on="click"
+                       data-event-category="Related links"
+                       data-event-action="Clicked"
+                       data-event-label="Employment by occupation">Employment by occupation</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
