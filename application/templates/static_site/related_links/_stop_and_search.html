@@ -1,3 +1,6 @@
+{#  TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
+{#  Temporarily disabled due to experimenting changes #}
+{#
 <h2 class="govuk-heading-l govuk-!-margin-top-5" id="related-content">
     {{ dimensions_count + 5 }}. Related content
 </h2>
@@ -17,3 +20,70 @@
 <p class="govuk-body">
 <a class="govuk-link" href="https://www.gov.uk/government/publications/ethnicity-facts-and-figures-black-caribbean-ethnic-group/black-caribbean-ethnic-group-facts-and-figures" data-on="click" data-event-category="Related links" data-event-action="Clicked" data-event-label="BC report">Research and analysis: Black Caribbean ethnic group</a><br />A summary of facts and figures about people from the Black Caribbean ethnic group.
 </p>
+#}
+
+
+<div class="gem-c-contextual-sidebar">
+    <div class="gem-c-related-navigation">
+
+        <h2 id="related-nav-related_items"
+            class="govuk-heading-s govuk-!-padding-top-5">
+            Related content
+        </h2>
+
+        <nav role="navigation"
+             class="gem-c-related-navigation__nav-section"
+             aria-labelledby="related-nav-related_items">
+
+            <ul class="gem-c-related-navigation__link-list"
+                data-module="track-click">
+
+                <li class="gem-c-related-navigation__link">
+                    <a class="govuk-link"
+                       href="/crime-justice-and-the-law/policing/number-of-arrests/latest"
+                       data-on="click"
+                       data-event-category="Related links"
+                       data-event-action="Clicked"
+                       data-event-label="Arrests">Arrests</a>
+                </li>
+
+                <li class="gem-c-related-navigation__link">
+                    <a class="govuk-link"
+                       href="/workforce-and-business/workforce-diversity/police-workforce/latest"
+                       data-on="click"
+                       data-event-category="Related links"
+                       data-event-action="Clicked"
+                       data-event-label="Police workforce">Police workforce</a>
+                </li>
+
+                <li class="gem-c-related-navigation__link">
+                    <a class="govuk-link"
+                       href="/crime-justice-and-the-law/courts-sentencing-and-tribunals/prosecutions-and-convictions/latest"
+                       data-on="click"
+                       data-event-category="Related links"
+                       data-event-action="Clicked"
+                       data-event-label="Prosecutions and convictions">Prosecutions and convictions</a>
+                </li>
+
+                <li class="gem-c-related-navigation__link">
+                    <a class="govuk-link"
+                       href="/crime-justice-and-the-law/policing/confidence-in-the-local-police/latest"
+                       data-on="click"
+                       data-event-category="Related links"
+                       data-event-action="Clicked"
+                       data-event-label="Confidence in the local police">Confidence in the local police</a>
+                </li>
+
+                <li class="gem-c-related-navigation__link">
+                    <a class="govuk-link"
+                       href="/crime-justice-and-the-law/crime-and-reoffending/victims-of-crime/latest"
+                       data-on="click"
+                       data-event-category="Related links"
+                       data-event-action="Clicked"
+                       data-event-label="Victims of crime">Victims of crime</a>
+                </li>
+
+            </ul>
+        </nav>
+    </div>
+</div>
