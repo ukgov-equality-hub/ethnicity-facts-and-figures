@@ -255,3 +255,24 @@ def understanding_our_data():
 @static_site_blueprint.route("/understanding-our-data/how-to-read-survey-data")
 def how_to_read_survey_data():
     return render_template("static_site/static_pages/understanding_our_data/how_to_read_survey_data.html")
+
+
+# summaries
+@static_site_blueprint.route("/summaries/indian-ethnic-group")
+def indian_ethnic_group():
+    return render_template("static_site/static_pages/summaries/indian_ethnic_group.html")
+
+
+@static_site_blueprint.route("/summaries/chinese-ethnic-group")
+def chinese_ethnic_group():
+    return render_template("static_site/static_pages/summaries/chinese_ethnic_group.html")
+
+
+@static_site_blueprint.route("/summaries/black-caribbean-ethnic-group")
+def black_caribbean_ethnic_group():
+    return render_template("static_site/static_pages/summaries/black_caribbean_ethnic_group.html")
+
+
+@static_site_blueprint.route("/summaries/public-sector-workforces")
+def public_sector_workforces():
+    return render_template("static_site/static_pages/summaries/public_sector_workforces.html")

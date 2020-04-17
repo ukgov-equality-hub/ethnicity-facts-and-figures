@@ -1,0 +1,618 @@
+{% extends "base.html" %}
+{% from "_macros/_back_to_top.html" import appBackToTop %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+  ]
+%}
+
+{% block pageTitle %}Indian ethnic group - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block metaDescription %}{% endblock %}
+{% block socialTitle %}Indian ethnic group: facts and figures{% endblock %}
+{% block socialDescription %}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Indian ethnic group');{% endblock %}
+
+
+{% block content %}
+
+{# Page title and TOC  #}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2">
+      Indian ethnic group: facts and figures
+    </h1>
+    <p class="govuk-body-s">Published 28 October 2019</p>
+
+    <div id="toc">
+      <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+      <ol class="eff-table-of-contents">
+        <li><a class="govuk-link"
+             href="#about-this-page"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Indian ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">1. </span><span
+                  class="eff-table-of-contents__content">About this page</span></a></li>
+        <li><a class="govuk-link"
+             href="#population"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Indian ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">2. </span><span
+                  class="eff-table-of-contents__content">Population</span></a></li>
+        <li><a class="govuk-link"
+             href="#education"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Indian ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">3. </span><span
+                  class="eff-table-of-contents__content">Education</span></a></li>
+        <li><a class="govuk-link"
+             href="#work-and-income"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Indian ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">4. </span><span
+                  class="eff-table-of-contents__content">Work and income</span></a></li>
+        <li><a class="govuk-link"
+             href="#stop-and-search"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Indian ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">5. </span><span
+                  class="eff-table-of-contents__content">Stop and search</span></a></li>
+        <li><a class="govuk-link"
+             href="#arrests"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Indian ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">6. </span><span
+                  class="eff-table-of-contents__content">Arrests</span></a></li>
+        <li><a class="govuk-link"
+             href="#fear-of-crime"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Indian ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">7. </span><span
+                  class="eff-table-of-contents__content">Fear of crime</span></a></li>
+        <li><a class="govuk-link"
+             href="#home-ownership-and-renting"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Indian ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">8. </span><span
+                  class="eff-table-of-contents__content">Home ownership and renting</span></a></li>
+        <li><a class="govuk-link"
+             href="#mental-health"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Indian ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">9. </span><span
+                  class="eff-table-of-contents__content">Mental health</span></a></li>
+      </ol>
+    </div>
+  </div>
+</div>
+{# end of Page title and TOC  #}
+
+{# summary section (optional) #}
+<div class="govuk-grid-row govuk-!-margin-top-6">
+  <div class="govuk-grid-column-three-quarters">
+    <h2 class="govuk-heading-l"
+        id="about-this-page">
+      <span class="number">1. </span>About this page</h2>
+
+    <p class="govuk-body">This is a summary of statistics about people from the Indian ethnic group (also referred to
+      here as ‘Indian
+      people’) living in England and Wales.</p>
+
+    <p class="govuk-body">It is part of a planned series of summaries about different ethnic groups. The first in the
+      series focuses on
+      the <a href="summaries/black-caribbean-ethnic-group"
+         class="govuk-link">Black Caribbean ethnic group</a>.</p>
+
+    <p class="govuk-body">This page includes:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>some population statistics from the most recent Census (2011)</li>
+      <li>data on the experiences of people from the Indian ethnic group compared with White British people, in areas
+        including education, crime and policing, home ownership and health</li>
+    </ul>
+
+    <p class="govuk-body">The White British ethnic group is used for most comparisons as it is the largest group, making
+      up 80.5% of the
+      population of England and Wales in 2011.</p>
+
+    <p class="govuk-body">This is an overview based on a selection of data published on <a href="/"
+         class="govuk-link">Ethnicity facts and figures</a> or being published soon. Some published data (for example,
+      on higher education) is only available for the broad Asian ethnic group, and is therefore not included here.</p>
+
+  </div>
+</div>
+{# end of summary section #}
+
+{# content #}
+<div class="govuk-grid-row govuk-!-margin-top-6">
+  <div class="govuk-grid-column-three-quarters">
+    <h2 class="govuk-heading-l"
+        id="population">
+      <span class="number">2. </span>Population</h2>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p>All data in this section comes from the 2011 Census of England and Wales, unless stated otherwise.</p>
+    </div>
+
+    <p class="govuk-body">In 2011, there were 1,412,958 people from the Indian ethnic group in England and Wales, making
+      up <a
+         href="/uk-population-by-ethnicity/national-and-regional-populations/population-of-england-and-wales/1.4#by-ethnicity"
+         class="govuk-link">2.5% of the total population</a>.</p>
+
+    <h3 class="govuk-heading-m"
+        id="where-indian-people-live">
+      <span class="number">2.1 </span>Where Indian people live</h3>
+
+    <p class="govuk-body">There were 348 local authorities in England and Wales. Half (50.2%) of the Indian population
+      lived in 17 of them.
+    </p>
+
+    <p class="govuk-body">Leicester was home to the largest Indian population, with 6.6% of all Indian people living
+      there, followed by
+      Birmingham (4.6%) and Harrow (4.5%).</p>
+
+    <h4 class="govuk-heading-s"
+        id="map-percentage-of-the-indian-population-of-england-and-wales-living-in-each-local-authority-area-top-17-areas-labelled">
+      Map: Percentage of the Indian population of England and Wales living in each local authority area (top 17 areas
+      labelled)</h4>
+
+    {# images stored locally at src/static/images/summaries #}
+    <div>
+      <img class="govuk-!-width-full"
+           src="
+             /static/images/summaries/Copy_of_Indian_Report_Population_v1-0.svg"
+           alt="Map of England and Wales showing the 17 local authorities where half of the Indian ethnic group population of England and Wales lives.">
+    </div>
+
+    <p class="govuk-body">Source: Census of England and Wales, 2011</p>
+
+
+    <h4 class="govuk-heading-s"
+        id="table-percentage-of-the-indian-population-of-england-and-wales-living-in-each-local-authority-area-top-17">
+      Table: Percentage of the Indian population of England and Wales living in each local authority area (top 17)</h4>
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Local authority</th>
+          <th scope="col"
+              class="govuk-table__header">Percentage of Indian people living there</th>
+          <th scope="col"
+              class="govuk-table__header">Number of Indian residents</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Leicester</td>
+          <td class="govuk-table__cell">6.6%</td>
+          <td class="govuk-table__cell">93,335</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Birmingham</td>
+          <td class="govuk-table__cell">4.6%</td>
+          <td class="govuk-table__cell">64,621</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Harrow</td>
+          <td class="govuk-table__cell">4.5%</td>
+          <td class="govuk-table__cell">63,051</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Brent</td>
+          <td class="govuk-table__cell">4.1%</td>
+          <td class="govuk-table__cell">58,017</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Ealing</td>
+          <td class="govuk-table__cell">3.4%</td>
+          <td class="govuk-table__cell">48,240</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Hounslow</td>
+          <td class="govuk-table__cell">3.4%</td>
+          <td class="govuk-table__cell">48,161</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Redbridge</td>
+          <td class="govuk-table__cell">3.2%</td>
+          <td class="govuk-table__cell">45,660</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Newham</td>
+          <td class="govuk-table__cell">3.0%</td>
+          <td class="govuk-table__cell">42,484</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Hillingdon</td>
+          <td class="govuk-table__cell">2.6%</td>
+          <td class="govuk-table__cell">36,795</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Wolverhampton</td>
+          <td class="govuk-table__cell">2.3%</td>
+          <td class="govuk-table__cell">32,162</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Sandwell</td>
+          <td class="govuk-table__cell">2.2%</td>
+          <td class="govuk-table__cell">31,400</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Barnet</td>
+          <td class="govuk-table__cell">2.0%</td>
+          <td class="govuk-table__cell">27,920</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Coventry</td>
+          <td class="govuk-table__cell">2.0%</td>
+          <td class="govuk-table__cell">27,751</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Croydon</td>
+          <td class="govuk-table__cell">1.8%</td>
+          <td class="govuk-table__cell">24,660</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Slough</td>
+          <td class="govuk-table__cell">1.6%</td>
+          <td class="govuk-table__cell">21,922</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Bolton</td>
+          <td class="govuk-table__cell">1.5%</td>
+          <td class="govuk-table__cell">21,665</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Kirklees</td>
+          <td class="govuk-table__cell">1.5%</td>
+          <td class="govuk-table__cell">20,797</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="govuk-body"><a
+         href="/uk-population-by-ethnicity/demographics/people-born-outside-the-uk/1.0#place-of-birth-uk-or-non-uk-by-ethnicity"
+         class="govuk-link">42.9% of people from the Indian ethnic group were born in the UK</a>. 41.9% were born in
+      Southern Asia and 11.1% were born in South and Eastern Africa (for example, Uganda, Kenya and Tanzania). Indian
+      people born in South and Eastern Africa were more clustered than those born in the UK or Southern Asia, with 11.0%
+      living in Harrow and 10.6% living in Leicester.</p>
+
+    <p class="govuk-body">39 local authorities had fewer than 200 Indian residents each. This is around 1 in 9 of all
+      local authorities.
+    </p>
+
+    <p class="govuk-body"><a
+         href="/uk-population-by-ethnicity/demographics/people-living-in-deprived-neighbourhoods/1.2#people-living-in-the-most-deprived-10-of-neighbourhoods-by-ethnicity"
+         class="govuk-link">8.3% of Indian people lived in the most deprived 10% of neighbourhoods</a>, the lowest
+      percentage out of all ethnic groups. This compares with 8.6% of White British people. (England, 2012/13)</p>
+
+    <h3 class="govuk-heading-m"
+        id="age-profile">
+      <span class="number">2.2 </span>Age profile</h3>
+
+    <p class="govuk-body">The Indian ethnic group had a younger age profile than the White British group in 2011.</p>
+
+    <p class="govuk-body"><a
+         href="/uk-population-by-ethnicity/demographics/age-groups/1.4#asian-ethnic-groups-age-profile"
+         class="govuk-link">18 to 34 year olds made up one-third (33.4%) of Indian people</a>, compared with 20.3% of
+      White British people. The younger age profile of the Indian group partly reflects increases in immigration from
+      India since the 1950s (<a rel="external"
+         target="_blank"
+         href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration/articles/immigrationpatternsofnonukbornpopulationsinenglandandwalesin2011/2013-12-17"
+         class="govuk-link">ONS, 2013</a>). In 1951, India was the third most common country of birth for people born
+      outside the UK. From 1961 until 2001, it was the second most common, and in 2011 it became the <a
+         href="/uk-population-by-ethnicity/demographics/people-born-outside-the-uk/1.0#top-10-countries-of-birth-outside-the-uk"
+         class="govuk-link">most common country of birth for people born outside the UK</a>.</p>
+
+    <p class="govuk-body">In 2011, <a
+         href="/uk-population-by-ethnicity/demographics/age-groups/1.4#asian-ethnic-groups-age-profile"
+         class="govuk-link">12.0% of Indian people were aged 60 and above</a>, compared with <a
+         href="/uk-population-by-ethnicity/demographics/age-groups/1.4#white-ethnic-groups-age-profile"
+         class="govuk-link">25.6% of White British people</a>.</p>
+
+    <h4 class="govuk-heading-s"
+        id="chart-age-profile-of-indian-and-white-british-people">Chart: Age profile of Indian and White British people
+    </h4>
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/Indian_Report_AgeProfile_v1-0.svg"
+           alt="Charts showing the percentage of the Indian and White British populations of England and Wales that are in each age band.">
+    </div>
+    <p class="govuk-body">Source: Census of England and Wales, 2011</p>
+
+    <h3 class="govuk-heading-m"
+        id="families-and-households">
+      <span class="number">2.3 </span>Families and households</h3>
+
+    <p class="govuk-body"><a
+         href="/uk-population-by-ethnicity/demographics/families-and-households/1.1#asian-ethnic-group-by-household-type"
+         class="govuk-link">3.8% of Indian households were made up of lone parents with dependent children</a>, compared
+      with 6.7% of White households.</p>
+
+    <p class="govuk-body">29.5% of Indian households were made up of married couples with dependent children, compared
+      with 14.1% of White
+      British households.</p>
+
+    <p class="govuk-body">7.1% of Indian households were made up of pensioners (either couples or single pensioners),
+      compared with 23.0%
+      of White British households.</p>
+
+    <h2 class="govuk-heading-l"
+        id="education">
+      <span class="number">3. </span>Education</h2>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">Data in this section covers England in the 2017/18 academic year, unless stated otherwise.
+      </p>
+    </div>
+
+    <p class="govuk-body">At all key stages, Indian pupils’ attainment was above the national average. Indian pupils had
+      a higher
+      attainment than White British pupils but not as high as Chinese pupils.</p>
+
+    <h4 class="govuk-heading-s"
+        id="chart-educational-attainment-among-indian-and-white-british-pupils">Chart: Educational attainment among
+      Indian and White British pupils</h4>
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/Indian_Report_Education_v1-1.svg"
+           alt="Chart comparing the educational attainment of Indian pupils with White British pupils."></div>
+    <p class="govuk-body">Source: England, Key Stage 1 Statistics, 2017/18; Key Stage 4 Statistics, 2016/17; and A
+      Level and other 16
+      to 18 results, 2016/17. Ethnicity facts and figures and Department for Education (DfE). Figures for Key Stage
+      2 are rounded to whole numbers by DfE.</p>
+
+    <h3 class="govuk-heading-m"
+        id="primary-education">
+      <span class="number">3.1 </span>Primary education</h3>
+
+    <p class="govuk-body">76% of Indian pupils met the expected standard in <a
+         href="/education-skills-and-training/7-to-11-years-old/reading-writing-and-maths-attainments-for-children-aged-7-to-11-key-stage-2/3.0#by-ethnicity"
+         class="govuk-link">key stage 2 reading, writing and maths</a>, compared with 65% of White British pupils. This
+      was the second highest percentage of all ethnic groups, after Chinese pupils (81%).</p>
+
+    <h3 class="govuk-heading-m"
+        id="secondary-education">
+      <span class="number">3.2 </span>Secondary education</h3>
+
+    <p class="govuk-body">62.0% of Indian pupils got a ‘strong pass’ in <a
+         href="/education-skills-and-training/11-to-16-years-old/a-to-c-in-english-and-maths-gcse-attainment-for-children-aged-14-to-16-key-stage-4/3.0#by-ethnicity"
+         class="govuk-link">English and maths GCSE</a>, compared with 42.7% of White British pupils.</p>
+
+    <p class="govuk-body"><a
+         href="/education-skills-and-training/after-education/destinations-of-school-pupils-after-key-stage-4-usually-aged-16-years/3.1#by-ethnicity"
+         class="govuk-link">96% of Indian students went into further education</a> (such as A levels), compared with 85%
+      of White British students. This was the second highest percentage out of all ethnic groups after Chinese students
+      (97%). (England, 2016/17)</p>
+
+    <p class="govuk-body">15.3% of Indian students got at least <a
+         href="/education-skills-and-training/a-levels-apprenticeships-further-education/students-aged-16-to-18-achieving-3-a-grades-or-better-at-a-level/3.0#by-ethnicity"
+         class="govuk-link">3 As or higher at A level</a>, compared with 10.9% of White British pupils. This was one of
+      the highest percentages of all ethnic groups.</p>
+
+    <h3 class="govuk-heading-m"
+        id="school-exclusions">
+      <span class="number">3.3 </span>School exclusions</h3>
+
+    <p class="govuk-body">Indian pupils were <a
+         href="/education-skills-and-training/absence-and-exclusions/pupil-exclusions/2.2#temporary-exclusions-by-ethnicity"
+         class="govuk-link">over 6 times less likely to be temporarily excluded</a> from school than White British
+      pupils. 0.84% were temporarily excluded, compared with 5.23% of White British pupils. (England, 2016/17)</p>
+
+    <p class="govuk-body">Indian pupils were <a
+         href="/education-skills-and-training/absence-and-exclusions/pupil-exclusions/2.2#permanent-exclusions-by-ethnicity"
+         class="govuk-link">5 times less likely to be permanently excluded</a> than White British pupils. 0.02% were
+      permanently excluded, compared with 0.10% of White British pupils. (England, 2016/17)</p>
+
+    <h2 class="govuk-heading-l"
+        id="work-and-income">
+      <span class="number">4. </span>Work and income</h2>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">Data in this section covers England, Wales and Scotland in 2018, unless stated otherwise.
+      </p>
+    </div>
+
+    <p class="govuk-body"><a href="/work-pay-and-benefits/employment/employment/3.0#by-ethnicity"
+         class="govuk-link">76% of Indian 16 to 64 year olds were in employment</a>, the same employment rate as for
+      White British people and the joint second highest rate out of all ethnic groups.</p>
+
+    <h3 class="govuk-heading-m"
+        id="graduate-work-and-pay">
+      <span class="number">4.1 </span>Graduate work and pay</h3>
+
+    <p class="govuk-body">5 years after graduating, 86.3% of both Indian and White graduates were <a
+         href="/education-skills-and-training/after-education/destinations-and-earnings-of-graduates-after-higher-education/2.0#graduate-destinations-by-ethnicity"
+         class="govuk-link">in sustained education or employment</a> (the highest percentage out of all ethnic groups).
+      On average, Indian graduates were earning £28,500 a year and White graduates were earning £26,100. (England
+      2016/17)</p>
+
+    <h3 class="govuk-heading-m"
+        id="professions">
+      <span class="number">4.2 </span>Professions</h3>
+
+    <p class="govuk-body">31% of Indian workers were employed in <a
+         href="/work-pay-and-benefits/employment/employment-by-occupation/2.1#by-ethnicity-and-type-of-occupation"
+         class="govuk-link">‘professional’ occupations</a> (for example, engineers, teachers or lawyers), the highest
+      percentage out of all ethnic groups. (UK, 2017)</p>
+
+    <p class="govuk-body">26.4% of Indian workers were employed in the <a
+         href="/work-pay-and-benefits/employment/employment-by-sector/2.1#by-ethnicity-and-sector"
+         class="govuk-link">public administration, education and health sector</a>. A further 20.9% were employed in the
+      banking, finance and insurance sector, the highest of all ethnic groups. (UK, 2017)</p>
+
+    <h3 class="govuk-heading-m"
+        id="employment-gender-gap">
+      <span class="number">4.3 </span>Employment gender gap</h3>
+
+    <p class="govuk-body">The <a href="/work-pay-and-benefits/employment/employment/3.0#by-ethnicity-and-gender"
+         class="govuk-link">gender gap in employment rates for the Indian group was twice as large as for the White
+        British group</a>. In the Indian ethnic group, 83% of men and 69% of women were employed, a gap of 14 percentage
+      points. In the White British ethnic group, 80% of men and 73% of women were employed, a gap of 7 percentage
+      points.</p>
+
+    <p class="govuk-body">This is likely to be due to the fact that <a
+         href="/work-pay-and-benefits/unemployment-and-economic-inactivity/economic-inactivity/3.0#by-ethnicity-and-gender"
+         class="govuk-link">Indian women were twice as likely as Indian men to be economically inactive</a> (28% and 14%
+      respectively), which means they were out of work and not looking for work. 47% of Indian women were economically
+      inactive because they were looking after their family or home (the most common reason).</p>
+
+    <h3 class="govuk-heading-m"
+        id="household-income">
+      <span class="number">4.4 </span>Household income</h3>
+
+    <p class="govuk-body"><a
+         href="/work-pay-and-benefits/pay-and-income/income-distribution/3.0#by-ethnicity-before-housing-costs"
+         class="govuk-link">43% of Indian households had a total income of £34,700 a year or more</a> (before housing
+      costs were deducted), the second highest percentage out of all ethnic groups. This was a similar percentage as
+      White British households (42%). (UK, 2015/16, 2016/17 and 2017/18 combined)</p>
+
+    <h4 class="govuk-heading-s"
+        id="chart-income-distribution-among-indian-white-british-and-all-asian-households">Chart: Income distribution
+      among Indian, White British and all Asian households</h4>
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/Indian_Report_IncomeDistribution_v1-0.svg"
+           alt="Chart showing the percentage of Indian, Asian and White British households that fall into the 2 lowest and 2 highest income groups">
+    </div>
+    <p class="govuk-body">Source: UK, Households Below Average Income, 2015/16, 2016/17 and 2017/18 combined</p>
+
+    <p class="govuk-body"><a href="/work-pay-and-benefits/pay-and-income/household-income/3.0#by-ethnicity"
+         class="govuk-link">42% of Indian households had a weekly income of £1,000 or more</a>, the highest percentage
+      out of all ethnic groups. This compares with 26% of White British households. (United Kingdom, 2015/16, 2016/17
+      and 2017/18 combined)</p>
+
+    <h2 class="govuk-heading-l"
+        id="stop-and-search">
+      <span class="number">5. </span>Stop and search</h2>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">Data in this section covers England and Wales in 2017/18.</p>
+    </div>
+
+    <p class="govuk-body">There were <a href="/crime-justice-and-the-law/policing/stop-and-search/3.2#by-ethnicity"
+         class="govuk-link">3 stop and searches for every 1,000 Indian people</a>. This was the same rate as for White
+      British people, and among the lowest rates of stop and search out of all ethnic groups.</p>
+
+    <p class="govuk-body"><a href="/crime-justice-and-the-law/policing/stop-and-search/3.2#by-ethnicity-over-time"
+         class="govuk-link">Stop and search rates fell for all ethnic groups between 2009/10 and 2017/18</a>. The rate
+      fell from 24 to 3 stop and searches for every 1,000 Indian people. The rate for White British people fell from 17
+      to 3 stop and searches for every 1,000 people.</p>
+
+    <p class="govuk-body"><a rel="external"
+         target="_blank"
+         href="https://www.gov.uk/government/statistics/police-powers-and-procedures-england-and-wales-year-ending-31-march-2018"
+         class="govuk-link">17.6% of stop and searches among the Indian group resulted in arrest</a>. This compares to
+      15.7% of all White British stop and searches.</p>
+
+    <h2 class="govuk-heading-l"
+        id="arrests">
+      <span class="number">6. </span>Arrests</h2>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">Data in this section covers England and Wales in 2017/18.</p>
+    </div>
+
+    <p class="govuk-body">Indian people were less likely to be arrested compared with White British people. There were
+      <a href="/crime-justice-and-the-law/policing/number-of-arrests/3.1#by-ethnicity"
+         class="govuk-link">6.7 arrests for every 1,000 Indian people</a>, the third lowest out of all ethnic groups.
+      This compares with 10.2 arrests for every 1,000 White British people.</p>
+
+    <p class="govuk-body">Between 2006/07 and 2017/18, the arrest rate for Indian people went down from 12.6 to 6.7
+      arrests per 1,000
+      people. The rate for White British people went down from 23.6 to 10.2 arrests per 1,000 people.</p>
+
+    <h2 class="govuk-heading-l"
+        id="fear-of-crime">
+      <span class="number">7. </span>Fear of crime</h2>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">Data in this section covers England and Wales in 2015/16.</p>
+    </div>
+
+    <p class="govuk-body">27% of Indian people said <a
+         href="/crime-justice-and-the-law/crime-and-reoffending/fear-of-crime/1.4#by-ethnicity-over-time"
+         class="govuk-link">they thought they were likely to be a victim of crime</a> in the next year, compared with
+      18% of White British people.</p>
+
+    <h2 class="govuk-heading-l"
+        id="home-ownership-and-renting">
+      <span class="number">8. </span>Home ownership and renting</h2>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">Data in this section covers England in 2016/17 and 2017/18 combined.</p>
+    </div>
+
+    <h4 class="govuk-heading-s"
+        id="chart-home-ownership-and-renting-among-indian-white-british-and-asian-households">Chart: Home ownership and
+      renting among Indian, White British and Asian households</h4>
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/Indian_Report_HomeOwnership_v2-0.svg"
+           alt="Chart showing the percentage of Indian, Asian and White British households that own their own home, rent privately, and rent social housing.">
+    </div>
+    <p class="govuk-body">Source: England, English Housing Survey, 2016/17 and 2017/18 combined</p>
+
+    <p class="govuk-body">74% of Indian households were homeowners, compared with 68% of White British households. This
+      was the highest
+      rate of all ethnic groups.</p>
+
+    <p class="govuk-body">7% of Indian households lived in social housing, compared with 16% of White British
+      households. This was one of
+      the lowest rates out of all ethnic groups.</p>
+
+    <h2 class="govuk-heading-l"
+        id="mental-health">
+      <span class="number">9. </span>Mental health</h2>
+
+    <p class="govuk-body">Indian people had the <a
+         href="/health/access-to-treatment/detentions-under-the-mental-health-act/2.1#by-ethnicity-16-ethnic-groups"
+         class="govuk-link">second lowest rate of detention under the Mental Health Act</a> out of all ethnic groups, at
+      55.7 detentions per 100,000 people. This was lower than the rate for White British people, at 69.0 per 100,000
+      people. (England 2017/18)</p>
+
+    <p class="govuk-body">Indian people were among the least likely out of all ethnic groups to use <a
+         href="/health/access-to-treatment/adults-using-nhs-funded-mental-health-and-learning-disability-services/1.2#by-ethnicity"
+         class="govuk-link">mental health and learning disability services</a> (at 2,520 per 100,000 adults), compared
+      with 3,634 per 100,000 White British adults. (England, 2014/15)</p>
+
+
+    <h2 class="govuk-heading-l govuk-!-padding-top-7">Help us improve this content</h2>
+    <p class="govuk-body">Answer 4 short questions to <a rel="external"
+         target="_blank"
+         href="https://www.surveymonkey.co.uk/r/LHNXF3N"
+         class="govuk-link">help us improve this content</a>.</p>
+
+  </div>
+</div>
+{# end of content #}
+
+{{ appBackToTop(anchor="toc",text="Contents",attributes={"data-on": "click", "data-event-category":"Back to Top", "data-event-action": "Clicked", "data-event-label": "Contents"}) }}
+{% endblock %}
+
+{% block bodyEnd %}
+{{ super() }}
+{% endblock %}
