@@ -1,0 +1,513 @@
+{% extends "base.html" %}
+{% from "_macros/_back_to_top.html" import appBackToTop %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+  ]
+%}
+
+{% block pageTitle %}Black Caribbean ethnic group - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block metaDescription %}{% endblock %}
+{% block socialTitle %}Black Caribbean ethnic group: facts and figures{% endblock %}
+{% block socialDescription %}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Black Caribbean ethnic group');{% endblock %}
+
+
+{% block content %}
+
+{# Page title and TOC  #}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2">
+      Black Caribbean ethnic group: facts and figures
+    </h1>
+    <p class="govuk-body-s">Published 27 June 2019</p>
+
+    <div id="toc">
+      <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+      <ol class="eff-table-of-contents">
+        <li><a class="govuk-link"
+             href="#about-this-page"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Indian ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">1. </span><span
+                  class="eff-table-of-contents__content">About this page</span></a></li>
+        <li><a class="govuk-link"
+             href="#population"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Black Caribbean ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">2. </span><span
+                  class="eff-table-of-contents__content">Population</span></a></li>
+        <li><a class="govuk-link"
+             href="#education"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Black Caribbean ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">3. </span><span
+                  class="eff-table-of-contents__content">Education</span></a></li>
+        <li><a class="govuk-link"
+             href="#stop-and-search"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Black Caribbean ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">4. </span><span
+                  class="eff-table-of-contents__content">Stop and search</span></a></li>
+        <li><a class="govuk-link"
+             href="#arrests"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Black Caribbean ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">5. </span><span
+                  class="eff-table-of-contents__content">Arrests</span></a></li>
+        <li><a class="govuk-link"
+             href="#fear-of-crime"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Black Caribbean ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">6. </span><span
+                  class="eff-table-of-contents__content">Fear of crime</span></a></li>
+        <li><a class="govuk-link"
+             href="#home-ownership-and-renting"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Black Caribbean ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">7. </span><span
+                  class="eff-table-of-contents__content">Home ownership and renting</span></a></li>
+        <li><a class="govuk-link"
+             href="#mental-health"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Black Caribbean ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">8. </span><span
+                  class="eff-table-of-contents__content">Mental health</span></a></li>
+        <li><a class="govuk-link"
+             href="#blog-post"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Black Caribbean ethnic group summary"
+             data-event-label=""><span class="eff-table-of-contents__number">9. </span><span
+                  class="eff-table-of-contents__content">Blog post</span></a></li>
+      </ol>
+    </div>
+  </div>
+</div>
+{# end of Page title and TOC  #}
+
+{# summary section (optional) #}
+<div class="govuk-grid-row govuk-!-margin-top-6">
+  <div class="govuk-grid-column-three-quarters">
+    <h2 class="govuk-heading-l"
+        id="about-this-page">
+      <span class="number">1. </span>About this page</h2>
+
+    <p class="govuk-body">This is a summary of statistics about Black Caribbean people in England and Wales.</p>
+
+    <p class="govuk-body">It is the first in a planned series of summaries about different ethnic groups.</p>
+
+    <p class="govuk-body">This page includes:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>some population statistics from the most recent Census (2011)</li>
+      <li>data on outcomes for Black Caribbean people compared with White British people, in areas including education,
+        crime and policing, housing and mental health</li>
+    </ul>
+
+    <p class="govuk-body">The White British ethnic group is used for comparison as it is the largest group, making up
+      80.5% of the
+      population of England and Wales in 2011.</p>
+
+    <p class="govuk-body">This is an overview based on a selection of data published on <a href="/"
+         class="govuk-link">Ethnicity facts and figures</a> or being published soon. Some data (for example, on
+      employment and income) is only available for the broad Black ethnic group, and is therefore not included here.</p>
+
+    <p class="govuk-body">Each section includes details of the time period covered by the data. Population and crime
+      data covers England
+      and Wales. Data on education, mental health and housing covers England only.</p>
+  </div>
+</div>
+{# end of summary section #}
+
+{# content #}
+<div class="govuk-grid-row govuk-!-margin-top-6">
+  <div class="govuk-grid-column-three-quarters">
+    <h2 class="govuk-heading-l"
+        id="population">
+      <span class="number">2. </span>Population</h2>
+
+    <p class="govuk-body">In 2011, there were 594,825 Black Caribbean people in England and Wales, making up <a
+         href="/uk-population-by-ethnicity/national-and-regional-populations/population-of-england-and-wales/1.4"
+         class="govuk-link">1.1% of the total population</a>.</p>
+
+    <h3 class="govuk-heading-m"
+        id="where-black-caribbean-people-live">
+      <span class="number">2.1 </span>Where Black Caribbean people live</h3>
+
+    <p class="govuk-body">There were 348 local authorities in England and Wales at the time of the 2011 Census. Half of
+      the Black Caribbean
+      population (49.5%) lived in 13 of them.</p>
+
+    <p class="govuk-body">Birmingham was home to the largest Black Caribbean population, with 8% of all Black Caribbean
+      people living
+      there, followed by Croydon (5.3%) and Lewisham (5.2%), both in London.</p>
+
+    <h4 class="govuk-heading-s"
+        id="map-percentage-of-the-black-caribbean-population-of-england-and-wales-living-in-each-local-authority-area-top-13-areas-labelled">
+      Map: Percentage of the Black Caribbean population of England and Wales living in each local authority area (top 13
+      areas labelled)</h4>
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/black-caribbean-population-2011-map.svg"
+           alt="Map of England and Wales showing the 13 local authorities where half of the Black Caribbean population of England and Wales lives">
+    </div>
+    <p class="govuk-body">Source: Census of England and Wales, 2011</p>
+
+    <h4 class="govuk-heading-s"
+        id="table-percentage-of-the-black-caribbean-population-of-england-and-wales-living-in-each-local-authority-area-top-13">
+      Table: Percentage of the Black Caribbean population of England and Wales living in each local authority area (top
+      13)</h4>
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header"
+              scope="col">Local authority</th>
+          <th class="govuk-table__header govuk-table__header--numeric"
+              scope="col">Number of Black Caribbean residents</th>
+          <th class="govuk-table__header govuk-table__header govuk-table__header--numeric"
+              scope="col">Percentage of Black Caribbean people living there</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Birmingham</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">47,641</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">8.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Croydon</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">31,320</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">5.3%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Lewisham</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">30,854</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">5.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Lambeth</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">28,886</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">4.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Brent</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">23,723</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">4.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Hackney</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">19,168</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">3.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Waltham Forest</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">18,841</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">3.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Haringey</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">18,087</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">3.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Southwark</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">17,974</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">3.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Enfield</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">17,334</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">2.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Newham</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">15,050</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">2.5%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Ealing</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">13,192</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">2.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row"
+              class="govuk-table__header">Wandsworth</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">12,297</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">2.1%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="govuk-body">In 2011, 164 local authorities had fewer than 200 Black Caribbean residents. This is almost
+      half (47%) of all
+      local authorities in England and Wales.</p>
+
+    <p class="govuk-body"><a
+         href="/uk-population-by-ethnicity/demographics/people-living-in-deprived-neighbourhoods/1.2#people-living-in-the-most-deprived-10-of-neighbourhoods-by-ethnicity"
+         class="govuk-link">18.1% of Black Caribbean people lived in the most deprived 10% of neighbourhoods</a> in
+      England compared with 8.6% of White British people. (England, 2012/13)</p>
+
+    <h3 class="govuk-heading-m"
+        id="age-profile">
+      <span class="number">2.2 </span>Age profile</h3>
+
+    <p class="govuk-body">The Black Caribbean ethnic group had a younger age profile than the White British group at the
+      time of the 2011
+      Census of England and Wales.</p>
+
+    <p class="govuk-body">The <a
+         href="/uk-population-by-ethnicity/demographics/age-groups/1.2#black-ethnic-groups-age-profile"
+         class="govuk-link">age profile of the Black Caribbean group</a> partly reflects the first large wave of
+      immigrants from the Caribbean in the 1950s and 1960s, and their children. The population who were aged 40 to 55
+      years at the 2011 Census made up nearly 30% of people in this ethnic group.</p>
+
+    <p class="govuk-body">In 2011, <a
+         href="/uk-population-by-ethnicity/demographics/age-groups/1.2#white-ethnic-groups-age-profile"
+         class="govuk-link">26% of White British people were aged 60 and above</a>, compared with 17% of Black Caribbean
+      people.</p>
+
+    <h4 class="govuk-heading-s"
+        id="chart-age-profile-of-black-caribbean-and-white-british-people">Chart: Age profile of Black Caribbean and
+      White British people</h4>
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/black-caribbean-age-profile.svg"
+           alt="Charts showing the percentage of the Black Caribbean and White British populations of England and Wales that are in each age band">
+    </div>
+    <p class="govuk-body">Source: Census of England and Wales, 2011</p>
+
+
+    <h3 class="govuk-heading-m"
+        id="families-and-households">
+      <span class="number">2.3 </span>Families and households</h3>
+
+    <p class="govuk-body">16.6% of <a
+         href="/uk-population-by-ethnicity/demographics/families-and-households/1.1#black-ethnic-group-by-household-type"
+         class="govuk-link">Black Caribbean households</a> in England and Wales were made up of lone parents with
+      dependent children, compared with <a
+         href="/uk-population-by-ethnicity/demographics/families-and-households/1.1#white-ethnic-group-by-household-type"
+         class="govuk-link">6.7% of White British households</a>.</p>
+
+    <p class="govuk-body">13.6% of Black Caribbean households were made up of married or cohabiting couples with
+      dependent children,
+      compared with 18.4% of White British households.</p>
+
+    <p class="govuk-body">13.5% of Black Caribbean households were made up of pensioners (either couples or single
+      pensioners), compared
+      with 23% of White British households.</p>
+
+    <h2 class="govuk-heading-l"
+        id="education">
+      <span class="number">3. </span>Education</h2>
+
+    <p class="govuk-body">In all subjects and at all key stages, Black Caribbean pupils’ attainment was below the
+      average for England.
+      (2017/18)</p>
+
+    <h4 class="govuk-heading-s"
+        id="chart-educational-attainment-among-black-caribbean-and-white-british-pupils">Chart: Educational attainment
+      among Black Caribbean and White British pupils</h4>
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/black-caribbean-education-statistics.svg"
+           alt="Chart comparing the attainment of Black Caribbean pupils with White British pupils"></div>
+    <p class="govuk-body">Source: England, Key Stage 1 Statistics, 2017/18; Key Stage 4 Statistics, 2016/17; and A Level
+      and other 16
+      to 18 results, 2016/17. Ethnicity facts and figures and Department for Education (DfE). Figures for Key Stage
+      2 are rounded to whole numbers by DfE.</p>
+
+    <h3 class="govuk-heading-m"
+        id="primary-education">
+      <span class="number">3.1 </span>Primary education</h3>
+
+    <p class="govuk-body">In year 6, 55% of Black Caribbean pupils met the expected standard in <a
+         href="/education-skills-and-training/7-to-11-years-old/reading-writing-and-maths-attainments-for-children-aged-7-to-11-key-stage-2/3.0#by-ethnicity"
+         class="govuk-link">key stage 2 reading, writing and maths</a>, compared with 65% of White British pupils. This
+      was the lowest percentage out of all ethnic groups after White Irish Traveller and Gypsy Roma pupils. (England,
+      2017/18)</p>
+
+    <h3 class="govuk-heading-m"
+        id="secondary-education">
+      <span class="number">3.2 </span>Secondary education</h3>
+
+    <p class="govuk-body">26.9% of Black Caribbean pupils achieved <a rel="external"
+         target="_blank"
+         href="https://www.gov.uk/government/statistics/gcse-and-equivalent-results-2017-to-2018-provisional"
+         class="govuk-link">Grade 5 or above in English and maths GCSE</a>, 15.8 percentage points less than White
+      British pupils at 42.7%. (England, 2017/18)</p>
+
+    <p class="govuk-body">3.5% of Black Caribbean pupils achieved at least <a rel="external"
+         target="_blank"
+         href="https://www.gov.uk/government/statistics/a-level-and-other-16-to-18-results-2017-to-2018-revised"
+         class="govuk-link">3 A grades at A level</a>, compared with 10.9% of White British pupils. This was the lowest
+      percentage of all ethnic groups. (England, 2017/18)</p>
+
+    <h3 class="govuk-heading-m"
+        id="school-exclusions">
+      <span class="number">3.3 </span>School exclusions</h3>
+
+    <p class="govuk-body">Black Caribbean pupils were <a
+         href="/education-skills-and-training/absence-and-exclusions/pupil-exclusions/2.2#temporary-exclusions-by-ethnicity"
+         class="govuk-link">twice as likely to be temporarily excluded</a> from school as White British pupils. 10.2%
+      were temporarily excluded, compared with 5.2% of White British pupils. (England, 2016/17)</p>
+
+    <p class="govuk-body">Black Caribbean pupils are almost <a
+         href="/education-skills-and-training/absence-and-exclusions/pupil-exclusions/2.2#permanent-exclusions-by-ethnicity"
+         class="govuk-link">three times as likely to be permanently excluded</a> as White British pupils. 0.28% were
+      permanently excluded, compared with 0.10% of White British pupils. (England, 2016/17)</p>
+
+    <h2 class="govuk-heading-l"
+        id="stop-and-search">
+      <span class="number">4. </span>Stop and search</h2>
+
+    <p class="govuk-body">Black Caribbean people were <a
+         href="/crime-justice-and-the-law/policing/stop-and-search/3.2#by-ethnicity"
+         class="govuk-link">9.6 times as likely to stopped and searched</a> as White British people. There were 26 stop
+      and searches per 1,000 Black Caribbean people, compared with 3 stop and searches per 1,000 White British people.
+      This was the highest rate out of all ethnic groups except those recorded as ‘Other Black’. (England and Wales,
+      2017/18)</p>
+
+    <p class="govuk-body">Rates for stop and search <a
+         href="/crime-justice-and-the-law/policing/stop-and-search/3.2#by-ethnicity-over-time"
+         class="govuk-link">decreased for all ethnic groups between 2009/10 and 2017/18</a>. The rate fell from 153 to
+      26 per 1,000 Black Caribbean people during this period.</p>
+
+    <p class="govuk-body">In recent years, stop and search rates have fallen faster for White British people than for
+      Black Caribbean
+      people. As a result, the disparity has widened since 2013/14 when Black Caribbean people were 4.7 times as likely
+      to be stopped and searched as White British people.</p>
+
+    <h4 class="govuk-heading-s"
+        id="chart-stop-and-search-rate-per-1000-people-over-time-among-black-caribbean-and-white-british-people">Chart:
+      Stop and Search rate (per 1,000 people) over time among Black Caribbean and White British people</h4>
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/black-caribbean-stop-and-search.svg"
+           alt="Chart showing the stop and search rates for Black Caribbean and White British people between 2009/10 and 2017/18">
+    </div>
+    <p class="govuk-body">Source: England and Wales, Police Powers and Procedures, 2017/18</p>
+
+    <p class="govuk-body">A higher percentage of <a rel="external"
+         target="_blank"
+         href="https://www.gov.uk/government/statistics/police-powers-and-procedures-england-and-wales-year-ending-31-march-2018"
+         class="govuk-link">stop and search incidents among the Black Caribbean group resulted in an arrest</a> (22.8%),
+      compared with all other ethnic groups except the Mixed White/Black Caribbean group (22.9%). The percentage for the
+      White British group was 15.7%. (England and Wales, 2017/18)</p>
+
+    <p class="govuk-body">Between 2009/10 and 2017/18, the percentage of stop and searches leading to an arrest
+      increased for all ethnic
+      groups. For the Black Caribbean group it increased from 7.4% to 22.8% of all stop and search incidents. This
+      increase was larger than among the White British group, which rose from 8.9% to 15.7%. (England and Wales, 2009/10
+      to 2017/18)</p>
+
+    <h2 class="govuk-heading-l"
+        id="arrests">
+      <span class="number">5. </span>Arrests</h2>
+
+    <p class="govuk-body">Black Caribbean people were <a
+         href="/crime-justice-and-the-law/policing/number-of-arrests/3.1#by-ethnicity"
+         class="govuk-link">3.8 times as likely to be arrested</a> as White British people. There were 38 arrests for
+      every 1,000 Black Caribbean people (the highest out of all ethnic groups), compared with 10 arrests for every
+      1,000 White British people. (England and Wales, 2017/18)</p>
+
+    <p class="govuk-body">The arrest rate for Black Caribbean people decreased from 81 per 1,000 people in 2006/7 to 38
+      per 1,000 people in
+      2017/18. This is a larger decrease than that seen for White British people (from 24 per 1,000 people in 2006/7 to
+      10 in 2017/18). (England and Wales, 2017/18)</p>
+
+    <h2 class="govuk-heading-l"
+        id="fear-of-crime">
+      <span class="number">6. </span>Fear of crime</h2>
+
+    <p class="govuk-body">28% of Black Caribbean people said they thought <a
+         href="/crime-justice-and-the-law/crime-and-reoffending/fear-of-crime/1.4#by-ethnicity-over-time"
+         class="govuk-link">they were likely to be a victim of crime in the next year</a>, compared with 18% of White
+      British people. (England and Wales, 2015/16)</p>
+
+    <h2 class="govuk-heading-l"
+        id="home-ownership-and-renting">
+      <span class="number">7. </span>Home ownership and renting</h2>
+
+    <h4 class="govuk-heading-s"
+        id="chart-home-ownership-and-renting-among-black-caribbean-and-white-british-households">Chart: Home ownership
+      and renting among Black Caribbean and White British households</h4>
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/black-caribbean-housing.svg"
+           alt="Chart showing the percentage of White British and Black Caribbean households that own their own home, rent privately, and rent social housing">
+    </div>
+    <p class="govuk-body">Source: England, English Housing Survey, 2015/16 and 2016/17 combined</p>
+
+    <p class="govuk-body"><a href="/housing/owning-and-renting/home-ownership/2.1#by-ethnicity"
+         class="govuk-link">37% of Black Caribbean people were homeowners</a>, compared with 68% of people from both the
+      White British and Indian ethnic groups. (England, 2015/16 and 2016/17 combined)</p>
+
+    <p class="govuk-body"><a
+         href="/housing/social-housing/renting-from-a-local-authority-or-housing-association-social-housing/2.1#by-ethnicity"
+         class="govuk-link">45% of Black Caribbean households rented social housing</a>, compared with 16% of White
+      British households. (England, 2015/16 and 2016/17 combined)</p>
+
+    <h2 class="govuk-heading-l"
+        id="mental-health">
+      <span class="number">8. </span>Mental health</h2>
+
+    <p class="govuk-body">Black Caribbean people had the highest rate of detention under the Mental Health Act out of
+      all ethnic groups, at
+      254 detentions per 100,000 people. This was <a
+         href="/health/mental-health/detentions-under-the-mental-health-act/2.1#by-ethnicity-16-ethnic-groups"
+         class="govuk-link">3.7 times as high</a> as the rate for White British people (69 per 100,000 people).
+      (England, 2017/18)</p>
+
+    <p class="govuk-body">Black Caribbean adults were the <a
+         href="/health/mental-health/adults-using-nhs-funded-mental-health-and-learning-disability-services/1.2#by-ethnicity"
+         class="govuk-link">most likely to use mental health and learning disability services</a> out of all ethnic
+      groups where the data was reliable. Nearly 4,800 adults per 100,000 of the Black Caribbean population did so,
+      compared with just over 3,600 per 100,000 White British people. (England, 2014/15)</p>
+
+    <h2 class="govuk-heading-l"
+        id="blog-post">
+      <span class="number">9. </span>Blog post</h2>
+
+    <p class="govuk-body">Read a blog post on <a rel="external"
+         target="_blank"
+         href="https://dataingovernment.blog.gov.uk/2019/06/27/how-were-helping-people-understand-ethnicity-data/"
+         class="govuk-link">How we’re helping people understand ethnicity data</a>, written by Richard Laux, chief
+      analyst at the Race Disparity Unit (RDU).</p>
+
+    <p class="govuk-body">In the blog post, Richard discusses:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>why the RDU is planning to publish a series of summary reports in addition to the data on Ethnicity facts and
+        figures</li>
+      <li>the reasoning behind decisions like which data to include</li>
+    </ul>
+  </div>
+</div>
+{# end of content #}
+
+{{ appBackToTop(anchor="toc",text="Contents",attributes={"data-on": "click", "data-event-category":"Back to Top", "data-event-action": "Clicked", "data-event-label": "Contents"}) }}
+{% endblock %}

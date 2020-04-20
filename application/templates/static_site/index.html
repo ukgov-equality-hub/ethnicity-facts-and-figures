@@ -4,20 +4,24 @@
 
 {% block pageTitle %}Ethnicity facts and figures – GOV.UK{% endblock %}
 {% block socialTitle %}Ethnicity facts and figures{% endblock %}
-{% block socialDescription %}Government data on how race and ethnicity affects health, education, housing, work & crime outcomes for people in the UK, produced by the Race Disparity Audit{% endblock %}
+{% block socialDescription %}Government data on how race and ethnicity affects health, education, housing, work & crime
+outcomes for people in the UK, produced by the Race Disparity Audit{% endblock %}
 {% block googleAnalytics %}ga('set','contentGroup1','Home');{% endblock %}
 
 {% block head %}
-    {{ super() }}
-    <meta name="description" content="Government data on how race and ethnicity affects health, education, housing, work & crime outcomes for people in the UK, produced by the Race Disparity Audit">
+{{ super() }}
+<meta name="description"
+      content="Government data on how race and ethnicity affects health, education, housing, work & crime outcomes for people in the UK, produced by the Race Disparity Audit">
 {% endblock %}
 
 {% block bodyClasses %}with-hero{% endblock %}
-{% block bodyStart %}{{ super( )}}<div itemscope itemtype="http://schema.org/DataCatalog">{% endblock %}
-{% block bodyEnd %}{{ super( )}}</div>{% endblock %}
+{% block bodyStart %}{{ super( )}}
+<div itemscope
+     itemtype="http://schema.org/DataCatalog">{% endblock %}
+  {% block bodyEnd %}{{ super( )}}</div>{% endblock %}
 
 {% block phaseBanner %}
-  {{ render_phase_banner(reversed=True) }}
+{{ render_phase_banner(reversed=True) }}
 {% endblock %}
 
 {% block main %}
@@ -28,12 +32,16 @@
       <div class="hero-inner">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-two-thirds">
-              <h1 class="govuk-heading-xl">
-                  Ethnicity facts and figures
-              </h1>
-              <p class="govuk-body">87% of people in the UK are White, and 13% belong to a Black, Asian, Mixed or Other ethnic group, according to the combined 2011 censuses for England and Wales, Scotland, and Northern Ireland.</p>
+            <h1 class="govuk-heading-xl">
+              Ethnicity facts and figures
+            </h1>
+            <p class="govuk-body">87% of people in the UK are White, and 13% belong to a Black, Asian, Mixed or Other
+              ethnic group, according to the combined 2011 censuses for England and Wales, Scotland, and Northern
+              Ireland.</p>
 
-              <p class="govuk-body">Use this service to find information about the different experiences of people from a variety of ethnic backgrounds. It gathers data collected by government in one place, making it available to the public, specialists and charities.</p>
+            <p class="govuk-body">Use this service to find information about the different experiences of people from a
+              variety of ethnic backgrounds. It gathers data collected by government in one place, making it available
+              to the public, specialists and charities.</p>
 
           </div>
         </div>
@@ -42,32 +50,36 @@
   </div>
 
   <div class="govuk-width-container">
-    <div class="govuk-grid-row" id="topic-section">
-        <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">
-                Data by topic
-            </h2>
-        </div>
+    <div class="govuk-grid-row"
+         id="topic-section">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-m">
+          Data by topic
+        </h2>
+      </div>
     </div>
 
     <ul class="govuk-list">
-    {% for topic_batch in (topics|selectattr('has_published_measures') if static_mode else topics)|batch(3) %}
+      {% for topic_batch in (topics|selectattr('has_published_measures') if static_mode else topics)|batch(3) %}
       <div class="govuk-grid-row topic-row">
-          {% for topic in topic_batch %}
-          <div class="govuk-grid-column-one-third topic">
-            <li>
-              <h3 class="govuk-heading-s govuk-!-margin-bottom-1">
-                  <a class="govuk-link" href="{{ url_for('static_site.topic', topic_slug=topic.slug) }}">{{ topic.short_title_or_title }}{% if topic.has_published_measures == false %} (not published){% endif %}</a>
-              </h3>
-              <p class="govuk-body">{{ topic.description }}</p>
-            </li>
-          </div>
-          {% endfor %}
+        {% for topic in topic_batch %}
+        <div class="govuk-grid-column-one-third topic">
+          <li>
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">
+              <a class="govuk-link"
+                 href="{{ url_for('static_site.topic', topic_slug=topic.slug) }}">{{ topic.short_title_or_title }}{% if topic.has_published_measures == false %}
+                (not published){% endif %}</a>
+            </h3>
+            <p class="govuk-body">{{ topic.description }}</p>
+          </li>
+        </div>
+        {% endfor %}
       </div>
-    {% endfor %}
+      {% endfor %}
     </ul>
 
-    <div class="govuk-grid-row" id="ethnicity-reports-section">
+    <div class="govuk-grid-row"
+         id="ethnicity-reports-section">
       <div class="govuk-grid-column-two-thirds">
         <h2 class="govuk-heading-m">
           Ethnic group summaries
@@ -77,38 +89,38 @@
 
     <ul class="govuk-list govuk-grid-row">
       <li class="govuk-grid-column-one-third">
-          <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Asian</h3>
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Asian</h3>
 
-          <ul class="govuk-list">
-            <li>
-              <a class="govuk-link"
-                href="https://www.gov.uk/government/publications/ethnicity-facts-and-figures-indian-ethnic-group/indian-ethnic-group-facts-and-figures">
-                Indian
-              </a>
-            </li>
-            <li>
-              <a class="govuk-link"
-                href="https://www.gov.uk/government/publications/ethnicity-facts-and-figures-chinese-ethnic-group/chinese-ethnic-group-facts-and-figures">
-                Chinese
-              </a>
-            </li>
-          </ul>
+        <ul class="govuk-list">
+          <li>
+            <a class="govuk-link"
+               href="{{ url_for('static_site.indian_ethnic_group') }}">
+              Indian
+            </a>
+          </li>
+          <li>
+            <a class="govuk-link"
+               href="{{ url_for('static_site.chinese_ethnic_group') }}">
+              Chinese
+            </a>
+          </li>
+        </ul>
       </li>
       <li class="govuk-grid-column-one-third">
-          <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Black</h3>
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Black</h3>
 
-          <a class="govuk-link"
-            href="https://www.gov.uk/government/publications/ethnicity-facts-and-figures-black-caribbean-ethnic-group/black-caribbean-ethnic-group-facts-and-figures">
-            Black Caribbean
-          </a>
+        <a class="govuk-link"
+           href="{{ url_for('static_site.black_caribbean_ethnic_group') }}">
+          Black Caribbean
+        </a>
       </li>
     </ul>
 
     <div class="govuk-grid-row">
       <p class="govuk-body govuk-grid-column-full">
-      These are the first summaries in a planned series.
+        These are the first summaries in a planned series.
         <a class="govuk-link"
-          href="https://dataingovernment.blog.gov.uk/2019/06/27/how-were-helping-people-understand-ethnicity-data/">
+           href="https://dataingovernment.blog.gov.uk/2019/06/27/how-were-helping-people-understand-ethnicity-data/">
           Read our blog post about these summaries</a>.
       </p>
     </div>
@@ -122,15 +134,17 @@
       <div class="govuk-grid-row">
         <li>
           <div class="govuk-grid-column-one-third">
-              <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a class="govuk-link" href="{{ url_for('dashboards.whats_new') }}">New and updated pages</a></h3>
-              <p class="govuk-body">Recent updates to the website</p>
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a class="govuk-link"
+                 href="{{ url_for('dashboards.whats_new') }}">New and updated pages</a></h3>
+            <p class="govuk-body">Recent updates to the website</p>
           </div>
         </li>
 
         <li>
           <div class="govuk-grid-column-one-third">
-              <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a class="govuk-link" href="{{ url_for('dashboards.planned_pages') }}">Planned pages</a></h3>
-              <p class="govuk-body">What’s being worked on and coming up next</p>
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a class="govuk-link"
+                 href="{{ url_for('dashboards.planned_pages') }}">Planned pages</a></h3>
+            <p class="govuk-body">What’s being worked on and coming up next</p>
           </div>
         </li>
       </div>
