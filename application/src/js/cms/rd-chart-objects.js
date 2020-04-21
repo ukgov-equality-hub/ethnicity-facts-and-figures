@@ -20,8 +20,8 @@ THE PARENT COLOUR SECTION IS TO DO WITH DISPLAY, NOT DATA CONTENT
 
  */
 
-var defaultParentColor = '#2B8CC4';
-var defaultChildColor = '#B3CBD9';
+var defaultParentColor = '#003078';
+var defaultChildColor = '#5694ca';
 var VERSION = '1.1'; // panel charts include sort option
 var BAR_CHART = 'bar';
 var LINE_CHART = 'line';

@@ -59,6 +59,8 @@ function barchart(container_id, chartObject) {
 }
 function barchartHighchartObject(chartObject) {
   preprocessChartObject(chartObject);
+  // fix old colours currently stored in DB json object
+  chartObject.series = replaceOldSeriesColors(chartObject);
 
   var chart = {
     colors: setColour(chartObject),
@@ -841,7 +843,7 @@ function getMissingCategories(categoryList, pointList) {
         y: 0,
         relationships: { is_parent: true, is_child: false, parent: parent },
         category: category,
-        color: '#2B8CC4',
+        color: '#003078',
         text: '',
         include: false
       });
@@ -856,21 +858,22 @@ function getMissingCategories(categoryList, pointList) {
 
 function setColour(chartObject) {
   var colours = [
-    '#2B8CC4',
-    '#F44336',
-    '#4CAF50',
-    '#FFC107',
-    '#9C27B0',
-    '#00BCD4'
+    '#5694ca',
+    '#003078',
+    '#ffdd00',
+    '#d53880',
+    '#b1b4b6',
+    '#28a197'
   ];
+
   return chartObject.type === 'line'
     ? colours
     : chartObject.series.length === 4
-    ? ['#2B8CC4', '#4891BB', '#76A6C2', '#B3CBD9']
+    ? colours.slice(0, 4)
     : chartObject.series.length === 3
-    ? ['#2B8CC4', '#76A6C2', '#B3CBD9']
+    ? colours.slice(0, 3)
     : chartObject.series.length === 2
-    ? ['#2B8CC4', '#B3CBD9']
+    ? colours.slice(0, 2)
     : colours;
 }
 
@@ -933,6 +936,22 @@ function setDecimalPlaces(chartObject) {
     }
   );
   chartObject.decimalPlaces = seriesDecimalPlaces(values);
+}
+
+
+function colorReplacer(key, value) {
+  // Filtering out properties
+  if ( value === '#2B8CC4') {
+    return '#003078';
+  }
+  else if ( value === '#B3CBD9') {
+    return '#5694ca';
+  }
+  return value;
+}
+
+function replaceOldSeriesColors(chartObject) {
+  return JSON.parse(JSON.stringify(chartObject.series, colorReplacer));
 }
 
 // If we're running under Node - required for testing
