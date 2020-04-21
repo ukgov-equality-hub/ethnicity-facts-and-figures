@@ -9,7 +9,7 @@
   " stroke-width="2" stroke="{{ colour }}" fill="none" />
 {% endmacro %}
 
-{% macro render_value_circles(values, x_scale, y_scale, graph_height, colour="#2B8CC4", start_index=0) %}
+{% macro render_value_circles(values, x_scale, y_scale, graph_height, colour="#003078", start_index=0) %}
   {% set start_index_scaled = (start_index * x_scale) %}
   {% for value in values[start_index:] %}
     <circle cx="{{ (loop.index0 * x_scale) + start_index_scaled + 0.5 }}" cy="{{ graph_height - (value * y_scale) }}" r="3" fill="{{ colour }}" />
@@ -44,7 +44,7 @@
 
       {# Cumulative number of pages #}
 
-      {{ render_value_line(data.total_page_count_each_week, x_scale, y_scale, graph_height, colour="#2B8CC4") }}
+      {{ render_value_line(data.total_page_count_each_week, x_scale, y_scale, graph_height, colour="#003078") }}
 
       {{ render_value_circles(data.total_page_count_each_week, x_scale, y_scale, graph_height) }}
 
