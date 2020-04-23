@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 
+{% set breadcrumbs = none %}
+
+{% block pageTitle %}Page not found{% endblock %}
+
 {% block content %}
-    <div class='govuk-grid-row'>
-        <div class='govuk-grid-column-full'>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-xl">Page not found</h1>
             <p class="govuk-body">If you entered a web address please check it was correct.</p>
-            <p class="govuk-body">You can also <a class="govuk-link" href="/">browse from our homepage</a>.</p>
+            <p class="govuk-body">You can also visit the <a class="govuk-link" href="{{ url_for('static_site.index') }}">Homepage</a></p>
         </div>
     </div>
 {% endblock %}
