@@ -275,8 +275,11 @@ def build_dashboards(build_dir):
     write_html(file_path, content)
 
     # New and updated pages
+    data = get_published_dashboard_data()
     pages_by_years_and_months = get_published_measures_by_years_and_months()
-    content = render_template("dashboards/whats_new.html", pages_by_years_and_months=pages_by_years_and_months)
+    content = render_template(
+        "dashboards/whats_new.html", pages_by_years_and_months=pages_by_years_and_months, data=data
+    )
     file_path = os.path.join(dashboards_dir, "whats-new/index.html")
     write_html(file_path, content)
 
