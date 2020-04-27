@@ -8,7 +8,13 @@
   ]
 %}
 
+
 {% block pageTitle %}Published pages{% endblock %}
+
+{% block headEnd %}
+    {{ super() }}
+    <meta name="robots" content="noindex">
+{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">

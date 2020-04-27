@@ -30,8 +30,9 @@ def index():
 @dashboard_blueprint.route("/whats-new")
 @login_required
 def whats_new():
+    data = get_published_dashboard_data()
     pages_by_years_and_months = get_published_measures_by_years_and_months()
-    return render_template("dashboards/whats_new.html", pages_by_years_and_months=pages_by_years_and_months)
+    return render_template("dashboards/whats_new.html", pages_by_years_and_months=pages_by_years_and_months, data=data)
 
 
 @dashboard_blueprint.route("/published")

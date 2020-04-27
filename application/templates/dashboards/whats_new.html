@@ -10,21 +10,44 @@
 {% block pageTitle %}New and updated pages for Ethnicity facts and figures - GOV.UK{% endblock %}
 
 {% block content %}
-    <h1 class="govuk-heading-xl">New and updated pages</h1>
+<h1 class="govuk-heading-xl">New and updated pages</h1>
 
-    <p class="govuk-body">All pages published on Ethnicity facts and figures, starting with the most recent.</p>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">All pages published on Ethnicity facts and figures, starting with the most recent. You can also find out what we have <a href="{{ url_for('dashboards.planned_pages') }}">planned and in
+      progress</a>.</p>
+  </div>
+</div>
 
-    {% for year, months in pages_by_years_and_months|dictsort(reverse=True) %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
+    <div class="eff-stat eff-!-background-light-blue">
+      <span class="eff-stat__figure">{{ data.number_of_publications }}</span>
+      <span class="eff-stat__description">{% if data.number_of_publications == 1 %}Page{% else %}Pages{% endif %}</span>
+    </div>
+  </div>
+  <div class="govuk-grid-column-one-third">
+    <div class="eff-stat eff-!-background-turquoise">
+      <span class="eff-stat__figure">{{ data.number_of_major_updates }}</span>
+      <span
+            class="eff-stat__description">{% if data.number_of_major_updates == 1 %}Update{% else %}Updates{% endif %}</span>
+    </div>
+  </div>
+</div>
 
-      <h2 class="govuk-heading-l">{{ year }}</h2>
 
-      {% for month, pages in months|dictsort(reverse=True) %}
+{% for year, months in pages_by_years_and_months|dictsort(reverse=True) %}
 
-        <h3 class="govuk-heading-m">{{ month.strftime("%B") }}</h3>
+<h2 class="govuk-heading-l">{{ year }}</h2>
 
-        <ol class="govuk-!-margin-bottom-5 govuk-list">
-          {% for page in pages %}
-            <li><a class="govuk-link" href="{{ url_for(
+{% for month, pages in months|dictsort(reverse=True) %}
+
+<h3 class="govuk-heading-m">{{ month.strftime("%B") }}</h3>
+
+<ol class="govuk-!-margin-bottom-5 govuk-list">
+  {% for page in pages %}
+  <li><a class="govuk-link"
+       href="{{ url_for(
               'static_site.measure_version',
               topic_slug=page.measure.subtopic.topic.slug,
               subtopic_slug=page.measure.subtopic.slug,
@@ -32,19 +55,20 @@
               version='latest'
             ) }}">
 
-              {{ page.title }}</a>
+      {{ page.title }}</a>
 
-              <span class="govuk-!-font-size-16">
-              {% if page.version == '1.0' %}
-                <strong class="new-tag govuk-!-margin-left-2">New</strong>
-              {% endif %}
+    <span class="govuk-!-font-size-16">
+      {% if page.version == '1.0' %}
+      <strong class="new-tag govuk-!-margin-left-2">New</strong>
+      {% endif %}
 
-              <span class="item-date govuk-!-margin-left-2 eff-!-grey-1">{{ page.published_at | format_friendly_short_date }}</span>
-              </span>
-            </li>
-          {% endfor %}
-          </ol>
+      <span
+            class="item-date govuk-!-margin-left-2 eff-!-grey-1">{{ page.published_at | format_friendly_short_date }}</span>
+    </span>
+  </li>
+  {% endfor %}
+</ol>
 
-      {% endfor %}
-    {% endfor %}
+{% endfor %}
+{% endfor %}
 {% endblock %}
