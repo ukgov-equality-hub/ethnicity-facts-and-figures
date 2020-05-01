@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% from "_macros/_accordion.html" import govukAccordion %}
+{% from "_macros/_back_to_top.html" import appBackToTop %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for("static_site.style_guide"), "text": "Style guide"},
+    {"url": "", "text": "Our writing principles"}
+  ]
+%}
+
+{% block pageTitle %}Our writing principles - GOV.UK{% endblock %}
+{% block metaDescription %}Our principles for writing clearly and impartially about statistics and ethnicity on
+Ethnicity facts and figures.{% endblock %}
+{% block socialTitle %}Our writing principles{% endblock %}
+{% block socialDescription %}Our principles for writing clearly and impartially about statistics and ethnicity on
+Ethnicity facts and figures.{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Ethnicity in the UK');{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2">
+      Our writing principles
+    </h1>
+
+    <p class="govuk-body">Our writing principles have been developed to ensure our content is clear, meaningful and
+      trustworthy to all our
+      users.</p>
+
+
+    <div id="toc">
+      <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+      <ol class="eff-table-of-contents">
+        <li><a class="govuk-link"
+             href="#write-clearly-and-concisely">
+            <span class="eff-table-of-contents__number">1. </span><span class="eff-table-of-contents__content">Write
+              clearly and concisely</span></a>
+        </li>
+        <li><a class="govuk-link"
+             href="#be-impartial-and-avoid-judgemental-language">
+            <span class="eff-table-of-contents__number">2. </span><span class="eff-table-of-contents__content">Be
+              impartial and avoid judgemental language</span></a>
+        </li>
+        <li><a class="govuk-link"
+             href="#explain-if-figures-arent-reliable">
+            <span class="eff-table-of-contents__number">3. </span><span class="eff-table-of-contents__content">Explain
+              if figures aren’t reliable</span></a></li>
+        <li><a class="govuk-link"
+             href="#define-terms">
+            <span class="eff-table-of-contents__number">4. </span><span class="eff-table-of-contents__content">Define
+              terms</span></a></li>
+        <li><a class="govuk-link"
+             href="#dont-overload-users-with-numbers">
+            <span class="eff-table-of-contents__number">5. </span><span class="eff-table-of-contents__content">Don’t
+              overload users with numbers</span></a></li>
+        <li><a class="govuk-link"
+             href="#avoid-ambiguity">
+            <span class="eff-table-of-contents__number">6. </span><span class="eff-table-of-contents__content">Avoid
+              ambiguity</span></a></li>
+        <li><a class="govuk-link"
+             href="#related-guidance">
+            <span class="eff-table-of-contents__number">7. </span><span class="eff-table-of-contents__content">Related
+              guidance</span></a></li>
+        <li><a class="govuk-link"
+             href="#help-us-stay-up-to-date">
+            <span class="eff-table-of-contents__number">8. </span><span class="eff-table-of-contents__content">Help us
+              stay up to date</span></a></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-4"
+        id="write-clearly-and-concisely">1. Write clearly and concisely</h2>
+
+    <p class="govuk-body">Content we write for the Ethnicity facts and figures website and GOV.UK should:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>meet user needs</li>
+      <li>be clear and concise</li>
+      <li>be written in plain English</li>
+      <li>be easy for everyone to understand, even complex statistical ideas</li>
+      <li>be accessible to everyone, including people with disabilities or who use assistive technologies like screen
+        readers</li>
+      <li>follow our guidelines on <a class="govuk-link"
+           href="{{ url_for('static_site.style_guide_writing_about_ethnicity').rstrip('/') }}">writing about
+          ethnicity</a> and <a class="govuk-link"
+           href="{{ url_for('static_site.style_guide_a_z').rstrip('/') }}">our
+          style guide A to Z</a></li>
+    </ul>
+
+    <p class="govuk-body">GOV.UK has <a class="govuk-link"
+         rel="external"
+         href="https://www.gov.uk/guidance/content-design/writing-for-gov-uk">guidance on
+        writing well</a>.
+    </p>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="be-impartial-and-avoid-judgemental-language">2. Be impartial and avoid judgemental language</h2>
+
+    <p class="govuk-body">We do not explain ethnic disparities shown in the data. We simply present the data in a way
+      that can be
+      understood by the widest possible audience.</p>
+
+    <p class="govuk-body">We avoid judgemental words like ‘only’, ‘best’ and ‘worst’ and let the facts speak for
+      themselves.</p>
+
+    <p class="govuk-body">This is neutral:</p>
+
+    <div class="govuk-inset-text">in every ethnic group, girls were more likely to achieve A* to C in English and Maths
+      GCSE than boys - 67% of girls did so, compared with 59% of boys
+    </div>
+
+    <p class="govuk-body">This is judgemental:</p>
+
+    <div class="govuk-inset-text">in every ethnic group, girls did better in their English and Maths GCSE than boys –
+      67% of girls achieved grades A* to C, compared with only 59% of boys
+    </div>
+
+    <p class="govuk-body">We refer to ethnic disparities rather than ethnic discrimination. This is because differences
+      in outcomes between
+      ethnic groups aren’t always the result of discrimination.</p>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="explain-if-figures-arent-reliable">3. Explain if figures aren’t reliable</h2>
+
+    <p class="govuk-body">Charts and tables can appear to show findings which, for statistical reasons, aren’t reliable
+      or meaningful. Ignoring them leaves readers confused or even suspicious.</p>
+
+    <p class="govuk-body">We explain if findings aren’t reliable or meaningful.</p>
+
+    <p class="govuk-body">For example:</p>
+
+    <div class="govuk-inset-text">although the data shows rises or falls in visits for some ethnic groups, these figures
+      may not represent the wider population because of the small number of people surveyed
+    </div>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="define-terms">4. Define terms</h2>
+
+    <p class="govuk-body">We include definitions of terms we think readers may not know. We do this the first time we
+      use the term.</p>
+
+    <p class="govuk-body">For example:</p>
+
+    <div class="govuk-inset-text">22% of working age people (people aged 16 to 64) were economically inactive in 2018,
+      which means they were out of work and not looking for a job
+    </div>
+
+    <div class="govuk-inset-text">in the academic year 2017 to 2018, the overall absence rate (school sessions missed
+      due to authorised and unauthorised absence) was 4.8%
+    </div>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="dont-overload-users-with-numbers">5. Don’t overload users with numbers</h2>
+
+    <p class="govuk-body">We don’t reference too many figures in one sentence. This is because it makes users work
+      harder to understand the information. The Nielson Norman Group have done <a class="govuk-link"
+         rel="external"
+         href="https://www.nngroup.com/articles/minimize-cognitive-load/">research into how users process
+        information</a>.</p>
+
+    <p class="govuk-body">For example:</p>
+
+    <div class="govuk-inset-text">4.6 million (20%) of the 23 million households in England rented their home from a
+      private landlord in the 2 years from 2016 to 2018
+    </div>
+
+    <p class="govuk-body">This could be rewritten as:</p>
+
+    <div class="govuk-inset-text">20% of households in England rented their home from a private landlord in the two
+      financial
+      years to 2018
+    </div>
+
+    <p class="govuk-body">We minimise the number of figures in one sentence.</p>
+
+    <p class="govuk-body">We’re also consistent in the way we present figures. For example, we use fractions and
+      percentages, but not both
+      in the same measure.</p>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="avoid-ambiguity">6. Avoid ambiguity</h2>
+
+    <p class="govuk-body">We avoid ambiguity, particularly when comparing ethnic groups.</p>
+
+    <p class="govuk-body">For example, the phrase ‘across all ethnic groups’ can mean ‘in every ethnic group’ or ‘in
+      total’.</p>
+
+    <p class="govuk-body">We say instead ‘in every ethnic group’ if a finding applies to every ethnic group.</p>
+
+    <p class="govuk-body">For example:</p>
+
+    <div class="govuk-inset-text">between 2004 and 2018, the employment rate increased in every ethnic group</p>
+    </div>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="related-guidance">7. Related guidance</h2>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li><a class="govuk-link"
+           href="{{ url_for('static_site.style_guide_writing_about_ethnicity').rstrip('/') }}">Writing about
+          ethnicity</a></li>
+      <li><a class="govuk-link"
+           href="{{ url_for('static_site.style_guide_a_z').rstrip('/') }}">Style guide A to Z</a></li>
+    </ul>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="help-us-stay-up-to-date">8. Help us stay up to date</h2>
+
+    <p class="govuk-body">Language usage and acceptability change over time. We want to make sure our content reflects
+      those changes. Contact us at <a class="govuk-link"
+         href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a> with your
+      thoughts and research.</p>
+
+  </div>
+</div>
+{{ appBackToTop(anchor="toc",text="Contents",attributes={"data-on": "click", "data-event-category":"Back to Top", "data-event-action": "Clicked", "data-event-label": "Contents"}) }}
+{% endblock %}

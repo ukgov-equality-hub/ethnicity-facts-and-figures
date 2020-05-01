@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% from "_macros/_back_to_top.html" import appBackToTop %}
+
+{% from "_macros/_accordion.html" import govukAccordion %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": "", "text": "Style guide"},
+  ]
+%}
+
+{% block pageTitle %}List of ethnic groups - GOV.UK{% endblock %}
+{% block metaDescription %}There are 18 ethnic groups recommended for use by government in England and Wales. Find out
+how the ethnic groups were chosen, and see how the groups differ in Scotland and Northern Ireland.{% endblock %}
+{% block socialTitle %}List of ethnic groups{% endblock %}
+{% block socialDescription %}There are 18 ethnic groups recommended for use by government in England and Wales. Find out
+how the ethnic groups were chosen, and see how the groups differ in Scotland and Northern Ireland.{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Ethnicity in the UK');{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">
+      Style guide
+    </h1>
+
+    <p class="govuk-body">Guidance on writing for the Ethnicity facts and figures website and publications.</p>
+
+    <ol class="section-list govuk-!-margin-bottom-9">
+      <li>
+        <a class="govuk-link"
+           href="{{ url_for('static_site.style_guide_principles').rstrip('/') }}">
+          <h2 class="subsection-title-text">Our writing principles</h2>
+          <span class="subsection-summary govuk-body govuk-!-margin-top-1 govuk-!-margin-bottom-0">Writing content our
+            users understand and trust.</span>
+        </a>
+      </li>
+      <li>
+        <a class="govuk-link"
+           href="{{ url_for('static_site.style_guide_writing_about_ethnicity').rstrip('/') }}">
+          <h2 class="subsection-title-text">Writing about ethnicity</h2>
+          <span class="subsection-summary  govuk-body  govuk-!-margin-top-1 govuk-!-margin-bottom-0">Words and phrases
+            we use or avoid.</span>
+        </a>
+      </li>
+      <li>
+        <a class="govuk-link"
+           href="{{ url_for('static_site.style_guide_a_z').rstrip('/') }}">
+          <h2 class="subsection-title-text">A to Z</h2>
+          <span class="subsection-summary govuk-body  govuk-!-margin-top-1 govuk-!-margin-bottom-0">Style, spelling and
+            grammar conventions.</span>
+        </a>
+      </li>
+      <li>
+        <a class="govuk-link"
+           href="{{ url_for('static_site.style_guide_ethnic_groups').rstrip('/') }}">
+          <h2 class="subsection-title-text">List of ethnic groups</h2>
+          <span class="subsection-summary govuk-body  govuk-!-margin-top-1 govuk-!-margin-bottom-0">Ethnic groups
+            recommended for use by government.</span>
+        </a>
+      </li>
+    </ol>
+
+  </div>
+
+
+
+</div>
+{% endblock %}

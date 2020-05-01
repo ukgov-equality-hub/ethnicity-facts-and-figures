@@ -180,7 +180,7 @@
   <p class="missing-data-explanation govuk-body govuk-!-margin-bottom-0">
     {% set table_data = dimension.dimension_table.table_object.data | flatten %}
 
-    {% if "~" in table_data %}
+    {% if "~0" in table_data %}
       <span class="explanation">~0 The actual figure is greater than zero but has been rounded down</span>
     {% endif %}
 

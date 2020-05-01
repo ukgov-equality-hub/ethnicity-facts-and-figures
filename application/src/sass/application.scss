@@ -30,6 +30,7 @@ $govuk-assets-path: '/static/assets/';
 @import 'components/phase_banner_reversed';
 @import 'components/publisher_banner';
 @import 'components/related_content';
+@import 'components/sections_list';
 @import 'components/select';
 @import 'components/share';
 @import 'components/sort_buttons';
@@ -40,6 +41,8 @@ $govuk-assets-path: '/static/assets/';
 @import 'components/table';
 @import 'components/template';
 
+// Page specific
+@import 'page-specific/style-guide';
 
 /* Import other custom styles that need converting, with care and consideration, to components in the future */
 @import 'accessible-autocomplete';

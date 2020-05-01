@@ -1,0 +1,25 @@
+/* DS - additions for A-Z page */
+#style-guide-az {
+  nav#toc ul {
+    max-width: 100%;
+    padding-top: 3em;
+  }
+  nav#toc ul li {
+      /* margin-right: 30px; */
+      display: inline;
+      padding: .4em;
+      line-height: 2em;
+      font-size: 21px;
+  }
+  nav#toc ul li span {
+    color: #6f777b;
+  }
+  h2.atoz-section {
+      width:  2em;
+      height:  2em;
+      background: #1d70b8;
+      text-align: center;
+      line-height: 2.2em;
+      color: #fff;
+  }
+}

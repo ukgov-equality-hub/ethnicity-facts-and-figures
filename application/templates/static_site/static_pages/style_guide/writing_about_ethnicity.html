@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% from "_macros/_back_to_top.html" import appBackToTop %}
+
+{% from "_macros/_accordion.html" import govukAccordion %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for("static_site.style_guide"), "text": "Style guide"},
+    {"url": "", "text": "Writing about ethnicity"}
+  ]
+%}
+
+{% block pageTitle %}Writing about ethnicity - GOV.UK{% endblock %}
+{% block metaDescription %}How we write about ethnicity on Ethnicity facts and figures, including our definition of
+ethnic minorities, words and phrases we use and avoid, and why we don’t use BAME or BME.{% endblock %}
+{% block socialTitle %}Writing about ethnicity{% endblock %}
+{% block socialDescription %}How we write about ethnicity on Ethnicity facts and figures, including our definition of
+ethnic minorities, words and phrases we use and avoid, and why we don’t use BAME or BME.{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Ethnicity in the UK');{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2">
+      Writing about ethnicity
+    </h1>
+
+    <p class="govuk-body">How we write about ethnicity, including words and phrases we use and avoid, and how we
+      describe ethnic minorities and different ethnic groups.</p>
+
+    <div id="toc">
+      <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+      <ol class="eff-table-of-contents">
+        <li><a class="govuk-link"
+             href="#ethnic-minorities-and-ethnic-groups">
+            <span class="eff-table-of-contents__number">1. </span><span class="eff-table-of-contents__content">Ethnic
+              minorities and ethnic groups</span></a>
+        </li>
+        <li><a class="govuk-link"
+             href="#ordering-and-style">
+            <span class="eff-table-of-contents__number">2. </span><span class="eff-table-of-contents__content">Ordering
+              and style</span></a>
+        </li>
+        <li><a class="govuk-link"
+             href="#related-guidance">
+            <span class="eff-table-of-contents__number">3. </span><span class="eff-table-of-contents__content">Related
+              guidance</span></a></li>
+        <li><a class="govuk-link"
+             href="#help-us-stay-up-to-date">
+            <span class="eff-table-of-contents__number">4. </span><span class="eff-table-of-contents__content">Help us
+              stay up to date</span></a></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-4"
+        id="ethnic-minorities-and-ethnic-groups">1. Ethnic minorities and ethnic groups</h2>
+
+    <p class="govuk-body">Ethnicity facts and figures generally follows the <a class="govuk-link"
+         rel="external"
+         href="https://style.ons.gov.uk/category/house-style/language-and-spelling/#race-and-ethnicity">ethnicity
+        guidelines in the ONS style guide</a>. We have developed additional ways to write about ethnicity, ethnic
+      minorities and specific ethnic groups.</p>
+
+    <h3 class="govuk-heading-m"
+        id="ethnicity-and-race">Ethnicity and race</h3>
+
+    <p class="govuk-body">We refer to ethnicity and not race. This is because:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>surveys usually ask for your ethnicity and not your race</li>
+      <li>using consistent terms helps people to understand our data</li>
+    </ul>
+
+    <h3 class="govuk-heading-m"
+        id="ethnic-minorities">Ethnic minorities</h3>
+
+    <p class="govuk-body">We use ‘ethnic minorities’ to refer to all ethnic groups except the White British group.
+      Ethnic minorities
+      include
+      White minorities, such as Irish Travellers.</p>
+
+    <p class="govuk-body">For comparisons with the White group as a whole, we use ‘all other ethnic groups combined’ or
+      ‘ethnic minorities
+      (excluding White minorities)’. We also refer to ‘White’ and ‘Other than White’ if space is limited.</p>
+
+    <p class="govuk-body">We do not use ‘Non-White’ because defining groups in relation to the White majority was not
+      well received in user
+      testing.</p>
+
+    <h3 class="govuk-heading-m"
+        id="bame-bme-and-people-of-colour">BAME, BME and people of colour</h3>
+
+    <p class="govuk-body">We do not use Black, Asian and minority ethnic (BAME) or Black and minority ethnic (BME)
+      because:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the UK’s ethnic minorities include White minorities</li>
+      <li>they highlight some groups and not others – for example, Black and Asian people are included but not people of
+        a Mixed ethnicity</li>
+      <li>in user research, the acronyms BAME and BME were not well understood by our audience</li>
+    </ul>
+
+    <p class="govuk-body">Similarly, we do not use ‘people of colour’ as it does not include White minorities.</p>
+
+    <h3 class="govuk-heading-m"
+        id="broad-and-specific-ethnic-groups">Broad and specific ethnic groups</h3>
+
+    <p class="govuk-body">We avoid using ‘broad’ and ‘specific’ when referring to ethnic groups. For example, the ‘broad
+      Asian group’ or
+      the ‘specific Pakistani group’. This is because these terms aren’t widely used outside of data collection.</p>
+
+    <p class="govuk-body">If we need to, we refer to ethnic groups ‘as a whole’. For example, ‘the Black ethnic group as
+      a whole’.</p>
+
+    <h3 class="govuk-heading-m"
+        id="phrasing">Phrasing</h3>
+
+    <p class="govuk-body">In research, ‘People from a Black Caribbean background’, ‘the Black ethnic group’ and ‘Black
+      people’ were all
+      acceptable phrases. ‘Blacks’ was not.</p>
+
+    <p class="govuk-body">Similarly ‘People from a White British background’, ‘the White ethnic group’ and ‘White
+      people’ are all
+      acceptable.
+    </p>
+
+    <p class="govuk-body">However, don’t say ‘Mixed people’ or ‘Mixed race people’. Say ‘people from a Mixed ethnic
+      background’, ‘people
+      with a Mixed ethnicity’ or ‘people from the Mixed ethnic group’.</p>
+
+    <h3 class="govuk-heading-m"
+        id="gypsy-roma-and-traveller-ethnic-groups">Gypsy, Roma and Traveller ethnic groups</h3>
+
+    <p class="govuk-body">We differentiate between Gypsy, Roma and Irish Traveller communities.</p>
+
+    <p class="govuk-body">‘Gypsy or Irish Traveller’ is one of the <a class="govuk-link"
+         rel="external"
+         href="{{ url_for('static_site.style_guide_ethnic_groups').rstrip('/') }}">18 standardised ethnic groups</a>.
+      However data is sometimes collected for a Gypsy/Roma group or White Gypsy/Traveller group, for example.</p>
+
+    <p class="govuk-body">We don’t use slashes (/) in commentary as this can imply these terms are the same. Instead we
+      refer to:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>‘the Gypsy and Roma ethnic group’ or ‘Gypsy and Roma people’</li>
+      <li>‘the Gypsy and Traveller ethnic group’ or ‘Gypsy and Traveller people’</li>
+    </ul>
+
+    <p class="govuk-body">For example:</p>
+
+    <div class="govuk-inset-text">
+      29% of White Gypsy and Roma pupils met the expected standard in reading compared with 31% of
+      White Irish Traveller pupils</div>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="ordering-and-style">Ordering and style</h2>
+
+    <h3 class="govuk-heading-m"
+        id="capitalisation">Capitalisation</h3>
+
+    <p class="govuk-body">We capitalise all ethnic groups. For example, Asian, Black, Mixed, White, Gypsy, Irish
+      Traveller, and Other.</p>
+
+    <p class="govuk-body">This is because:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>ethnic groups such as Asian and Indian must take a capital so this maintains a consistent approach for all
+        groups
+      </li>
+      <li>it makes our content easier to read if we’re comparing ‘the Other ethnic group’ with other ethnic groups</li>
+    </ul>
+
+    <p class="govuk-body">For this reason in commentary we write, for example, ‘people from the Asian Other ethnic
+      group’. This is despite
+      the
+      fact the category is usually ‘Any other Asian background’.</p>
+
+    <h3 class="govuk-heading-m"
+        id="order-of-ethnic-categories">Order of ethnic categories</h3>
+
+    <p class="govuk-body">Generally, ONS orders categories in order of size. However, in research users were sometimes
+      offended when White
+      was
+      placed first in commentary, charts and tables. They were also confused by the way ethnic categories found in
+      different
+      contexts were presented in varying orders.</p>
+
+    <p class="govuk-body">Ethnic groups are therefore ordered alphabetically in charts and tables, with ‘Other’, and
+      occasionally
+      ‘Unknown’, as
+      a final category.</p>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="ethnicities-and-nationalities">Ethnicities and nationalities</h2>
+
+    <p class="govuk-body">These ethnic groups are also nationalities:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Bangladeshi</li>
+      <li>Chinese</li>
+      <li>Indian</li>
+      <li>Pakistani</li>
+    </ul>
+
+    <p class="govuk-body">Where there’s a risk of users mistaking ethnicities for nationalities, we avoid ambiguity by
+      writing:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>‘people from the Indian ethnic group’, not ‘Indian people’</li>
+      <li>‘pupils from the Chinese ethnic group’, not ‘Chinese pupils’</li>
+    </ul>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="related-guidance">3. Related guidance</h2>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li><a class="govuk-link"
+           href="{{ url_for('static_site.style_guide_principles').rstrip('/') }}">Our writing principles</a></li>
+      <li><a class="govuk-link"
+           href="{{ url_for('static_site.style_guide_a_z').rstrip('/') }}">Style guide A to Z</a></li>
+    </ul>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="help-us-stay-up-to-date">4. Help us stay up to date</h2>
+
+    <p class="govuk-body">Language usage and acceptability change over time. We want to make sure our content reflects
+      those changes. Contact us at <a class="govuk-link"
+         href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a> with your
+      thoughts and research.</p>
+
+  </div>
+</div>
+{{ appBackToTop(anchor="toc",text="Contents",attributes={"data-on": "click", "data-event-category":"Back to Top", "data-event-action": "Clicked", "data-event-label": "Contents"}) }}
+{% endblock %}
