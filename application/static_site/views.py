@@ -275,7 +275,7 @@ def public_sector_workforces():
 # style guide
 @static_site_blueprint.route("/style-guide")
 def style_guide():
-    return render_template("static_site/static_pages/style_guide/style_guide.html")
+    return render_template("static_site/static_pages/style_guide.html")
 
 
 @static_site_blueprint.route("/style-guide/principles")
