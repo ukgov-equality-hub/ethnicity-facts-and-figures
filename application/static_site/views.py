@@ -38,12 +38,6 @@ def ethnicity_in_the_uk_page(page_name):
         abort(404)
 
 
-@static_site_blueprint.route("/ethnic-groups")
-@login_required
-def ethnic_groups():
-    return render_template("static_site/static_pages/ethnic_groups.html")
-
-
 @static_site_blueprint.route("/background")
 @login_required
 def background():
@@ -276,3 +270,30 @@ def black_caribbean_ethnic_group():
 @static_site_blueprint.route("/summaries/public-sector-workforces")
 def public_sector_workforces():
     return render_template("static_site/static_pages/summaries/public_sector_workforces.html")
+
+
+# style guide
+@static_site_blueprint.route("/style-guide")
+def style_guide():
+    return render_template("static_site/static_pages/style_guide/style_guide.html")
+
+
+@static_site_blueprint.route("/style-guide/principles")
+def style_guide_principles():
+    return render_template("static_site/static_pages/style_guide/principles.html")
+
+
+@static_site_blueprint.route("/style-guide/writing-about-ethnicity")
+def style_guide_writing_about_ethnicity():
+    return render_template("static_site/static_pages/style_guide/writing_about_ethnicity.html")
+
+
+@static_site_blueprint.route("/style-guide/a-z")
+def style_guide_a_z():
+    return render_template("static_site/static_pages/style_guide/a_z.html")
+
+
+@static_site_blueprint.route("/style-guide/ethnic-groups")
+@login_required
+def style_guide_ethnic_groups():
+    return render_template("static_site/static_pages/style_guide/ethnic_groups.html")

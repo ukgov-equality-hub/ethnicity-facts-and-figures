@@ -5,6 +5,8 @@
 {% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for("static_site.style_guide"), "text": "Style guide"},
+    {"url": "", "text": "List of ethnic groups"}
   ]
 %}
 
@@ -19,7 +21,7 @@ how the ethnic groups were chosen, and see how the groups differ in Scotland and
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2">
       List of ethnic groups
     </h1>
 
