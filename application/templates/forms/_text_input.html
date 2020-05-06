@@ -37,6 +37,13 @@
   <input id="{{ id_ }}" name="{{ name }}" class="govuk-input {{ class_ }}{% if field.errors %} govuk-input--error{% endif %}" value="{{ value }}" {% if field.hint or hint | default(false) %}aria-describedby="{{ id_ }}-hint"{% endif %} {{ field_params }}>
 {% endif %}
 
+{% if field.clear_text %}
+  <div class="govuk-!-margin-top-2">
+    <a href="#" class="govuk-link govuk-!-font-size-16"
+      onclick="event.preventDefault(); document.getElementById('{{ id_ }}').value = ''">Clear text</a>
+  </div>
+{% endif %}
+
 {% if field.character_count_limit %}
   <span id="{{ id_ }}-info" class="govuk-hint govuk-character-count__message" aria-live="polite">Please try to keep within {{ field.character_count_limit }} characters.</span>
 </div>

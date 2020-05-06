@@ -176,6 +176,7 @@ class MeasureVersionForm(FlaskForm):
         label="Time period covered",
         validators=[RequiredForReviewValidator(message="Enter the time period covered")],
         extended_hint="_time_period_covered.html",
+        clear_text=True,
     )
 
     area_covered = RDUCheckboxField(
@@ -217,6 +218,7 @@ class MeasureVersionForm(FlaskForm):
             "</details>"
         ),
         extended_hint="_summary.html",
+        clear_text=True,
     )
 
     measure_summary = RDUTextAreaField(
@@ -370,8 +372,10 @@ class DimensionForm(FlaskForm):
         hint="For example, ‘By ethnicity and gender’",
         validators=[DataRequired(message="Enter the dimension title")],
     )
-    time_period = RDUStringField(label="Time period covered", extended_hint="_time_period_covered.html")
-    summary = RDUTextAreaField(label="Summary", extended_hint="_dimension_summary.html")
+    time_period = RDUStringField(
+        label="Time period covered", extended_hint="_time_period_covered.html", clear_text=True
+    )
+    summary = RDUTextAreaField(label="Summary", extended_hint="_dimension_summary.html", clear_text=True)
 
     def __init__(self, *args, **kwargs):
         super(FlaskForm, self).__init__(*args, **kwargs)
