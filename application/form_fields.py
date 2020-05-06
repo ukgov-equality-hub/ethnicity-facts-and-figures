@@ -293,7 +293,14 @@ class RDUStringField(StringField):
     widget = _RDUTextInput()
 
     def __init__(
-        self, label=None, validators=None, hint=None, extended_hint=None, character_count_limit=None, **kwargs
+        self,
+        label=None,
+        validators=None,
+        hint=None,
+        extended_hint=None,
+        character_count_limit=None,
+        clear_text=None,
+        **kwargs,
     ):
         kwargs["filters"] = kwargs.get("filters", [])
 
@@ -313,6 +320,7 @@ class RDUStringField(StringField):
         self.hint = hint
         self.character_count_limit = character_count_limit
         self.extended_hint = Markup(render_template(f"forms/extended_hints/{extended_hint}")) if extended_hint else None
+        self.clear_text = clear_text if clear_text else None
 
     def populate_obj(self, obj, name):
         """
