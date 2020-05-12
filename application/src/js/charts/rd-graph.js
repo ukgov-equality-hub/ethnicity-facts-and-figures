@@ -332,9 +332,9 @@ function componentChart(container_id, chartObject) {
 }
 
 function componentChartTooltip(chartObject) {
-  // in components manually set decimal places to be equal 2 if not set
+  // in components manually set decimal places to be equal 2 if decimal places are more
   // @see https://trello.com/c/VyspZX5I/1741-when-you-hover-over-some-charts-the-figures-that-appear-have-6-decimal-places-after-them
-  var decimalPlaces = chartObject.decimalPlaces ? chartObject.decimalPlaces : 2;
+  var decimalPlaces = (chartObject.decimalPlaces * 1) > 2 ? 2 : chartObject.decimalPlaces;
 
   if (chartObject.series.length > 1) {
     return {
@@ -932,9 +932,14 @@ function setDecimalPlaces(chartObject) {
       })
     ),
     function(item) {
-      return item ? item.y : null;
+      if (chartObject.type === 'component') {
+        return item
+      }else {
+        return item ? item.y : null;
+      }
     }
   );
+
   chartObject.decimalPlaces = seriesDecimalPlaces(values);
 }
 
