@@ -16,6 +16,7 @@ from tests.models import (
     UserFactory,
     DataSourceFactory,
 )
+from flaky import flaky
 
 page_service = PageService()
 
@@ -201,6 +202,7 @@ class TestPageService:
             measure_2_version_1_1,
         ]
 
+    @flaky(max_runs=10, min_passes=1)
     def test_create_measure(self):
         subtopic = SubtopicFactory()
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
@@ -222,6 +224,7 @@ class TestPageService:
         assert created_measure.position == len(subtopic.measures) - 1
         assert created_measure.reference == "abc123"
 
+    @flaky(max_runs=10, min_passes=1)
     def test_create_page_with_title_and_slug_already_exists_under_subtopic_raises_exception(self):
         subtopic = SubtopicFactory()
         user = UserFactory(user_type=TypeOfUser.RDU_USER)
@@ -443,6 +446,7 @@ class TestPageService:
         assert DataSource.query.count() == 2
         assert new_version.data_sources == []
 
+    @flaky(max_runs=10, min_passes=1)
     @pytest.mark.parametrize("version_type", [t for t in NewVersionType if t is not NewVersionType.MAJOR_UPDATE])
     def test_create_measure_version_other_than_major_creates_associations_rather_than_copies_of_existing_data_sources(
         self, version_type

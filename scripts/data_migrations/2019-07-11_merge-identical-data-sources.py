@@ -2,14 +2,14 @@
 
 import sys
 
-sys.path.insert(0, ".")  # noqa
-
 from sqlalchemy import func
 
 from application import db
 from application.config import Config
 from application.factory import create_app
 from application.cms.models import DataSource
+
+sys.path.insert(0, ".")  # noqa
 
 
 def merge_identical_duplicate_data_sources(app):

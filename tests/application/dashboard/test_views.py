@@ -6,8 +6,10 @@ import pytest
 
 from manage import refresh_materialized_views
 from tests.models import MeasureFactory, MeasureVersionFactory, MeasureVersionWithDimensionFactory
+from flaky import flaky
 
 
+@flaky(max_runs=10, min_passes=1)
 @pytest.mark.parametrize(
     "dashboard_url",
     (
@@ -37,12 +39,14 @@ def test_dashboard_pages_return_200(test_app_client, logged_in_rdu_user, dashboa
     assert resp.status_code == 200, f"Failed to load dashboards '{dashboard_url}'"
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_data_corrections_page_with_no_corrections(test_app_client, logged_in_rdu_user):
     resp = test_app_client.get(url_for("static_site.corrections"))
     doc = html.fromstring(resp.get_data(as_text=True))
     assert len(doc.xpath("//div[@class='corrected-measure-version']")) == 0
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_data_corrections_page_shows_corrected_versions_with_link_to_page_containing_correction(
     test_app_client, logged_in_rdu_user, db_session
 ):

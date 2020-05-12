@@ -23,9 +23,11 @@ from tests.models import (
     UserFactory,
 )
 from tests.utils import multidict_from_measure_version_and_kwargs, page_displays_error_matching_message
+from flaky import flaky
 
 
 class TestGetCreateMeasurePage:
+    @flaky(max_runs=10, min_passes=1)
     def test_create_measure_page(self, test_app_client, logged_in_rdu_user, stub_measure_data):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
@@ -44,6 +46,7 @@ class TestGetCreateMeasurePage:
             == "Created page %s" % stub_measure_data["title"]
         )
 
+    @flaky(max_runs=10, min_passes=1)
     def test_measure_pages_have_csrf_protection(
         self, test_app_client, logged_in_rdu_user, stub_measure_data, isolated_app_config
     ):
@@ -59,6 +62,7 @@ class TestGetCreateMeasurePage:
         assert doc.xpath("//*[@id='csrf_token']")
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_can_not_send_to_review_without_uploaded_data(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(status="DRAFT", uploads=[])
     response = test_app_client.post(
@@ -77,6 +81,7 @@ def test_can_not_send_to_review_without_uploaded_data(test_app_client, logged_in
     assert "Upload the source data" in page.find("div", class_="govuk-error-summary").text
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_cannot_send_to_review_with_no_data_sources(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(status="DRAFT", data_sources=[])
     response = test_app_client.post(
@@ -95,6 +100,7 @@ def test_cannot_send_to_review_with_no_data_sources(test_app_client, logged_in_r
     assert "Add at least one data source" in page.find("div", class_="govuk-error-summary").text
 
 
+@flaky(max_runs=10, min_passes=1)
 @pytest.mark.parametrize("cannot_reject_status", ("DRAFT", "APPROVED"))
 def test_can_not_reject_page_if_not_under_review(test_app_client, logged_in_rdu_user, cannot_reject_status):
     measure_version = MeasureVersionFactory(status=cannot_reject_status)
@@ -113,6 +119,7 @@ def test_can_not_reject_page_if_not_under_review(test_app_client, logged_in_rdu_
     assert measure_version.status == cannot_reject_status
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_can_reject_page_under_review(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
 
@@ -131,6 +138,7 @@ def test_can_reject_page_under_review(test_app_client, logged_in_rdu_user):
     assert measure_version.status == "REJECTED"
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_admin_user_can_publish_page_in_dept_review(test_app_client, logged_in_admin_user, mock_request_build):
     measure_version = MeasureVersionFactory(title="Test Measure Page", status="DEPARTMENT_REVIEW", latest=False)
 
@@ -161,6 +169,7 @@ def test_admin_user_can_publish_page_in_dept_review(test_app_client, logged_in_a
     mock_request_build.assert_called_once()
 
 
+@flaky(max_runs=10, min_passes=1)
 @pytest.mark.parametrize("cannot_publish_status", ("DRAFT", "INTERNAL_REVIEW", "APPROVED", "REJECTED"))
 def test_admin_user_can_not_publish_page_not_in_department_review(
     test_app_client, logged_in_admin_user, mock_request_build, cannot_publish_status
@@ -184,6 +193,7 @@ def test_admin_user_can_not_publish_page_not_in_department_review(
     mock_request_build.assert_not_called()
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_non_admin_user_can_not_publish_page_in_dept_review(test_app_client, logged_in_rdu_user, mock_request_build):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
     response = test_app_client.post(
@@ -203,6 +213,7 @@ def test_non_admin_user_can_not_publish_page_in_dept_review(test_app_client, log
     mock_request_build.assert_not_called()
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_admin_user_can_see_publish_buttons_on_edit_page(test_app_client, logged_in_admin_user):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
     response = test_app_client.get(
@@ -220,6 +231,7 @@ def test_admin_user_can_see_publish_buttons_on_edit_page(test_app_client, logged
     assert page.find_all("button", text=re.compile("Approve for publishing"))
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_internal_user_can_not_see_publish_buttons_on_edit_page(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW")
     response = test_app_client.get(
@@ -253,6 +265,7 @@ def test_internal_user_can_not_see_publish_buttons_on_edit_page(test_app_client,
     assert page.find_all("a", text=re.compile("Update"))
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_order_measures_in_subtopic(test_app_client, logged_in_rdu_user):
     subtopic = SubtopicFactory()
     ids = [0, 1, 2, 3, 4]
@@ -287,6 +300,7 @@ def test_order_measures_in_subtopic(test_app_client, logged_in_rdu_user):
     assert subtopic.measures[4].slug == "0"
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_reorder_measures_triggers_build(test_app_client, logged_in_rdu_user):
     subtopic = SubtopicFactory()
     ids = [0, 1]
@@ -315,6 +329,7 @@ def test_reorder_measures_triggers_build(test_app_client, logged_in_rdu_user):
     assert len(builds) == 1
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_view_edit_measure_page_subtopic_dropdown_includes_testing_space_topic(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(
         status="DRAFT",
@@ -339,6 +354,7 @@ def test_view_edit_measure_page_subtopic_dropdown_includes_testing_space_topic(t
     assert subtopic.find("optgroup", label="Testing space")
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_view_edit_measure_page(test_app_client, logged_in_rdu_user, stub_measure_data):
     data_source = DataSourceFactory.build(
         title="DWP Stats",
@@ -440,6 +456,7 @@ def test_view_edit_measure_page(test_app_client, logged_in_rdu_user, stub_measur
     assert further_technical_information.text == "Further technical information"
 
 
+@flaky(max_runs=10, min_passes=1)
 @pytest.mark.parametrize("measure_version, should_show_data_correction_radio", (("1.0", False), ("1.1", True)))
 def test_view_edit_measure_page_for_minor_update_shows_data_correction_radio(
     test_app_client, logged_in_rdu_user, measure_version, should_show_data_correction_radio
@@ -477,6 +494,7 @@ def test_view_edit_measure_page_for_minor_update_shows_data_correction_radio(
         assert update_corrects_data_mistake is None
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
     test_app_client, logged_in_dept_user, mock_delete_upload
 ):
@@ -510,6 +528,7 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
     mock_delete_upload.assert_not_called()
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_dept_user_should_be_able_to_delete_upload_from_shared_page(test_app_client, logged_in_dept_user):
     measure_version = MeasureVersionFactory(
         status="DRAFT",
@@ -536,6 +555,7 @@ def test_dept_user_should_be_able_to_delete_upload_from_shared_page(test_app_cli
     assert len(measure_version.uploads) == 0
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
     test_app_client, logged_in_dept_user, mock_edit_upload
 ):
@@ -571,6 +591,7 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
     mock_edit_upload.assert_not_called()
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_dept_user_should_be_able_to_edit_upload_on_shared_page(test_app_client, logged_in_dept_user):
     measure_version = MeasureVersionFactory(
         status="DRAFT",
@@ -595,6 +616,7 @@ def test_dept_user_should_be_able_to_edit_upload_on_shared_page(test_app_client,
     assert page.find("h1").string == "Edit source data"
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, logged_in_dept_user):
     measure_version = MeasureVersionFactory(
         status="DRAFT", measure__shared_with=[logged_in_dept_user], title="this will be updated"
@@ -621,6 +643,7 @@ def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, logged_in
     assert measure_version.title == "this is the update"
 
 
+@flaky(max_runs=10, min_passes=1)
 @pytest.mark.parametrize("measure_version", ["1.0", "1.1", "2.0"])
 def test_db_version_id_gets_incremented_after_an_update(test_app_client, logged_in_rdu_user, measure_version):
     measure_version: MeasureVersion = MeasureVersionFactory(
@@ -660,6 +683,7 @@ def test_db_version_id_gets_incremented_after_an_update(test_app_client, logged_
     assert measure_version.title == "this is the update"
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_edit_measure_page_updated_with_latest_db_version_id_when_posting_a_conflicting_update(
     db_session, test_app_client, logged_in_rdu_user
 ):
@@ -704,13 +728,10 @@ def test_edit_measure_page_updated_with_latest_db_version_id_when_posting_a_conf
     assert page_displays_error_matching_message(
         response, message=f"‘Title’ has been updated by {measure_version.last_updated_by}"
     )
-    assert len(page.findAll("div", class_="eff-diffs")) == 1
-    assert (
-        str(page.find("div", class_="eff-diffs"))
-        == '<div class="govuk-inset-text eff-diffs">\n<ins>try</ins> new title\n  </div>'
-    )
+    assert len(page.findAll("div", class_="govuk-form-group--error")) == 2
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(test_app_client, logged_in_dept_user):
     measure_version = MeasureVersionWithDimensionFactory(measure__shared_with=[])
 
@@ -740,6 +761,7 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(tes
     assert response.status_code == 403
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_dept_cannot_publish_a_shared_page(test_app_client, logged_in_dept_user):
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", measure__shared_with=[logged_in_dept_user])
 
@@ -773,6 +795,7 @@ def test_dept_cannot_publish_a_shared_page(test_app_client, logged_in_dept_user)
     assert response.status_code == 403
 
 
+@flaky(max_runs=10, min_passes=1)
 @pytest.mark.parametrize(
     "user_type, can_see_copy_button",
     (
@@ -786,8 +809,7 @@ def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(test_app_cl
     user = UserFactory(user_type=user_type)
     measure_version = MeasureVersionFactory()
 
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = user.id
+    test_app_client.post("/auth/login", data=dict(email=user.email, password=user.password), follow_redirects=True)
 
     response = test_app_client.get(
         url_for(
@@ -805,6 +827,7 @@ def test_only_allowed_users_can_see_copy_measure_button_on_edit_page(test_app_cl
     assert ("create a copy of this measure" in page_button_texts) is can_see_copy_button
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_copy_measure_page(test_app_client, logged_in_dev_user):
     measure_version = MeasureVersionFactory(title="Test Measure Page", status="APPROVED")
 
@@ -826,6 +849,7 @@ def test_copy_measure_page(test_app_client, logged_in_dev_user):
     assert page.find("input", attrs={"name": "title"})["value"] == "COPY OF Test Measure Page"
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_measure_version_history_page(test_app_client, logged_in_dev_user):
     measure_version_1_0 = MeasureVersionFactory(status="APPROVED", latest=False, version="1.0")
     measure_version_1_1 = MeasureVersionFactory(
@@ -857,6 +881,7 @@ def test_measure_version_history_page(test_app_client, logged_in_dev_user):
     ]
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_view_measure_version_by_measure_version_id_redirects(test_app_client, logged_in_rdu_user):
     measure_version = MeasureVersionFactory(id=345)
     response = test_app_client.get(url_for("cms.view_measure_version_by_measure_version_id", measure_version_id=345))
@@ -872,6 +897,7 @@ def test_view_measure_version_by_measure_version_id_redirects(test_app_client, l
     )
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_view_measure_version_by_measure_version_id_404_if_no_measure_version(test_app_client, logged_in_rdu_user):
     MeasureVersionFactory(id=345)
     response = test_app_client.get(url_for("cms.view_measure_version_by_measure_version_id", measure_version_id=456))
@@ -895,6 +921,7 @@ class _TestVisualisationBuilder:
             dimension_guid=measure_version.dimensions[0].guid,
         )
 
+    @flaky(max_runs=10, min_passes=1)
     def test_custom_classification_select_populates_with_known_classification(
         self, test_app_client, logged_in_rdu_user
     ):
@@ -967,6 +994,7 @@ class TestRemoveDataSourceView:
         assert res.status_code == 302
         assert parse.urlparse(res.location).path == url_for("security.login")
 
+    @flaky(max_runs=10, min_passes=1)
     def test_department_user_needs_specific_access_to_measure(self, test_app_client, logged_in_dept_user):
         measure_version = MeasureVersionFactory()
 
@@ -984,6 +1012,7 @@ class TestRemoveDataSourceView:
 
         assert res.status_code == 403
 
+    @flaky(max_runs=10, min_passes=1)
     @pytest.mark.parametrize("data_source_id", [-1, 123])
     def test_404_on_invalid_data_source_id(self, test_app_client, logged_in_rdu_user, data_source_id):
         measure_version = MeasureVersionFactory(data_sources=[])
@@ -1002,6 +1031,7 @@ class TestRemoveDataSourceView:
 
         assert res.status_code == 404
 
+    @flaky(max_runs=10, min_passes=1)
     def test_404_if_data_source_not_associated_with_measure_version(self, test_app_client, logged_in_rdu_user):
         measure_version = MeasureVersionFactory(data_sources=[])
         data_source = DataSourceFactory()
@@ -1036,6 +1066,7 @@ class TestRemoveDataSourceView:
 
         assert res.status_code == 200
 
+    @flaky(max_runs=10, min_passes=1)
     def test_csrf_protection(self, test_app_client, logged_in_rdu_user, isolated_app_config):
         current_app.config["WTF_CSRF_ENABLED"] = True
         measure_version = MeasureVersionFactory(data_sources=[])
@@ -1056,6 +1087,7 @@ class TestRemoveDataSourceView:
         assert res.status_code == 400
         assert "The CSRF token is missing." in res.get_data(as_text=True)
 
+    @flaky(max_runs=10, min_passes=1)
     def test_data_source_unlinked_from_measure_version_but_not_deleted_entirely(
         self, test_app_client, logged_in_rdu_user
     ):
@@ -1080,6 +1112,7 @@ class TestRemoveDataSourceView:
 
 
 class TestLinkExistingDataSource:
+    @flaky(max_runs=10, min_passes=1)
     def test_csrf_protection(self, test_app_client, logged_in_rdu_user, isolated_app_config):
         current_app.config["WTF_CSRF_ENABLED"] = True
         measure_version = MeasureVersionFactory(data_sources=[])
@@ -1098,6 +1131,7 @@ class TestLinkExistingDataSource:
         assert res.status_code == 400
         assert "The CSRF token is missing." in res.get_data(as_text=True)
 
+    @flaky(max_runs=10, min_passes=1)
     def test_redirect_with_flash_if_measure_version_has_two_data_sources_already(
         self, test_app_client, logged_in_rdu_user, db
     ):

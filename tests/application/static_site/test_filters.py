@@ -58,7 +58,7 @@ class TestHtmlParams:
         assert html_params({"disabled": True}) == "disabled"
 
     def test_double_quotes_are_escaped(self):
-        assert html_params({"value": 'Escape "me"'}) == 'value="Escape &quot;me&quot;"'
+        assert html_params({"value": 'Escape "me"'}) == 'value="Escape &#34;me&#34;"'
 
     def test_ampersand_is_escaped(self):
         output = html_params({"href": "/?a&b"})

@@ -5,6 +5,7 @@ from lxml import html
 from tests.models import DataSourceFactory, MeasureVersionFactory
 
 from tests.utils import find_input_for_label_with_text
+from flaky import flaky
 
 
 class TestSearchDataSourceView:
@@ -16,6 +17,7 @@ class TestSearchDataSourceView:
 
         return f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}/edit/data-sources"
 
+    @flaky(max_runs=10, min_passes=1)
     def test_no_search_param_specified(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionFactory.create()
@@ -31,6 +33,7 @@ class TestSearchDataSourceView:
 
         assert input_field["value"] == ""
 
+    @flaky(max_runs=10, min_passes=1)
     def test_search_param_specified(self, test_app_client, logged_in_rdu_user):
 
         DataSourceFactory.create(title="Annual population survey", publication_date="25 October 2018")
@@ -50,6 +53,7 @@ class TestSearchDataSourceView:
         assert "Annual population survey" in page.text
         assert "25 October 2018" in page.text
 
+    @flaky(max_runs=10, min_passes=1)
     def test_data_sources_already_linked_to_measure_version_are_excluded(self, test_app_client, logged_in_admin_user):
         measure_version = MeasureVersionFactory(data_sources__title="Data source 1")
         DataSourceFactory(title="Data source 2")
@@ -64,6 +68,7 @@ class TestSearchDataSourceView:
         assert find_input_for_label_with_text(page, "Data source 2")
         assert find_input_for_label_with_text(page, "Data source 3")
 
+    @flaky(max_runs=10, min_passes=1)
     def test_search_returning_zero_results_shows_no_results_message_and_link_to_create_data_source(
         self, test_app_client, logged_in_admin_user
     ):

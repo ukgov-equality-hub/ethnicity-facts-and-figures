@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 
+from application import db
+from application.cms.models import Measure, Subtopic, Topic
+from application.config import Config
+from application.factory import create_app
+from application.redirects.models import Redirect
 from datetime import datetime
+from slugify import slugify
 import sys
 
 sys.path.insert(0, ".")  # noqa
 
-from slugify import slugify
-
-from application import db
-from application.config import Config
-from application.factory import create_app
-from application.cms.models import Measure, Subtopic, Topic
-from application.redirects.models import Redirect
 
 new_grouping = {
     "alcohol-smoking-and-drug-use": [

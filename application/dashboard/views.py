@@ -98,7 +98,11 @@ def ethnicity_classifications():
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def ethnicity_classification(classification_id):
-    classification_title, page_count, nested_measures_and_dimensions = get_ethnicity_classification_by_id_dashboard_data(  # noqa
+    (
+        classification_title,
+        page_count,
+        nested_measures_and_dimensions,
+    ) = get_ethnicity_classification_by_id_dashboard_data(  # noqa
         classification_id
     )
     return render_template(
@@ -121,7 +125,11 @@ def locations():
 @login_required
 @user_can(VIEW_DASHBOARDS)
 def location(slug):
-    geography, page_count, measure_titles_and_urls_by_topic_and_subtopic = get_geographic_breakdown_by_slug_dashboard_data(  # noqa
+    (
+        geography,
+        page_count,
+        measure_titles_and_urls_by_topic_and_subtopic,
+    ) = get_geographic_breakdown_by_slug_dashboard_data(  # noqa
         slug
     )
     return render_template(

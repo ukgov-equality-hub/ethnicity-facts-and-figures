@@ -572,7 +572,7 @@ class DataSourceSearchPage(BasePage):
 
     def search_for(self, value):
 
-        label = self.driver.find_element_by_xpath(f"//label[text()='Search for an existing data source']")
+        label = self.driver.find_element_by_xpath("//label[text()='Search for an existing data source']")
         for_id = label.get_attribute("for")
         input_element = self.driver.find_element_by_id(for_id)
         input_element.send_keys(value)

@@ -18,5 +18,5 @@ def test_only_adds_quotes_to_non_quoted_values():
 
 
 def test_base_template_renders_page_built_at_comment(test_app_client, logged_in_rdu_user):
-    response = test_app_client.get("/")
+    response = test_app_client.get("/", follow_redirects=True)
     assert "<!-- Page built at" in response.get_data(as_text=True)

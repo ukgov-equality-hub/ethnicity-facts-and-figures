@@ -329,7 +329,11 @@ def build_dashboards(build_dir):
 
     # Individual ethnicity classifications dashboards
     for classification in classifications:
-        classification_title, page_count, nested_measures_and_dimensions = get_ethnicity_classification_by_id_dashboard_data(  # noqa
+        (
+            classification_title,
+            page_count,
+            nested_measures_and_dimensions,
+        ) = get_ethnicity_classification_by_id_dashboard_data(  # noqa
             classification["id"]
         )
         content = render_template(
@@ -351,7 +355,11 @@ def build_dashboards(build_dir):
     # Individual geographic area dashboards
     for loc_level in location_levels:
         slug = loc_level["url"][loc_level["url"].rindex("/") + 1 :]  # The part of the url after the final /
-        geography, page_count, measure_titles_and_urls_by_topic_and_subtopic = get_geographic_breakdown_by_slug_dashboard_data(  # noqa
+        (
+            geography,
+            page_count,
+            measure_titles_and_urls_by_topic_and_subtopic,
+        ) = get_geographic_breakdown_by_slug_dashboard_data(  # noqa
             slug
         )
         content = render_template(

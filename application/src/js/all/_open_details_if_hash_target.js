@@ -11,4 +11,3 @@ function checkForDetailsHashTarget() {
 
 window.addEventListener('hashchange', checkForDetailsHashTarget)
 document.addEventListener('DOMContentLoaded', checkForDetailsHashTarget)
-

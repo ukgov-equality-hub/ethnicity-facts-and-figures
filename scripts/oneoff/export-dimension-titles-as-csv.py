@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 
 
-import sys
+from application import db
+from application.config import DevConfig
+from application.dashboard.data_helpers import _calculate_short_title
+from application.factory import create_app
 import csv
+import sys
 
 sys.path.insert(0, ".")  # noqa
-
-from application.config import DevConfig
-from application import db
-from application.factory import create_app
-from application.dashboard.data_helpers import _calculate_short_title
 
 
 app = create_app(DevConfig)

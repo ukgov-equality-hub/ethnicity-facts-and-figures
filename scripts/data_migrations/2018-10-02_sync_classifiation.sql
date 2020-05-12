@@ -37,4 +37,3 @@ USING classification
 WHERE classification.id = parent_ethnicity_in_classification.classification_id AND classification.code = '11A';
 DELETE from classification
 WHERE classification.code = '11A';
-

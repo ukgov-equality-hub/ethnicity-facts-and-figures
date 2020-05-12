@@ -176,7 +176,7 @@ def test_build_classification_has_unknown_if_synonym_for_unknown_is_an_input_val
 
 
 def test_build_classification_has_parents_if_the_classification_implements_parent_child_and_parents_are_input_values(
-    two_classifications_2A_5A
+    two_classifications_2A_5A,
 ):
     # GIVEN
     # a builder
@@ -196,7 +196,7 @@ def test_build_classification_has_parents_if_the_classification_implements_paren
 
 
 def test_build_classification_does_not_have_parents_if_the_classification_does_not_implement_parent_child(
-    two_classifications_2A_5A
+    two_classifications_2A_5A,
 ):
     # GIVEN
     # a builder

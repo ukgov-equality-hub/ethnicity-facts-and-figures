@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
+from application import db
+from application.cms.models import Organisation, TypeOfOrganisation
+from application.config import Config
+from application.factory import create_app
 import sys
 
 sys.path.insert(0, ".")  # noqa
-
-from application import db
-from application.config import Config
-from application.factory import create_app
-from application.cms.models import Organisation, TypeOfOrganisation
 
 if __name__ == "__main__":
     app = create_app(Config())

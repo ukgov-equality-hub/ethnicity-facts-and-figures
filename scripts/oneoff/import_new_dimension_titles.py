@@ -4,6 +4,12 @@
 import csv
 import sys
 
+from application import db
+from application.auth.models import User
+from application.cms.models import Dimension, NewVersionType
+from application.cms.page_service import page_service
+from application.config import DevConfig
+from application.factory import create_app
 from argparse import ArgumentParser
 from collections import defaultdict
 from sqlalchemy.orm.exc import NoResultFound
@@ -11,12 +17,6 @@ from typing import List
 
 sys.path.insert(0, ".")  # noqa
 
-from application import db
-from application.auth.models import User
-from application.cms.models import Dimension, NewVersionType
-from application.cms.page_service import page_service
-from application.config import DevConfig
-from application.factory import create_app
 
 STANDARD_EDIT_SUMMARY = "Some headings have been changed. No data or commentary has been updated."
 
@@ -45,7 +45,7 @@ def import_dimension_titles(user_email, app, dimension_rows: List):  # noqa: C90
                 print(f"---> retrieved {dimension}")
 
             except NoResultFound:
-                print(f"---> ERROR: No dimension found")
+                print("---> ERROR: No dimension found")
                 error_count += 1
                 continue
 
@@ -124,7 +124,7 @@ def import_dimension_titles(user_email, app, dimension_rows: List):  # noqa: C90
             draft_measure_to_update = None
 
             if measure_version in skip_measures:
-                print(f"---> SKIP")
+                print("---> SKIP")
 
             elif measure_version.major() < latest_measure_version.major():
                 draft_measure_to_update = page_service.create_measure_version(

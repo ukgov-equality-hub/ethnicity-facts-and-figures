@@ -22,19 +22,19 @@ function display_result {
   fi
 }
 
-npm test
-display_result $? 3 "JS tests"
+# npm test
+# display_result $? 3 "JS tests"
 
-black --check .
-display_result $? 1 "Code style check"
+# black --check .
+# display_result $? 1 "Code style check"
 
-flake8 .
-display_result $? 4 "Python code lint check"
+# flake8 .
+# display_result $? 4 "Python code lint check"
 
-npx gulp
-display_result $? 2 "Frontend asset build check"
+# npx gulp
+# display_result $? 2 "Frontend asset build check"
 
-py.test --cov application/ --cov-report term-missing
+pytest --cov application/ --cov-report term-missing
 pytest_exitcode=$?
 
 display_result ${pytest_exitcode} 3 "Python tests"

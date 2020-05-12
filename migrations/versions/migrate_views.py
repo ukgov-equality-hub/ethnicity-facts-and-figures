@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'migrate_views'
-down_revision = '2018_03_22_user_model_refactor'
+revision = "migrate_views"
+down_revision = "2018_03_22_user_model_refactor"
 branch_labels = None
 depends_on = None
 
@@ -19,7 +19,8 @@ depends_on = None
 def upgrade():
 
     op.get_bind()
-    op.execute('''
+    op.execute(
+        """
         CREATE
         MATERIALIZED
         VIEW
@@ -75,25 +76,29 @@ def upgrade():
             )
       ) AS all_page_value_connections
       JOIN
-      (SELECT guid, version_arr[1] || '.' || version_arr[2] AS "version" FROM 
+      (SELECT guid, version_arr[1] || '.' || version_arr[2] AS "version" FROM
         (SELECT guid, MAX(string_to_array(version, '.')::int[]) AS "version_arr"
-          FROM page 
+          FROM page
           WHERE status = 'APPROVED'
           GROUP BY guid
         ) AS latest_arr
       ) AS latest
       ON all_page_value_connections.page_guid = latest.guid AND all_page_value_connections.page_version = latest.version
     );
-    ''')
+    """
+    )
 
-    op.execute('''
+    op.execute(
+        """
         CREATE
         UNIQUE INDEX
         uix_ethnic_groups_by_dimension
         ON ethnic_groups_by_dimension (dimension_guid, value)
-    ''')
+    """
+    )
 
-    op.execute('''
+    op.execute(
+        """
         CREATE
         MATERIALIZED
         VIEW
@@ -123,27 +128,31 @@ def upgrade():
               )
       ) AS all_dimension_categorisations
       JOIN
-      (SELECT guid, version_arr[1] || '.' || version_arr[2] AS "version" FROM 
+      (SELECT guid, version_arr[1] || '.' || version_arr[2] AS "version" FROM
         (SELECT guid, MAX(string_to_array(version, '.')::int[]) AS "version_arr"
-          FROM page 
+          FROM page
           WHERE status = 'APPROVED'
           GROUP BY guid
         ) AS latest_arr
       ) AS latest
       ON all_dimension_categorisations.page_guid = latest.guid AND all_dimension_categorisations.page_version = latest.version
     );
-    ''')
+    """
+    )
 
-    op.execute('''
+    op.execute(
+        """
         CREATE
         UNIQUE INDEX
         uix_categorisations_by_dimension
         ON categorisations_by_dimension (dimension_guid, categorisation_id)
-    ''')
+    """
+    )
+
 
 def downgrade():
     op.get_bind()
-    op.execute('DROP INDEX IF EXISTS uix_ethnic_groups_by_dimension;')
-    op.execute('DROP INDEX IF EXISTS uix_categorisations_by_dimension;')
-    op.execute('DROP MATERIALIZED VIEW ethnic_groups_by_dimension;')
-    op.execute('DROP MATERIALIZED VIEW categorisations_by_dimension;')
+    op.execute("DROP INDEX IF EXISTS uix_ethnic_groups_by_dimension;")
+    op.execute("DROP INDEX IF EXISTS uix_categorisations_by_dimension;")
+    op.execute("DROP MATERIALIZED VIEW ethnic_groups_by_dimension;")
+    op.execute("DROP MATERIALIZED VIEW categorisations_by_dimension;")
