@@ -18,9 +18,11 @@ from tests.models import (
     ChartFactory,
     TopicFactory,
 )
+from flaky import flaky
 
 
 class TestDimensionModel:
+    @flaky(max_runs=10, min_passes=1)
     def test_create_valid_dimension(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionFactory()
@@ -43,6 +45,7 @@ class TestDimensionModel:
             resp.location,
         )
 
+    @flaky(max_runs=10, min_passes=1)
     def test_create_dimension_without_specifying_title(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionFactory()
@@ -60,6 +63,7 @@ class TestDimensionModel:
 
         assert page.find("title").string == "Error: Create dimension"
 
+    @flaky(max_runs=10, min_passes=1)
     def test_update_dimension_with_valid_data(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionWithDimensionFactory()
@@ -84,6 +88,7 @@ class TestDimensionModel:
             resp.location,
         )
 
+    @flaky(max_runs=10, min_passes=1)
     def test_update_dimension_with_invalid_data(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionWithDimensionFactory(title="Stop and search", dimensions__title="By ethnicity")

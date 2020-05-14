@@ -18,6 +18,7 @@ from tests.models import (
 )
 
 from tests.utils import find_input_for_label_with_text
+from flaky import flaky
 
 
 class TestAddDataSourceView:
@@ -35,6 +36,7 @@ class TestAddDataSourceView:
 
         return f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}/edit"
 
+    @flaky(max_runs=10, min_passes=1)
     def test_returns_200(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionFactory.create()
@@ -44,6 +46,7 @@ class TestAddDataSourceView:
         response, _ = self.__get_page(url, test_app_client)
         assert response.status_code == 200
 
+    @flaky(max_runs=10, min_passes=1)
     def test_page_title(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionFactory.create()
@@ -54,11 +57,13 @@ class TestAddDataSourceView:
         assert "Add data source" == page.find("h1").text
         assert "Add data source" == page.find("title").text
 
+    @flaky(max_runs=10, min_passes=1)
     def test_returns_404_if_measure_doesnt_exist(self, test_app_client, logged_in_rdu_user):
 
         response = test_app_client.get("/cms/topic/subtopic/measure/1.0/edit/data-sources/new")
         assert response.status_code == 404
 
+    @flaky(max_runs=10, min_passes=1)
     def test_returns_403_if_dept_user_cant_access_measure(self, test_app_client, logged_in_dept_user):
 
         measure_version = MeasureVersionFactory.create()
@@ -68,6 +73,7 @@ class TestAddDataSourceView:
         response = test_app_client.get(url)
         assert response.status_code == 403
 
+    @flaky(max_runs=10, min_passes=1)
     def test_returns_200_if_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
 
         measure_version = MeasureVersionFactory.create(measure__shared_with=[logged_in_dept_user])
@@ -77,6 +83,7 @@ class TestAddDataSourceView:
         response = test_app_client.get(url)
         assert response.status_code == 200
 
+    @flaky(max_runs=10, min_passes=1)
     @pytest.mark.parametrize("from_search_query", (None, "foo"))
     def test_back_link_goes_to_measure_version_or_search_results_based_on_url_param(
         self, test_app_client, logged_in_rdu_user, from_search_query
@@ -130,6 +137,7 @@ class TestCreateDataSource:
 
         return f"{edit_measure_url}/data-sources/new"
 
+    @flaky(max_runs=10, min_passes=1)
     def test_post_with_a_title_redirects_to_edit_measure(self, test_app_client, logged_in_rdu_user, db_session):
 
         type_of_statistic = TypeOfStatisticFactory.create()
@@ -172,6 +180,7 @@ class TestCreateDataSource:
 
         measure_version = MeasureVersion.query.get(measure_version.id)
 
+    @flaky(max_runs=10, min_passes=1)
     def test_post_with_no_title(self, test_app_client, logged_in_rdu_user):
 
         measure_version = MeasureVersionFactory.create()
@@ -184,12 +193,14 @@ class TestCreateDataSource:
         assert response.status_code == 200
         assert "Error: Add data source" == page.find("title").text
 
+    @flaky(max_runs=10, min_passes=1)
     def test_post_with_invalid_measure_version_path_id(self, test_app_client, logged_in_rdu_user):
 
         response = test_app_client.post("/cms/topic/subtopic/measure_slug/1.0/data-sources", data={"title": "Test"})
 
         assert response.status_code == 404
 
+    @flaky(max_runs=10, min_passes=1)
     def test_returns_403_if_dept_user_cant_access_measure(self, test_app_client, logged_in_dept_user):
 
         measure_version = MeasureVersionFactory.create(measure__shared_with=[])
@@ -200,6 +211,7 @@ class TestCreateDataSource:
 
         assert response.status_code == 403
 
+    @flaky(max_runs=10, min_passes=1)
     def test_returns_200_if_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
 
         measure_version = MeasureVersionFactory.create(measure__shared_with=[logged_in_dept_user])
@@ -240,6 +252,7 @@ class TestEditDataSourceView:
 
         return (response, BeautifulSoup(response.data.decode("utf-8"), "html.parser"))
 
+    @flaky(max_runs=10, min_passes=1)
     def test_returns_200(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create()
@@ -248,6 +261,7 @@ class TestEditDataSourceView:
         response, _ = self.__get_page(test_app_client, data_source, measure_version)
         assert response.status_code == 200
 
+    @flaky(max_runs=10, min_passes=1)
     def test_page_title_is_set(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create()
@@ -257,6 +271,7 @@ class TestEditDataSourceView:
         assert "Edit data source" == page.find("h1").text
         assert "Edit data source" == page.find("title").text
 
+    @flaky(max_runs=10, min_passes=1)
     def test_edit_form_fields_populate_from_existing_data(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create(title="Police statistics 2019")
@@ -268,6 +283,7 @@ class TestEditDataSourceView:
 
         assert "Police statistics 2019" == title_input["value"]
 
+    @flaky(max_runs=10, min_passes=1)
     def test_edit_page_if_data_source_not_associated_with_measure_version(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create(title="Police statistics 2019")
@@ -277,6 +293,7 @@ class TestEditDataSourceView:
 
         assert response.status_code == 404
 
+    @flaky(max_runs=10, min_passes=1)
     def test_edit_page_if_dept_user_cannot_access_measure(self, test_app_client, logged_in_dept_user):
 
         data_source = DataSourceFactory.create()
@@ -285,6 +302,7 @@ class TestEditDataSourceView:
         response, _ = self.__get_page(test_app_client, data_source, measure_version)
         assert response.status_code == 403
 
+    @flaky(max_runs=10, min_passes=1)
     def test_edit_page_if_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
 
         data_source = DataSourceFactory.create()
@@ -316,6 +334,7 @@ class TestUpdateDataSource:
 
         return f"/cms/{topic_slug}/{subtopic_slug}/{measure_slug}/{measure_version.version}/edit"
 
+    @flaky(max_runs=10, min_passes=1)
     def test_post_with_an_updated_title_redirects_back_edit_data_source(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create(title="Police stats 2019")
@@ -350,6 +369,7 @@ class TestUpdateDataSource:
 
         assert data_source.title == "Police statistics 2019", "Expected title to have been updated"
 
+    @flaky(max_runs=10, min_passes=1)
     def test_post_with_no_title_redisplays_form_with_error(self, test_app_client, logged_in_rdu_user):
 
         data_source = DataSourceFactory.create(title="Police stats 2019")
@@ -363,6 +383,7 @@ class TestUpdateDataSource:
         assert response.status_code == 200
         assert "Error: Edit data source" == page.find("title").text
 
+    @flaky(max_runs=10, min_passes=1)
     def test_post_when_dept_user_cannot_access_measure(self, test_app_client, logged_in_dept_user):
 
         data_source = DataSourceFactory.create(title="Police stats 2019")
@@ -374,6 +395,7 @@ class TestUpdateDataSource:
 
         assert response.status_code == 403
 
+    @flaky(max_runs=10, min_passes=1)
     def test_post_when_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
 
         data_source = DataSourceFactory.create(title="Police stats 2019")
@@ -397,6 +419,7 @@ class TestUpdateDataSource:
         )
         assert response.status_code == 302
 
+    @flaky(max_runs=10, min_passes=1)
     def test_pending_build_is_added_to_database(self, test_app_client, logged_in_rdu_user):
         data_source = DataSourceFactory.create(title="Police stats 2019")
         measure_version = MeasureVersionFactory.create(status="DRAFT", data_sources=[data_source])

@@ -89,11 +89,11 @@ class TestMeasureVersionForm:
                 assert field.data is None
 
             elif is_minor_update is False and field.name in {"external_edit_summary", "internal_edit_summary"}:
-                assert field.data is ""
+                assert field.data == ""
 
             else:
                 assert (
-                    field.data is not None and field.data is not ""
+                    field.data is not None and field.data != ""
                 ), f"{field.name} should be populated from the measure version"
 
     def test_fields_populate_with_data_when_correcting_data_mistake(self):
@@ -110,7 +110,7 @@ class TestMeasureVersionForm:
 
         for field in form:
             assert (
-                field.data is not None and field.data is not ""
+                field.data is not None and field.data != ""
             ), f"{field.name} should be populated from the measure version"
 
     def test_reference_field_not_populated_with_none(self):

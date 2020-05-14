@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2018_04_25_migrate_geog_view'
-down_revision = '2018_04_20_data_src_refactor'
+revision = "2018_04_25_migrate_geog_view"
+down_revision = "2018_04_20_data_src_refactor"
 branch_labels = None
 depends_on = None
 
@@ -20,7 +20,8 @@ def upgrade():
 
     op.get_bind()
 
-    op.execute('''
+    op.execute(
+        """
     CREATE
     MATERIALIZED
     VIEW
@@ -33,9 +34,11 @@ def upgrade():
                    FROM page
                   WHERE page.status::text = 'APPROVED'::text
                   GROUP BY page.guid) latest_arr) latest_published ON p.guid::text = latest_published.guid::text AND p.version::text = latest_published.version)
-        ''')
+        """
+    )
 
-    op.execute('''
+    op.execute(
+        """
         CREATE
         MATERIALIZED
         VIEW
@@ -52,25 +55,31 @@ def upgrade():
         JOIN page subtopic ON p.parent_guid = subtopic.guid
         JOIN lowest_level_of_geography geog ON p.lowest_level_of_geography_id = geog.name
         ORDER BY geog.position ASC)
-    ''')
+    """
+    )
 
-    op.execute('''
+    op.execute(
+        """
         CREATE
         UNIQUE INDEX
         uix_pages_by_geography
         ON pages_by_geography (page_guid)
-    ''')
+    """
+    )
 
-    op.execute('''
+    op.execute(
+        """
         CREATE
         UNIQUE INDEX
         uix_latest_published_pages
         ON latest_published_pages (guid)
-    ''')
+    """
+    )
+
 
 def downgrade():
     op.get_bind()
-    op.execute('DROP INDEX IF EXISTS uix_pages_by_geography;')
-    op.execute('DROP INDEX IF EXISTS uix_latest_published_pages;')
-    op.execute('DROP MATERIALIZED VIEW pages_by_geography;')
-    op.execute('DROP MATERIALIZED VIEW latest_published_pages;')
+    op.execute("DROP INDEX IF EXISTS uix_pages_by_geography;")
+    op.execute("DROP INDEX IF EXISTS uix_latest_published_pages;")
+    op.execute("DROP MATERIALIZED VIEW pages_by_geography;")
+    op.execute("DROP MATERIALIZED VIEW latest_published_pages;")

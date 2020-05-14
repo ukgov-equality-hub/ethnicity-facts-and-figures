@@ -606,7 +606,7 @@ describe('rd-table-objects', function () {
                 assert.equal(table['data'][1]['category'], 'BAME');
                 assert.equal(table['data'][2]['category'], 'White');
             });
-            
+
             it('should return rows sorted by alternative column if specified', function () {
                 var order_column = 'Alternate';
                 var table = tableObjects.groupedTable(getGroupedArrayData(), 'title', '', '', 'Ethnicity', '', 'Socio-economic', ['Value'], order_column, ['']);

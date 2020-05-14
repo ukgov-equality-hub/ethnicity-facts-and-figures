@@ -1,15 +1,14 @@
 #!/usr/bin/env python
-import sys
-from flask import current_app
-
-sys.path.insert(0, ".")  # noqa: E402
-
 from application import db
 from application.cms.models import Dimension, Chart, Table
 from application.config import Config
 from application.data.charts import ChartObjectDataBuilder
 from application.data.tables import TableObjectDataBuilder
 from application.factory import create_app
+from flask import current_app
+import sys
+
+sys.path.insert(0, ".")  # noqa: E402
 
 
 def copy_chart_and_table_data(app):  # noqa: C901

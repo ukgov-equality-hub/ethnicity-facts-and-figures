@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
-import sys
-
-sys.path.insert(0, ".")  # noqa
-
 from application import db
 from application.cms.models import MeasureVersion
 from application.cms.page_service import page_service
 from application.config import DevConfig
 from application.factory import create_app
+import sys
+
+sys.path.insert(0, ".")  # noqa
+
 
 app = create_app(DevConfig)
 with app.app_context():

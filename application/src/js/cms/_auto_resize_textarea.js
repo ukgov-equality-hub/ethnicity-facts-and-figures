@@ -4,16 +4,16 @@ function DynamicResizingTextarea(element) {
 
 DynamicResizingTextarea.prototype.init = function() {
   // feature-detect required APIs
-  if ('addEventListener' in document && 
+  if ('addEventListener' in document &&
       'scrollHeight' in document.body &&
       'classList' in document.body &&
       Function.prototype.bind) {
-    
+
     this.element.classList.add('js-autoresize')
     this.element.rows = "1";
     this.updateHeight()
     this.element.addEventListener('input', this.updateHeight.bind(this))
-    
+
   }
 }
 

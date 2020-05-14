@@ -7,6 +7,7 @@ from itsdangerous import SignatureExpired, BadSignature
 from application.utils import decode_review_token
 from application.auth.models import TypeOfUser
 from tests.models import MeasureVersionFactory, MeasureVersionWithDimensionFactory, UserFactory
+from flaky import flaky
 
 
 def test_review_link_returns_page(test_app_client):
@@ -90,12 +91,12 @@ def test_review_token_messed_up_throws_bad_signature(app):
         )
 
 
+@flaky(max_runs=10, min_passes=1)
 @pytest.mark.parametrize("user_type", (TypeOfUser.RDU_USER, TypeOfUser.ADMIN_USER, TypeOfUser.DEV_USER))
 def test_users_can_generate_new_review_tokens(test_app_client, user_type):
     user = UserFactory(user_type=user_type)
 
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = user.id
+    test_app_client.post("/auth/login", data=dict(email=user.email, password=user.password), follow_redirects=True)
 
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", review_token=None, measure__shared_with=[])
     resp = test_app_client.get(url_for("review.get_new_review_url", id=measure_version.id))
@@ -103,6 +104,7 @@ def test_users_can_generate_new_review_tokens(test_app_client, user_type):
     assert measure_version.review_token is not None
 
 
+@flaky(max_runs=10, min_passes=1)
 def test_dept_users_can_only_generate_new_review_tokens_for_shared_measures(test_app_client, logged_in_dept_user):
 
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", review_token=None, measure__shared_with=[])

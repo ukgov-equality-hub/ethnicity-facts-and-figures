@@ -246,38 +246,9 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         topic_slug, subtopic_slug, measure_slug, version
     )
 
-    # These actions are changes of state sent by buttons in the top banner of the measure page.
-    # The buttons are embedded inside the measure page form and we POST here to get the benefit of CSRF protection.
-    # They don't require the form to be validated or saved so we check for them first and redirect as appropriate.
     measure_action = request.form.get("measure-action", False)
     if request.method == "POST" and measure_action:
-        redirect_following_change_of_status = redirect(
-            url_for(
-                "cms.edit_measure_version",
-                topic_slug=topic_slug,
-                subtopic_slug=subtopic_slug,
-                measure_slug=measure_slug,
-                version=version,
-            )
-        )
-        if measure_action == "reject-measure":
-            _reject_page(topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug, version=version)
-            return redirect_following_change_of_status
-
-        elif measure_action == "send-back-to-draft":
-            _send_page_to_draft(
-                topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug, version=version
-            )
-            return redirect_following_change_of_status
-
-        elif measure_action == "send-to-department-review":
-            return _send_to_review(
-                topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug, version=version
-            )
-
-        elif measure_action == "send-to-approved":
-            _publish(topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug, version=version)
-            return redirect_following_change_of_status
+        return _action_call(request, measure_action, topic_slug, subtopic_slug, measure_slug, version)
 
     diffs = {}
 
@@ -293,6 +264,85 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
 
     saved = False
     errors_preamble = None
+
+    result = _validate_and_update_version(measure_version_form, measure_version)
+    saved, errors_preamble = result
+
+    if saved and "save-and-review" in request.form:
+        return _send_to_review(
+            topic_slug=measure_version.measure.subtopic.topic.slug,
+            subtopic_slug=measure_version.measure.subtopic.slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version,
+        )
+    elif saved:
+        return redirect(
+            url_for(
+                "cms.edit_measure_version",
+                topic_slug=measure_version.measure.subtopic.topic.slug,
+                subtopic_slug=measure_version.measure.subtopic.slug,
+                measure_slug=measure_version.measure.slug,
+                version=measure_version.version,
+            )
+        )
+    context = {
+        "form": measure_version_form,
+        "topic": measure_version.measure.subtopic.topic,
+        "subtopic": measure_version.measure.subtopic,
+        "measure": measure_version.measure,
+        "measure_version": measure_version,
+        "diffs": diffs,
+        "organisations_by_type": Organisation.select_options_by_type(),
+        "topics": page_service.get_topics(include_testing_space=True),
+        "errors_preamble": errors_preamble,
+        "errors": get_form_errors(forms=[measure_version_form]),
+        "new": False,
+        "data_not_uploaded_error": False,
+        "data_sources_not_added": False,
+        "dimensions_not_complete_error": False,
+    }
+
+    return render_template("cms/edit_measure_version.html", **context)
+
+
+def _action_call(request, measure_action, topic_slug, subtopic_slug, measure_slug, version):
+    # These actions are changes of state sent by buttons in the top banner of the measure page.
+    # The buttons are embedded inside the measure page form and we POST here to get the benefit of CSRF protection.
+    # They don't require the form to be validated or saved so we check for them first and redirect as appropriate.
+    redirect_following_change_of_status = redirect(
+        url_for(
+            "cms.edit_measure_version",
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_slug,
+            version=version,
+        )
+    )
+    if measure_action == "reject-measure":
+        _reject_page(topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug, version=version)
+        return redirect_following_change_of_status
+
+    elif measure_action == "send-back-to-draft":
+        _send_page_to_draft(
+            topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug, version=version
+        )
+        return redirect_following_change_of_status
+
+    elif measure_action == "send-to-department-review":
+        return _send_to_review(
+            topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug, version=version
+        )
+
+    elif measure_action == "send-to-approved":
+        _publish(topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_slug, version=version)
+        return redirect_following_change_of_status
+
+
+def _validate_and_update_version(measure_version_form, measure_version):
+
+    saved = False
+    errors_preamble = None
+
     if measure_version_form.validate_on_submit():
         additional_kwargs_from_request = {
             "status": request.form.get("status", None),
@@ -335,41 +385,7 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
             current_app.logger.info(e)
             flash(str(e), "error")
 
-    if saved and "save-and-review" in request.form:
-        return _send_to_review(
-            topic_slug=measure_version.measure.subtopic.topic.slug,
-            subtopic_slug=measure_version.measure.subtopic.slug,
-            measure_slug=measure_version.measure.slug,
-            version=measure_version.version,
-        )
-    elif saved:
-        return redirect(
-            url_for(
-                "cms.edit_measure_version",
-                topic_slug=measure_version.measure.subtopic.topic.slug,
-                subtopic_slug=measure_version.measure.subtopic.slug,
-                measure_slug=measure_version.measure.slug,
-                version=measure_version.version,
-            )
-        )
-    context = {
-        "form": measure_version_form,
-        "topic": measure_version.measure.subtopic.topic,
-        "subtopic": measure_version.measure.subtopic,
-        "measure": measure_version.measure,
-        "measure_version": measure_version,
-        "diffs": diffs,
-        "organisations_by_type": Organisation.select_options_by_type(),
-        "topics": page_service.get_topics(include_testing_space=True),
-        "errors_preamble": errors_preamble,
-        "errors": get_form_errors(forms=[measure_version_form]),
-        "new": False,
-        "data_not_uploaded_error": False,
-        "data_sources_not_added": False,
-        "dimensions_not_complete_error": False,
-    }
-
-    return render_template("cms/edit_measure_version.html", **context)
+    return saved, errors_preamble
 
 
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/upload", methods=["GET", "POST"])
