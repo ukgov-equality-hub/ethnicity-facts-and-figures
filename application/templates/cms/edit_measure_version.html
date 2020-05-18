@@ -14,451 +14,512 @@
 {% block pageTitle %}{{ measure_version.title if measure_version.title is defined and measure_version.title else "Create a measure" }}{% endblock %}
 
 {% block content %}
-    <form method="POST" action="{% if new %}{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}{% else %}{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}{% endif %}">
-        {{ form.csrf_token | default('') }}
-        {% call status_banner() %}
-            <div class="left">
-                <span class="info">Version&nbsp;<b>{{ '1.0' if new else measure_version.version }}</b></span>
-            </div>
-            <div>
-                <span class="info" id="status">
-                    Status:&nbsp;<b>{{ ("DRAFT" if new else measure_version.status) | format_status | safe }}</b>
-                </span>
-                {% if measure_version.status == 'DEPARTMENT_REVIEW' %}
-                    <div id="review-url">
-                        {% if measure_version.review_token and measure_version.review_token_expires_in(config) > 0 %}
-                            {% set expires_in_days = measure_version.review_token_expires_in(config) %}
-                                <a class="govuk-link" href="{{ url_for('review.review_page', review_token=measure_version.review_token, _external=True) }}"  id='review-link-url'>Review link</a>
-                                expires in {{ expires_in_days }} {% if expires_in_days == 1 %}
-                                day{% else %}days{% endif %}
-                                <button id="copy-to-clipboard" class="govuk-button eff-button--secondary-quiet">Copy link</button>
-                                <input id="review-link" class="govuk-visually-hidden" value="{{ url_for('review.review_page', review_token=measure_version.review_token, _external=True) }}">
-                        {% else %}
-                            <span class="warning">Review link expired <button id="generate-review-url" class="govuk-button eff-button--secondary-quiet">Renew</button></span>
-                        {% endif %}
-                    </div>
-                {% endif %}
+<form method="POST"
+      action="{% if new %}{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}{% else %}{{ url_for('cms.edit_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}{% endif %}">
+    {{ form.csrf_token | default('') }}
+    {% call status_banner() %}
+    <div class="left">
+        <span class="info">Version&nbsp;<b>{{ '1.0' if new else measure_version.version }}</b></span>
+    </div>
+    <div>
+        <span class="info"
+              id="status">
+            Status:&nbsp;<b>{{ ("DRAFT" if new else measure_version.status) | format_status | safe }}</b>
+        </span>
+        {% if measure_version.status == 'DEPARTMENT_REVIEW' %}
+        <div id="review-url">
+            {% if measure_version.review_token and measure_version.review_token_expires_in(config) > 0 %}
+            {% set expires_in_days = measure_version.review_token_expires_in(config) %}
+            <a class="govuk-link"
+               href="{{ url_for('review.review_page', review_token=measure_version.review_token, _external=True) }}"
+               id='review-link-url'>Review link</a>
+            expires in {{ expires_in_days }} {% if expires_in_days == 1 %}
+            day{% else %}days{% endif %}
+            <button id="copy-to-clipboard"
+                    class="govuk-button eff-button--secondary-quiet">Copy link</button>
+            <input id="review-link"
+                   class="govuk-visually-hidden"
+                   value="{{ url_for('review.review_page', review_token=measure_version.review_token, _external=True) }}">
+            {% else %}
+            <span class="warning">Review link expired <button id="generate-review-url"
+                        class="govuk-button eff-button--secondary-quiet">Renew</button></span>
+            {% endif %}
+        </div>
+        {% endif %}
 
-              {% if not new and measure_version.measure.versions|length > 1 %}
-                <span class="info"><a href="{{ url_for('cms.list_measure_versions',
+        {% if not new and measure_version.measure.versions|length > 1 %}
+        <span class="info"><a href="{{ url_for('cms.list_measure_versions',
                                       topic_slug=topic.slug,
                                       subtopic_slug=subtopic.slug,
-                                      measure_slug=measure.slug)}}" class="govuk-link">Version history</a></span>
+                                      measure_slug=measure.slug)}}"
+               class="govuk-link">Version history</a></span>
 
-              {% endif %}
+        {% endif %}
 
-            </div>
-            <div class="right">
-                  {% if not new %}
-                      <a class="govuk-link" href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}" name="preview">
-                        {% if measure_version.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
-                      </a>
-                  {% endif %}
-            </div>
-            <div class="actions right">
+    </div>
+    <div class="right">
+        {% if not new %}
+        <a class="govuk-link"
+           href="{{ url_for('static_site.measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}"
+           name="preview">
+            {% if measure_version.status == 'APPROVED' %}View{% else %}Preview this version{% endif %}
+        </a>
+        {% endif %}
+    </div>
+    <div class="actions right">
 
-            {% if measure_version.status == 'APPROVED' and measure_version.latest and current_user.can(CREATE_VERSION)%}
-                <a class="govuk-button" href="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
-                    Update
-                </a>
-            {% endif %}
+        {% if measure_version.status == 'APPROVED' and measure_version.latest and current_user.can(CREATE_VERSION)%}
+        <a class="govuk-button"
+           href="{{ url_for('cms.new_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
+            Update
+        </a>
+        {% endif %}
 
-            {% if measure_version.status == 'APPROVED' and not measure_version.latest %}
+        {% if measure_version.status == 'APPROVED' and not measure_version.latest %}
 
-                {%  set latest = measure.latest_version %}
-                <div class="other-versions">
+        {%  set latest = measure.latest_version %}
+        <div class="other-versions">
 
-                      {% if latest.status == 'DRAFT' or latest.status == 'INTERNAL_REVIEW' or latest.status == 'DEPARTMENT_REVIEW' %}
-                        <a href="{{ url_for('cms.edit_measure_version',
+            {% if latest.status == 'DRAFT' or latest.status == 'INTERNAL_REVIEW' or latest.status == 'DEPARTMENT_REVIEW' %}
+            <a href="{{ url_for('cms.edit_measure_version',
                                             topic_slug=topic.slug,
                                             subtopic_slug=subtopic.slug,
                                             measure_slug=measure.slug,
-                                            version=latest.version) }}" class="govuk-link">Version {{ latest.version }}</a> of this page is in {{ latest.status | format_status | safe }}
-                    {% endif %}
-
-                </div>
+                                            version=latest.version) }}"
+               class="govuk-link">Version {{ latest.version }}</a> of this page is in
+            {{ latest.status | format_status | safe }}
             {% endif %}
 
-            {% if "REJECT" in measure_version.available_actions %}
-                <button id="reject-measure" name="measure-action" value="reject-measure" class="govuk-button eff-button--warning">Reject</button>
+        </div>
+        {% endif %}
+
+        {% if "REJECT" in measure_version.available_actions %}
+        <button id="reject-measure"
+                name="measure-action"
+                value="reject-measure"
+                class="govuk-button eff-button--warning">Reject</button>
+        {% endif %}
+
+        {% if measure_version.status == 'REJECTED' %}
+        <button id="send-back-to-draft"
+                name="measure-action"
+                value="send-back-to-draft"
+                class="govuk-button">Send back to draft</button>
+        {%  endif %}
+
+        {% if "APPROVE" in measure_version.available_actions %}
+        {% if measure_version.status == 'DRAFT' %}
+        <button type="submit"
+                class="govuk-button {% if measure_version.next_approval_state == 'INTERNAL_REVIEW' %}eff-button--neutral{%endif %}"
+                name="save-and-review"
+                id="save-and-review">
+            {{ measure_version.next_approval_state | format_approve_button | safe }}
+        </button>
+        {% elif measure_version.next_approval_state == 'DEPARTMENT_REVIEW' %}
+        <button class="govuk-button"
+                id="send-to-department-review"
+                name="measure-action"
+                value="send-to-department-review">
+            {{ measure_version.next_approval_state | format_approve_button | safe }}
+        </button>
+        {% elif measure_version.next_approval_state == 'APPROVED' and current_user.can(PUBLISH) %}
+        <button class="govuk-button"
+                id="send-to-approved"
+                name="measure-action"
+                value="send-to-approved">
+            {{ measure_version.next_approval_state | format_approve_button | safe }}
+        </button>
+        {% endif %}
+        {% endif %}
+
+    </div>
+    {% endcall %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">{% if new %}Create{% else %}Edit{% endif %} page</h1>
+            {% if not new %}{{ form.db_version_id }}{% endif %}
+            {% if measure_version.published_at %}
+            <h3 class="govuk-heading-m">Publication date: {{ measure_version.published_at | format_friendly_date}}</h3>
             {% endif %}
 
-            {% if measure_version.status == 'REJECTED' %}
-                <button id="send-back-to-draft" name="measure-action" value="send-back-to-draft" class="govuk-button">Send back to draft</button>
-            {%  endif %}
+            {{ form.title(disabled=form_disabled, diffs=diffs) }}
 
-            {% if "APPROVE" in measure_version.available_actions %}
-                {% if measure_version.status == 'DRAFT' %}
-                    <button type="submit" class="govuk-button {% if measure_version.next_approval_state == 'INTERNAL_REVIEW' %}eff-button--neutral{%endif %}" name="save-and-review" id="save-and-review">
-                        {{ measure_version.next_approval_state | format_approve_button | safe }}
-                    </button>
-                {% elif measure_version.next_approval_state == 'DEPARTMENT_REVIEW' %}
-                    <button class="govuk-button" id="send-to-department-review" name="measure-action" value="send-to-department-review">
-                        {{ measure_version.next_approval_state | format_approve_button | safe }}
-                    </button>
-                {% elif measure_version.next_approval_state == 'APPROVED' and current_user.can(PUBLISH) %}
-                    <button class="govuk-button" id="send-to-approved" name="measure-action" value="send-to-approved">
-                        {{ measure_version.next_approval_state | format_approve_button | safe }}
-                    </button>
-                {% endif %}
-            {% endif %}
+            {{ form.description(disabled=form_disabled, diffs=diffs,rows="3") }}
 
-            </div>
-        {% endcall %}
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-xl">{% if new %}Create{% else %}Edit{% endif %} page</h1>
-                    {% if not new %}{{ form.db_version_id }}{% endif %}
-                    {% if measure_version.published_at %}
-                        <h3 class="govuk-heading-m">Publication date: {{ measure_version.published_at | format_friendly_date}}</h3>
-                    {% endif %}
-
-                    {{ form.title(disabled=form_disabled, diffs=diffs) }}
-
-                    {{ form.description(disabled=form_disabled, diffs=diffs,rows="3") }}
-
-                    <div class="govuk-form-group">
-                        <label class="govuk-label" for="subtopic">Topic</label>
-                        <select id="subtopic" name="subtopic" class="govuk-select sub-topic"
-                                {% if form_disabled or new or (measure_version and measure_version.version != '1.0') %}disabled{% endif %}>
-                            {% for topic in topics %}
-                                <optgroup label="{{ topic.title }}">
-                                    {% for st in topic.subtopics %}
-                                        <option value="{{ st.id }}"
-                                                {% if st.id == subtopic.id %}selected{% endif %}>{{ st.title }}</option>
-                                    {% endfor %}
-                                </optgroup>
-                            {% endfor %}
-                        </select>
-                    </div>
+            <div class="govuk-form-group">
+                <label class="govuk-label"
+                       for="subtopic">Topic</label>
+                <select id="subtopic"
+                        name="subtopic"
+                        class="govuk-select sub-topic"
+                        {% if form_disabled or new or (measure_version and measure_version.version != '1.0') %}disabled{% endif %}>
+                    {% for topic in topics %}
+                    <optgroup label="{{ topic.title }}">
+                        {% for st in topic.subtopics %}
+                        <option value="{{ st.id }}"
+                                {% if st.id == subtopic.id %}selected{% endif %}>{{ st.title }}</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                </select>
             </div>
         </div>
+    </div>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-                {{ form.time_covered(disabled=form_disabled, diffs=diffs) }}
+            {{ form.time_covered(disabled=form_disabled, diffs=diffs) }}
 
-                {{ form.area_covered(disabled=form_disabled, diffs=diffs, class_='country', fieldset_class='uk-countries', field_class='country') }}
+            {{ form.area_covered(disabled=form_disabled, diffs=diffs, class_='country', fieldset_class='uk-countries', field_class='country') }}
 
-                {{ form.lowest_level_of_geography_id(disabled=form_disabled) }}
-            </div>
+            {{ form.lowest_level_of_geography_id(disabled=form_disabled) }}
         </div>
+    </div>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                    <h3 class="govuk-heading-m">Commentary</h3>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h3 class="govuk-heading-m">Commentary</h3>
 
-                    {{ form.summary(disabled=form_disabled, diffs=diffs) }}
+            {{ form.summary(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ form.need_to_know(disabled=form_disabled, diffs=diffs) }}
+            {{ form.need_to_know(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ form.measure_summary(disabled=form_disabled, diffs=diffs) }}
+            {{ form.measure_summary(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ form.ethnicity_definition_summary(disabled=form_disabled, diffs=diffs) }}
+            {{ form.ethnicity_definition_summary(disabled=form_disabled, diffs=diffs) }}
 
-                    <h3 class="govuk-heading-m">Methodology</h3>
+            <h3 class="govuk-heading-m">Methodology</h3>
 
-                    {{ form.methodology(disabled=form_disabled, diffs=diffs) }}
+            {{ form.methodology(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ form.suppression_and_disclosure(disabled=form_disabled, diffs=diffs) }}
+            {{ form.suppression_and_disclosure(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ form.estimation(disabled=form_disabled, diffs=diffs) }}
+            {{ form.estimation(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ form.related_publications(disabled=form_disabled, diffs=diffs) }}
+            {{ form.related_publications(disabled=form_disabled, diffs=diffs) }}
 
-                    {{ form.qmi_url(disabled=form_disabled) }}
+            {{ form.qmi_url(disabled=form_disabled) }}
 
-                    {{ form.further_technical_information(disabled=form_disabled, diffs=diffs) }}
+            {{ form.further_technical_information(disabled=form_disabled, diffs=diffs) }}
 
-                    <h3 class="govuk-heading-m">Updates and corrections</h3>
-                    {% if new or measure_version.version == '1.0' %}<div class="hidden">{% endif %}
-                        {% if form.is_minor_update %}
-                            {{ form.update_corrects_data_mistake(disabled=form_disabled, diffs=diffs, inline=True,
+            <h3 class="govuk-heading-m">Updates and corrections</h3>
+            {% if new or measure_version.version == '1.0' %}<div class="hidden">{% endif %}
+                {% if form.is_minor_update %}
+                {{ form.update_corrects_data_mistake(disabled=form_disabled, diffs=diffs, inline=True,
                                                                  conditional_questions={"Yes": form.update_corrects_measure_version(disabled=form_disabled, diffs=diffs)}) }}
-                        {% endif %}
-
-                        {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
-
-                        {{ form.internal_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
-                    {% if new or measure_version.version == '1.0' %}</div>{% endif %}
-
-                    {{ form.internal_reference(disabled=form_disabled, diffs=diffs, class_='short') }}
-
-                {%  if new or measure_version.status == 'DRAFT' %}
-                     <button class="govuk-button" type="submit" name="save">Save</button>
                 {% endif %}
 
-            </div>
-        </div>
-    </form>
+                {{ form.external_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
 
-    <div class="govuk-grid-row govuk-!-margin-bottom-5">
-      <div class="govuk-grid-column-two-thirds">
+                {{ form.internal_edit_summary(disabled=form_disabled, diffs=diffs, rows=4) }}
+                {% if new or measure_version.version == '1.0' %}</div>{% endif %}
+
+            {{ form.internal_reference(disabled=form_disabled, diffs=diffs, class_='short') }}
+
+            {%  if new or measure_version.status == 'DRAFT' %}
+            <button class="govuk-button"
+                    type="submit"
+                    name="save">Save</button>
+            {% endif %}
+
+        </div>
+    </div>
+</form>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-5">
+    <div class="govuk-grid-column-two-thirds">
         <div class="govuk-form-group {% if data_sources_not_added %}govuk-form-group--error{% endif %}">
-          <h2 class="govuk-heading-m" id="data-sources">Data sources</h2>
-          <div class="govuk-!-margin-bottom-5">
-            {% if new %}
-              <p class="govuk-body">Once this page is saved you will be able to add data sources</p>
-            {% else %}
-              {{ manage_measure_version_data_source(measure_version=measure_version, data_source=measure_version.primary_data_source, description="primary") }}
+            <h2 class="govuk-heading-m"
+                id="data-sources">Data sources</h2>
+            <div class="govuk-!-margin-bottom-5">
+                {% if new %}
+                <p class="govuk-body">Once this page is saved you will be able to add data sources</p>
+                {% else %}
+                {{ manage_measure_version_data_source(measure_version=measure_version, data_source=measure_version.primary_data_source, description="primary") }}
             </div>
 
             {% if measure_version.primary_data_source %}
-              {{ manage_measure_version_data_source(measure_version=measure_version, data_source=measure_version.secondary_data_source, description="secondary") }}
+            {{ manage_measure_version_data_source(measure_version=measure_version, data_source=measure_version.secondary_data_source, description="secondary") }}
             {% endif %}
-          {% endif %}
-        </div>
-      </div>
-    </div>
-
-     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="govuk-form-group {% if dimensions_not_complete_error %}govuk-form-group--error{% endif %}">
-                <h3 class="govuk-heading-m">Dimensions</h3>
-
-                <details class='govuk-details'
-                        data-module='govuk-details'>
-                    <summary class='govuk-details__summary'>
-                        <span class='govuk-details__summary-text'>
-                            Ordering dimensions
-                        </span>
-                    </summary>
-                    <div class='govuk-details__text'>
-                        <ul class='govuk-list govuk-list--bullet'>
-                            <li>‘By ethnicity’ should always be the first dimension</li>
-                            <li>‘By ethnicity over time’ should be the second dimension, if data is available – alternatively, put time series data into the table of the ‘By ethnicity’ dimension for time series of 2 or 3 years</li>
-                            <li>make sure the order of additional dimensions is consistent between related groups of measures</li>
-                        </ul>
-                    </div>
-                </details>
-
-                {% if dimensions_not_complete_error %}
-                    <span class="govuk-error-message">All dimensions must be complete.</span>
-                {% endif %}
-                {% if measure_version.dimensions %}
-                    <table class="govuk-table govuk-!-font-size-16">
-                        {% for dimension in measure_version.dimensions %}
-                            <tr class="govuk-table__row eff-movable" data-dimension-guid="{{ dimension.guid }}">
-                                <td class="govuk-table__cell">{{ dimension.title }}</td>
-                                <td class="govuk-table__cell">
-                                    {% if dimension.measure_version.version != '1.0' and dimension.updated_at != dimension.measure_version.updated_at %}
-                                        <span class="eff-badge">Updated</span>
-                                    {% endif %}
-                                </td>
-                                <td class="govuk-table__cell">
-                                    <a class="govuk-link" href="{{ url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}">
-                                        {% if 'UPDATE' in measure_version.available_actions %}Edit{% else %}view{% endif %}</a></td>
-                                <td class="govuk-table__cell">{% if 'UPDATE' in measure_version.available_actions %}
-                                    <form action="{{ url_for('cms.delete_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}" method="post">
-                                        {{ form.csrf_token | default('') }}
-                                        <button class="eff-button-link eff-button-link--warning">Delete</button>
-                                    </form>
-                                    {% endif %}
-                                </td>
-                                <td class="govuk-table__cell eff-move-controls">
-                                    {% if 'UPDATE' in measure_version.available_actions %}
-                                        <span title="move up" class="eff-move-up">&#x25B2</span>
-                                        <span title="move down" class="eff-move-down">&#x25BC</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                {% endif %}
-
-                {% if 'UPDATE' in measure_version.available_actions %}
-                    <p class="govuk-body"><a class="govuk-link" href="{{ url_for('cms.create_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add
-                        dimension</a></p>
-                {% endif %}
-
-                {% if new %}
-                    <p class="govuk-body">Once this page is saved you will be able to add dimensions</p>
-                {% endif %}
-            </div>
+            {% endif %}
         </div>
     </div>
+</div>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <div class="govuk-form-group {% if data_not_uploaded_error %}govuk-form-group--error{% endif %}">
-                    <h3 class="govuk-heading-m" id="source-data" tabindex="-1">Data</h3>
-                    {% if data_not_uploaded_error %}
-                        <span class="govuk-error-message">Upload the source data</span>
-                    {% endif %}
-                    {% if measure_version.uploads %}
-                        <table class="govuk-table govuk-!-font-size-16">
-                            {% for upload in measure_version.uploads %}
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell">
-                                        <a class="govuk-link" href="{{ url_for('static_site.measure_version_file_download', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
-                                    </td>
-                                    <td class="govuk-table__cell">{{ upload.title }}</td>
-                                    <td class="govuk-table__cell">
-                                        <a class="govuk-link" href="{{ url_for('cms.edit_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}">
-                                            {% if 'UPDATE' in measure_version.available_actions %}Edit{% else %}view{% endif %}</a>
-                                    </td>
-                                    <td class="govuk-table__cell">
-                                        {% if 'UPDATE' in measure_version.available_actions %}
-                                            <form action="{{ url_for('cms.delete_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}" method="post">
-                                                {{ form.csrf_token | default('') }}
-                                                <button class="eff-button-link eff-button-link--warning">Delete</button>
-                                            </form>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    {% endif %}
-                    {% if 'UPDATE' in measure_version.available_actions %}
-                        <p class="govuk-body"><a class="govuk-link" href="{{ url_for('cms.create_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add data file (CSV)</a></p>
-                    {% endif %}
-                    {% if new %}
-                        <p class="govuk-body">Once this page is saved you will be able to add downloads</p>
-                    {% endif %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="govuk-form-group {% if dimensions_not_complete_error %}govuk-form-group--error{% endif %}">
+            <h3 class="govuk-heading-m">Dimensions</h3>
+
+            <details class='govuk-details'
+                     data-module='govuk-details'>
+                <summary class='govuk-details__summary'>
+                    <span class='govuk-details__summary-text'>
+                        Ordering dimensions
+                    </span>
+                </summary>
+                <div class='govuk-details__text'>
+                    <ul class='govuk-list govuk-list--bullet'>
+                        <li>‘By ethnicity’ should always be the first dimension</li>
+                        <li>‘By ethnicity over time’ should be the second dimension, if data is available –
+                            alternatively, put time series data into the table of the ‘By ethnicity’ dimension for time
+                            series of 2 or 3 years</li>
+                        <li>make sure the order of additional dimensions is consistent between related groups of
+                            measures</li>
+                    </ul>
                 </div>
-            </div>
-        </div>
+            </details>
 
-    {% if current_user.can(COPY_MEASURE) and not new %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form id="measure-action-section__copy_measure_form-{{ measure_version.id }}" method="POST" action="{{ url_for('cms.copy_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
-                {{ form.csrf_token | default('') }}
-                <button class="govuk-button copy-button" type="submit">Create a copy of this measure</button>
-            </form>
+            {% if measure_version.dimensions %}
+            <table class="govuk-table govuk-!-font-size-16">
+                {% for dimension in measure_version.dimensions %}
+                {% if dimensions_errors and dimension.guid in dimensions_errors %}
+                <tr>
+                    <td colspan="4">
+                        <span id="{{ dimension.guid }}"
+                              class="govuk-error-message govuk-error-message govuk-!-margin-top-3 govuk-error-message govuk-!-margin-bottom-0">Your
+                            dimension is missing a summary. Enter a summary.</span>
+                    </td>
+                </tr>
+                {% endif %}
+                <tr class="govuk-table__row eff-movable"
+                    data-dimension-guid="{{ dimension.guid }}">
+
+                    <td class="govuk-table__cell">{{ dimension.title }}</td>
+                    <td class="govuk-table__cell">
+                        {% if dimension.measure_version.version != '1.0' and dimension.updated_at != dimension.measure_version.updated_at %}
+                        <span class="eff-badge">Updated</span>
+                        {% endif %}
+                    </td>
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link"
+                           href="{{ url_for('cms.edit_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}">
+                            {% if 'UPDATE' in measure_version.available_actions %}Edit{% else %}view{% endif %}</a></td>
+                    <td class="govuk-table__cell">{% if 'UPDATE' in measure_version.available_actions %}
+                        <form action="{{ url_for('cms.delete_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, dimension_guid=dimension.guid ) }}"
+                              method="post">
+                            {{ form.csrf_token | default('') }}
+                            <button class="eff-button-link eff-button-link--warning">Delete</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                    <td class="govuk-table__cell eff-move-controls">
+                        {% if 'UPDATE' in measure_version.available_actions %}
+                        <span title="move up"
+                              class="eff-move-up">&#x25B2</span>
+                        <span title="move down"
+                              class="eff-move-down">&#x25BC</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+
+            {% if 'UPDATE' in measure_version.available_actions %}
+            <p class="govuk-body"><a class="govuk-link"
+                   href="{{ url_for('cms.create_dimension', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add
+                    dimension</a></p>
+            {% endif %}
+
+            {% if new %}
+            <p class="govuk-body">Once this page is saved you will be able to add dimensions</p>
+            {% endif %}
         </div>
     </div>
-    {% endif %}
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-form-group {% if data_not_uploaded_error %}govuk-form-group--error{% endif %}">
+            <h3 class="govuk-heading-m"
+                id="source-data"
+                tabindex="-1">Data</h3>
+            {% if data_not_uploaded_error %}
+            <span class="govuk-error-message">Upload the source data</span>
+            {% endif %}
+            {% if measure_version.uploads %}
+            <table class="govuk-table govuk-!-font-size-16">
+                {% for upload in measure_version.uploads %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link"
+                           href="{{ url_for('static_site.measure_version_file_download', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, filename=upload.file_name) }}">{{ upload.file_name }}</a>
+                    </td>
+                    <td class="govuk-table__cell">{{ upload.title }}</td>
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link"
+                           href="{{ url_for('cms.edit_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}">
+                            {% if 'UPDATE' in measure_version.available_actions %}Edit{% else %}view{% endif %}</a>
+                    </td>
+                    <td class="govuk-table__cell">
+                        {% if 'UPDATE' in measure_version.available_actions %}
+                        <form action="{{ url_for('cms.delete_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version, upload_guid=upload.guid ) }}"
+                              method="post">
+                            {{ form.csrf_token | default('') }}
+                            <button class="eff-button-link eff-button-link--warning">Delete</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            {% if 'UPDATE' in measure_version.available_actions %}
+            <p class="govuk-body"><a class="govuk-link"
+                   href="{{ url_for('cms.create_upload', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">Add
+                    data file (CSV)</a></p>
+            {% endif %}
+            {% if new %}
+            <p class="govuk-body">Once this page is saved you will be able to add downloads</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if current_user.can(COPY_MEASURE) and not new %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="measure-action-section__copy_measure_form-{{ measure_version.id }}"
+              method="POST"
+              action="{{ url_for('cms.copy_measure_version', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version) }}">
+            {{ form.csrf_token | default('') }}
+            <button class="govuk-button copy-button"
+                    type="submit">Create a copy of this measure</button>
+        </form>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block bodyEnd %}
-  {{ super() }}
+{{ super() }}
 
-    <script>
+<script>
 
-        {% if not form_disabled %}
+    {% if not form_disabled %}
 
-            document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener( 'DOMContentLoaded', function () {
 
-              ukCountriesSelect(document.querySelector('fieldset.uk-countries'));
+        ukCountriesSelect( document.querySelector( 'fieldset.uk-countries' ) );
 
-              var publisherFields = document.querySelectorAll('select.publisher');
-              for (var i = 0; i < publisherFields.length; i++) {
-                    govukGovernmentOrganisationsAutocomplete({
-                        selectElement: publisherFields[i],
-                        showAllValues: false,
-                        minLength: 2,
-                        defaultValue: ''
-                    });
+        var publisherFields = document.querySelectorAll( 'select.publisher' );
+        for ( var i = 0; i < publisherFields.length; i++ ) {
+            govukGovernmentOrganisationsAutocomplete( {
+                selectElement: publisherFields[ i ],
+                showAllValues: false,
+                minLength: 2,
+                defaultValue: ''
+            } );
+        }
+    } );
+
+    {% endif %}
+
+
+    {%  if not new %}
+    function refreshFileList() {
+        $.ajax( {
+            type: 'GET',
+            dataType: 'json',
+            url: "{{ url_for('cms.get_measure_version_uploads', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version)}}",
+            success: function ( page ) {
+                var fileListHtml = '';
+                for ( i in page.uploads ) {
+                    fileListHtml = fileListHtml + '<tr>' +
+                        '<td>' + page.uploads[ i ] + '</td>' +
+                        '<td><a class="govuk-link" href="/cms/{{ topic.slug }}/{{ subtopic.slug }}/{{ measure.slug }}/{{ measure_version.version }}/uploads/' + page.uploads[ i ] + '/delete">Delete</a></td>' +
+                        '</tr>';
                 }
-            });
+                $( '#fileList' ).html( fileListHtml );
+            }
+        } )
+    }
 
-        {%  endif %}
+    function moveDimensionUp( event ) {
+        event.preventDefault();
+        var row = $( event.currentTarget ).parents( 'tr:first' );
+        if ( row.prev().length > 0 ) {
+            row.insertBefore( row.prev() );
+            syncDimensionOrder();
+        }
+    }
 
+    function moveDimensionDown( event ) {
+        event.preventDefault();
+        var row = $( event.currentTarget ).parents( 'tr:last' );
+        if ( row.next().length > 0 ) {
+            row.insertAfter( row.next() );
+            syncDimensionOrder();
+        }
+    }
 
+    function syncDimensionOrder() {
+        var rows = $( 'tr.eff-movable' ),
+            dimensions = [],
+            guid;
+
+        $( rows ).each( function ( index, row ) {
+            guid = $( row ).data( 'dimension-guid' );
+            dimensions.push( { "index": index, "guid": guid } );
+        } );
+        $.ajax( {
+            type: 'POST',
+            url: "{{ url_for('cms.set_dimension_order') }}",
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify( { "dimensions": dimensions } ),
+            success: function ( data ) {
+                console.log( 'Set order for dimensions:', dimensions );
+            },
+            error: function ( data ) {
+                console.log( 'Error setting order for dimensions:', dimensions );
+            }
+        } );
+    }
+
+    function getPreviewUrl( event ) {
+        event.preventDefault();
+        $.ajax( {
+            type: 'GET',
+            url: "{{ url_for('review.get_new_review_url', id=measure_version.id)}}",
+            success: function ( data ) {
+                $( '#review-url' ).html( data );
+                initialiseCopy();
+            },
+            error: function ( data ) {
+                $( '#review-url' ).html( '<span class="warning">Error trying to generate new preview url</span>' );
+            }
+        } )
+    }
+    {% endif %}
+
+    function copyToClipboard( event ) {
+        event.preventDefault();
+        var link = document.querySelector( '#review-link' );
+        link.select();
+        document.execCommand( 'copy' );
+    }
+
+    function initialiseCopy() {
+        if ( document.queryCommandSupported( 'copy' ) ) {
+            $( '#copy-to-clipboard' ).show();
+            $( '#copy-to-clipboard' ).click( copyToClipboard );
+        }
+    }
+
+    $( document ).ready( function () {
         {%  if not new %}
-            function refreshFileList() {
-                $.ajax({
-                    type: 'GET',
-                    dataType: 'json',
-                    url: "{{ url_for('cms.get_measure_version_uploads', topic_slug=topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, version=measure_version.version)}}",
-                    success: function (page) {
-                        var fileListHtml = '';
-                        for (i in page.uploads) {
-                            fileListHtml = fileListHtml + '<tr>' +
-                                '<td>' + page.uploads[i] + '</td>' +
-                                '<td><a class="govuk-link" href="/cms/{{ topic.slug }}/{{ subtopic.slug }}/{{ measure.slug }}/{{ measure_version.version }}/uploads/' + page.uploads[i] + '/delete">Delete</a></td>' +
-                                '</tr>';
-                        }
-                        $('#fileList').html(fileListHtml);
-                    }
-                })
-            }
+        refreshFileList();
+        {% endif %}
+        $( '.eff-move-up' ).click( moveDimensionUp );
+        $( '.eff-move-down' ).click( moveDimensionDown );
+        $( '#generate-review-url' ).click( getPreviewUrl );
+        initialiseCopy();
+    } )
 
-            function moveDimensionUp(event) {
-                event.preventDefault();
-                var row = $(event.currentTarget).parents('tr:first');
-                if (row.prev().length > 0) {
-                    row.insertBefore(row.prev());
-                    syncDimensionOrder();
-                }
-            }
-
-            function moveDimensionDown(event) {
-                event.preventDefault();
-                var row = $(event.currentTarget).parents('tr:last');
-                if (row.next().length > 0) {
-                    row.insertAfter(row.next());
-                    syncDimensionOrder();
-                }
-            }
-
-            function syncDimensionOrder() {
-                var rows = $('tr.eff-movable'),
-                    dimensions = [],
-                    guid;
-
-                $(rows).each(function (index, row) {
-                    guid = $(row).data('dimension-guid');
-                    dimensions.push({"index": index, "guid": guid});
-                });
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ url_for('cms.set_dimension_order') }}",
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify({"dimensions": dimensions}),
-                    success: function (data) {
-                        console.log('Set order for dimensions:', dimensions);
-                    },
-                    error: function (data) {
-                        console.log('Error setting order for dimensions:', dimensions);
-                    }
-                });
-            }
-
-            function getPreviewUrl(event) {
-                event.preventDefault();
-                $.ajax({
-                    type: 'GET',
-                    url: "{{ url_for('review.get_new_review_url', id=measure_version.id)}}",
-                    success: function (data) {
-                        $('#review-url').html(data);
-                        initialiseCopy();
-                    },
-                    error: function(data) {
-                        $('#review-url').html('<span class="warning">Error trying to generate new preview url</span>');
-                    }
-                })
-            }
-        {%  endif %}
-
-        function copyToClipboard(event) {
-            event.preventDefault();
-            var link = document.querySelector('#review-link');
-            link.select();
-            document.execCommand('copy');
-        }
-
-        function initialiseCopy() {
-            if (document.queryCommandSupported('copy')){
-                $('#copy-to-clipboard').show();
-                $('#copy-to-clipboard').click(copyToClipboard);
-            }
-        }
-
-        $(document).ready(function () {
-            {%  if not new %}
-                refreshFileList();
-            {%  endif %}
-            $('.eff-move-up').click(moveDimensionUp);
-            $('.eff-move-down').click(moveDimensionDown);
-            $('#generate-review-url').click(getPreviewUrl);
-            initialiseCopy();
-        })
-
-    </script>
+</script>
 
 {% endblock %}
