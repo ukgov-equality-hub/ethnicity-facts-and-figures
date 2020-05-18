@@ -110,6 +110,7 @@ def create_measure(topic_slug, subtopic_slug):
         data_not_uploaded_error=False,
         data_sources_not_added=False,
         dimensions_not_complete_error=False,
+        dimensions_errors=False,
     )
 
 
@@ -300,6 +301,7 @@ def edit_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         "data_not_uploaded_error": False,
         "data_sources_not_added": False,
         "dimensions_not_complete_error": False,
+        "dimensions_errors": False,
     }
 
     return render_template("cms/edit_measure_version.html", **context)
@@ -500,16 +502,18 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             copy_form_errors(from_form=measure_version_form_to_validate, to_form=measure_version_form)
 
             additional_errors = []
+            dimension_errors = []
             data_not_uploaded_error = dimensions_not_complete_error = data_sources_not_added = False
             if invalid_dimensions:
                 dimensions_not_complete_error = True
                 for invalid_dimension in invalid_dimensions:
                     additional_errors.append(
                         ErrorSummaryMessage(
-                            text="Your dimension is missing a title. Enter a title.",
-                            href=f"./{invalid_dimension.guid}/edit?validate=true",
+                            text=f'Your dimension "{invalid_dimension.title}" is missing a summary. Enter a summary.',
+                            href=f"#{invalid_dimension.guid}",
                         )
                     )
+                    dimension_errors.append(invalid_dimension.guid)
 
             if not data_file_uploaded:
                 data_not_uploaded_error = True
@@ -531,6 +535,7 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
                 "data_not_uploaded_error": data_not_uploaded_error,
                 "data_sources_not_added": data_sources_not_added,
                 "dimensions_not_complete_error": dimensions_not_complete_error,
+                "dimensions_errors": dimension_errors,
                 "new": False,
             }
 
