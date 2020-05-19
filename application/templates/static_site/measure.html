@@ -24,7 +24,15 @@
     {{ super() }}
 
     {% if not latest_url %}
-        <meta name="robots" content="noindex">
+      <link rel="canonical"
+            href="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_version',
+                      topic_slug=topic_slug,
+                      subtopic_slug=subtopic_slug,
+                      measure_slug=measure_version.measure.slug,
+                      version=version) }}" />
+
+      <meta name="robots"
+            content="noindex">
     {% endif %}
 {% endblock %}
 
