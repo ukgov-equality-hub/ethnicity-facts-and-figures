@@ -204,15 +204,16 @@ Code,Classification short name,Classification long name,Standard,Display,Parent,
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Unclassified,Unclassified,Unclassified,9990,
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Unmatched,Unmatched,Unmatched,9991,
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Not applicable,Not applicable,Not applicable,9999,
-2A,White and Other,White and Other,White,White,White,4000,TRUE
-2A,White and Other,White and Other,Other,Other than White,Other than White,9100,TRUE
-2A,White and Other,White and Other,All,All,All,0,
-2A,White and Other,White and Other,Other than White,Other than White,Other than White,9100,
-2A,White and Other,White and Other,Any other,Other than White,Other than White,9100,
-2A,White and Other,White and Other,Unknown,Unknown,Unknown,9980,
-2A,White and Other,White and Other,Unclassified,Unclassified,Unclassified,9990,
-2A,White and Other,White and Other,Unmatched,Unmatched,Unmatched,9991,
-2A,White and Other,White and Other,Not applicable,Not applicable,Not applicable,9999,
+2A,White and Other than White,White and Other than White,White,White,White,4000,TRUE
+2A,White and Other than White,White and Other than White,Other,Other than White,Other than White,9100,TRUE
+2A,White and Other than White,White and Other than White,All,All,All,0,
+2A,White and Other than White,White and Other than White,Other than White,Other than White,Other than White,9100,
+2A,White and Other than White,White and Other than White,Any other,Other than White,Other than White,9100,
+2A,White and Other than White,White and Other than White,Unknown,Unknown,Unknown,9980,
+2A,White and Other than White,White and Other than White,Unclassified,Unclassified,Unclassified,9990,
+2A,White and Other than White,White and Other than White,Unmatched,Unmatched,Unmatched,9991,
+2A,White and Other than White,White and Other than White,Not applicable,Not applicable,Not applicable,9999,
+2A,White and Other than White,White and Other than White,White and Other than White,White and Other than White,White and Other than White,9100,
 2B,White British and Other,White British and Other,White British,White British,White British,4100,TRUE
 2B,White British and Other,White British and Other,Other,Other than White British,Other than White British,9200,TRUE
 2B,White British and Other,White British and Other,All,All,All,0,
