@@ -963,7 +963,7 @@ class _TestVisualisationBuilder:
             "Please select",
             "Well-being survey - 12",
             "White British and Other",
-            "White and Other",
+            "White and Other than White",
         }  # TODO: Fix to use definitions/lookups from `test_data: https://trello.com/c/fwYpIWkD
 
 
