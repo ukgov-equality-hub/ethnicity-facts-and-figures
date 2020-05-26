@@ -30,9 +30,8 @@ SET additional_description = 'Includes data on school results, apprenticeships,
 WHERE slug = 'education-skills-and-training';
 
 UPDATE topic
-SET additional_description = 'Includes data on physical and mental health, diet
-
-     and exercise, and smoking and alcohol use.'
+SET additional_description = 'Includes data on physical and mental health,
+ diet and exercise, and smoking and alcohol use.'
 WHERE slug = 'health';
 
 UPDATE topic
