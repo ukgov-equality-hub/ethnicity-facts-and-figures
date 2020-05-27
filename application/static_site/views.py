@@ -45,9 +45,13 @@ def background():
 
 
 @static_site_blueprint.route("/cookies")
-@login_required
 def cookies():
     return render_template("static_site/static_pages/cookies.html")
+
+
+@static_site_blueprint.route("/cookie-settings")
+def cookie_settings():
+    return render_template("static_site/static_pages/cookie-settings.html")
 
 
 @static_site_blueprint.route("/privacy-policy")

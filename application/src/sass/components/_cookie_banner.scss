@@ -4,30 +4,86 @@
 
 #global-cookie-message {
   width: 100%;
-  background-color: #d5e8f3;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  background-color:#f3f2f1;
+  padding-top: 20px;
+  padding-bottom: 20px;
 
-  & p {
-    font-family: "nta", Arial, sans-serif;
-    font-weight: 400;
-    text-transform: none;
-    font-size: 14px;
-    line-height: 1.14286;
-    margin: 0 15px;
-    max-width: 960px;
-
-    @media (min-width: 641px) {
-      font-size: 16px;
-      line-height: 1.25;
-    }
-
-    @media (min-width: 641px) {
-      margin: 0 30px;
-    }
-
-    @media (min-width: 1020px) {
-      margin: 0 auto;
-    }
+  .button-inline {
+    flex-grow: 1;
+    flex-basis: 10rem;
+    padding-right: 15px;
+    margin-bottom: 15px;
+    display: inline-block;
+    width: auto;
+    vertical-align: baseline;
+    margin-right: 10px;
   }
+
+  .cookie-banner__buttons--flex {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+
+  .cookie-banner__link {
+    flex-grow: 1;
+    flex-basis: 10rem;
+    margin-right: 15px;
+    margin-bottom: 15px;
+    font-size: 1.1875rem;
+    line-height: 1.3157894737;
+  }
+
+  .cookie-banner__confirmation {
+    display: none;
+    position: relative;
+
+    p {
+      display: inline-block;
+      margin: 0 0 10px 0
+    }
+
+    @media (min-width: 769px) {
+      p {
+        max-width: 90%;
+      }
+    }
+
+  }
+
+  .cookie-banner__hide-button {
+    @media (min-width: 769px) {
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
+      background: none;
+      border: 0;
+      box-shadow: none;
+      color: #1d70b8;
+      font-size: 1.1875rem;
+      font-weight: 400;
+      line-height: 1.3157894737;
+      margin-top: 0;
+      outline: 0;
+      padding: 0;
+      position: absolute;
+      right: 5px;
+      text-decoration: underline;
+    }
+
+    @media screen and (max-width: 379px) {
+      position: relative
+    }
+
+  }
+
+
+}
+
+.cookie-settings__confirmation {
+  display: none;
+  color: #0b0c0c;
+  padding: 15px;
+  margin-bottom: 30px;
+  clear: both;
+  border: 5px solid #1d70b8;
 }

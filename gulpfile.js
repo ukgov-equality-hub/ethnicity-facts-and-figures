@@ -35,7 +35,7 @@ gulp.task('compile-js-all', function () {
     './node_modules/govuk-frontend/govuk/all.js',
     './application/src/js/all/vendor/jquery.min.js',
     './application/src/js/all/vendor/polyfills/*.js',
-    './application/src/js/all/vendor/govuk-template.js',
+    './application/src/js/all/govuk-template.js',
     './application/src/js/all/*.js'
   ])
     .pipe(sourcemaps.init())
@@ -114,6 +114,21 @@ gulp.task('compile-js-chartbuilder', function (cb) {
   );
 });
 
+gulp.task('compile-js-cookies', function (cb) {
+  pump([
+    gulp.src([
+      './application/src/js/cookies/*.js'
+    ]),
+    sourcemaps.init(),
+    concat('cookies.js'),
+    gulpif(!process.env.DISABLE_UGLIFY, uglify()),
+    sourcemaps.write('.', { sourceRoot: '../src' }),
+    gulp.dest('./application/static/javascripts')
+  ],
+    cb
+  );
+});
+
 gulp.task('watch', function () {
   gulp.watch(['./application/src/js/**/*.js', './application/src/sass/*.scss', './application/src/sass/**/*.scss'], gulp.series('version'));
 });
@@ -123,7 +138,8 @@ gulp.task('manifest-js', function () {
     './application/static/javascripts/charts.js',
     './application/static/javascripts/cms.js',
     './application/static/javascripts/tablebuilder.js',
-    './application/static/javascripts/chartbuilder.js'])
+    './application/static/javascripts/chartbuilder.js',
+    './application/static/javascripts/cookies.js'])
     .pipe(rev())
     .pipe(gulp.dest('./application/static/javascripts'))
     .pipe(rev.manifest())
@@ -138,7 +154,7 @@ gulp.task('manifest-css', function () {
     .pipe(gulp.dest('./application/static/stylesheets'))
 });
 
-gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-charts', 'compile-js-cms', 'compile-js-tablebuilder', 'compile-js-chartbuilder'), 'manifest-js'));
+gulp.task('make-js', gulp.series(gulp.parallel('compile-js-all', 'compile-js-charts', 'compile-js-cms', 'compile-js-tablebuilder', 'compile-js-chartbuilder', 'compile-js-cookies'), 'manifest-js'));
 
 gulp.task('make-css', gulp.series(gulp.parallel('compile-css'), 'manifest-css'));
 
