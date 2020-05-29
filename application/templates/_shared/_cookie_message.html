@@ -1,5 +1,42 @@
-<div id="global-cookie-message">
-  <div class="cookie-message full-width">
-    <p class="govuk-body">GOV.UK uses cookies to make the site simpler. <a class="govuk-link" href="/cookies">Find out more about cookies</a></p>
+<div id="global-cookie-message"
+     class="cookie-banner govuk-clearfix"
+     data-module="cookie-banner"
+     role="region"
+     aria-label="cookie banner"
+     data-nosnippet>
+  <div id="cookie-actions" class="cookie-banner__wrapper govuk-width-container">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <div class="cookie-banner__message">
+          <h2 class="govuk-heading-m">Can we store analytics cookies on your device?</h2>
+          <p class="govuk-body">Analytics cookies help us understand how our website is being used.</p>
+        </div>
+        <div class="cookie-banner__buttons cookie-banner__buttons--flex">
+
+          <button id="cookie-accept"
+                  class="govuk-button button-inline"
+                  data-module="govuk-button">
+            Yes
+          </button>
+          <button id="cookie-decline"
+                  class="govuk-button button-inline"
+                  data-module="govuk-button">
+            No
+          </button>
+
+          <a class="cookie-banner__link govuk-link"
+             href="/cookies">How we use cookies</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cookie-confirmation" class="cookie-banner__confirmation govuk-width-container govuk-!-margin-top-1">
+    <p class="govuk-body">
+      You’ve accepted all cookies. You can <a class='govuk-link'
+         href='/cookie-settings'>change your cookie settings</a> at any time.
+    </p>
+    <button id="hide-cookie-banner"
+            class="cookie-banner__hide-button govuk-button govuk-button--secondary">Hide</button>
   </div>
 </div>
