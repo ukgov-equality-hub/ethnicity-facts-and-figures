@@ -40,7 +40,6 @@
       var date = new Date();
       date.setTime(date.getTime() + options.days * 24 * 60 * 60 * 1000);
       cookieString = cookieString + ';expires=' + date.toGMTString();
-      console.log(cookieString)
     }
     if (document.location.protocol == 'https:') {
       cookieString = cookieString + ';Secure';
