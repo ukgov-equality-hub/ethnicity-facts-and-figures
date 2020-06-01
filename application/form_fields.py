@@ -104,11 +104,30 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
     TEMPLATE = "forms/_text_input.html"
     input_type = "text"
 
-    def __call__(self, field, class_="", diffs=None, disabled=False, textarea=False, label_class="", **kwargs):
+    def __call__(
+        self,
+        field,
+        class_="",
+        diffs=None,
+        disabled=False,
+        textarea=False,
+        inline_instructions=None,
+        hint=None,
+        extended_hint=None,
+        label_class="",
+        **kwargs,
+    ):
         value = {"value": field.data}
 
         field_params = {} if textarea else {"type": self.input_type}
         field_params = {**field_params, **kwargs}
+
+        extended_hint_markup = (
+            Markup(render_template(f"forms/extended_hints/{extended_hint}")) if extended_hint else None
+        )
+        inline_instructions_markup = (
+            Markup(render_template(f"forms/inline_instructions/{inline_instructions}")) if inline_instructions else None
+        )
 
         return super().__call__(
             field=field,
@@ -117,7 +136,14 @@ class _RDUTextInput(_FormFieldTemplateRenderer):
             class_=class_,
             diffs=diffs,
             disabled=disabled,
-            render_params={"textarea": textarea, **value, "label_class": label_class},
+            render_params={
+                "textarea": textarea,
+                "hint": hint,
+                "extended_hint": extended_hint_markup,
+                "inline_instructions": inline_instructions_markup,
+                **value,
+                "label_class": label_class,
+            },
             field_params=field_params,
         )
 
@@ -131,13 +157,35 @@ class _RDUEmailInput(_RDUTextInput):
 
 
 class _RDUTextAreaInput(_RDUTextInput):
-    def __call__(self, field, class_="", diffs=None, disabled=False, rows=10, cols=100, **kwargs):
+    def __call__(
+        self,
+        field,
+        class_="",
+        diffs=None,
+        disabled=False,
+        rows=10,
+        cols=100,
+        hint=None,
+        extended_hint=None,
+        inline_instructions=None,
+        **kwargs,
+    ):
         if rows:
             kwargs["rows"] = rows
         if cols:
             kwargs["cols"] = cols
 
-        return super().__call__(field=field, diffs=diffs, disabled=disabled, class_=class_, textarea=True, **kwargs)
+        return super().__call__(
+            field=field,
+            diffs=diffs,
+            disabled=disabled,
+            class_=class_,
+            textarea=True,
+            hint=hint,
+            extended_hint=extended_hint,
+            inline_instructions=inline_instructions,
+            **kwargs,
+        )
 
 
 class _RDUURLInput(_RDUTextInput):
@@ -298,6 +346,7 @@ class RDUStringField(StringField):
         validators=None,
         hint=None,
         extended_hint=None,
+        inline_instructions=None,
         character_count_limit=None,
         clear_text=None,
         **kwargs,
@@ -318,6 +367,7 @@ class RDUStringField(StringField):
         super().__init__(label, validators, **kwargs)
 
         self.hint = hint
+        self.inline_instructions = inline_instructions
         self.character_count_limit = character_count_limit
         self.extended_hint = Markup(render_template(f"forms/extended_hints/{extended_hint}")) if extended_hint else None
         self.clear_text = clear_text if clear_text else None

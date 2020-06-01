@@ -30,7 +30,7 @@ class TestGetCreateMeasurePage:
     def test_create_measure_page(self, test_app_client, logged_in_rdu_user, stub_measure_data):
         LowestLevelOfGeographyFactory(name=stub_measure_data["lowest_level_of_geography_id"])
         subtopic = SubtopicFactory()
-        form = MeasureVersionForm(is_minor_update=False, **stub_measure_data)
+        form = MeasureVersionForm(template_version="1", is_minor_update=False, **stub_measure_data)
 
         response = test_app_client.post(
             url_for("cms.create_measure", topic_slug=subtopic.topic.slug, subtopic_slug=subtopic.slug),
@@ -636,9 +636,11 @@ def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, logged_in
         user_id = session["_user_id"]
     user = User.query.get(user_id)
 
-    measure_version = MeasureVersionFactory(status="DRAFT", measure__shared_with=[user], title="this will be updated")
+    measure_version = MeasureVersionFactory(
+        template_version="1", status="DRAFT", measure__shared_with=[user], title="this will be updated"
+    )
 
-    data = {"title": "this is the update", "db_version_id": measure_version.db_version_id + 1}
+    data = {"template_version": "1", "title": "this is the update", "db_version_id": measure_version.db_version_id + 1}
     response = test_app_client.post(
         url_for(
             "cms.edit_measure_version",
@@ -663,7 +665,7 @@ def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, logged_in
 @pytest.mark.parametrize("measure_version", ["1.0", "1.1", "2.0"])
 def test_db_version_id_gets_incremented_after_an_update(test_app_client, logged_in_rdu_user, measure_version):
     measure_version: MeasureVersion = MeasureVersionFactory(
-        status="DRAFT", title="this will be updated", db_version_id=1, version=measure_version
+        template_version="1", status="DRAFT", title="this will be updated", db_version_id=1, version=measure_version
     )
 
     response = test_app_client.get(

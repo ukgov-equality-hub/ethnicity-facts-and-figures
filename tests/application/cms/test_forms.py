@@ -27,7 +27,7 @@ class TestDataSourceForm:
 
         assert data_source.title == form.title.data
 
-    def test_runs_full_validation_when_sending_to_review(self):
+    def test_runs_template_version_one_full_validation_when_sending_to_review(self):
         form = DataSourceForm(sending_to_review=True)
 
         form.validate()
@@ -44,9 +44,8 @@ class TestDataSourceForm:
 
 
 class TestMeasureVersionForm:
-    def test_runs_full_validation_when_sending_to_review(self):
+    def test_runs_template_version_one_full_validation_when_sending_to_review(self):
         form = MeasureVersionForm(is_minor_update=False, sending_to_review=True)
-
         form.validate()
 
         assert set(form.errors.keys()) == {
@@ -56,11 +55,27 @@ class TestMeasureVersionForm:
             "lowest_level_of_geography_id",
             "summary",
             "measure_summary",
+            "description",
             "need_to_know",
             "ethnicity_definition_summary",
             "methodology",
             "external_edit_summary",
+        }
+
+    def test_runs_template_version_two_full_validation_on_when_sending_to_review(self):
+        form = MeasureVersionForm(is_minor_update=False, sending_to_review=True)
+        form.template_version.data = "2"
+        form.validate()
+
+        assert set(form.errors.keys()) == {
+            "title",
+            "time_covered",
+            "area_covered",
+            "lowest_level_of_geography_id",
+            "summary",
             "description",
+            "need_to_know",
+            "external_edit_summary",
         }
 
     @pytest.mark.parametrize("is_minor_update, form_should_error", ((False, False), (True, True)))
