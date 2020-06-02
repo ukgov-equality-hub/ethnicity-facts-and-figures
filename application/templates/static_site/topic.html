@@ -22,7 +22,7 @@
                 </h1>
                 {% if topic.additional_description  %}
                     <div class="govuk-body">
-                        {{ topic.additional_description | render_markdown  }}
+                        {{ topic.additional_description | safe  }}
                     </div>
                 {% endif %}
             </div>
