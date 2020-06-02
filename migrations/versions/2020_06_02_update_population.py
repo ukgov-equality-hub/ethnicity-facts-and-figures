@@ -24,7 +24,7 @@ UPDATE topic
 SET additional_description = 'Population statistics and 2011 Census data.
 
 <div class="govuk-inset-text">
-See the list of <a class="govuk-link" href="/ethnic-groups">list of ethnic groups</a> used in the 2011 Census
+See the list of <a class="govuk-link" href="/ethnic-groups">ethnic groups</a> used in the 2011 Census.
 </div>'
 WHERE slug = 'uk-population-by-ethnicity';
 """
