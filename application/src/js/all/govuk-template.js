@@ -54,18 +54,22 @@
     }
   }
 
-  cookieSettingsSubmit.addEventListener('click', function (event) {
-    // on form submission, prevent default
-    event.preventDefault();
-    if (document.getElementById('radio-accept').checked) {
-      setCookiesSettings(true);
-    } else {
-      setCookiesSettings(false);
-    }
+  if (cookieSettingsSubmit) {
+    cookieSettingsSubmit.addEventListener('click', function (event) {
+      // on form submission, prevent default
+      event.preventDefault();
+      if (document.getElementById('radio-accept').checked) {
+        setCookiesSettings(true);
+      } else {
+        setCookiesSettings(false);
+      }
 
-    var confirmation = document.getElementById('cookie-settings__confirmation');
-    confirmation.style.display = 'block';
-    confirmation.scrollIntoView();
-  });
+      var confirmation = document.getElementById(
+        'cookie-settings__confirmation'
+      );
+      confirmation.style.display = 'block';
+      confirmation.scrollIntoView();
+    });
+  }
   // ./cookie settings page
 }.call(this));
