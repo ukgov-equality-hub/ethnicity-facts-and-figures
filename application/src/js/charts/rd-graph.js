@@ -59,8 +59,6 @@ function barchart(container_id, chartObject) {
 }
 function barchartHighchartObject(chartObject) {
   preprocessChartObject(chartObject);
-  // fix old colours currently stored in DB json object
-  chartObject.series = replaceOldSeriesColors(chartObject);
 
   var chart = {
     colors: setColour(chartObject),
@@ -806,6 +804,8 @@ function adjustParents(chartObject) {
       var currentParent = { category: 'null' };
       var fullSeriesData = [];
       _.forEach(series.data, function(item) {
+        // fix old colours currently stored in DB json object
+        item = JSON.parse(JSON.stringify(item, colorReplacer));
         if (item.relationships.is_parent) {
           fullSeriesData.push(item);
 
