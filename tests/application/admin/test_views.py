@@ -7,7 +7,6 @@ from flask import url_for
 from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory, OrganisationFactory
 from tests.utils import find_input_for_label_with_text
 from werkzeug.datastructures import ImmutableMultiDict
-import pytest
 
 
 @flaky(max_runs=10, min_passes=1)
@@ -243,15 +242,16 @@ def test_measure_versions_in_all_states_are_available_to_share(test_app_client, 
     assert len(select.findAll("option")) == num_measures + 1
 
 
-# FIXME: Fix Test
-@pytest.mark.skip(reason="fails constantly needs refactoring")
-def test_admin_user_can_share_page_with_dept_user(test_app_client):
+@flaky(max_runs=15, min_passes=1)
+def test_admin_user_can_share_page_with_dept_user(test_app_client, logged_in_dept_user):
     dept_user = UserFactory(user_type=TypeOfUser.DEPT_USER)
     admin_user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
 
+    test_app_client.post(
+        "/auth/login", data=dict(email=dept_user.email, password=dept_user.password), follow_redirects=True
+    )
+
     measure_version = MeasureVersionFactory(status="DRAFT")
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = dept_user.id
 
     # dept user can't get to page
     resp = test_app_client.get(
@@ -277,10 +277,12 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client):
     )
 
     assert resp.status_code == 403
+    test_app_client.post(url_for("auth.logout"), follow_redirects=True)
 
     # admin user shares page
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = admin_user.id
+    test_app_client.post(
+        "/auth/login", data=dict(email=admin_user.email, password=admin_user.password), follow_redirects=True
+    )
 
     data = {"measure-picker": measure_version.id}
 
@@ -289,10 +291,12 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client):
     )
     assert measure_version.measure.shared_with == [dept_user]
     assert resp.status_code == 200
+    test_app_client.post(url_for("auth.logout"), follow_redirects=True)
 
     # dept user can view or edit page
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = dept_user.id
+    test_app_client.post(
+        "/auth/login", data=dict(email=dept_user.email, password=dept_user.password), follow_redirects=True
+    )
 
     resp = test_app_client.get(
         url_for(
@@ -319,55 +323,78 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client):
     assert resp.status_code == 200
 
 
-# FIXME: Fix Test
-@pytest.mark.skip(reason="fails constantly needs refactoring")
-def test_admin_user_can_remove_share_of_page_with_dept_user(test_app_client):
+@flaky(max_runs=20, min_passes=1)
+def test_admin_user_can_remove_share_of_page_with_dept_user(app, test_app_client):
     dept_user = UserFactory(user_type=TypeOfUser.DEPT_USER)
     admin_user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
 
-    measure_version = MeasureVersionFactory(status="DRAFT", measure__shared_with=[dept_user])
+    rv = test_app_client.post(
+        url_for("security.login"), data=dict(email=dept_user.email, password=dept_user.password), follow_redirects=True
+    )
+    page = BeautifulSoup(rv.data.decode("utf-8"), "html.parser")
+    assert page.h1.text.strip() == "Ethnicity facts and figures"
 
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = dept_user.id
+    measure_version = MeasureVersionFactory(status="DRAFT", measure__shared_with=[dept_user])
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_version",
+            "cms.edit_measure_version",
             topic_slug=measure_version.measure.subtopic.topic.slug,
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_slug=measure_version.measure.slug,
             version=measure_version.version,
-        )
+        ),
+        follow_redirects=True,
     )
 
     assert resp.status_code == 200
+    rv = test_app_client.post(url_for("auth.logout"), follow_redirects=True)
+    page = BeautifulSoup(rv.data.decode("utf-8"), "html.parser")
+    assert page.h1.text.strip() == "Login"
 
     # admin user removes share
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = admin_user.id
+    rv = test_app_client.post(
+        url_for("security.login"),
+        data=dict(email=admin_user.email, password=admin_user.password),
+        follow_redirects=True,
+    )
+    page = BeautifulSoup(rv.data.decode("utf-8"), "html.parser")
+    assert page.h1.text.strip() == "Ethnicity facts and figures"
 
     resp = test_app_client.get(
-        url_for("admin.remove_shared_page_from_user", measure_id=measure_version.measure_id, user_id=dept_user.id),
+        url_for("admin.remove_shared_page_from_user", user_id=dept_user.id, measure_id=measure_version.measure_id),
         follow_redirects=True,
     )
 
     assert resp.status_code == 200
 
+    rv = test_app_client.post(url_for("auth.logout"), follow_redirects=True)
+    page = BeautifulSoup(rv.data.decode("utf-8"), "html.parser")
+    assert page.h1.text.strip() == "Login"
+
     # dept user can no longer access page
-    with test_app_client.session_transaction() as session:
-        session["user_id"] = dept_user.id
+    rv = test_app_client.post(
+        url_for("security.login"), data=dict(email=dept_user.email, password=dept_user.password), follow_redirects=True
+    )
+
+    assert rv.status_code == 200
+    page = BeautifulSoup(rv.data.decode("utf-8"), "html.parser")
+    assert page.h1.text.strip() == "Ethnicity facts and figures"
 
     resp = test_app_client.get(
         url_for(
-            "static_site.measure_version",
+            "cms.edit_measure_version",
             topic_slug=measure_version.measure.subtopic.topic.slug,
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_slug=measure_version.measure.slug,
             version=measure_version.version,
-        )
+        ),
+        follow_redirects=True,
     )
 
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert resp.status_code == 403
+    assert page.h1.text.strip() == "Forbidden"
 
 
 @flaky(max_runs=10, min_passes=1)
