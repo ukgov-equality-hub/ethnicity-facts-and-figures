@@ -400,8 +400,6 @@ def test_view_topic_page(test_app_client, logged_in_rdu_user):
     assert page.h1.text.strip() == "Test topic page"
 
 
-# FIXME: Fix Test
-@pytest.mark.skip(reason="fails, needs refactoring")
 @flaky(max_runs=10, min_passes=1)
 def test_view_topic_page_contains_reordering_javascript_for_admin_user_only(test_app_client):
     rdu_user = UserFactory(user_type=TypeOfUser.RDU_USER)
