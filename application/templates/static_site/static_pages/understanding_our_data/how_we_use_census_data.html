@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for("static_site.understanding_our_data"), "text": "Understanding our data"},
+    {"url": "", "text": "How we use Census data"}
+  ]
+%}
+
+{% block pageTitle %}How we use Census data on Ethnicity facts and figures - GOV.UK{% endblock %}
+{% block socialTitle %}How we use Census data on Ethnicity facts and figures{% endblock %}
+{% block socialDescription %}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Misc');{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-xl">How we use Census data</h1>
+
+
+    <p class="govuk-body">Most of our data on the UK population comes from the 2011 Census. It includes population
+      statistics for England and Wales, and age and gender data for different ethnic groups.</p>
+
+    <p class="govuk-body">We also use Census data to:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>work out rates on some of our data pages – for example, our stop and search data shows the stop and search
+        rate per 1,000 people for every ethnic group</li>
+      <li>act as a comparator – for example, our NHS workforce data compares the ethnic groups that make up the NHS
+        workforce with the overall working age population</li>
+    </ul>
+
+    <h2 class="govuk-heading-l"
+        id="problems-using-census-data">Problems using Census data</h2>
+
+    <p class="govuk-body">Using Census data can be problematic because:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the most recent Census was in 2011 and it is likely that there have been some population changes since then
+      </li>
+      <li>ethnicity categories are usually updated every Census – so datasets that use the 2001 Census ethnic categories
+        have to be altered so they match 2011 Census categories
+      </li>
+      <li>population figures for each area only include permanent residents and not visitors</li>
+    </ul>
+
+
+    <div class="govuk-inset-text">
+      <p class="govuk-body govuk-!-font-weight-bold">Example:</p>
+
+      <p>In our data on the school teacher workforce, the ethnic groups follow the 2001 Census classification. However, the 2011
+        Census moved 'Chinese' from the ‘Any Other’ ethnic group to ‘Asian/Asian British’. This means that figures using
+        2011 Census categories can’t be compared with any using 2001 Census categories for 'Any Other' and 'Asian’.</p>
+    </div>
+
+
+
+  </div>
+</div>
+{% endblock %}

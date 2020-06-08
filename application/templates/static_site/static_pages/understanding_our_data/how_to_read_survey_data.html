@@ -3,8 +3,12 @@
 {% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for("static_site.understanding_our_data"), "text": "Understanding our data"},
+    {"url": "", "text": "How to read survey data"}
   ]
 %}
+
+
 
 {% block pageTitle %}How to read survey data on Ethnicity facts and figures - GOV.UK{% endblock %}
 {% block socialTitle %}How to read survey data on Ethnicity facts and figures{% endblock %}
@@ -13,7 +17,8 @@
 
 {% block headEnd %}
 <link rel="canonical"
-      href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.how_to_read_survey_data') }}">{% endblock %}
+      href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.how_to_read_survey_data') }}">
+{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -21,60 +26,163 @@
 
     <h1 class="govuk-heading-xl">How to read survey data</h1>
 
+    <p class="govuk-body">Some of our data comes from surveys. Surveys take responses from a sample rather than the
+      whole group. </p>
 
-    <p class="govuk-body">Some of the data on this website comes from surveys.</p>
-    <p class="govuk-body">Surveys collect responses from a sample of a group, rather than the whole group. For example, a survey might
-      ask 10% of parents their opinion on changing the curriculum rather than asking all parents.</p>
+    <p class="govuk-body">For example, a survey might ask 10% of parents their opinion on changing the curriculum rather
+      than asking all parents.</p>
+
     <p class="govuk-body">The quality of survey data depends on:</p>
+
     <ul class="govuk-list govuk-list--bullet">
       <li>how people were selected</li>
       <li>the number of people surveyed (the ‘sample size’)</li>
       <li>how the questions were asked</li>
     </ul>
-    <p class="govuk-body">Once survey data has been collected and processed, statisticians can use techniques to improve its quality or
-      assess how representative the sample is.</p>
-    <p class="govuk-body">Different techniques can be used to:</p>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>make survey data more representative of the whole group (for example, the population of England) – this is
-        known as ‘weighting’</li>
-      <li>assess the reliability of estimates and differences between them using ‘confidence intervals’</li>
-    </ul>
-    <h2 class="govuk-heading-l" id="weighting">Weighting</h2>
-    <p class="govuk-body">Weighting adjusts the results of a survey so they better represent the whole group.</p>
-    <p class="govuk-body">For example, a survey of 25 women and 75 men may not reflect the views of the general population (which is 50%
-      men, 50% women). Statisticians can weight the results to more accurately represent the split of men and women in
+
+    <p class="govuk-body">Once survey data has been collected and processed, analysts can use techniques to make it more representative or assess how reliable the sample is.</p>
+
+    <h2 class="govuk-heading-l"
+        id="how-surveys-are-completed">How surveys are completed</h2>
+
+
+    <p class="govuk-body">The method of a survey can affect the honesty of the answers given, influencing results.</p>
+
+<p class="govuk-body">People are usually more honest when completing surveys about sensitive topics without an interviewer present, for example when giving details about smoking or drinking.</p>
+
+<p class="govuk-body">People are also more likely to make mistakes when responding to online or paper surveys. This is less likely with face-to-face or phone surveys because people can ask for things to be repeated.</p>
+
+
+
+
+    <h2 class="govuk-heading-l"
+        id="weighting">Making survey data more representative</h2>
+
+    <p class="govuk-body">Different techniques can be used to make survey data more representative of the whole group,
+      and to assess the reliability of estimates and differences.</p>
+
+    <p class="govuk-body">‘Weighting’ adjusts the results of a survey so they better represent the whole group.</p>
+
+    <p class="govuk-body">A survey of 25 women and 75 men may not reflect the views of the general population (which is
+      50% men, 50% women). </p>
+
+    <p class="govuk-body">Analysts can ‘weight’ the results to more accurately represent the split of men and women in
       the general population.</p>
-    <p class="govuk-body">Survey weights are usually applied to make sure the survey sample has broadly the same gender, age, ethnic or
-      geographic make up as the general population.</p>
-    <h2 class="govuk-heading-l" id="confidence-intervals">Confidence intervals</h2>
-    <div class="govuk-inset-text"><p class="govuk-body govuk-!-font-weight-bold">Example</p> <p>2017/18 data showed that 22.4% of all 4 to 5 year olds in England were overweight. This is only an
-        estimate based on a sample of 4 to 5 year olds. The ‘true’ figure for all 4 to 5 year olds was very likely
-        somewhere between 22.3% and 22.5%. These are the upper and lower bounds of the confidence interval.</p>
+
+    <p class="govuk-body">Survey weights help to make sure the survey sample has broadly the same gender, age, ethnic
+      and geographic proportions as the general population.</p>
+
+    <h2 class="govuk-heading-l"
+        id="confidence-intervals">Confidence intervals</h2>
+
+    <p class="govuk-body">A confidence interval is a range of values that the 'true' value for the whole group is highly
+      likely to lie within. The estimate is the central point of this range.</p>
+
+    <div class="govuk-inset-text">
+      <p class="govuk-body govuk-!-font-weight-bold">Example:</p>
+      <p>Data from 2017 to 2018 showed that 22.4% of all 4 to 5 year olds in England were overweight. This is only an
+        estimate based on a sample of children. The ‘true’ figure was very likely to be between 22.3% and 22.5% – the
+        upper and lower bounds of the confidence interval.</p>
     </div>
-    <p class="govuk-body">A confidence interval is a range of values that the 'true' value for the whole group is highly likely to lie
-      within. The estimate is the central point of this range.</p>
-    <p class="govuk-body">Confidence intervals show how likely it is that the ‘true’ figure falls within the upper and lower bounds (the
-      highest and lowest values in the range).</p>
-    <p class="govuk-body">A confidence interval of 95% means if we took 100 random samples, the estimate would fall within its upper and
-      lower bounds 95 times. Confidence intervals of 90% and 99% are also sometimes used.</p>
+
+    <p class="govuk-body">A confidence interval of 95% means if we took 100 random samples, the estimate would fall
+      within its upper and lower bounds 95 times. Confidence intervals of 90% and 99% are also sometimes used.</P>
+
     <h3 class="govuk-heading-m">Using confidence intervals</h3>
-    <p class="govuk-body">Confidence intervals show how reliable estimates are. The wider the intervals, the less reliable the estimate.
-      Wide confidence intervals can be the result of small samples or a lot of variation within survey responses.</p>
-    <p class="govuk-body">We can also use confidence intervals to assess whether differences in the statistics for 2 groups are
-      meaningful (for example, their mean averages). We can do this to assess differences in the means for 2 ethnic
-      groups or 2 time periods.</p>
-    <p class="govuk-body">Differences are meaningful ('statistically significant') if the confidence intervals for the 2 sets of
-      statistics don't overlap. In other words, they don't have any values in common.</p>
-    <p class="govuk-body">If the confidence intervals overlap, this shows that the difference in the 2 estimates is not meaningful. This
-      means the findings cannot tell us if the difference observed in the sample is also present in the whole
-      population.</p>
-    <h2 class="govuk-heading-l" id="limitations">The limitations of survey data</h2>
-    <p class="govuk-body">Even using weighting and confidence intervals, it’s important to treat all survey data with caution.</p>
-    <p class="govuk-body">In particular, where survey data is broken down by ethnicity, gender, age or region for example, the numbers of
-      people involved can be very small.</p>
-    <p class="govuk-body">If they are too small, the figures can be too unreliable to use or may be disclosive (you might be able to
-      identify individual respondents from the data). In these cases, the figures will be unavailable (or
-      ‘suppressed’).</p>
+
+    <p class="govuk-body">The wider the confidence interval, the less reliable the estimate. Wide confidence intervals
+      can be the result of small samples, or large variation within survey responses.</P>
+
+    <p class="govuk-body">Confidence intervals can be used to find out if differences between the statistics for 2 groups are meaningful, for example differences between 2 ethnic groups or 2 time periods.</P>
+
+    <p class="govuk-body">Differences are meaningful ('statistically significant') if the confidence intervals for the 2
+      sets of statistics don't overlap, meaning they don't have any values in common. If they overlap, this shows that
+      the difference in the 2 estimates is not meaningful. This means the findings cannot tell us if the difference
+      found in the sample is also shown in the whole population.</P>
+
+    <h2 class="govuk-heading-l"
+        id="commonly-used-surveys">Commonly used surveys</h2>
+
+    <h3 class="govuk-heading-m">Population</h3>
+
+    <p class="govuk-body">The <a href="https://www.ons.gov.uk/census">Census of England and Wales</a> is carried out
+      every 10 years. Every household has to complete it.</p>
+      
+      <p class="govuk-body">Around 23.5 million households completed the last Census in March 2011. Find out <a
+         href="{{ url_for('static_site.how_we_use_census_data') }}">how we use Census data</a> on our website.</P>
+
+
+    <p class="govuk-body">The <a
+         href="https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/employmentandemployeetypes/methodologies/annualpopulationsurveyapsqmi">Annual
+        Population Survey</a> is a continuous household survey which covers the UK. Around 320,000 people aged 16 and over take part.</P>
+
+    <p class="govuk-body">The topics covered include:</P>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>employment and unemployment</li>
+      <li>housing</li>
+      <li>ethnicity</li>
+      <li>religion</li>
+      <li>health</li>
+      <li>education</li>
+    </ul>
+
+
+
+    <h3 class="govuk-heading-m">Housing</h3>
+
+    <p class="govuk-body">The <a href="https://www.gov.uk/government/collections/english-housing-survey">English Housing
+        Survey</A> is a continuous national survey. </P>
+
+    <p class="govuk-body">The survey collects information about people’s housing circumstances, and the condition and
+      energy efficiency of housing in England. </P>
+
+    <p class="govuk-body">Around 13,300 households a year take part.</P>
+
+    <h3 class="govuk-heading-m">Crime</h3>
+
+    <p class="govuk-body">The <a href="https://www.crimesurvey.co.uk/en/AboutTheSurvey.html">Crime Survey for England
+        and Wales</a> asks people about their experiences of crime. It involves a structured interview which usually
+      takes place in respondents' homes.</P>
+
+    <p class="govuk-body">The types of crime covered include:</P>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>fraud</li>
+      <li>online crime</li>
+      <li>theft</li>
+      <li>assault</li>
+    </ul>
+
+    <p class="govuk-body">Around 35,000 households take part every year.</P>
+
+
+    <h3 class="govuk-heading-m">Travel</h3>
+
+    <p class="govuk-body">The <a
+         href="https://www.gov.uk/government/collections/national-travel-survey-statistics">National Travel Survey</a>
+      collects information on how, why, when and where people travel, and things that affect travel, such as access to a
+      car.</P>
+
+    <p class="govuk-body">Around 16,000 people aged 16 and over in 7,000 households in England take part every year.</P>
+
+    <h3 class="govuk-heading-m">Culture, media and sport</h3>
+
+    <p class="govuk-body">The <a href="https://www.gov.uk/guidance/taking-part-survey">Taking Part Survey</a> collects
+      data on people’s engagement in:</P>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>art</li>
+      <li>museums and galleries</li>
+      <li>archives</li>
+      <li>libraries</li>
+      <li>heritage</li>
+      <li>sport</li>
+    </ul>
+
+
+<p class="govuk-body">Around 8,000 people were interviewed for the 2018 to 2019 survey.</p>
+
   </div>
 </div>
 {% endblock %}

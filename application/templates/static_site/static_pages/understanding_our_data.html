@@ -1,25 +1,72 @@
 {% extends "base.html" %}
+{% from "_macros/_back_to_top.html" import appBackToTop %}
+
+{% from "_macros/_accordion.html" import govukAccordion %}
 
 {% set breadcrumbs =
   [
     {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": "", "text": "Understanding our data"},
   ]
 %}
 
-{% block pageTitle %}Understanding our data on Ethnicity facts and figures - GOV.UK{% endblock %}
-{% block socialTitle %}Understanding our data on Ethnicity facts and figures{% endblock %}
-{% block socialDescription %}{% endblock %}
-{% block googleAnalytics %}ga('set','contentGroup1','Misc');{% endblock %}
+{% block pageTitle %}Understanding our data - GOV.UK{% endblock %}
+{% block metaDescription %}Understanding our data on Ethnicity facts and figures.{% endblock %}
+{% block socialTitle %}Understanding our data{% endblock %}
+{% block socialDescription %}Understanding our data on Ethnicity facts and figures.{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Ethnicity in the UK');{% endblock %}
 
 {% block headEnd %}<link rel="canonical" href="{{ config.RDU_SITE | strip_trailing_slash }}{{ url_for('static_site.understanding_our_data') }}">{% endblock %}
 
+
+
 {% block content %}
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2">
+      Understanding our data
+    </h1>
 
-        <h1 class="govuk-heading-xl">Understanding our data</h1>
+    <p class="govuk-body">Guidance on reading and understanding survey and administrative data on our website.</p>
+
+    <ol class="section-list govuk-!-margin-bottom-9">
+      <li>
+        <a class="govuk-link"
+           href="{{ url_for('static_site.how_to_read_survey_data').rstrip('/') }}">
+          <h2 class="subsection-title-text">How to read survey data</h2>
+          <span class="subsection-summary govuk-body govuk-!-margin-top-1 govuk-!-margin-bottom-0">An introduction to surveys, weighting and confidence intervals.</span>
+        </a>
+      </li>
+      <li>
+        <a class="govuk-link"
+           href="{{ url_for('static_site.interpreting_our_data').rstrip('/') }}">
+          <h2 class="subsection-title-text">Interpreting our data</h2>
+          <span class="subsection-summary  govuk-body  govuk-!-margin-top-1 govuk-!-margin-bottom-0">Issues with smaller sample sizes and making generalisations.</span>
+        </a>
+      </li>
+      <li>
+        <a class="govuk-link"
+           href="{{ url_for('static_site.how_we_use_census_data').rstrip('/') }}">
+          <h2 class="subsection-title-text">How we use Census data</h2>
+          <span class="subsection-summary govuk-body  govuk-!-margin-top-1 govuk-!-margin-bottom-0">Using population data from the 2011 Census.</span>
+        </a>
+      </li>
+      <li>
+        <a class="govuk-link"
+           href="{{ url_for('static_site.our_statistical_principles').rstrip('/') }}">
+          <h2 class="subsection-title-text">Our statistical principles</h2>
+          <span class="subsection-summary govuk-body  govuk-!-margin-top-1 govuk-!-margin-bottom-0">Our approach to averages and rounding.</span>
+        </a>
+      </li>
+    </ol>
+
+  </div>
 
 
-      </div>
-    </div>
+
+</div>
 {% endblock %}
+
+
+
+
