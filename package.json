@@ -34,6 +34,8 @@
   },
   "scripts": {
     "test": "mocha",
-    "postinstall": "gulp"
+    "postinstall": "gulp",
+    "gulp:build": "gulp make",
+    "gulp:watch": "gulp watch"
   }
 }
