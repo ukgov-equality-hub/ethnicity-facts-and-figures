@@ -8,6 +8,7 @@ BOARD_ID = "K3A3MP7x"
 TRELLO_LISTS = {
     "5a686d4076c5194520f1186c": {"name": "Planned", "id": "5a686d4076c5194520f1186c", "stage": "planned"},
     "5b90ec017b538e7de152dbc0": {"name": "Data received", "id": "5b90ec017b538e7de152dbc0", "stage": "planned"},
+    "5cc705f5771ebd73cb216caa": {"name": "Departmental updates", "id": "5cc705f5771ebd73cb216caa", "stage": "planned"},
     "5b90ec070793305d06d2b01f": {
         "name": "Data checks in progress",
         "id": "5b90ec070793305d06d2b01f",
