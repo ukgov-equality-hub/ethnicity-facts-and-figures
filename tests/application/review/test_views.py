@@ -5,7 +5,7 @@ from flask import url_for
 from itsdangerous import SignatureExpired, BadSignature
 
 from application.utils import decode_review_token
-from application.auth.models import TypeOfUser
+from application.auth.models import User, TypeOfUser
 from tests.models import MeasureVersionFactory, MeasureVersionWithDimensionFactory, UserFactory
 from flaky import flaky
 
@@ -106,6 +106,10 @@ def test_users_can_generate_new_review_tokens(test_app_client, user_type):
 
 @flaky(max_runs=10, min_passes=1)
 def test_dept_users_can_only_generate_new_review_tokens_for_shared_measures(test_app_client, logged_in_dept_user):
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
 
     measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", review_token=None, measure__shared_with=[])
     # Measure is not shared with the user
@@ -114,7 +118,7 @@ def test_dept_users_can_only_generate_new_review_tokens_for_shared_measures(test
     assert measure_version.review_token is None
 
     # Once measure is shared the user can create a review token
-    measure_version.measure.shared_with = [logged_in_dept_user]
+    measure_version.measure.shared_with = [user]
     resp = test_app_client.get(url_for("review.get_new_review_url", id=measure_version.id))
     assert resp.status_code == 200
     assert measure_version.review_token is not None

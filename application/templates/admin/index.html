@@ -25,6 +25,10 @@
                 {% if current_user.can(MANAGE_DATA_SOURCES) %}
                     <p class="govuk-body"><a class="govuk-link" href="{{ url_for('admin.data_sources') }}">Data sources</a></p>
                 {% endif %}
+
+                {% if current_user.can(MANAGE_TOPICS) %}
+                    <p class="govuk-body"><a class="govuk-link" href="{{ url_for('admin.manage_topics') }}">Manage topics</a></p>
+                {% endif %}
             </div>
         </div>
 {% endblock %}

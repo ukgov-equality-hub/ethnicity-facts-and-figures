@@ -9,8 +9,7 @@ from bs4 import BeautifulSoup
 from flask import url_for, current_app
 from lxml import html
 from werkzeug.datastructures import ImmutableMultiDict
-
-from application.auth.models import TypeOfUser
+from application.auth.models import User, TypeOfUser
 from application.cms.forms import MeasureVersionForm
 from application.cms.models import TESTING_SPACE_SLUG, MeasureVersion, DataSource
 from application.sitebuilder.models import Build
@@ -140,6 +139,11 @@ def test_can_reject_page_under_review(test_app_client, logged_in_rdu_user):
 
 @flaky(max_runs=10, min_passes=1)
 def test_admin_user_can_publish_page_in_dept_review(test_app_client, logged_in_admin_user, mock_request_build):
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
+
     measure_version = MeasureVersionFactory(title="Test Measure Page", status="DEPARTMENT_REVIEW", latest=False)
 
     response = test_app_client.post(
@@ -162,8 +166,8 @@ def test_admin_user_can_publish_page_in_dept_review(test_app_client, logged_in_a
     )
 
     assert measure_version.status == "APPROVED"
-    assert measure_version.last_updated_by == logged_in_admin_user.email
-    assert measure_version.published_by == logged_in_admin_user.email
+    assert measure_version.last_updated_by == user.email
+    assert measure_version.published_by == user.email
     assert measure_version.published_at == datetime.date.today()
     assert measure_version.latest is True
     mock_request_build.assert_called_once()
@@ -267,6 +271,11 @@ def test_internal_user_can_not_see_publish_buttons_on_edit_page(test_app_client,
 
 @flaky(max_runs=10, min_passes=1)
 def test_order_measures_in_subtopic(test_app_client, logged_in_rdu_user):
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
+
     subtopic = SubtopicFactory()
     ids = [0, 1, 2, 3, 4]
     for id_ in ids:
@@ -281,7 +290,7 @@ def test_order_measures_in_subtopic(test_app_client, logged_in_rdu_user):
     assert subtopic.measures[4].slug == "4"
 
     with test_app_client.session_transaction() as session:
-        session["user_id"] = logged_in_rdu_user.id
+        session["user_id"] = user.id
 
     updates = []
     for position, id_ in enumerate(reversed(ids)):
@@ -530,11 +539,13 @@ def test_dept_user_should_not_be_able_to_delete_upload_if_page_not_shared(
 
 @flaky(max_runs=10, min_passes=1)
 def test_dept_user_should_be_able_to_delete_upload_from_shared_page(test_app_client, logged_in_dept_user):
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
+
     measure_version = MeasureVersionFactory(
-        status="DRAFT",
-        measure__shared_with=[logged_in_dept_user],
-        uploads__guid="test-download",
-        uploads__title="upload title",
+        status="DRAFT", measure__shared_with=[user], uploads__guid="test-download", uploads__title="upload title",
     )
 
     response = test_app_client.post(
@@ -593,11 +604,13 @@ def test_dept_user_should_not_be_able_to_edit_upload_if_page_not_shared(
 
 @flaky(max_runs=10, min_passes=1)
 def test_dept_user_should_be_able_to_edit_upload_on_shared_page(test_app_client, logged_in_dept_user):
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
+
     measure_version = MeasureVersionFactory(
-        status="DRAFT",
-        measure__shared_with=[logged_in_dept_user],
-        uploads__guid="test-download",
-        uploads__title="upload title",
+        status="DRAFT", measure__shared_with=[user], uploads__guid="test-download", uploads__title="upload title",
     )
 
     response = test_app_client.get(
@@ -618,9 +631,12 @@ def test_dept_user_should_be_able_to_edit_upload_on_shared_page(test_app_client,
 
 @flaky(max_runs=10, min_passes=1)
 def test_dept_user_should_be_able_to_edit_shared_page(test_app_client, logged_in_dept_user):
-    measure_version = MeasureVersionFactory(
-        status="DRAFT", measure__shared_with=[logged_in_dept_user], title="this will be updated"
-    )
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
+
+    measure_version = MeasureVersionFactory(status="DRAFT", measure__shared_with=[user], title="this will be updated")
 
     data = {"title": "this is the update", "db_version_id": measure_version.db_version_id + 1}
     response = test_app_client.post(
@@ -763,7 +779,12 @@ def test_dept_user_should_not_be_able_to_delete_dimension_if_page_not_shared(tes
 
 @flaky(max_runs=10, min_passes=1)
 def test_dept_cannot_publish_a_shared_page(test_app_client, logged_in_dept_user):
-    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", measure__shared_with=[logged_in_dept_user])
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
+
+    measure_version = MeasureVersionFactory(status="DEPARTMENT_REVIEW", measure__shared_with=[user])
 
     response = test_app_client.get(
         url_for(

@@ -6,9 +6,17 @@ from sqlalchemy.orm.exc import NoResultFound
 from application import db
 from application.admin import admin_blueprint
 from application.admin.forms import AddUserForm, DataSourceSearchForm, DataSourceMergeForm
-from application.auth.models import User, TypeOfUser, CAPABILITIES, MANAGE_SYSTEM, MANAGE_USERS, MANAGE_DATA_SOURCES
+from application.auth.models import (
+    User,
+    TypeOfUser,
+    CAPABILITIES,
+    MANAGE_SYSTEM,
+    MANAGE_USERS,
+    MANAGE_DATA_SOURCES,
+    MANAGE_TOPICS,
+)
 from application.cms.forms import SelectMultipleDataSourcesForm
-from application.cms.models import user_measure, DataSource
+from application.cms.models import user_measure, DataSource, Topic, Subtopic
 from application.cms.page_service import page_service
 from application.utils import create_and_send_activation_email, user_can
 from application.cms.utils import get_form_errors
@@ -270,3 +278,105 @@ def merge_data_sources():
         data_source_merge_form=data_source_merge_form,
         errors=get_form_errors(forms=[data_source_merge_form]),
     )
+
+
+@admin_blueprint.route("/manage-topics")
+@login_required
+@user_can(MANAGE_TOPICS)
+def manage_topics():
+    topics = Topic.query.all()
+
+    return render_template("admin/manage_topics.html", topics=topics,)
+
+
+@admin_blueprint.route("/topic/<int:topic_id>/edit")
+@login_required
+@user_can(MANAGE_TOPICS)
+def edit_topic(topic_id):
+    topic = Topic.query.get(topic_id)
+    error = False
+
+    return render_template("admin/edit_topic.html", page_title=topic.title, topic=topic, error=error)
+
+
+@admin_blueprint.route("/topic/<int:topic_id>/update", methods=["POST"])
+@login_required
+@user_can(MANAGE_TOPICS)
+def update_topic(topic_id):
+    topic = Topic.query.get(topic_id)
+    page_title = topic.title
+    new_title = request.form["topic-title"]
+    error = False
+
+    topic.description = request.form["description"]
+    topic.additional_description = request.form["additional_description"]
+    topic.meta_description = request.form["meta_description"]
+
+    if topic and new_title is not topic.title:
+        topic.title = new_title
+        if page_service.valid_topic_title(new_title):
+
+            old_path = topic.slug
+            topic.slug = page_service.generate_topic_slug(new_title)
+            # CREATE AN AWS STATIC PAGE REDIRECT
+            page_service.set_static_page_redirect(old_path, topic.slug)
+
+            flash("Topic %s updated" % topic.title)
+        else:
+            error = "Only alphabet and space characters are allowed"
+            return render_template("admin/edit_topic.html", page_title=page_title, topic=topic, error=error)
+
+    db.session.commit()
+
+    return redirect(url_for("admin.manage_topics"))
+
+
+@admin_blueprint.route("/subtopic/<int:subtopic_id>/edit")
+@login_required
+@user_can(MANAGE_TOPICS)
+def edit_subtopic(subtopic_id):
+    topics = Topic.query.all()
+    subtopic = Subtopic.query.get(subtopic_id)
+    error = False
+
+    return render_template(
+        "admin/edit_subtopic.html", page_title=subtopic.title, subtopic=subtopic, topics=topics, error=error
+    )
+
+
+@admin_blueprint.route("/subtopic/<int:subtopic_id>/update", methods=["POST"])
+@login_required
+@user_can(MANAGE_TOPICS)
+def update_subtopic(subtopic_id):
+    topics = Topic.query.all()
+    subtopic = Subtopic.query.get(subtopic_id)
+    page_title = subtopic.title
+    new_title = request.form["subtopic-title"]
+    error = False
+
+    if subtopic and (new_title is not subtopic.title or subtopic.topic_id is not request.form["subtopic_topic"]):
+        subtopic.title = new_title
+        if page_service.valid_topic_title(new_title):
+
+            # old path
+            topic = Topic.query.get(subtopic.topic_id)
+            old_path = topic.slug + "/" + subtopic.slug
+            # new path
+            subtopic.slug = page_service.generate_topic_slug(new_title)
+            subtopic.topic_id = request.form["subtopic_topic"]
+            new_topic = Topic.query.get(subtopic.topic_id)
+            new_path = new_topic.slug + "/" + subtopic.slug
+
+            # CREATE AN AWS STATIC PAGE REDIRECT
+            page_service.set_static_page_redirect(old_path, new_path)
+
+            flash("Subtopic %s updated" % subtopic.title)
+        else:
+            error = "Only alphabet and space characters are allowed"
+            return render_template(
+                "admin/edit_subtopic.html", page_title=page_title, subtopic=subtopic, topics=topics, error=error
+            )
+
+    db.session.commit()
+
+    return redirect(url_for("admin.manage_topics"))

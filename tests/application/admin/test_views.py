@@ -4,7 +4,14 @@ from application.utils import generate_token
 from bs4 import BeautifulSoup
 from flaky import flaky
 from flask import url_for
-from tests.models import UserFactory, MeasureVersionFactory, DataSourceFactory, OrganisationFactory
+from tests.models import (
+    UserFactory,
+    MeasureVersionFactory,
+    DataSourceFactory,
+    OrganisationFactory,
+    TopicFactory,
+    SubtopicFactory,
+)
 from tests.utils import find_input_for_label_with_text
 from werkzeug.datastructures import ImmutableMultiDict
 import pytest
@@ -12,7 +19,11 @@ import pytest
 
 @flaky(max_runs=10, min_passes=1)
 def test_standard_user_cannot_view_admin_urls(test_app_client, logged_in_rdu_user):
-    resp = test_app_client.get(url_for("admin.index"))
+    resp = test_app_client.get(url_for("admin.index", follow_redirects=True))
+
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
 
     assert resp.status == "403 FORBIDDEN"
     assert resp.status_code == 403
@@ -22,7 +33,7 @@ def test_standard_user_cannot_view_admin_urls(test_app_client, logged_in_rdu_use
     assert resp.status == "403 FORBIDDEN"
     assert resp.status_code == 403
 
-    resp = test_app_client.get(url_for("admin.user_by_id", user_id=logged_in_rdu_user.id))
+    resp = test_app_client.get(url_for("admin.user_by_id", user_id=user_id))
 
     assert resp.status == "403 FORBIDDEN"
     assert resp.status_code == 403
@@ -32,7 +43,7 @@ def test_standard_user_cannot_view_admin_urls(test_app_client, logged_in_rdu_use
     assert resp.status == "403 FORBIDDEN"
     assert resp.status_code == 403
 
-    resp = test_app_client.get(url_for("admin.deactivate_user", user_id=logged_in_rdu_user.id))
+    resp = test_app_client.get(url_for("admin.deactivate_user", user_id=user_id))
 
     assert resp.status == "403 FORBIDDEN"
     assert resp.status_code == 403
@@ -42,10 +53,25 @@ def test_standard_user_cannot_view_admin_urls(test_app_client, logged_in_rdu_use
     assert resp.status == "403 FORBIDDEN"
     assert resp.status_code == 403
 
+    resp = test_app_client.get(url_for("admin.manage_topics"))
+
+    assert resp.status == "403 FORBIDDEN"
+    assert resp.status_code == 403
+
+    resp = test_app_client.get(url_for("admin.edit_topic", topic_id=2))
+
+    assert resp.status == "403 FORBIDDEN"
+    assert resp.status_code == 403
+
+    resp = test_app_client.get(url_for("admin.edit_subtopic", subtopic_id=2))
+
+    assert resp.status == "403 FORBIDDEN"
+    assert resp.status_code == 403
+
 
 @flaky(max_runs=10, min_passes=1)
 def test_admin_user_can_view_admin_page(test_app_client, logged_in_admin_user):
-    resp = test_app_client.get(url_for("admin.index"), follow_redirects=True)
+    resp = test_app_client.get(url_for("admin.index"))
 
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
     assert page.find("title").string == "Admin"
@@ -168,9 +194,14 @@ def test_admin_user_cannot_grant_departmental_user_admin_rights(test_app_client,
 
 @flaky(max_runs=10, min_passes=1)
 def test_admin_user_cannot_remove_their_own_admin_rights(test_app_client, logged_in_admin_user):
-    assert logged_in_admin_user.is_admin_user()
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
 
-    resp = test_app_client.get(url_for("admin.make_rdu_user", user_id=logged_in_admin_user.id), follow_redirects=True)
+    user = User.query.get(user_id)
+    assert user.is_admin_user()
+
+    resp = test_app_client.get(url_for("admin.make_rdu_user", user_id=user_id), follow_redirects=True)
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
@@ -179,7 +210,7 @@ def test_admin_user_cannot_remove_their_own_admin_rights(test_app_client, logged
         == "You can't remove your own admin rights"
     )
 
-    assert logged_in_admin_user.is_admin_user()
+    assert user.is_admin_user()
 
 
 @flaky(max_runs=10, min_passes=1)
@@ -243,12 +274,12 @@ def test_measure_versions_in_all_states_are_available_to_share(test_app_client, 
     assert len(select.findAll("option")) == num_measures + 1
 
 
-@flaky(max_runs=15, min_passes=1)
-def test_admin_user_can_share_page_with_dept_user(test_app_client, logged_in_dept_user):
+@flaky(max_runs=20, min_passes=1)
+def test_admin_user_can_share_page_with_dept_user(test_app_client):
     dept_user = UserFactory(user_type=TypeOfUser.DEPT_USER)
     admin_user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
 
-    test_app_client.post(
+    res = test_app_client.post(
         "/auth/login", data=dict(email=dept_user.email, password=dept_user.password), follow_redirects=True
     )
 
@@ -262,7 +293,8 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, logged_in_dep
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_slug=measure_version.measure.slug,
             version=measure_version.version,
-        )
+        ),
+        follow_redirects=True,
     )
 
     assert resp.status_code == 403
@@ -274,11 +306,13 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, logged_in_dep
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_slug=measure_version.measure.slug,
             version=measure_version.version,
-        )
+        ),
+        follow_redirects=True,
     )
-
     assert resp.status_code == 403
-    test_app_client.post(url_for("auth.logout"), follow_redirects=True)
+
+    res = test_app_client.post("/auth/logout", follow_redirects=True)
+    assert b"Login" in res.data
 
     # admin user shares page
     test_app_client.post(
@@ -306,7 +340,8 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, logged_in_dep
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_slug=measure_version.measure.slug,
             version=measure_version.version,
-        )
+        ),
+        follow_redirects=True,
     )
 
     assert resp.status_code == 200
@@ -318,7 +353,8 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, logged_in_dep
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_slug=measure_version.measure.slug,
             version=measure_version.version,
-        )
+        ),
+        follow_redirects=True,
     )
 
     assert resp.status_code == 200
@@ -326,7 +362,7 @@ def test_admin_user_can_share_page_with_dept_user(test_app_client, logged_in_dep
 
 # FIXME: Fix Test
 @pytest.mark.skip(reason="always fails on third login attempt")
-@flaky(max_runs=10, min_passes=1)
+# @flaky(max_runs=10, min_passes=1)
 def test_admin_user_can_remove_share_of_page_with_dept_user(app, test_app_client):
     dept_user = UserFactory(user_type=TypeOfUser.DEPT_USER)
     admin_user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
@@ -417,6 +453,24 @@ def test_admin_user_can_delete_non_admin_user_account(test_app_client, logged_in
     )
 
     assert User.query.filter_by(email="someuser@somedept.gov.uk").first() is None
+
+
+@flaky(max_runs=10, min_passes=1)
+def test_admin_user_can_view_manage_topics_page(test_app_client, logged_in_admin_user):
+    topic = TopicFactory(slug="topic-slug")
+    subtopic = SubtopicFactory(topic=topic)
+
+    resp = test_app_client.get(url_for("admin.manage_topics", follow_redirects=True))
+    assert resp.status_code == 200
+
+    page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
+    assert page.find("h1").string == "Manage topics"
+
+    resp = test_app_client.get(url_for("admin.edit_topic", topic_id=topic.id, follow_redirects=True))
+    assert resp.status_code == 200
+
+    resp = test_app_client.get(url_for("admin.edit_subtopic", subtopic_id=subtopic.id, follow_redirects=True))
+    assert resp.status_code == 200
 
 
 class TestDataSourcesView:

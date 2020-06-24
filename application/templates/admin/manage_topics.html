@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for('admin.index'), "text": "Admin"},
+  ]
+%}
+
+{% block pageTitle %}Manage topics{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-xl">Manage topics</h1>
+
+
+
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Title</th>
+          <th scope="col"
+              class="govuk-table__header">Parent topic</th>
+          <th scope="col"
+              class="govuk-table__header"></th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {%for topic in topics %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header"
+              colspan="2">{{topic.title}}</td>
+          <td class="govuk-table__cell">
+            <a class="govuk-link"
+               href="{{ url_for('admin.edit_topic', topic_id=topic.id) }}">Edit</a></td>
+        </tr>
+          {%for subtopic in topic.subtopics %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">{{subtopic.title}}</td>
+            <td class="govuk-table__cell">{{topic.title}}</td>
+            <td class="govuk-table__cell">
+              <a class="govuk-link"
+                href="{{ url_for('admin.edit_subtopic', subtopic_id=subtopic.id) }}">Edit</a>
+            </td>
+          </tr>
+          {%endfor%}
+
+        {%endfor%}
+    </table>
+  </div>
+</div>
+{% endblock %}
