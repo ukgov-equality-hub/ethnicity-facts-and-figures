@@ -8,7 +8,7 @@ from lxml import html
 
 from application.cms.models import DataSource, MeasureVersion
 from application.sitebuilder.models import Build
-
+from application.auth.models import User
 from tests.models import (
     DataSourceFactory,
     MeasureVersionFactory,
@@ -75,8 +75,12 @@ class TestAddDataSourceView:
 
     @flaky(max_runs=10, min_passes=1)
     def test_returns_200_if_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
+        user_id = None
+        with test_app_client.session_transaction() as session:
+            user_id = session["_user_id"]
+        user = User.query.get(user_id)
 
-        measure_version = MeasureVersionFactory.create(measure__shared_with=[logged_in_dept_user])
+        measure_version = MeasureVersionFactory.create(measure__shared_with=[user])
 
         url = f"{self.__measure_edit_url(measure_version)}/data-sources/new"
 
@@ -213,8 +217,12 @@ class TestCreateDataSource:
 
     @flaky(max_runs=10, min_passes=1)
     def test_returns_200_if_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
+        user_id = None
+        with test_app_client.session_transaction() as session:
+            user_id = session["_user_id"]
+        user = User.query.get(user_id)
 
-        measure_version = MeasureVersionFactory.create(measure__shared_with=[logged_in_dept_user])
+        measure_version = MeasureVersionFactory.create(measure__shared_with=[user])
 
         type_of_statistic = TypeOfStatisticFactory.create()
         organisation = OrganisationFactory.create()
@@ -304,11 +312,13 @@ class TestEditDataSourceView:
 
     @flaky(max_runs=10, min_passes=1)
     def test_edit_page_if_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
+        user_id = None
+        with test_app_client.session_transaction() as session:
+            user_id = session["_user_id"]
+        user = User.query.get(user_id)
 
         data_source = DataSourceFactory.create()
-        measure_version = MeasureVersionFactory.create(
-            data_sources=[data_source], measure__shared_with=[logged_in_dept_user]
-        )
+        measure_version = MeasureVersionFactory.create(data_sources=[data_source], measure__shared_with=[user])
 
         response, _ = self.__get_page(test_app_client, data_source, measure_version)
         assert response.status_code == 200
@@ -397,11 +407,13 @@ class TestUpdateDataSource:
 
     @flaky(max_runs=10, min_passes=1)
     def test_post_when_dept_user_has_access_to_measure(self, test_app_client, logged_in_dept_user):
+        user_id = None
+        with test_app_client.session_transaction() as session:
+            user_id = session["_user_id"]
+        user = User.query.get(user_id)
 
         data_source = DataSourceFactory.create(title="Police stats 2019")
-        measure_version = MeasureVersionFactory.create(
-            data_sources=[data_source], measure__shared_with=[logged_in_dept_user]
-        )
+        measure_version = MeasureVersionFactory.create(data_sources=[data_source], measure__shared_with=[user])
 
         url = self.__update_data_source_url(data_source, measure_version)
 

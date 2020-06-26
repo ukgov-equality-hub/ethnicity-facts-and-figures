@@ -192,6 +192,7 @@ def create_app(config_object):
             READ,
             UPDATE_MEASURE,
             VIEW_DASHBOARDS,
+            MANAGE_TOPICS,
         )
 
         return dict(
@@ -213,6 +214,7 @@ def create_app(config_object):
             get_form_errors=get_form_errors,
             static_mode=get_bool(request.args.get("static_mode", app.config["STATIC_MODE"])),
             raise_exception=jinja_raise_exception,
+            MANAGE_TOPICS=MANAGE_TOPICS,
         )
 
     return app

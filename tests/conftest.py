@@ -120,41 +120,33 @@ def test_app_client(app):
 @pytest.fixture(scope="function")
 def logged_in_admin_user(test_app_client):
     user = UserFactory(user_type=TypeOfUser.ADMIN_USER)
-    # with test_app_client.session_transaction() as session:
-    #     session['user_id'] = user.id
-    #     session['_fresh'] = True
-    test_app_client.post("/auth/login", data=dict(email=user.email, password=user.password), follow_redirects=True)
-    return user
+    return test_app_client.post(
+        "/auth/login", data=dict(email=user.email, password=user.password), follow_redirects=True
+    )
 
 
 @pytest.fixture(scope="function")
 def logged_in_dept_user(test_app_client):
     user = UserFactory(user_type=TypeOfUser.DEPT_USER)
-    # with test_app_client.session_transaction() as session:
-    #     session["user_id"] = user.id
-    #     session['_fresh'] = True
-    test_app_client.post("/auth/login", data=dict(email=user.email, password=user.password), follow_redirects=True)
-    return user
+    return test_app_client.post(
+        "/auth/login", data=dict(email=user.email, password=user.password), follow_redirects=True
+    )
 
 
 @pytest.fixture(scope="function")
 def logged_in_rdu_user(test_app_client):
     user = UserFactory(user_type=TypeOfUser.RDU_USER)
-    # with test_app_client.session_transaction() as session:
-    #     session['user_id'] = user.id
-    #     session['_fresh'] = True
-    test_app_client.post("/auth/login", data=dict(email=user.email, password=user.password), follow_redirects=True)
-    return user
+    return test_app_client.post(
+        "/auth/login", data=dict(email=user.email, password=user.password), follow_redirects=True
+    )
 
 
 @pytest.fixture(scope="function")
 def logged_in_dev_user(test_app_client):
     user = UserFactory(user_type=TypeOfUser.DEV_USER)
-    # with test_app_client.session_transaction() as session:
-    #     session["user_id"] = user.id
-    #     session['_fresh'] = True
-    test_app_client.post("/auth/login", data=dict(email=user.email, password=user.password), follow_redirects=True)
-    return user
+    return test_app_client.post(
+        "/auth/login", data=dict(email=user.email, password=user.password), follow_redirects=True
+    )
 
 
 # ###############################################################################

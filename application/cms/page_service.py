@@ -32,6 +32,10 @@ from application.cms.service import Service
 from application.cms.upload_service import upload_service
 from application.sitebuilder.build_service import request_build
 from application.utils import create_guid, generate_review_token
+from flask import current_app
+import boto3
+import boto3.session
+import botocore
 
 
 class PageService(Service):
@@ -462,6 +466,64 @@ class PageService(Service):
             .order_by(desc(MeasureVersion.published_at))
             .all()
         )
+
+    @staticmethod
+    def valid_topic_title(title):
+        if all(x.isalpha() or x.isspace() for x in title):
+            return True
+        return False
+
+    @staticmethod
+    def generate_topic_slug(title):
+        return title.strip().lower().replace(" ", "-")
+
+    @staticmethod
+    def set_static_page_redirect(old_path, new_path):
+        """Setting static page redirects when naming changes take place.
+
+        This method is mainly used for setting up redirects automatically
+        without a dev needed to go and set up them inside AWS. Correct page
+        content eg breadcrumbs, will be updated with the build static script.
+        """
+
+        s3 = boto3.resource("s3")
+        bucket_name = current_app.config["S3_STATIC_SITE_BUCKET"]
+        bucket = s3.Bucket(bucket_name)
+
+        try:
+            s3.Object(bucket_name, old_path).load()
+        except botocore.exceptions.ClientError as e:
+            if e.response["Error"]["Code"] == "404":
+                current_app.logger.info("Object %s does not exist" % (old_path))
+        else:
+            s3.Object(bucket_name, new_path).copy_from(CopySource="%s/%s" % (bucket_name, old_path), ACL="public-read")
+
+            s3.Object(bucket_name, old_path).copy_from(
+                CopySource="%s/%s" % (bucket_name, old_path),
+                ACL="public-read",
+                WebsiteRedirectLocation="https://www.ethnicity-facts-figures.service.gov.uk/%s" % new_path,
+            )
+
+        for obj in bucket.objects.filter(Prefix=old_path):
+            new_object_path = obj.key.replace(old_path, new_path)
+
+            # copy only latest to avoid having timeout issues
+            # all other documents will be created with the build static script
+            if obj.key.endswith("latest"):
+
+                s3.Object(bucket_name, new_object_path).copy_from(
+                    CopySource="%s/%s" % (bucket_name, obj.key), ACL="public-read"
+                )
+
+                s3.Object(bucket_name, obj.key).copy_from(
+                    CopySource="%s/%s" % (bucket_name, obj.key),
+                    ACL="public-read",
+                    WebsiteRedirectLocation="https://www.ethnicity-facts-figures.service.gov.uk/%s" % new_object_path,
+                )
+
+        current_app.logger.info("Objects from %s copied to %s" % (old_path, new_path))
+
+        return True
 
 
 page_service = PageService()

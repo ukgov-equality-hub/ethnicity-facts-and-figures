@@ -5,7 +5,7 @@ import pytest
 from bs4 import BeautifulSoup
 from flask import url_for
 
-from application.auth.models import TypeOfUser
+from application.auth.models import User, TypeOfUser
 from application.cms.models import UKCountry, TypeOfData, TESTING_SPACE_SLUG
 from application.config import Config
 from tests.models import (
@@ -51,9 +51,14 @@ def test_homepage_search_links_to_google_custom_url_before_javascript(test_app_c
 
 @flaky(max_runs=10, min_passes=1)
 def test_rdu_user_can_see_page_if_not_shared(test_app_client, logged_in_rdu_user):
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
+
     measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[])
     assert measure_version.measure.shared_with == []
-    assert logged_in_rdu_user.measures == []
+    assert user.measures == []
 
     resp = test_app_client.get(
         url_for(
@@ -72,9 +77,14 @@ def test_rdu_user_can_see_page_if_not_shared(test_app_client, logged_in_rdu_user
 
 @flaky(max_runs=10, min_passes=1)
 def test_departmental_user_cannot_see_draft(test_app_client, logged_in_dept_user):
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
+
     measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[], status="DRAFT")
     assert measure_version.measure.shared_with == []
-    assert logged_in_dept_user.measures == []
+    assert user.measures == []
 
     resp = test_app_client.get(
         url_for(
@@ -91,9 +101,12 @@ def test_departmental_user_cannot_see_draft(test_app_client, logged_in_dept_user
 
 @flaky(max_runs=10, min_passes=1)
 def test_departmental_user_can_see_draft_measure_if_they_have_access(test_app_client, logged_in_dept_user):
-    measure_version = MeasureVersionFactory(
-        title="Test Measure Page", measure__shared_with=[logged_in_dept_user], status="DRAFT"
-    )
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
+
+    measure_version = MeasureVersionFactory(title="Test Measure Page", measure__shared_with=[user], status="DRAFT")
 
     resp = test_app_client.get(
         url_for(
@@ -154,8 +167,12 @@ def test_departmental_user_can_see_latest_published_version(test_app_client, log
 
 @flaky(max_runs=10, min_passes=1)
 def test_departmental_user_can_see_latest_draft_version_if_they_have_access(test_app_client, logged_in_dept_user):
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
 
-    measure = MeasureFactory(shared_with=[logged_in_dept_user])
+    measure = MeasureFactory(shared_with=[user])
 
     MeasureVersionFactory(title="Old Test Measure Page", status="APPROVED", measure=measure, version="1.0")
     MeasureVersionFactory(title="Updated Test Measure Page", status="DRAFT", measure=measure, version="2.0")
@@ -676,9 +693,15 @@ def test_topic_page_only_shows_subtopics_with_published_measures_for_static_site
 def test_topic_page_only_shows_subtopics_with_shared_or_published_measures_for_dept_user_type(
     measure_shared, measure_published, subtopic_should_be_visible, test_app_client, logged_in_dept_user
 ):
+
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
+
     MeasureVersionFactory(
         status="APPROVED" if measure_published else "DRAFT",
-        measure__shared_with=[logged_in_dept_user] if measure_shared else [],
+        measure__shared_with=[user] if measure_shared else [],
         measure__subtopics__topic__slug="test-topic",
         measure__subtopics__topic__title="Test topic page",
         measure__subtopics__title="Test subtopic page",
@@ -729,6 +752,12 @@ def test_topic_meta_description(test_app_client, logged_in_rdu_user):
 def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_and_path(
     test_app_client, logged_in_rdu_user
 ):
+
+    user_id = None
+    with test_app_client.session_transaction() as session:
+        user_id = session["_user_id"]
+    user = User.query.get(user_id)
+
     measure_version = MeasureVersionFactory(
         status="DRAFT",
         measure__shared_with=[],
@@ -739,7 +768,7 @@ def test_measure_page_share_links_do_not_contain_double_slashes_between_domain_a
         measure__subtopics__title="Test subtopic page",
     )
     assert measure_version.measure.shared_with == []
-    assert logged_in_rdu_user.measures == []
+    assert user.measures == []
 
     resp = test_app_client.get(
         url_for(

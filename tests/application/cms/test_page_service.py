@@ -18,6 +18,7 @@ from tests.models import (
 )
 from flaky import flaky
 
+
 page_service = PageService()
 
 
@@ -658,3 +659,15 @@ class TestPageService:
         topics = page_service.get_topics(include_testing_space=include_testing_space)
 
         assert len(topics) == expected_topic_count
+
+    def test_valid_topic_title(self):
+
+        test_valid_title = "alphabet with spaces"
+        assert page_service.valid_topic_title(test_valid_title) == True
+
+        test_invalid_title = "alphabet with spaces and 123 _"
+        assert page_service.valid_topic_title(test_invalid_title) == False
+
+    def test_generate_topic_slug(self):
+        slug = page_service.generate_topic_slug("Alphabet with SPaces")
+        assert slug == "alphabet-with-spaces"

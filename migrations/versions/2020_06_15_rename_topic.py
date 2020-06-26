@@ -1,5 +1,5 @@
 """
-Update topic meta descriptions
+Rename topic
 
 Revision ID: 2020_06_15_rename_topic
 Revises: 2020_06_11_move_measure
