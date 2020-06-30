@@ -255,6 +255,21 @@ def how_to_read_survey_data():
     return render_template("static_site/static_pages/understanding_our_data/how_to_read_survey_data.html")
 
 
+@static_site_blueprint.route("/understanding-our-data/interpreting-our-data")
+def interpreting_our_data():
+    return render_template("static_site/static_pages/understanding_our_data/interpreting_our_data.html")
+
+
+@static_site_blueprint.route("/understanding-our-data/how-we-use-census-data")
+def how_we_use_census_data():
+    return render_template("static_site/static_pages/understanding_our_data/how_we_use_census_data.html")
+
+
+@static_site_blueprint.route("/understanding-our-data/our-statistical-principles")
+def our_statistical_principles():
+    return render_template("static_site/static_pages/understanding_our_data/our_statistical_principles.html")
+
+
 # summaries
 @static_site_blueprint.route("/summaries/indian-ethnic-group")
 def indian_ethnic_group():

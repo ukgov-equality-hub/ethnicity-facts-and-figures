@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for("static_site.understanding_our_data"), "text": "Understanding our data"},
+    {"url": "", "text": "Interpreting our data"}
+  ]
+%}
+
+{% block pageTitle %}Interpreting our data on Ethnicity facts and figures - GOV.UK{% endblock %}
+{% block socialTitle %}Interpreting our data on Ethnicity facts and figures{% endblock %}
+{% block socialDescription %}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Misc');{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-xl">Interpreting our data</h1>
+
+    <p class="govuk-body">Data on this website comes from either:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+
+      <li>survey data – figures we show are estimates which are checked to make sure they’re reliable and
+        representative</li>
+      <li>administrative data – figures are based on actual numbers</li>
+    </ul>
+
+    <p class="govuk-body">Whichever type of data is used, you should always keep in mind:</p>
+    <ul class="govuk-list govuk-list--bullet">
+
+      <li>how group size affects the reliability of data</li>
+      <li>the risks of making generalisations about any ethnic group as a whole</li>
+    </ul>
+
+    <h2 class="govuk-heading-l"
+        id="group-size-reliability">How group size affects the reliability of data</h2>
+
+    <p class="govuk-body">We usually only comment on reliable (‘statistically significant’) findings from survey data, otherwise we say if data is not reliable.</p>
+
+    <p class="govuk-body">Data is reliable when we can be confident it reflects the total population. This means we
+      would get similar findings 19 times out of 20 if we did the same survey with different random people.</p>
+
+    <h3 class="govuk-heading-m">Ethnic groups and reliability</h3>
+
+    <p class="govuk-body">The larger the number of people in an ethnic group, the more reliable the data.</p>
+
+    <p class="govuk-body">Estimates for the White British ethnic group tend to be the most reliable as they’re usually
+      based on larger numbers of people. At the time of the 2011 Census, 80.5% of people in England and Wales identified
+      as White British.</p>
+
+    <p class="govuk-body">Estimates for ethnic minority groups (including White minorities) tend to be less reliable as
+      they’re usually based on smaller numbers of people.</p>
+
+    <p class="govuk-body">Estimates based on a small number of people are more likely to change from year to year – what
+      can look like changes over time might not reflect real differences. </p>
+
+    <p class="govuk-body">Where the data is available, we include the number of people from each ethnic group in our
+      tables or data downloads. This shows how many people each estimate is based on (for survey data) or the actual
+      number of people (for administrative data).</p>
+
+    <div class="govuk-inset-text">
+      <p class="govuk-body">Find out <a
+           href="{{ url_for('static_site.how_to_read_survey_data') }}#confidence-intervals">how we use confidence
+          intervals</a> to determine the reliability of survey data.</p>
+    </div>
+
+    <h2 class="govuk-heading-l"
+        id="problems-with-making-generalisations">Problems with making generalisations</h2>
+
+
+    <p class="govuk-body">It’s important to consider the risks in making generalisations about large groups of people.
+      People within any one ethnic group are likely to have very different experiences from each other.</p>
+
+    <p class="govuk-body">Generalisations are harder to make when ethnic groups are combined. </p>
+    
+    <div class="govuk-inset-text">
+      <p class="govuk-body govuk-!-font-weight-bold">Example:</p>
+      <p>The aggregated ‘Black’ ethnic group might include a range of people, from Black people born in Britain to British parents, to recent migrants. The aggregated ‘White’ ethnic group usually includes people from White British backgrounds as well as White minorities such as Gypsy, Roma and Irish Traveller groups.</p>
+    </div>
+      
+
+    <h3 class="govuk-heading-m">Making better generalisations</h3>
+
+    <p class="govuk-body">To help make generalisations more accurate we use:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+
+      <li><a href="{{ url_for('static_site.how_to_read_survey_data') }}#weighting">weighting</a> to make survey data
+        more representative</li>
+      <li>administrative data (where it's available) based on real numbers rather than survey estimates</li>
+    </ul>
+
+    <p class="govuk-body">We also use <a
+         href="{{ url_for('static_site.how_to_read_survey_data') }}#confidence-intervals">confidence intervals</a> to
+      determine the reliability of data.</p>
+
+    <p class="govuk-body">We use additional factors like age, gender and area to analyse differences within and between
+      ethnic groups, where data is available and reliable.</p>
+
+    <p class="govuk-body">We ‘suppress’ data (make it unavailable) if:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+
+      <li>the figures are too unreliable to use</li>
+      <li>it is possible to identify individual respondents</li>
+    </ul>
+
+
+
+
+
+  </div>
+</div>
+{% endblock %}

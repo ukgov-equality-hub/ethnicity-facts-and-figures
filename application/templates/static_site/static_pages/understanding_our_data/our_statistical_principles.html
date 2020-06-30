@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for("static_site.understanding_our_data"), "text": "Understanding our data"},
+    {"url": "", "text": "Our statistical principles"}
+  ]
+%}
+
+{% block pageTitle %}Our statistical principles on Ethnicity facts and figures - GOV.UK{% endblock %}
+{% block socialTitle %}Our statistical principles on Ethnicity facts and figures{% endblock %}
+{% block socialDescription %}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Misc');{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-xl">Our statistical principles</h1>
+
+    <p class="govuk-body">We follow certain statistical principles to make sure the data shown on our website is
+      consistent.</p>
+
+    <h2 class="govuk-heading-l"
+        id="averages">Averages: mean and median</h2>
+
+    <p class="govuk-body">The median is the middle point of a range of numbers which are arranged in order. </p>
+
+     <p class="govuk-body">We usually use the median in our data. Using the median prevents very high and very low values
+      from distorting the figures, but this is less reliable for ethnic groups with smaller numbers of respondents.</p>
+    
+     <p class="govuk-body">The mean is the sum of all the numbers, divided by how many numbers there are.</p>
+    
+    <p class="govuk-body">The mean can be used if there are no very high and very low values that might distort the figures.</p>
+
+
+ 
+    <h2 class="govuk-heading-l"
+        id="rounding">Rounding</h2>
+
+    <p class="govuk-body">Rounding is used to make our published data clearer by making very small changes to the data
+      that do not affect its overall accuracy.</p>
+    
+    <div class="govuk-inset-text">
+      <p class="govuk-body govuk-!-font-weight-bold">Example:</p>
+      <p>If we were using a base of 5 we would round all the numbers in a dataset up or
+      down to be a multiple of 5. In this example, a value of 26 would be rounded down to 25.</p>
+    </div>
+
+    <p class="govuk-body">We usually round percentages to 1 decimal place. We round some survey estimates to whole
+      numbers to avoid presenting them as being more accurate than they actually are.</p>
+
+  </div>
+</div>
+{% endblock %}
