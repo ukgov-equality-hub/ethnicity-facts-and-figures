@@ -77,50 +77,48 @@
       </div>
     </div>
 
-    <hr class="govuk-footer__section-break">
-    <div class="govuk-footer__meta">
+    <hr class="govuk-footer__section-break  govuk-!-margin-bottom-2">
+    <div class="govuk-!-margin-bottom-2">
+      <a href="{{ url_for('static_site.background') }}"
+         class="govuk-footer__link govuk-!-padding-right-3">Background</a>
 
+      <a class="govuk-footer__link govuk-!-padding-right-3"
+         rel="external"
+         data-on="click"
+         data-event-category="Race Disparity Unit: Research"
+         data-event-action="Link clicked"
+         href="https://www.gov.uk/search/research-and-statistics?content_store_document_type=research&organisations%5B%5D=race-disparity-unit&order=updated-newest&utm_source=Ethnicity%20facts%20and%20figures&utm_campaign=footer">
+        Research</a>
+
+      <a class="govuk-footer__link govuk-!-padding-right-3"
+         href="{{ url_for('static_site.corrections').rstrip('/') }}">Corrections</a>
+
+      <a class="govuk-footer__link govuk-!-padding-right-3"
+         href="{{ url_for('static_site.privacy_policy').rstrip('/') }}">Privacy</a>
+
+      <a class="govuk-footer__link govuk-!-padding-right-3"
+         href="{{ url_for('static_site.cookies').rstrip('/') }}">Cookies</a>
+
+      <a class="govuk-footer__link govuk-!-padding-right-3"
+         rel="external"
+         data-on="click"
+         data-event-category="Link clicked"
+         data-event-action="Statement of compliance"
+         href="https://www.gov.uk/government/publications/statement-of-compliance-for-race-disparity-unit">Statement
+        of compliance</a>
+    </div>
+
+    <div class="govuk-!-margin-bottom-2">Built by the <a class="govuk-footer__link govuk-!-margin-right-3"
+         href="https://www.gov.uk/government/organisations/race-disparity-unit">Race Disparity Unit.</a> Contact: <a
+         class="govuk-footer__link"
+         data-on="click"
+         data-event-category="E-mail link clicked"
+         data-event-action="Contact e-mail"
+         data-event-label="Footer"
+         href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a></div>
+    <div class="govuk-footer__meta">
       <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
 
-        <div class="govuk-!-margin-bottom-2">
-          <a href="{{ url_for('static_site.background') }}"
-             class="govuk-footer__link govuk-!-padding-right-3">Background</a>
-
-          <a class="govuk-footer__link govuk-!-padding-right-3"
-             rel="external"
-             data-on="click"
-             data-event-category="Race Disparity Unit: Research"
-             data-event-action="Link clicked"
-             href="https://www.gov.uk/search/research-and-statistics?content_store_document_type=research&organisations%5B%5D=race-disparity-unit&order=updated-newest&utm_source=Ethnicity%20facts%20and%20figures&utm_campaign=footer">
-            Research
-          </a>
-
-          <a class="govuk-footer__link govuk-!-padding-right-3"
-             href="{{ url_for('static_site.corrections').rstrip('/') }}">Corrections</a>
-
-          <a class="govuk-footer__link govuk-!-padding-right-3"
-             href="{{ url_for('static_site.privacy_policy').rstrip('/') }}">Privacy</a>
-
-          <a class="govuk-footer__link govuk-!-padding-right-3"
-             href="{{ url_for('static_site.cookies').rstrip('/') }}">Cookies</a>
-
-          <a class="govuk-footer__link govuk-!-padding-right-3"
-             rel="external"
-             data-on="click"
-             data-event-category="Link clicked"
-             data-event-action="Statement of compliance"
-             href="https://www.gov.uk/government/publications/statement-of-compliance-for-race-disparity-unit">Statement
-            of compliance</a>
-        </div>
-
-        <div class="govuk-!-margin-bottom-2">Built by the <a class="govuk-footer__link"
-             href="https://www.gov.uk/government/organisations/race-disparity-unit">Race Disparity Unit</a>. Contact: <a
-             class="govuk-footer__link"
-             data-on="click"
-             data-event-category="E-mail link clicked"
-             data-event-action="Contact e-mail"
-             data-event-label="Footer"
-             href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a></div>
 
         <svg role="presentation"
              focusable="false"
