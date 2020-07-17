@@ -1,0 +1,917 @@
+{% extends "base.html" %}
+{% from "_shared/_status_banner_macro.html" import status_banner %}
+{% from "_macros/_details.html" import govukDetails %}
+{% from "_macros/_back_to_top.html" import appBackToTop %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_version.measure.subtopic.topic.title},
+  ]
+  if preview | default(true) else
+  none
+%}
+
+{% block pageTitle %}{{ measure_version.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block metaDescription %}{{ measure_version.social_description | render_markdown | striptags }}{% endblock %}
+{% block socialTitle %}{{ measure_version.title }}{% endblock %}
+{% block socialDescription %}{{ measure_version.social_description | render_markdown | striptags }}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Measure');{% endblock %}
+
+{% set version = 'latest' if measure_version.has_no_later_published_versions() else measure_version.version %}
+
+{% block headEnd %}
+{{ super() }}
+
+{% if not latest_url %}
+<link rel="canonical"
+      href="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_version',
+                      topic_slug=topic_slug,
+                      subtopic_slug=subtopic_slug,
+                      measure_slug=measure_version.measure.slug,
+                      version=version) }}" />
+
+<meta name="robots"
+      content="noindex">
+{% endif %}
+{% endblock %}
+
+{% block mainAttributes %}itemscope itemtype="http://schema.org/NewsArticle"{% endblock %}
+
+{% block content %}
+<meta itemprop="image"
+      content="https://www.ethnicity-facts-figures.service.gov.uk/static/images/opengraph-image.png" />
+<meta itemscope
+      itemprop="mainEntityOfPage"
+      itemType="https://schema.org/WebPage"
+      itemid="https://www.ethnicity-facts-figures.service.gov.uk{{ url_for('static_site.measure_version',
+                          topic_slug=topic_slug,
+                          subtopic_slug=subtopic_slug,
+                          measure_slug=measure_version.measure.slug,
+                          version=version) }}" />
+
+
+{% if not static_mode and (preview is undefined or not preview) %}
+{% call status_banner(sticky=False) %}
+<div class="left">
+  <span class="info">Version&nbsp;<b>{{ measure_version.version }}</b></span>
+  <br />
+  <span class="info">Template version&nbsp;<b>{{ measure_version.template_version }}</b></span>
+</div>
+<div>
+  <span class="info"
+        id="status">
+    Status:&nbsp;<b>{{ measure_version.status | format_status | safe }}</b>
+  </span>
+
+  {% if measure_version.measure.versions|length > 1 %}
+  <span class="info"><a href="{{ url_for('cms.list_measure_versions',
+                                    topic_slug=topic_slug,
+                                    subtopic_slug=subtopic_slug,
+                                    measure_slug=measure_version.measure.slug)}}"
+       class="govuk-link">Version history</a></span>
+
+  {% endif %}
+
+</div>
+<div class="right">
+
+
+  <span class="info">
+    <a href="{{ url_for('static_site.measure_version_markdown',
+              topic_slug=topic_slug,
+              subtopic_slug=subtopic_slug,
+              measure_slug=measure_version.measure.slug,
+              version=measure_version.version) }}"
+       class="govuk-link">Export <span class="govuk-visually-hidden">page: {{ measure_version.title }}</a>
+  </span>
+
+  <span class="info">
+    {% if measure_version.latest %}
+    {% if measure_version.status == 'APPROVED' %}
+    {% if current_user.is_authenticated and current_user.can(CREATE_VERSION) %}
+    <a class="govuk-button"
+       href="{{ url_for('cms.new_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">
+      Update<span class="govuk-visually-hidden"> page: {{ measure_version.title }}
+    </a>
+    {% endif %}
+    {% else %}
+    <a href="{{ url_for('cms.edit_measure_version',
+            topic_slug=topic_slug,
+            subtopic_slug=subtopic_slug,
+            measure_slug=measure_version.measure.slug,
+            version=measure_version.version) }}"
+       class="govuk-button">Edit<span class="govuk-visually-hidden"> page: {{ measure_version.title }}</a>
+    {% endif %}
+    {% endif %}
+  </span>
+
+  {% if measure_version.status == 'DRAFT' %}
+
+
+  <a class="govuk-button eff-button--warning"
+     href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Delete<span
+          class="govuk-visually-hidden"> page: {{ measure_version.title }}</a>
+
+  {% endif %}
+</div>
+{% endcall %}
+{% endif %}
+
+
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2"
+        itemprop="headline"
+        id="title">
+      {{ measure_version.title }}
+    </h1>
+
+    {%  if measure_version.first_published_date %}
+    <p class="govuk-body-s govuk-!-margin-bottom-2">Published <time itemprop="datePublished"
+            datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
+    </p>
+    {% if measure_version.previous_minor_versions %}
+    <p class="govuk-body-s">Last updated <span class="updated definition">
+        {{ measure_version.published_at|format_friendly_date }}</span> - <a href="#full-page-history"
+         class="govuk-link">see all updates</a></p>
+    {% endif %}
+    {%  endif %}
+
+  </div>
+</div>
+
+{% if measure_version.has_known_statistical_errors %}
+{% include "_shared/_contains_factual_mistake.html" %}
+{% elif measure_version.has_known_statistical_corrections %}
+{% include "_shared/_contains_corrections.html" %}
+{% elif version != 'latest' %}
+{% include "_shared/_newer_version_available.html" %}
+{% endif %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <div id="toc">
+      <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+      <ol class="eff-table-of-contents">
+        <li><a class="govuk-link"
+             href="#main-facts-and-figures"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Main facts and figures"
+             data-event-label=""><span class="eff-table-of-contents__number">1. </span><span
+                  class="eff-table-of-contents__content">Main facts and figures</span></a></li>
+        <li><a class="govuk-link"
+             href="#things-you-need-to-know"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Main facts and figures"
+             data-event-label=""><span class="eff-table-of-contents__number">2. </span><span
+                  class="eff-table-of-contents__content">Things you need to know</span></a></li>
+
+        {% for dimension in measure_version.dimensions %}
+
+        <li><a class="govuk-link"
+             href="#{{ dimension.title|slugify_value }}"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Dimension"
+             data-event-label="{{ dimension.title }}"><span class="eff-table-of-contents__number">{{ loop.index + 2 }}.
+            </span><span class="eff-table-of-contents__content">{{ dimension.title }}</span></a></li>
+
+        {% endfor %}
+
+        {% set dimensions_count = measure_version.dimensions.all()|length %}
+
+        <li><a class="govuk-link"
+             href="#data-sources"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Data sources"
+             data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 3 }}. </span><span
+                  class="eff-table-of-contents__content">Data sources</span></a></li>
+        <li><a class="govuk-link"
+             href="#download-the-data"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Download the data"
+             data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 4 }}. </span><span
+                  class="eff-table-of-contents__content">Download the data</span></a></li>
+
+        {#  TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
+        {#  Temporarily disabled due to experimenting changes #}
+        {#
+            {% if measure_version.measure.slug == "number-of-arrests" or measure_version.measure.slug == "household-income" or measure_version.measure.slug == "stop-and-search" or measure_version.measure.slug == "employment" or measure_version.measure.slug == "average-hourly-pay" %}
+              <li><a class="govuk-link" href="#related-content" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Related links" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 6 }}. </span><span class="eff-table-of-contents__content">Related content</span></a></li>
+            {% endif %}
+          #}
+
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-4"
+        id="main-facts-and-figures">1. Main facts and figures</h2>
+
+    {% if measure_version.summary %}
+    <div class="eff-summary--with-bullets-spaced-out">
+      {{ measure_version.summary | render_markdown }}
+    </div>
+    {% endif %}
+  </div>
+
+  {#  TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
+  {# New design approach of related content #}
+
+
+  {% if
+      measure_version.measure.slug == "age-groups" or
+      measure_version.measure.slug == "population-of-england-and-wales" or
+      measure_version.measure.slug == "regional-ethnic-diversity" or
+      measure_version.measure.slug == "male-and-female-populations" or
+      measure_version.measure.slug == "stop-and-search" or
+      measure_version.measure.slug == "number-of-arrests" or
+      measure_version.measure.slug == "low-income" or
+      measure_version.measure.slug == "nhs-workforce" or
+      measure_version.measure.slug == "employment" %}
+
+  {# {% if measure_version.measure.slug == "number-of-arrests" or
+          measure_version.measure.slug == "household-income" or
+          measure_version.measure.slug == "stop-and-search" or
+          measure_version.measure.slug == "employment" or
+          measure_version.measure.slug == "average-hourly-pay" %} #}
+
+  <div class="govuk-grid-column-one-third">
+    {% if measure_version.measure.slug == "age-groups" %}
+    {% include "static_site/related_links/_age_groups.html" %}
+    {% elif measure_version.measure.slug == "population-of-england-and-wales" %}
+    {% include "static_site/related_links/_population_of_england_and_wales.html" %}
+    {% elif measure_version.measure.slug == "regional-ethnic-diversity" %}
+    {% include "static_site/related_links/_regional_ethnic_diversity.html" %}
+    {% elif measure_version.measure.slug == "male-and-female-populations" %}
+    {% include "static_site/related_links/_male_and_female_populations.html" %}
+    {% elif measure_version.measure.slug == "stop-and-search" %}
+    {% include "static_site/related_links/_stop_and_search.html" %}
+    {% elif measure_version.measure.slug == "number-of-arrests" %}
+    {% include "static_site/related_links/_number_of_arrests.html" %}
+    {% elif measure_version.measure.slug == "low-income" %}
+    {% include "static_site/related_links/_low_income.html" %}
+    {% elif measure_version.measure.slug == "nhs-workforce" %}
+    {% include "static_site/related_links/_nhs_workforce.html" %}
+    {% elif measure_version.measure.slug == "employment" %}
+    {% include "static_site/related_links/_employment.html" %}
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- New Section  -->
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds things-you-need-to-know">
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="things-you-need-to-know">2. Things you need to know</h2>
+    {% if measure_version.need_to_know %}
+    {{measure_version.need_to_know | render_markdown}}
+    {% endif %}
+  </div>
+</div>
+<!-- ./New Section  -->
+
+<div class="govuk-grid-row">
+  {% if measure_version.dimensions %}
+  {% for dimension in measure_version.dimensions %}
+
+  <div class="govuk-grid-column-two-thirds">
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="{{ dimension.title | slugify_value }}">{{ loop.index + 2}}. {{ dimension.title }}</h2>
+    <div class="metadata">
+      <dl>
+        {% if measure_version.area_covered %}
+        <dt>Location:</dt>
+        <dd>
+          {{ measure_version.format_area_covered()  }}
+        </dd>
+        {% endif %}
+        {% if dimension.time_period %}
+        <dt>Time period:</dt>
+        <dd>
+          {{ dimension.time_period }}
+        </dd>
+        {% endif %}
+        {% if measure_version.primary_data_source %}
+        <dt>Source:</dt>
+        <dd>
+          <a class="govuk-link"
+             href="{{ measure_version.primary_data_source.source_url }}"
+             data-on="click"
+             data-event-category="External link clicked"
+             data-event-action="Data Source (section header)"
+             data-event-label="{{ measure_version.primary_data_source.title }}">
+            {{ measure_version.primary_data_source.title }}
+          </a>
+        </dd>
+        {% endif %}
+      </dl>
+    </div>
+  </div>
+</div>
+
+{% if dimension.dimension_chart %}
+{% set chart_and_downloadable = (dimension.dimension_chart.chart_object.type not in ['panel_bar_chart', 'panel_line_chart']) %}
+<div class="chart-and-footer hidden">
+  <div class="govuk-grid-row">
+    <div class="rd_chart"
+         aria-hidden="true"
+         id="chart_{{ dimension.guid }}"
+         style="clear: both; overflow: hidden"></div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full chart-footer">
+      {% set chart_text_data = dimension.dimension_chart.chart_object | flatten_chart %}
+
+      {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data or "~0" in chart_text_data %}
+      <p class="missing-data-explanation">
+
+        {% if "~0" in chart_text_data %}
+        <span class="explanation"> ~0 The actual figure is greater than zero but has been rounded down</span>
+        {% endif %}
+
+        {% if "N/A" in chart_text_data %}
+        <span class="explanation"><sup>*</sup> Not applicable</span>
+        {% endif %}
+
+        {% if "-" in chart_text_data %}
+        <span class="explanation"><span class="missing-data not-collected"></span> Data not collected</span>
+        {% endif %}
+
+        {% if "!" in chart_text_data %}
+        <span class="explanation"><span class="missing-data confidential"></span> Data withheld to protect
+          confidentiality</span>
+        {% endif %}
+
+        {% if "?" in chart_text_data %}
+        <span class="explanation"><span class="missing-data sample-too-small"></span> Data withheld because a small
+          sample size makes it unreliable</span>
+        {% endif %}
+
+      </p>
+      {% endif %}
+
+      {% if chart_and_downloadable %}
+      <p class="chart-download chart-download-link-container"
+         data-chart-guid="{{ dimension.guid }}"
+         data-chart-title="{{ dimension.dimension_chart.chart_object.title.text }}">
+      </p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if dimension.dimension_table %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full"
+       style="{% if not dimension.dimension_table and not dimension.dimension_chart.chart_object %}display: none;{% endif %}">
+    {% include "static_site/_table.html" %}
+
+    <p class="chart-download">
+      {% if static_mode %}
+      <a class="govuk-link"
+         href="{{ url_for('static_site.measure_version_file_download', topic_slug=topic_slug,
+                                   subtopic_slug=subtopic_slug,
+                                   measure_slug=measure_version.measure.slug,
+                                   version=version,
+                                   filename=dimension.static_table_file_name) }}"
+         data-on="click"
+         data-event-category="CSV downloaded"
+         data-event-action="Table as spreadsheet"
+         data-event-label="{{dimension.dimension_table.table_object.header}}"
+         download="{{ dimension.static_table_file_name }}">Download table data <span class="govuk-visually-hidden">for
+          ‘{{ dimension.title }}’</span> (CSV)</a>
+      {% else %}
+      <a class="govuk-link"
+         href="{{ url_for('static_site.dimension_file_table_download',
+                                   topic_slug=topic_slug,
+                                   subtopic_slug=subtopic_slug,
+                                   measure_slug=measure_version.measure.slug,
+                                   version=measure_version.version,
+                                   dimension_guid=dimension.guid) }}"
+         data-on="click"
+         data-event-category="CSV downloaded"
+         data-event-action="Table as spreadsheet"
+         data-event-label="{{dimension.dimension_table.table_object.header}}">Download table data <span
+              class="govuk-visually-hidden">for ‘{{ dimension.title }}’</span> (CSV)</a>
+      {% endif %}
+
+      {% if static_mode %}
+      <a class="govuk-link"
+         href="{{ url_for('static_site.measure_version_file_download', topic_slug=topic_slug,
+                                   subtopic_slug=subtopic_slug,
+                                   measure_slug=measure_version.measure.slug,
+                                   version=version,
+                                   filename=dimension.static_file_name) }}"
+         data-on="click"
+         data-event-category="CSV downloaded"
+         data-event-action="Table source data"
+         data-event-label="{{dimension.dimension_table.table_object.header}}">Source data <span
+              class="govuk-visually-hidden">for ‘{{ dimension.title }}’</span> (CSV)</a>
+      {% else %}
+      <a class="govuk-link"
+         href="{{ url_for('static_site.dimension_file_download',
+                                   topic_slug=topic_slug,
+                                   subtopic_slug=subtopic_slug,
+                                   measure_slug=measure_version.measure.slug,
+                                   version=measure_version.version,
+                                   dimension_guid=dimension.guid) }}"
+         data-on="click"
+         data-event-category="CSV downloaded"
+         data-event-action="Table source data"
+         data-event-label="{{dimension.dimension_table.table_object.header}}">Source data <span
+              class="govuk-visually-hidden">for ‘{{ dimension.title }}’</span> (CSV)</a>
+      {% endif %}
+    </p>
+  </div>
+</div>
+{% endif %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h3 class="govuk-heading-s"><span class="sr-only">Summary of {{ measure_version.title }} {{dimension.title}} </span>
+      Summary </h3>
+    <div class="govuk-!-margin-bottom-8 eff-summary--with-bullets-spaced-out">
+      {{ dimension.summary | render_markdown }}
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <div itemscope
+         itemtype="http://schema.org/Dataset">
+      <meta itemprop="version"
+            content=" {{ measure_version.version }}">
+      <div itemprop="spatialCoverage"
+           itemscope
+           itemtype="http://schema.org/Place">
+        <meta itemprop="name"
+              content="{{ measure_version.format_area_covered() }}">
+      </div>
+      {% if measure_version.published_at %}
+      <meta itemprop="dateModified"
+            content="{{ measure_version.published_at | format_iso8601_date }}">{% endif %}
+      {% if measure_version.first_published_date %}
+      <meta itemprop="datePublished"
+            content="{{ measure_version.first_published_date | format_iso8601_date }}">{% endif %}
+      <div itemprop="creator"
+           itemscope
+           itemtype="http://schema.org/Organization">
+        <meta itemprop="name"
+              content="Race Disparity Unit">
+        <meta itemprop="url"
+              content="https://www.gov.uk/government/organisations/race-disparity-unit">
+      </div>
+
+      <h2 class="govuk-heading-l"
+          id="data-sources">
+        {{ dimensions_count + 3 }}. Data sources
+      </h2>
+
+      <div itemprop="isBasedOn"
+           itemscope
+           itemtype="http://schema.org/Dataset">
+        {% if measure_version.primary_data_source %}
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Source</h3>
+        <p class="govuk-body"
+           itemprop="name"><a class="govuk-link"
+             href="{{ measure_version.primary_data_source.source_url }}"
+             data-on="click"
+             data-event-category="External link clicked"
+             data-event-action="Data Source (Source Details section)"
+             data-event-label="{{ measure_version.title }}"
+             itemprop="url">
+            {{ measure_version.primary_data_source.title }}</a>
+        </p>
+
+        {% if measure_version.primary_data_source.type_of_data %}
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of data</h3>
+        <p class="govuk-body">{{ measure_version.primary_data_source.type_of_data| join_enum_display_names(' and ') }}
+          data</p>
+        {% endif %}
+
+        {% if measure_version.primary_data_source.type_of_statistic %}
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of statistic</h3>
+        <p class="govuk-body">{{ measure_version.primary_data_source.type_of_statistic.external }}</p>
+        {% endif %}
+
+        {% if measure_version.primary_data_source.publisher %}
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publisher</h3>
+        <p class="govuk-body"
+           itemprop="publisher"
+           itemscope
+           itemtype="http://schema.org/Organization"><span
+                itemprop="name">{{ measure_version.primary_data_source.publisher.name }}</span></p>
+        {% endif %}
+
+        {% if measure_version.primary_data_source.note_on_corrections_or_updates %}
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Note on corrections or updates</h3>
+        <p class="govuk-body">{{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown }}
+        </p>
+        {% endif %}
+
+        {% if measure_version.primary_data_source.frequency_of_release %}
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publication frequency</h3>
+        {% if measure_version.primary_data_source.frequency_of_release.description == 'Other' %}
+        <p class="govuk-body">{{ measure_version.primary_data_source.frequency_of_release_other }}</p>
+        {% else %}
+        <p class="govuk-body">{{ measure_version.primary_data_source.frequency_of_release.description }}</p>
+        {% endif %}
+        {% endif %}
+
+        {% if measure_version.primary_data_source.purpose %}
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Purpose of data source</h3>
+        {{ measure_version.primary_data_source.purpose | render_markdown }}
+        {% endif %}
+        {% endif %}
+
+        {% if measure_version.secondary_data_source %}
+        <div class="secondary-source"
+             itemprop="isBasedOn"
+             itemscope
+             itemtype="http://schema.org/Dataset">
+          <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Secondary source</h3>
+          <p class="govuk-body"
+             itemprop="name"><a class="govuk-link"
+               href="{{ measure_version.secondary_data_source.source_url }}"
+               data-on="click"
+               data-event-category="External link clicked"
+               data-event-action="Data Source (Source Details section)"
+               data-event-label="{{ measure_version.secondary_data_source.title }}"
+               itemprop="url">
+              {{ measure_version.secondary_data_source.title }}
+            </a></p>
+
+          {% if measure_version.secondary_data_source.type_of_data %}
+          <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of data</h3>
+          <p class="govuk-body">
+            {{ measure_version.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
+          {% endif %}
+
+          {% if measure_version.secondary_data_source.type_of_statistic %}
+          <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of statistic</h3>
+          <p class="govuk-body">{{ measure_version.secondary_data_source.type_of_statistic.external }}</p>
+          {% endif %}
+
+          {% if measure_version.secondary_data_source.publisher %}
+          <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publisher</h3>
+          <p class="govuk-body"
+             itemprop="publisher"
+             itemscope
+             itemtype="http://schema.org/Organization"><span
+                  itemprop="name">{{ measure_version.secondary_data_source.publisher.name }}</span></p>
+          {% endif %}
+
+          {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
+                {% if measure_version.secondary_data_source.publication_date %}
+                  <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publication release date</h3>
+                  <p class="govuk-body">{{ measure_version.secondary_data_source.publication_date }}</p>
+                {% endif %}
+              #}
+
+          {% if measure_version.secondary_data_source.note_on_corrections_or_updates %}
+          <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Note on corrections or updates</h3>
+          <p class="govuk-body">
+            {{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
+          {% endif %}
+
+          {% if measure_version.secondary_data_source.frequency_of_release %}
+          <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publication frequency</h3>
+          {% if measure_version.secondary_data_source.frequency_of_release.description == 'Other' %}
+          <p class="govuk-body">{{ measure_version.secondary_data_source.frequency_of_release_other }}</p>
+          {% else %}
+          <p class="govuk-body">{{ measure_version.secondary_data_source.frequency_of_release.description }}</p>
+          {% endif %}
+          {% endif %}
+
+          {% if measure_version.secondary_data_source.purpose %}
+          <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Purpose of data source</h3>
+          {{ measure_version.secondary_data_source.purpose | render_markdown }}
+          {% endif %}
+        </div>
+
+        {% endif %}
+
+
+
+        <h2 class="govuk-heading-l"
+            id="download-the-data">
+          {{ dimensions_count + 4 }}. Download the data
+        </h2>
+      </div>
+
+      <div>
+        <div itemprop="license"
+             itemscope
+             itemtype="http://schema.org/CreativeWork">
+          <meta itemprop="url"
+                content="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">
+          <meta itemprop="name"
+                content="Open Government Licence">
+        </div>
+        <meta itemprop="name"
+              content="{{ measure_version.title | striptags }}">
+        <meta itemprop="description"
+              content="{{ measure_version.social_description | render_markdown | striptags }}">
+
+        {% for file in measure_version.uploads  %}
+        {% if file.file_name %}
+        {% set measure_version_data_url =
+                  url_for('static_site.measure_version_file_download', topic_slug=topic_slug,
+                          subtopic_slug=subtopic_slug,
+                          measure_slug=measure_version.measure.slug,
+                          version=version,
+                          filename=file.file_name)
+                  if static_mode else
+                  url_for('static_site.measure_version_file_download',
+                          topic_slug=topic_slug,
+                          subtopic_slug=subtopic_slug,
+                          measure_slug=measure_version.measure.slug,
+                          version=measure_version.version,
+                          filename=file.file_name)
+                %}
+
+        <div itemprop="distribution"
+             itemscope
+             itemtype="http://schema.org/DataDownload">
+          <meta itemprop="encodingFormat"
+                content="text/csv">
+          <meta itemprop="contentSize"
+                content="{{ file.size|filesize }}">
+          <meta itemprop="name"
+                content="{{ file.title | striptags }}">
+          <a class="govuk-link govuk-!-font-size-19"
+             itemprop="contentUrl"
+             href="{{ measure_version_data_url }}"
+             data-on="click"
+             data-event-category="CSV downloaded"
+             data-event-action="Source data"
+             data-event-label="{{ file.title }}">
+            {{ file.title }}
+            {{ " - Spreadsheet " if file.extension() == "csv" else "" }}
+            {{ " - Microsoft Excel " if file.extension() == "xls" or file.extension() == "xlsx" else "" }}
+            {{ " - Open Document Format " if file.extension() == "odf" else "" }}
+            ({{ file.extension() }})
+            {{ file.size|filesize }}
+          </a>
+          {% if file.description %}
+          <p class="govuk-body">{{ file.description }}</p>
+          {% else %}
+          <br />
+          {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+        <button class="js--print govuk-link print-btn"
+                data-on="click"
+                data-event-category="Page printed"
+                data-event-action="Link clicked">Print this page</button>
+      </div>
+    </div>
+
+    <div itemprop="includedInDataCatalog"
+         itemscope
+         itemtype="http://schema.org/DataCatalog">
+      <meta itemprop="name"
+            content="Ethnicity facts and figures">
+      <meta itemprop="url"
+            content="{{ url_for('static_site.index') }}">
+    </div>
+
+    {# TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1
+          {% if measure_version.measure.slug == "number-of-arrests" %}
+            {% include "static_site/related_links/_number_of_arrests.html" %}
+          {% elif measure_version.measure.slug == "household-income" %}
+            {% include "static_site/related_links/_household_income.html" %}
+          {% elif measure_version.measure.slug == "stop-and-search" %}
+            {% include "static_site/related_links/_stop_and_search.html" %}
+          {% elif measure_version.measure.slug == "employment" %}
+            {% include "static_site/related_links/_employment.html" %}
+          {% elif measure_version.measure.slug == "average-hourly-pay" %}
+            {% include "static_site/related_links/_average_hourly_pay.html" %}
+          {% endif %}
+        #}
+    <div class="eff-document-footer">
+
+      <div class="history-information"
+           id="history">
+
+        <p>
+          Publication release date:
+          <span class="published definition">
+            {% if measure_version.first_published_date %}
+            {{ measure_version.first_published_date|format_friendly_date }}
+            {% else %}
+            TBC
+            {% endif %}
+          </span>
+        </p>
+
+        {% if measure_version.previous_minor_versions %}
+        <p>Updated:
+          <span class="updated definition"> {{ measure_version.published_at|format_friendly_date }}</span>
+        </p>
+        {% endif %}
+
+        <div class="change-notes">
+
+          {% set fullPageHistoryHtml %}
+          <ol class="govuk-list">
+            <li>
+              {% if measure_version.published_at %}
+              <a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
+                            topic_slug=topic_slug,
+                            subtopic_slug=subtopic_slug,
+                            measure_slug=measure_version.measure.slug,
+                            version=measure_version.version) }}"><time datetime="{{ measure_version.published_at }}"
+                      class="timestamp">{{ measure_version.published_at|format_friendly_date }}</time></a>
+              {% else %}
+              <span class="timestamp">TBC</span>
+              {% endif %}
+              {% if measure_version.external_edit_summary %}
+              {{ measure_version.external_edit_summary }}
+              {% endif %}
+            </li>
+            {% for old_page_version in measure_version.previous_minor_versions %}
+            <li>
+              <a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
+                            topic_slug=topic_slug,
+                            subtopic_slug=subtopic_slug,
+                            measure_slug=measure_version.measure.slug,
+                            version=old_page_version.version) }}"><time datetime="{{ old_page_version.published_at }}"
+                      class="timestamp">{{ old_page_version.published_at|format_friendly_date }}</time></a>
+
+              {% if (loop.index == loop|length) %}
+              {% set edit_summary = old_page_version.external_edit_summary or "First published" %}
+              {% else %}
+              {% set edit_summary = old_page_version.external_edit_summary or "Minor edit" %}
+              {% endif %}
+              {% if edit_summary %}
+              {{ edit_summary }}
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ol>
+          {% endset %}
+
+          {{ govukDetails(
+              summaryText="full page history",
+              html=fullPageHistoryHtml,
+              id="full-page-history",
+              classes="eff-details--page-history",
+              attributes={
+                "data-on":"click",
+                "data-event-category":"Disclosure",
+                "data-event-action":"Opened",
+                "data-event-label":"Full page history"
+              }
+            ) }}
+
+        </div>
+      </div>
+      <div class="related-information">
+        {% if measure_version.primary_data_source and measure_version.primary_data_source.publisher %}
+        <p>
+          From:
+          <span class="definition">{{ measure_version.primary_data_source.publisher.name }}</span>
+        </p>
+        {%  endif %}
+
+        {% if measure_version.previous_major_versions %}
+        {% set version_count = measure_version.previous_major_versions|length %}
+
+        <div class="previous-editions">
+          Previous {{ "editions" if version_count > 1 else "edition" }}:
+
+          <ol class="govuk-list">
+            {% for page_version in measure_version.previous_major_versions %}
+            <li>
+              <a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
+                            topic_slug=topic_slug,
+                            subtopic_slug=subtopic_slug,
+                            measure_slug=page_version.measure.slug,
+                            version=page_version.version) }}"><span class="govuk-visually-hidden">Edition published on
+                </span>{{ page_version.published_at|format_friendly_date }}</a>
+            </li>
+            {% endfor %}
+          </ol>
+        </div>
+
+        {% endif %}
+      </div>
+
+    </div>
+
+
+    {{ appBackToTop(anchor="title",text="Contents",attributes={"data-on": "click", "data-event-category":"Back to Top", "data-event-action": "Clicked", "data-event-label": "Contents"}) }}
+
+    {% include "static_site/_share.html" %}
+
+  </div>
+</div>
+{% endblock %}
+
+{% block bodyEnd %}
+{{ super() }}
+
+<script type="text/javascript"
+        src="/static/javascripts/{{ 'charts.js' | version_filter }}"></script>
+
+<script type="text/javascript">
+
+  var dimensions = {{ measure_version.dimensions | models_to_dicts | tojson }};
+
+  $( document ).ready( function () {
+    for ( d in dimensions ) {
+      if ( dimensions[ d ].dimension_chart != null ) {
+        var chartObject = dimensions[ d ].dimension_chart.chart_object;
+        if ( chartObject ) {
+          // code writes title as html and creates sub-container
+          var chartContainer = 'chart_' + dimensions[ d ].guid;
+          var chartHtml = '<div class="govuk-grid-column-two-thirds">';
+          chartHtml = chartObject.title.text ? chartHtml + '<h3 class="govuk-heading-s">' + chartObject.title.text + '</h3>' : chartHtml;
+          chartHtml = chartHtml + '<div id="' + chartContainer + '_image"></div>';
+          chartHtml = chartHtml + '</div>';
+          $( '#' + chartContainer ).html( chartHtml );
+
+          // draws chart in sub-container
+          chartObject.title = '';
+
+          drawChart( chartContainer + '_image', chartObject );
+        }
+      }
+
+      // fix focus issue on ie11
+      $( '.highcharts-container' ).each( function () {
+        $( this ).attr( "tabindex", "-1" );
+      } );
+      $( '.highcharts-root' ).each( function () {
+        $( this ).attr( "focusable", "false" );
+      } );
+    };
+
+    var chart_divs = document.getElementsByClassName( 'chart-and-footer' );
+    for ( var i = 0, chart_div; chart_div = chart_divs[ i ]; i++ ) {
+      chart_div.classList.remove( 'hidden' );
+    };
+
+    if ( $() && typeof ( $().highcharts ) === 'function' ) {
+      var chartDownloadLinkContainers = document.getElementsByClassName( 'chart-download-link-container' );
+      for ( var i = 0, chartDownloadLinkContainer; chartDownloadLinkContainer = chartDownloadLinkContainers[ i ]; i++ ) {
+        var link = document.createElement( 'a' );
+        link.id = 'download-' + chartDownloadLinkContainer.getAttribute( 'data-chart-guid' );
+        link.href = '#';
+        link.className = 'govuk-link download-png';
+        link.setAttribute( 'aria-hidden', 'true' );
+        link.setAttribute( 'data-on', 'click' );
+        link.setAttribute( 'data-event-category', 'Image downloaded' );
+        link.setAttribute( 'data-event-action', "Image of the chart" );
+        link.setAttribute( 'data-event-label', chartDownloadLinkContainer.getAttribute( 'data-chart-title' ) );
+        link.setAttribute( 'data-title', chartDownloadLinkContainer.getAttribute( 'data-chart-title' ) );
+        link.text = 'Download chart (PNG)';
+        chartDownloadLinkContainer.appendChild( link );
+      }
+      ;
+    }
+
+    $( '.download-png' ).click( function ( evt ) {
+      var dimensionGuid = $( evt.currentTarget ).attr( 'id' ).replace( 'download-', '' ),
+        chartId = '#chart_' + dimensionGuid + '_image',
+        chart = $( chartId ),
+        dimension = dimensions.find( function ( d ) { return d.guid == dimensionGuid } ),
+        chartTitle = $( evt.currentTarget ).data( 'title' );
+
+      var subtitle = 'Title:' + chartTitle
+        + '. Location: ' + '{{ measure_version.format_area_covered() }}'
+        + '. Time period: ' + dimension.time_period
+        + '. Source:  {{ measure_version.primary_data_source.title if measure_version.primary_data_source else "" }}'
+        + '| Ethnicity Facts and Figures GOV.UK';
+
+      chart.highcharts().options.subtitle.text = subtitle;
+      chart.highcharts().exportChart( { "filename": chartTitle } );
+      evt.preventDefault();
+    } );
+  } );
+</script>
+{% endblock %}

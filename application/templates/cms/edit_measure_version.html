@@ -20,6 +20,8 @@
     {% call status_banner() %}
     <div class="left">
         <span class="info">Version&nbsp;<b>{{ '1.0' if new else measure_version.version }}</b></span>
+        <br />
+        <span class="info">Template version&nbsp;<b>{{ measure_version.template_version }}</b></span>
     </div>
     <div>
         <span class="info"
@@ -138,6 +140,24 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">{% if new %}Create{% else %}Edit{% endif %} page</h1>
+
+            <!-- Select template version -->
+            <div class="govuk-form-group">
+                <label class="govuk-label"
+                       for="template-version">
+                    Select measure template
+                </label>
+                <select class="govuk-select"
+                        id="template_version"
+                        name="template_version"
+                        onchange="this.form.submit()">
+                    <option value="1"
+                            {% if measure_version.template_version == "1" %}selected{% endif %}>Template 1</option>
+                    <option value="2"
+                            {% if measure_version.template_version == "2" %}selected{% endif %}>Template 2</option>
+                </select>
+            </div>
+
             {% if not new %}{{ form.db_version_id }}{% endif %}
             {% if measure_version.published_at %}
             <h3 class="govuk-heading-m">Publication date: {{ measure_version.published_at | format_friendly_date}}</h3>
@@ -184,7 +204,12 @@
 
             {{ form.summary(disabled=form_disabled, diffs=diffs) }}
 
-            {{ form.need_to_know(disabled=form_disabled, diffs=diffs) }}
+            <div id="render_need_to_know"> </div>
+            {% if measure_version.template_version == "1" %}
+                {{ form.need_to_know(disabled=form_disabled, diffs=diffs,  **{'hint': 'Outline how the data was collected and explain any limitations', 'extended_hint': '_things_you_need_to_know.html'}) }}
+            {% else %}
+                {{ form.need_to_know(disabled=form_disabled, diffs=diffs,  **{'inline_instructions': '_things_you_need_to_know_template_two.html'}) }}
+            {% endif %}
 
             {{ form.measure_summary(disabled=form_disabled, diffs=diffs) }}
 
@@ -414,6 +439,10 @@
                 defaultValue: ''
             } );
         }
+
+
+        // enable/disable form elements depending template version
+        formElementsAvailability()
     } );
 
     {% endif %}
@@ -520,6 +549,26 @@
         initialiseCopy();
     } )
 
+
+    function formElementsAvailability() {
+       event.preventDefault();
+       var templateVersion = document.getElementById( "template_version" ).value;
+
+        var methodologyElements = ['methodology', 'measure_summary', 'ethnicity_definition_summary', 'estimation', 'suppression_and_disclosure', 'related_publications', 'qmi_url', 'further_technical_information'];
+        switch ( templateVersion ) {
+            case "2":
+                for (i = 0; i < methodologyElements.length; i++) {
+                    document.getElementById( methodologyElements[i] ).disabled = true;
+                }
+                break;
+            case "1":
+            default:
+                for (i = 0; i < methodologyElements.length; i++) {
+                    document.getElementById( methodologyElements[i] ).disabled = false;
+                }
+
+        }
+    }
 </script>
 
 {% endblock %}

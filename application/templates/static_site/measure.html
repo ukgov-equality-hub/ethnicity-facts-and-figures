@@ -47,10 +47,14 @@
                           version=version) }}"/>
 
 
-  {% if not static_mode and (preview is undefined or not preview) %}
+{#TODO: REMOVE testuser check #}
+{% if not static_mode and (preview is undefined or not preview) and current_user.email != 'testuser@eff.gov.uk' %}
+
     {% call status_banner(sticky=False) %}
       <div class="left">
           <span class="info">Version&nbsp;<b>{{ measure_version.version }}</b></span>
+          <br />
+          <span class="info">Template version&nbsp;<b>{{ measure_version.template_version }}</b></span>
       </div>
       <div>
           <span class="info" id="status">

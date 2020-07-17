@@ -332,6 +332,10 @@ class MeasureVersion(db.Model, CopyableModel):
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     measure_id = db.Column(db.Integer, nullable=True)  # FK to `measure` table
     version = db.Column(db.String(), nullable=False)  # The version number of this measure version in the format `X.y`.
+    template_version = db.Column(
+        db.String(2), default="1", nullable=False
+    )  # The version number of this measure version in the format `X.y`.
+
     latest = db.Column(db.Boolean, default=True)  # True if the current row is the latest version of a measure
     #                                               (latest created, not latest published, so could be a new draft)
 
@@ -674,6 +678,7 @@ class MeasureVersion(db.Model, CopyableModel):
             "estimation": self.estimation,
             "qmi_url": self.qmi_url,
             "further_technical_information": self.further_technical_information,
+            "template_version": self.template_version,
         }
 
         if with_dimensions:
@@ -1221,6 +1226,8 @@ class Measure(db.Model):
         "Subtopic", secondary="subtopic_measure", back_populates="measures", order_by="asc(Subtopic.id)"
     )
     versions = db.relationship("MeasureVersion", back_populates="measure", order_by="desc(MeasureVersion.version)")
+
+    template_version = 1
 
     # Departmental users can only access measures that have been shared with them, as defined by this relationship
     shared_with = db.relationship(

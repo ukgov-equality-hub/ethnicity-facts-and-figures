@@ -210,7 +210,11 @@ class TestPageService:
         created_measure_version = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=False, title="I care", published_at=datetime.now().date(), internal_reference="abc123"
+                template_version="1",
+                is_minor_update=False,
+                title="I care",
+                published_at=datetime.now().date(),
+                internal_reference="abc123",
             ),
             created_by_email=user.email,
         )
@@ -232,7 +236,7 @@ class TestPageService:
         created_measure_version = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=False, title="I care", published_at=datetime.now().date()
+                template_version="1", is_minor_update=False, title="I care", published_at=datetime.now().date()
             ),
             created_by_email=user.email,
         )
@@ -241,6 +245,7 @@ class TestPageService:
             page_service.create_measure(
                 subtopic=subtopic,
                 measure_version_form=MeasureVersionForm(
+                    template_version="1",
                     is_minor_update=False,
                     title=created_measure_version.title,
                     published_at=created_measure_version.published_at,
@@ -254,6 +259,7 @@ class TestPageService:
         created_measure_version = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
+                template_version="1",
                 is_minor_update=False,
                 title="\n\t   I care\n",
                 published_at=datetime.now().date(),
@@ -271,7 +277,7 @@ class TestPageService:
         created_measure_version = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=False, title="the title", published_at=datetime.now().date()
+                template_version="1", is_minor_update=False, title="the title", published_at=datetime.now().date()
             ),
             created_by_email=user.email,
         )
@@ -282,7 +288,10 @@ class TestPageService:
         updated_measure_version = page_service.update_measure_version(
             created_measure_version,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=True, title="an updated title", db_version_id=created_measure_version.db_version_id
+                template_version="1",
+                is_minor_update=True,
+                title="an updated title",
+                db_version_id=created_measure_version.db_version_id,
             ),
             data_source_forms=[],
             last_updated_by_email=user.email,
@@ -297,7 +306,7 @@ class TestPageService:
         created_measure_version = page_service.create_measure(
             subtopic=subtopic,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=False, title="the title", published_at=datetime.now().date()
+                template_version="1", is_minor_update=False, title="the title", published_at=datetime.now().date()
             ),
             created_by_email=user.email,
         )
@@ -308,6 +317,7 @@ class TestPageService:
         page_service.update_measure_version(
             created_measure_version,
             measure_version_form=MeasureVersionForm(
+                template_version="1",
                 is_minor_update=True,
                 title="the title",
                 status="APPROVED",
@@ -327,7 +337,10 @@ class TestPageService:
         page_service.update_measure_version(
             copied_measure_version,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=True, title="the updated title", db_version_id=copied_measure_version.db_version_id
+                template_version="1",
+                is_minor_update=True,
+                title="the updated title",
+                db_version_id=copied_measure_version.db_version_id,
             ),
             data_source_forms=[],
             last_updated_by_email=user.email,
@@ -504,7 +517,10 @@ class TestPageService:
         page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=True, title="I care too much!", db_version_id=measure_version.db_version_id
+                template_version="1",
+                is_minor_update=True,
+                title="I care too much!",
+                db_version_id=measure_version.db_version_id,
             ),
             data_source_forms=[],
             last_updated_by_email=user.email,
@@ -528,7 +544,10 @@ class TestPageService:
         page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=True, title="Who cares", db_version_id=measure_version.db_version_id
+                template_version="1",
+                is_minor_update=True,
+                title="Who cares",
+                db_version_id=measure_version.db_version_id,
             ),
             data_source_forms=[],
             last_updated_by_email=user.email,
@@ -544,7 +563,10 @@ class TestPageService:
             page_service.update_measure_version(
                 measure_version,
                 measure_version_form=MeasureVersionForm(
-                    is_minor_update=True, title="I care too much!", db_version_id=measure_version.db_version_id
+                    template_version="1",
+                    is_minor_update=True,
+                    title="I care too much!",
+                    db_version_id=measure_version.db_version_id,
                 ),
                 data_source_forms=[],
                 last_updated_by_email=user.email,
@@ -557,6 +579,7 @@ class TestPageService:
         page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(
+                template_version="1",
                 is_minor_update=False,
                 title="Who cares",
                 db_version_id=measure_version.db_version_id,
@@ -572,6 +595,7 @@ class TestPageService:
         page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(
+                template_version="1",
                 is_minor_update=False,
                 title="Who cares",
                 db_version_id=measure_version.db_version_id,
@@ -595,7 +619,10 @@ class TestPageService:
         page_service.update_measure_version(
             measure_version,
             measure_version_form=MeasureVersionForm(
-                is_minor_update=False, title="Who cares", db_version_id=measure_version.db_version_id
+                template_version="1",
+                is_minor_update=False,
+                title="Who cares",
+                db_version_id=measure_version.db_version_id,
             ),
             last_updated_by_email=user.email,
             data_source_forms=[],

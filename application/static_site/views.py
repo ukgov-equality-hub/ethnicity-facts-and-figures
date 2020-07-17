@@ -141,8 +141,14 @@ def measure_version(topic_slug, subtopic_slug, measure_slug, version):
     except PageNotFoundException:
         abort(404)
 
+    # define template
+    template = "static_site/measure.html"
+
+    if measure_version.template_version != "1":
+        template = f"static_site/measure_v{measure_version.template_version}.html"
+
     return render_template(
-        "static_site/measure.html",
+        template,
         topic_slug=topic_slug,
         subtopic_slug=subtopic_slug,
         measure_version=measure_version,

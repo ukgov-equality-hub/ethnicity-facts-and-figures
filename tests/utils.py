@@ -37,6 +37,7 @@ def page_displays_error_matching_message(response, message: str) -> bool:
 def multidict_from_measure_version_and_kwargs(measure_version: MeasureVersion, **kwargs) -> ImmutableMultiDict:
     return ImmutableMultiDict(
         {
+            "template_version": measure_version.template_version,
             "title": measure_version.title,
             "description": measure_version.description,
             "measure_summary": measure_version.measure_summary,

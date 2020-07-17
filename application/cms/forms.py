@@ -162,7 +162,16 @@ class MeasureVersionForm(FlaskForm):
                 field.errors[:] = []
                 raise StopValidation()
 
+    class NotRequiredForVersionTwoTemplate:
+        def __call__(self, form: "MeasureVersionForm", field):
+            if form.template_version.data == "2":
+                field.errors[:] = []
+                raise StopValidation()
+
     db_version_id = IntegerField(widget=HiddenInput())
+
+    template_version = RDUStringField(label="Template version")
+
     title = RDUStringField(
         label="Title",
         validators=[DataRequired(message="Enter a page title"), Length(max=255)],
@@ -223,7 +232,10 @@ class MeasureVersionForm(FlaskForm):
 
     measure_summary = RDUTextAreaField(
         label="What the data measures",
-        validators=[RequiredForReviewValidator(message="Explain what the data measures")],
+        validators=[
+            NotRequiredForVersionTwoTemplate(),
+            RequiredForReviewValidator(message="Explain what the data measures"),
+        ],
         hint=(
             "Explain what the data is analysing, what’s included in categories labelled as ‘Other’ and define any "
             "terms users might not understand"
@@ -244,13 +256,14 @@ class MeasureVersionForm(FlaskForm):
     need_to_know = RDUTextAreaField(
         label="Things you need to know",
         validators=[RequiredForReviewValidator(message="Explain what the reader needs to know to understand the data")],
-        hint="Outline how the data was collected and explain any limitations",
-        extended_hint="_things_you_need_to_know.html",
     )
 
     ethnicity_definition_summary = RDUTextAreaField(
         label="The ethnic categories used in this data",
-        validators=[RequiredForReviewValidator(message="List the ethnic categories used in the data")],
+        validators=[
+            NotRequiredForVersionTwoTemplate(),
+            RequiredForReviewValidator(message="List the ethnic categories used in the data"),
+        ],
         hint=Markup(
             "Only use this section to explain if:"
             "<ul class='govuk-list govuk-list--bullet govuk-hint'>"
@@ -274,7 +287,10 @@ class MeasureVersionForm(FlaskForm):
 
     methodology = RDUTextAreaField(
         label="Methodology",
-        validators=[RequiredForReviewValidator(message="Enter the data’s methodology")],
+        validators=[
+            NotRequiredForVersionTwoTemplate(),
+            RequiredForReviewValidator(message="Enter the data’s methodology"),
+        ],
         hint="Explain in clear, simple language how the data was collected and processed.",
         extended_hint="_methodology.html",
     )
