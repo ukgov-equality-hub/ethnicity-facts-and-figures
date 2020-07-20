@@ -35,13 +35,39 @@ outcomes for people in the UK, produced by the Race Disparity Audit{% endblock %
             <h1 class="govuk-heading-xl">
               Ethnicity facts and figures
             </h1>
-            <p class="govuk-body">87% of people in the UK are White, and 13% belong to a Black, Asian, Mixed or Other
-              ethnic group, according to the combined 2011 censuses for England and Wales, Scotland, and Northern
-              Ireland.</p>
+            <p class="govuk-body">Government data about the UK's different ethnic groups.</p>
+            <p class="govuk-body"> 87% of people in the UK are
+              White, and 13% belong to a Black, Asian, Mixed or Other ethnic group (2011
+              Census data).
+            </p>
 
-            <p class="govuk-body">Use this service to find information about the different experiences of people from a
-              variety of ethnic backgrounds. It gathers data collected by government in one place, making it available
-              to the public, specialists and charities.</p>
+            <p class="govuk-body">Find information about the experiences and outcomes of people from a variety of ethnic
+              backgrounds.</p>
+
+            <form id="search-form"
+                  class="eff-search__form"
+                  action="{{ config.GOOGLE_CUSTOM_SEARCH_ENDPOINT }}"
+                  method="get"
+                  role="search">
+              <label for="site-search-text"
+                     class="eff-search__label"
+                     id="site-search-label">Search</label>
+              <input type="search"
+                     name="q"
+                     id="site-search-text"
+                     title="Search facts and figures"
+                     class="eff-search__input eff-search__input--text js-search-focus"
+                     value="{{ current_search_value if current_search_value is defined and current_search_value else '' }}">
+              <input id="search-form-cx"
+                     type="hidden"
+                     name="cx"
+                     value="{{ config.GOOGLE_CUSTOM_SEARCH_ID }}"
+                     class="eff-search__input">
+              <input class="eff-search__input eff-search__input--submit"
+                     type="submit"
+                     value="Search">
+            </form>
+
 
           </div>
         </div>
@@ -61,7 +87,7 @@ outcomes for people in the UK, produced by the Race Disparity Audit{% endblock %
 
     <ul class="govuk-list">
       {% for topic_batch in (topics|selectattr('has_published_measures') if static_mode else topics)|batch(3) %}
-      <div class="govuk-grid-row topic-row">
+      <div class="govuk-grid-row topic-row govuk-!-margin-bottom-3">
         {% for topic in topic_batch %}
         <div class="govuk-grid-column-one-third topic">
           <li>
@@ -78,16 +104,23 @@ outcomes for people in the UK, produced by the Race Disparity Audit{% endblock %
       {% endfor %}
     </ul>
 
-    <div class="govuk-grid-row"
+    <div class="govuk-grid-row govuk-!-margin-bottom-3"
          id="ethnicity-reports-section">
       <div class="govuk-grid-column-two-thirds">
         <h2 class="govuk-heading-m">
-          Ethnic group summaries
+          Data by ethnic group
         </h2>
+
+        <p class="govuk-body">There are <a class="govuk-link"
+             href="{{ url_for('static_site.style_guide_ethnic_groups') }}">18 ethnic groups</a> in England and Wales.</p>
+        <p class="govuk-body">These are the first in a <a class="govuk-link"
+             rel="external"
+             href="https://dataingovernment.blog.gov.uk/2019/06/27/how-were-helping-people-understand-ethnicity-data/">
+            series of summaries</a> about some of those groups.</p>
       </div>
     </div>
 
-    <ul class="govuk-list govuk-grid-row">
+    <ul class="govuk-list govuk-grid-row ">
       <li class="govuk-grid-column-one-third">
         <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Asian</h3>
 
@@ -115,16 +148,6 @@ outcomes for people in the UK, produced by the Race Disparity Audit{% endblock %
         </a>
       </li>
     </ul>
-
-    <div class="govuk-grid-row">
-      <p class="govuk-body govuk-grid-column-full">
-        These are the first summaries in a planned series.
-        <a class="govuk-link"
-           href="https://dataingovernment.blog.gov.uk/2019/06/27/how-were-helping-people-understand-ethnicity-data/">
-          Read our blog post about these summaries</a>.
-      </p>
-    </div>
-
 
     <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6 govuk-!-margin-top-4" />
 

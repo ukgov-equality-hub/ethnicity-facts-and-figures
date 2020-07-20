@@ -2,9 +2,10 @@
 https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158/app/assets/stylesheets/helpers/_header.scss */
 
 .eff-search__label {
+  font-family: "GDS Transport",Arial,sans-serif;
   float: left;
-  color: black;
-  font-weight: 400;
+  color:	#626a6e;
+  font-weight: 300;
   min-height: 36px;
   line-height: 35px;
   text-indent: 15px;
@@ -120,7 +121,7 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
   width: 36px;
   height: 36px;
 
-  border: 1px solid $govuk-brand-colour;
+  border: 1px solid #222;
   border-left-color: #222;
   border-radius: 0;
 
@@ -128,7 +129,7 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
   text-indent: -5000px;
 
   color: govuk-colour("white");
-  background-color: $govuk-brand-colour;
+  background-color: #222;
   background-image: url('/static/images/icon-search-govuk.png');
   background-repeat: no-repeat;
   background-position: 0 50%;
@@ -139,7 +140,7 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
   }
 
   &:hover {
-    background-color: darken($govuk-brand-colour, 5%);
+    background-color: darken(#222, 5%);
   }
 
   &.focus,
