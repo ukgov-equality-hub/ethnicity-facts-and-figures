@@ -36,13 +36,14 @@ def test_homepage_includes_mailing_list_sign_up(test_app_client, logged_in_rdu_u
     assert page.find_all("button", text="Subscribe")[0], "Subscribe button should be present"
 
 
-def test_homepage_search_links_to_google_custom_url_before_javascript(test_app_client):
-    resp = test_app_client.get(url_for("static_site.search"))
+@flaky(max_runs=10, min_passes=1)
+def test_homepage_search_links_to_google_custom_url_before_javascript(test_app_client, logged_in_rdu_user):
+    resp = test_app_client.get(url_for("static_site.index"))
 
     assert resp.status_code == 200
     page = BeautifulSoup(resp.get_data(as_text=True), "html.parser")
 
-    search_forms = page.header.select("#search-form")
+    search_forms = page.select("#search-form")
     assert len(search_forms) == 1
 
     assert search_forms[0]["action"] == "https://cse.google.com/cse/publicurl"
