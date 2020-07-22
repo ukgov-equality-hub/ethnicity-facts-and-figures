@@ -14,7 +14,7 @@ class NavigationLocators:
 
 class HeaderLocators:
     SEARCH_INPUT = (By.ID, "site-search-text")
-    SEARCH_SUBMIT = (By.CSS_SELECTOR, ".eff-search__input--submit")
+    SEARCH_SUBMIT = (By.CSS_SELECTOR, ".eff-search__input--submit_black")
 
 
 class FooterLinkLocators:

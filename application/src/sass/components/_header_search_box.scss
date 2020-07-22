@@ -121,6 +121,43 @@ https://github.com/alphagov/static/blob/99f41342b66cde279f231fdc0834fac493260158
   width: 36px;
   height: 36px;
 
+  border: 1px solid $govuk-brand-colour;
+  border-left-color: #222;
+  border-radius: 0;
+
+  overflow: hidden;
+  text-indent: -5000px;
+
+  color: govuk-colour("white");
+  background-color: $govuk-brand-colour;
+  background-image: url('/static/images/icon-search-govuk.png');
+  background-repeat: no-repeat;
+  background-position: 0 50%;
+
+  @include govuk-device-pixel-ratio() {
+    background-size: 52.5px 35px;
+    background-position: 100% 50%;
+  }
+
+  &:hover {
+    background-color: darken($govuk-brand-colour, 5%);
+  }
+
+  &.focus,
+  &:focus {
+    outline-offset: -3px;
+  }
+}
+
+
+.eff-search__input--submit_black {
+  position: absolute;
+  z-index: 4;
+  right: 0;
+  top: 0;
+  width: 36px;
+  height: 36px;
+
   border: 1px solid #222;
   border-left-color: #222;
   border-radius: 0;

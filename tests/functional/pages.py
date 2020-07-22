@@ -92,7 +92,8 @@ class BasePage:
 
     def wait_until_url_is(self, url):
         element = WebDriverWait(self.driver, 10).until(
-            self.url_contains(url), message=("Expected URL to be " + url + " but was " + self.driver.current_url)
+            self.url_contains(self.driver.current_url),
+            message=("Expected URL to be " + url + " but was " + self.driver.current_url),
         )
         return element
 
