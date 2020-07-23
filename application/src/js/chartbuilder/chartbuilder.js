@@ -68,7 +68,10 @@ $(document).ready(function () {
         } else {
             data_text_area.classList.add('govuk-textarea--error')
             data_form_group.classList.add('govuk-form-group--error')
-            data_error_message.textContent = 'Enter some data'
+            data_error_message.textContent = 'Enter some data';
+            data_error_message.classList.remove('hidden');
+            document.getElementById('errors_container').classList.remove('hidden');
+            document.getElementById('data-missing').classList.remove('hidden');
         }
 
 
@@ -88,6 +91,8 @@ $(document).ready(function () {
         document.getElementById('data-panel').classList.add('hidden')
         document.getElementById('edit-panel').classList.remove('hidden')
         document.getElementById('builder-title').textContent = 'Format and view chart'
+        document.getElementById('errors_container').classList.add('hidden');
+        document.getElementById('data-missing').classList.add('hidden');
     }
 
 
