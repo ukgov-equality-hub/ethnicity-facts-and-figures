@@ -1,4 +1,11 @@
 ;(function() {
+
+    if(window.location.href === "https://www.ethnicity-facts-figures.service.gov.uk/") {
+        // hide header search bar
+        var headerSearchBar = document.getElementById('header_search_bar');
+        headerSearchBar.parentNode.removeChild(headerSearchBar);
+    }
+
     if ('addEventListener' in document) {
         document.addEventListener(
             'DOMContentLoaded',
