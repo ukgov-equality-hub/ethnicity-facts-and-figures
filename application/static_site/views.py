@@ -25,7 +25,9 @@ from application.utils import cleanup_filename
 @static_site_blueprint.route("")
 @login_required
 def index():
-    return render_template("static_site/index.html", topics=page_service.get_topics(include_testing_space=False))
+    return render_template(
+        "static_site/index.html", topics=page_service.get_topics(include_testing_space=False), hide_search=True
+    )
 
 
 @static_site_blueprint.route("/ethnicity-in-the-uk/<page_name>")
