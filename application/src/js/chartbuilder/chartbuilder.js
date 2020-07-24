@@ -60,6 +60,7 @@ $(document).ready(function () {
             document.getElementById('data-panel').classList.add('hidden')
             document.getElementById('edit-panel').classList.remove('hidden')
             document.getElementById('builder-title').textContent = 'Format and view chart'
+            document.title = 'Format and view chart'
 
             data_text_area.classList.remove('govuk-textarea--error')
             data_form_group.classList.remove('govuk-form-group--error')
@@ -84,6 +85,7 @@ $(document).ready(function () {
         document.getElementById('data-panel').classList.remove('hidden')
         document.getElementById('edit-panel').classList.add('hidden')
         document.getElementById('builder-title').textContent = 'Create a chart'
+        document.title = 'Create a chart'
     }
 
     function cancelEditData(evt) {
@@ -91,6 +93,7 @@ $(document).ready(function () {
         document.getElementById('data-panel').classList.add('hidden')
         document.getElementById('edit-panel').classList.remove('hidden')
         document.getElementById('builder-title').textContent = 'Format and view chart'
+        document.title = 'Format and view chart'
         document.getElementById('errors_container').classList.add('hidden');
         document.getElementById('data-missing').classList.add('hidden');
     }

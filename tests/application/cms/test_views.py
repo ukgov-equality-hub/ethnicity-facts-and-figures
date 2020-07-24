@@ -388,7 +388,8 @@ def test_view_edit_measure_page(test_app_client, logged_in_rdu_user, stub_measur
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
-    assert page.h1.text.strip() == "Edit page"
+    edit_page_title = page.find("h2", attrs={"id": "edit_page_title"})
+    assert edit_page_title.text.strip() == "Edit page"
 
     title = page.find("input", attrs={"id": "title"})
     assert title
@@ -485,7 +486,8 @@ def test_view_edit_measure_page_for_minor_update_shows_data_correction_radio(
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
-    assert page.h1.text.strip() == "Edit page"
+    edit_page_title = page.find("h2", attrs={"id": "edit_page_title"})
+    assert edit_page_title.text.strip() == "Edit page"
 
     update_corrects_data_mistake = page.find("div", id="update_corrects_data_mistake")
     if should_show_data_correction_radio:
@@ -868,7 +870,8 @@ def test_copy_measure_page(test_app_client, logged_in_dev_user):
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
 
-    assert page.find("h1").text == "Edit page"
+    edit_page_title = page.find("h2", attrs={"id": "edit_page_title"})
+    assert edit_page_title.text.strip() == "Edit page"
     assert page.find("input", attrs={"name": "title"})["value"] == "COPY OF Test Measure Page"
 
 

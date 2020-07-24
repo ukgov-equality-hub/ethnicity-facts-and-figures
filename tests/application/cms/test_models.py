@@ -61,7 +61,7 @@ class TestDimensionModel:
         resp = test_app_client.post(url, follow_redirects=False)
         page = BeautifulSoup(resp.data.decode("utf-8"), "html.parser")
 
-        assert page.find("title").string == "Error: Create dimension"
+        assert page.find("title").string == "Error: Create new dimension"
 
     @flaky(max_runs=10, min_passes=1)
     def test_update_dimension_with_valid_data(self, test_app_client, logged_in_rdu_user):
