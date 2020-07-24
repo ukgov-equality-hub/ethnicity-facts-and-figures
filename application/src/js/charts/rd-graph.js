@@ -61,6 +61,9 @@ function barchartHighchartObject(chartObject) {
   preprocessChartObject(chartObject);
 
   var chart = {
+    accessibility: {
+      keyboardNavigation: { enabled: false },
+    },
     colors: setColour(chartObject),
     chart: {
       type: 'bar',
@@ -282,6 +285,9 @@ function componentChart(container_id, chartObject) {
   preprocessChartObject(chartObject);
 
   return Highcharts.chart(container_id, {
+    accessibility: {
+      keyboardNavigation: { enabled: false },
+    },
     chart: {
       type: 'bar',
       height: setHeight(chartObject),
@@ -430,12 +436,12 @@ function yAxisMaxValue(panelChartData) {
   }
 
   if (hasOnePercent && max < 50) {
-    return 60
+    return 60;
   } else if (hasOnePercent) {
-    return 75
+    return 75;
   }
 
-  return max
+  return max;
 }
 
 function smallBarchart(container_id, chartObject, yAxisMax) {
@@ -444,6 +450,9 @@ function smallBarchart(container_id, chartObject, yAxisMax) {
   var showLastLabel = small_barchart_show_last_label(chartObject);
 
   var chart = Highcharts.chart(container_id, {
+    accessibility: {
+      keyboardNavigation: { enabled: false },
+    },
     colors: setColour(chartObject),
     chart: {
       type: 'bar',
@@ -457,10 +466,12 @@ function smallBarchart(container_id, chartObject, yAxisMax) {
 
           // add precent sign to last x axis labels when table is displaying precentages
           if (chartObject.number_format.suffix === '%') {
-
             var textValue = $xLabels.find('text').eq(-2).text();
-            textValue = textValue.replace('%', '') //fix or resize
-            $xLabels.find('text').eq(-2).text(textValue + '%')
+            textValue = textValue.replace('%', ''); //fix or resize
+            $xLabels
+              .find('text')
+              .eq(-2)
+              .text(textValue + '%');
 
             $(container)
               .find('g.highcharts-yaxis-grid')
@@ -701,6 +712,9 @@ function smallLinechart(container_id, chartObject, max, min) {
   }
 
   var chart = Highcharts.chart(container_id, {
+    accessibility: {
+      keyboardNavigation: { enabled: false },
+    },
     chart: {
       marginTop: 20,
       height: 250,
