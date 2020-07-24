@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('data-panel').classList.add('hidden')
             document.getElementById('edit-panel').classList.remove('hidden')
             document.getElementById('builder-title').innerHTML = 'Format and view table';
+            document.title = 'Format and view table';
 
             data_text_area.classList.remove('govuk-textarea--error')
             data_form_group.classList.remove('govuk-form-group--error')
@@ -117,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('data_text_area').focus()
         document.getElementById('edit-panel').classList.add('hidden')
         document.getElementById('builder-title').innerHTML = 'Create a table';
+        document.title = 'Create a table';
     }
 
     function cancelEditData(evt) {
@@ -124,6 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('data-panel').classList.add('hidden')
         document.getElementById('edit-panel').classList.remove('hidden')
         document.getElementById('builder-title').innerHTML = 'Format and view table';
+        document.title = 'Format and view table';
         document.getElementById('errors_container').classList.add('hidden');
         document.getElementById('data-missing').classList.add('hidden');
     }

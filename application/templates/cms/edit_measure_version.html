@@ -11,7 +11,7 @@
 {% set form_disabled = false if (new is defined and new) else measure_version.status != 'DRAFT' %}
 
 {% block bodyClasses %}rd_cms{% endblock %}
-{% block pageTitle %}{{ measure_version.title if measure_version.title is defined and measure_version.title else "Create a measure" }}{% endblock %}
+{% block pageTitle %}{{ measure_version.title if measure_version.title is defined and measure_version.title else "Create page" }}{% endblock %}
 
 {% block content %}
 <form method="POST"
@@ -139,7 +139,13 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">{% if new %}Create{% else %}Edit{% endif %} page</h1>
+            {% if new %}
+            <h1 class="govuk-heading-xl">Create page</h1>
+
+            {% else %}
+                <h1 class="govuk-heading-xl">{{ measure_version.title }}</h1>
+                <h2 id="edit_page_title" class="govuk-heading-l">Edit page</h2>
+            {% endif %}
 
             <!-- Select template version -->
             <div class="govuk-form-group">
