@@ -12,160 +12,180 @@
 {% block socialDescription %}{{ topic.meta_description | render_markdown | striptags }}{% endblock %}
 {% block googleAnalytics %}ga('set','contentGroup1','Topic');{% endblock %}
 
-{% block bodyStart %}{{ super( )}}<div itemscope itemtype="http://schema.org/DataCatalog">{% endblock %}
+{% block bodyStart %}{{ super( )}}
+<div itemscope
+     itemtype="http://schema.org/DataCatalog">{% endblock %}
 
-{% block content %}
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-xl">
-                    {{ topic.title }}
-                </h1>
-                {% if topic.additional_description  %}
-                    <div class="govuk-body">
-                        {{ topic.additional_description | safe  }}
-                    </div>
-                {% endif %}
+    {% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
+                {{ topic.title }}
+            </h1>
+            {% if topic.additional_description  %}
+            <div class="govuk-body">
+                {{ topic.additional_description | safe  }}
             </div>
+            {% endif %}
         </div>
+    </div>
 
-        <div class="govuk-grid-row">
+    <div class="govuk-grid-row">
 
-            <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-column-two-thirds">
 
-                <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-{{ topic.slug }}">
-                        {% for subtopic in (subtopics|selectattr('has_published_measures') if static_mode else subtopics) %}
-                            {% if measures_by_subtopic[subtopic.id]|length > 0 or (current_user.is_authenticated and current_user.can(CREATE_MEASURE)) %}
-                                <div class="govuk-accordion__section">
-                                    <div class="govuk-accordion__section-header">
-                                        <h2 class="govuk-accordion__section-heading">
-                                            <span class="govuk-accordion__section-button" id="accordion-{{ subtopic.slug }}">{{- subtopic.title -}}{% if subtopic.has_published_measures == false %} (not published){% endif %}</span>
-                                        </h2>
-                                    </div>
-                                    <div id="accordion-{{ topic.slug }}-content-{{ loop.index }}" class="govuk-accordion__section-content {% if not static_mode %} govuk-!-padding-bottom-4{% endif %}">
-                                        {% if not static_mode %}
-                                            {% if current_user.is_authenticated and current_user.can(CREATE_MEASURE) %}
-                                                <a href="{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}" class="govuk-button">Create a new page <span class="govuk-visually-hidden">within {{ topic.title }}</span></a>
-                                            {% endif %}
-                                        {% endif %}
-                                        {% if measures_by_subtopic[subtopic.id] %}
-                                                {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}<div class="govuk-body govuk-!-margin-bottom-0 reordering-save-status">&nbsp;</div>{% endif %}
-                                                <ul class="govuk-list {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}js-reorderable{% endif %}">
-                                                    {% for measure in measures_by_subtopic[subtopic.id] %}
-                                                        {% with measure_version = measure.latest_version %}
-                                                            <li data-measure-id="{{ measure.id }}" data-subtopic-id="{{ subtopic.id }}" itemprop="dataset" itemscope itemtype="http://schema.org/Dataset">
-                                                                <span itemprop="name"><a class="govuk-link" href="{{ url_for('static_site.measure_version',
+            <div class="govuk-accordion"
+                 data-module="govuk-accordion"
+                 id="accordion-{{ topic.slug }}">
+                {% for subtopic in (subtopics|selectattr('has_published_measures') if static_mode else subtopics) %}
+                {% if measures_by_subtopic[subtopic.id]|length > 0 or (current_user.is_authenticated and current_user.can(CREATE_MEASURE)) %}
+                <div class="govuk-accordion__section">
+                    <div class="govuk-accordion__section-header">
+                        <h2 class="govuk-accordion__section-heading">
+                            <span class="govuk-accordion__section-button"
+                                  id="accordion-{{ subtopic.slug }}">{{- subtopic.title -}}{% if subtopic.has_published_measures == false %}
+                                (not published){% endif %}</span>
+                        </h2>
+                    </div>
+                    <div id="accordion-{{ topic.slug }}-content-{{ loop.index }}"
+                         class="govuk-accordion__section-content {% if not static_mode %} govuk-!-padding-bottom-4{% endif %}">
+                        {% if not static_mode %}
+                        {% if current_user.is_authenticated and current_user.can(CREATE_MEASURE) %}
+                        <a href="{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}"
+                           class="govuk-button">Create a new page
+                           <span class="sr-only"> within
+                                {{ topic.title }}</span></a>
+                        {% endif %}
+                        {% endif %}
+                        {% if measures_by_subtopic[subtopic.id] %}
+                        {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}
+                        <div class="govuk-body govuk-!-margin-bottom-0 reordering-save-status">&nbsp;</div>{% endif %}
+                        <ul
+                            class="govuk-list {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}js-reorderable{% endif %}">
+                            {% for measure in measures_by_subtopic[subtopic.id] %}
+                            {% with measure_version = measure.latest_version %}
+                            <li data-measure-id="{{ measure.id }}"
+                                data-subtopic-id="{{ subtopic.id }}"
+                                itemprop="dataset"
+                                itemscope
+                                itemtype="http://schema.org/Dataset">
+                                <span itemprop="name"><a class="govuk-link"
+                                       href="{{ url_for('static_site.measure_version',
                                                                                     topic_slug=topic.slug,
                                                                                     subtopic_slug=subtopic.slug,
                                                                                     measure_slug=measure.slug,
-                                                                                    version='latest') }}" itemprop="url">{{ measure_version.title }}
-                                                                </a></span>
+                                                                                    version='latest') }}"
+                                       itemprop="url">{{ measure_version.title }}
+                                    </a></span>
 
-                                                                {% if not static_mode and not measure_version.status == "APPROVED" %}
-                                                                    &nbsp;({{ measure_version.status | format_status | safe }}&nbsp;{{ measure_version.version }})
+                                {% if not static_mode and not measure_version.status == "APPROVED" %}
+                                &nbsp;({{ measure_version.status | format_status | safe }}&nbsp;{{ measure_version.version }})
 
-                                                                {% endif %}
-                                                            </li>
-                                                        {% endwith %}
-                                                    {% endfor %}
-                                                </ul>
-                                        {% endif %}
+                                {% endif %}
+                            </li>
+                            {% endwith %}
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
 
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
+                    </div>
                 </div>
+                {% endif %}
+                {% endfor %}
             </div>
         </div>
-{% endblock %}
+    </div>
+    {% endblock %}
 
 
     {% block bodyEnd %}
-        {{ super( )}}
-        </div>
+    {{ super( )}}
+</div>
 
-        {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}
+{% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}
 
-        <script type="text/javascript">
+<script type="text/javascript">
 
-            var setupReorderableTables = function() {
-                var reOrderableLists = document.querySelectorAll('.js-reorderable');
-                reOrderableLists.forEach(function (list) {
-                    if (list.children.length > 1) {
-                        var r = new ReorderableListItems(list);
-                        r.onDrop = orderMeasures;
-                    }
-                });
-            };
+    var setupReorderableTables = function () {
+        var reOrderableLists = document.querySelectorAll( '.js-reorderable' );
+        reOrderableLists.forEach( function ( list ) {
+            if ( list.children.length > 1 ) {
+                var r = new ReorderableListItems( list );
+                r.onDrop = orderMeasures;
+            }
+        } );
+    };
 
-            var orderMeasures = function(list) {
+    var orderMeasures = function ( list ) {
 
-                var status = list.parentElement.querySelector('.reordering-save-status')
-                var savingIntervalId;
+        var status = list.parentElement.querySelector( '.reordering-save-status' )
+        var savingIntervalId;
 
-                var stillSaving = function () {
-                    if (status) {
-                        switch (status.textContent) {
-                            case 'Saving new order':
-                                status.textContent = 'Saving new order.';
-                                break;
-                            case 'Saving new order.':
-                                status.textContent = 'Saving new order..';
-                                break;
-                            case 'Saving new order..':
-                                status.textContent = 'Saving new order...';
-                                break;
-                            case 'Saving new order...':
-                                status.textContent = 'Saving new order';
-                                break;
-                        }
-                    }
-                };
-
-                var saved = function (savingIntervalId) {
-                    clearInterval(savingIntervalId);
-
-                    if (status) {
-                        status.textContent = 'Saved';
-                        status.classList.add('status-invisible');
-                    }
-                };
-
-                var positions = [];
-                for(var i = 0; i < list.children.length; i++) {
-                     positions.push({"position": i,
-                                     "measure_id": list.children[i].dataset.measureId,
-                                     "subtopic_id": list.children[i].dataset.subtopicId})
+        var stillSaving = function () {
+            if ( status ) {
+                switch ( status.textContent ) {
+                    case 'Saving new order':
+                        status.textContent = 'Saving new order.';
+                        break;
+                    case 'Saving new order.':
+                        status.textContent = 'Saving new order..';
+                        break;
+                    case 'Saving new order..':
+                        status.textContent = 'Saving new order...';
+                        break;
+                    case 'Saving new order...':
+                        status.textContent = 'Saving new order';
+                        break;
                 }
+            }
+        };
 
-                if (status) {
-                    status.classList.remove('status-invisible');
-                    status.textContent = 'Saving new order';
-                }
-                savingIntervalId = setInterval(stillSaving, 300);
-                list.classList.toggle('reorderable');
+        var saved = function ( savingIntervalId ) {
+            clearInterval( savingIntervalId );
 
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ url_for('cms.set_measure_order') }}",
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify({"positions": positions}),
-                    success: function (data) {
-                        console.log('Set order for measures:', positions);
-                        saved(savingIntervalId);
-                        list.classList.toggle('reorderable');
-                    },
-                    error: function (data) {
-                        console.log('Error setting order for measures:', positions);
-                    }
-                });
-            };
+            if ( status ) {
+                status.textContent = 'Saved';
+                status.classList.add( 'status-invisible' );
+            }
+        };
 
-            setupReorderableTables();
+        var positions = [];
+        for ( var i = 0; i < list.children.length; i++ ) {
+            positions.push( {
+                "position": i,
+                "measure_id": list.children[ i ].dataset.measureId,
+                "subtopic_id": list.children[ i ].dataset.subtopicId
+            } )
+        }
 
-        </script>
+        if ( status ) {
+            status.classList.remove( 'status-invisible' );
+            status.textContent = 'Saving new order';
+        }
+        savingIntervalId = setInterval( stillSaving, 300 );
+        list.classList.toggle( 'reorderable' );
 
-        {% endif %}
+        $.ajax( {
+            type: 'POST',
+            url: "{{ url_for('cms.set_measure_order') }}",
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify( { "positions": positions } ),
+            success: function ( data ) {
+                console.log( 'Set order for measures:', positions );
+                saved( savingIntervalId );
+                list.classList.toggle( 'reorderable' );
+            },
+            error: function ( data ) {
+                console.log( 'Error setting order for measures:', positions );
+            }
+        } );
+    };
 
-    {% endblock %}
+    setupReorderableTables();
+
+</script>
+
+{% endif %}
+
+{% endblock %}
