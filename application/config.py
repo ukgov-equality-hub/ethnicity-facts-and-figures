@@ -111,6 +111,7 @@ class DevConfig(Config):
     SESSION_COOKIE_SECURE = False
     SESSION_COOKIE_DOMAIN = False
     SERVER_NAME = "localhost:5000"
+    # When testing IE using vm replace SERVER_NAME with 10.0.2.2:5000
 
 
 class TestConfig(DevConfig):

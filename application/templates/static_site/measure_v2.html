@@ -161,15 +161,17 @@
              data-on="click"
              data-event-category="Table of contents link clicked"
              data-event-action="Main facts and figures"
-             data-event-label=""><span class="eff-table-of-contents__number">1. </span><span
-                  class="eff-table-of-contents__content">Main facts and figures</span></a></li>
+             data-event-label=""><span class="eff-table-of-contents__number">1. </span><span class="sr-only">Navigate
+              to</span><span class="eff-table-of-contents__content">Main facts and figures<span class="sr-only">
+                section</span></span></a></li>
         <li><a class="govuk-link"
              href="#things-you-need-to-know"
              data-on="click"
              data-event-category="Table of contents link clicked"
              data-event-action="Main facts and figures"
-             data-event-label=""><span class="eff-table-of-contents__number">2. </span><span
-                  class="eff-table-of-contents__content">Things you need to know</span></a></li>
+             data-event-label=""><span class="eff-table-of-contents__number">2. </span><span class="sr-only">Navigate
+              to</span><span class="eff-table-of-contents__content">Things you need to know<span class="sr-only">
+                section</span></span></a></li>
 
         {% for dimension in measure_version.dimensions %}
 
@@ -179,7 +181,9 @@
              data-event-category="Table of contents link clicked"
              data-event-action="Dimension"
              data-event-label="{{ dimension.title }}"><span class="eff-table-of-contents__number">{{ loop.index + 2 }}.
-            </span><span class="eff-table-of-contents__content">{{ dimension.title }}</span></a></li>
+            </span><span class="sr-only">Navigate to</span><span
+                  class="eff-table-of-contents__content">{{ dimension.title }}<span class="sr-only">
+                section</span></span></a></li>
 
         {% endfor %}
 
@@ -191,20 +195,22 @@
              data-event-category="Table of contents link clicked"
              data-event-action="Data sources"
              data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 3 }}. </span><span
-                  class="eff-table-of-contents__content">Data sources</span></a></li>
+                  class="sr-only">Navigate to</span><span class="eff-table-of-contents__content">Data sources<span
+                    class="sr-only"> section</span></span></a></li>
         <li><a class="govuk-link"
              href="#download-the-data"
              data-on="click"
              data-event-category="Table of contents link clicked"
              data-event-action="Download the data"
              data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 4 }}. </span><span
-                  class="eff-table-of-contents__content">Download the data</span></a></li>
+                  class="sr-only">Navigate to</span><span class="eff-table-of-contents__content">Download the data<span
+                    class="sr-only"> section</span></span></a></li>
 
         {#  TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
         {#  Temporarily disabled due to experimenting changes #}
         {#
             {% if measure_version.measure.slug == "number-of-arrests" or measure_version.measure.slug == "household-income" or measure_version.measure.slug == "stop-and-search" or measure_version.measure.slug == "employment" or measure_version.measure.slug == "average-hourly-pay" %}
-              <li><a class="govuk-link" href="#related-content" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Related links" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 6 }}. </span><span class="eff-table-of-contents__content">Related content</span></a></li>
+              <li><a class="govuk-link" href="#related-content" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Related links" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 6 }}. </span><span class="sr-only">Navigate to</span><span class="eff-table-of-contents__content">Related content<span class="sr-only"> section</span></span></a></li>
             {% endif %}
           #}
 
@@ -811,8 +817,7 @@
                             topic_slug=topic_slug,
                             subtopic_slug=subtopic_slug,
                             measure_slug=page_version.measure.slug,
-                            version=page_version.version) }}"><span class="govuk-visually-hidden">Edition published on
-                </span>{{ page_version.published_at|format_friendly_date }}</a>
+                            version=page_version.version) }}"><span class="govuk-visually-hidden">Edition published on </span>{{ page_version.published_at|format_friendly_date }}</a>
             </li>
             {% endfor %}
           </ol>
