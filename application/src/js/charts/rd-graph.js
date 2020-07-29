@@ -226,6 +226,9 @@ function linechartHighchartObject(chartObject) {
   }
 
   return {
+    accessibility: {
+      keyboardNavigation: { enabled: false },
+    },
     chart: {
       marginTop: 20,
       height: 400,
