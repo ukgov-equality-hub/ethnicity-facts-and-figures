@@ -1,6 +1,6 @@
 {# Required parameters: field, id_, name, class_, textarea, diffs, field_params #}
 
-<div class="govuk-form-group {% if field.errors %}govuk-form-group--error{% endif %}">
+<div class="govuk-form-group {% if field.errors %}govuk-form-group--error{% endif %}" tabindex="-1">
 
 {% if field.character_count_limit %}
 <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="{{ field.character_count_limit }}">
