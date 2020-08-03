@@ -48,6 +48,7 @@ function preprocessChartObject(chartObject) {
     adjustParents(chartObject);
   }
   setDecimalPlaces(chartObject);
+  replaceIncValues(chartObject);
 }
 
 // ----------------------------------
@@ -82,6 +83,9 @@ function barchartHighchartObject(chartObject) {
       },
       labels: {
         formatter: function () {
+          this.value = this.value
+            .replace('inc', 'including')
+            .replace('inc.', 'including');
           return $.inArray(this.value, chartObject.parents) < 0
             ? this.value
             : '<b>' + this.value + '</b>';
@@ -297,17 +301,23 @@ function componentChart(container_id, chartObject) {
     },
     colors: setColour(chartObject),
     title: {
-      text: chartObject.title.text,
+      text: chartObject.title.text? chartObject.title.text
+      .replace('inc', 'including')
+      .replace('inc.', 'including'): '',
     },
     xAxis: {
       categories: chartObject.xAxis.categories,
       title: {
-        text: chartObject.xAxis.title.text,
+        text: chartObject.xAxis.title.text? chartObject.xAxis.title.text
+          .replace('inc', 'including')
+          .replace('inc.', 'including'): '',
       },
     },
     yAxis: {
       title: {
-        text: chartObject.yAxis.title.text,
+        text: chartObject.yAxis.title.text? chartObject.yAxis.title.text
+          .replace('inc', 'including')
+          .replace('inc.', 'including'): '',
       },
       min: 0,
       max: 100,
@@ -373,7 +383,11 @@ function panelBarchart(container_id, chartObject) {
   var internal_divs =
     chartObject.title === ''
       ? ''
-      : "<div class='small-chart-title'>" + chartObject.title + '</div>';
+      : "<div class='small-chart-title'>" +
+        chartObject.title
+          .replace('inc', 'including')
+          .replace('inc.', 'including') +
+        '</div>';
 
   for (var c in chartObject.panels) {
     internal_divs =
@@ -504,7 +518,9 @@ function smallBarchart(container_id, chartObject, yAxisMax) {
       },
     },
     title: {
-      text: chartObject.title.text,
+      text: chartObject.title.text? chartObject.title.text
+        .replace('inc', 'including')
+        .replace('inc.', 'including'): '',
     },
     xAxis: {
       categories: chartObject.xAxis.categories,
@@ -687,7 +703,9 @@ function smallLinechart(container_id, chartObject, max, min) {
 
   var yaxis = {
     title: {
-      text: chartObject.yAxis.title.text,
+      text: chartObject.yAxis.title.text? chartObject.yAxis.title.text
+      .replace('inc', 'including')
+      .replace('inc.', 'including'): '',
     },
     labels: {
       format:
@@ -724,7 +742,9 @@ function smallLinechart(container_id, chartObject, max, min) {
     },
     colors: setColour(chartObject),
     title: {
-      text: chartObject.title.text,
+      text: chartObject.title.text? chartObject.title.text
+      .replace('inc', 'including')
+      .replace('inc.', 'including'): '',
       useHTML: true,
     },
     legend: {
@@ -995,6 +1015,17 @@ function colorReplacer(key, value) {
 
 function replaceOldSeriesColors(chartObject) {
   return JSON.parse(JSON.stringify(chartObject.series, colorReplacer));
+}
+
+function replaceIncValues(chartObject) {
+  var i;
+  for (i = 0; i < chartObject.series.length; i++) {
+    chartObject.series[i].name = chartObject.series[i].name
+      .replace('inc', 'including')
+      .replace('inc.', 'including');
+  }
+
+  return chartObject;
 }
 
 // If we're running under Node - required for testing
