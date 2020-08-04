@@ -224,7 +224,7 @@ def get_content_security_policy(allow_google_custom_search=False):
     content_security_policy = (
         "default-src 'self';"
         "script-src 'self' 'unsafe-inline' http://widget.surveymonkey.com "
-        "https://ajax.googleapis.com https://www.google-analytics.com "
+        "https://ajax.googleapis.com https://www.google-analytics.com service.us17.list-manage.com"
         "{additional_script_src} data:;"
         "connect-src 'self' https://www.google-analytics.com;"
         "style-src 'self' 'unsafe-inline' {additional_style_src};"
