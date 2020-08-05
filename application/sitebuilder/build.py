@@ -173,8 +173,14 @@ def write_measure_vesion_at_slug(measure, measure_version, slug, latest_url, loc
 
     process_dimensions(measure_version, slug)
 
+    # define template
+    template = "static_site/measure.html"
+
+    if measure_version.template_version != "1":
+        template = f"static_site/measure_v{measure_version.template_version}.html"
+
     content = render_template(
-        "static_site/measure.html",
+        template,
         topic_slug=measure.subtopic.topic.slug,
         subtopic_slug=measure.subtopic.slug,
         measure_version=measure_version,
