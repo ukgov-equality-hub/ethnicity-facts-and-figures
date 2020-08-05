@@ -168,7 +168,7 @@ def run_bar_chart_scenarios(chart_builder_page, driver):
     THEN the ethnicities that appear in the charts get changed
     """
     ethnicities = chart_builder_page.chart_x_axis()
-    assert ethnicities == ["Asian", "Black", "Mixed", "White", "Other inc Chinese"]
+    assert ethnicities == ["Asian", "Black", "Mixed", "White", "Other including Chinese"]
 
     """
     SCENARIO 2. CREATE A CHART WITH DISORDERLY DATA
