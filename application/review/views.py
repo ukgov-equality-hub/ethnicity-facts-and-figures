@@ -25,8 +25,14 @@ def review_page(review_token):
         if measure_version.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html", preview=True)
 
+        # define template
+        template = "static_site/measure.html"
+
+        if measure_version.template_version != "1":
+            template = f"static_site/measure_v{measure_version.template_version}.html"
+
         return render_template(
-            "static_site/measure.html",
+            template,
             topic_slug=measure_version.measure.subtopic.topic.slug,
             subtopic_slug=measure_version.measure.subtopic.slug,
             measure_version=measure_version,
