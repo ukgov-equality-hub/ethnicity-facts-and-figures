@@ -39,7 +39,7 @@
         <tbody class="govuk-table__body">
           {% for ethnic_group in ethnic_groups %}
                 <tr class="govuk-table__row">
-                  <td class="govuk-table__cell eff-table__cell--dense"><a class="govuk-link" href="{{ ethnic_group.url }}">{{ ethnic_group.value }}</a></td>
+                  <td class="govuk-table__cell eff-table__cell--dense"><a class="govuk-link" href="{{ ethnic_group.url }}">{{ ethnic_group.value.replace(" inc ", " including ").replace(" inc. ", " including ") }}</a></td>
                   <td class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--dense">{{ ethnic_group.measure_count }}</td>
                   <td class="govuk-table__cell govuk-table__cell--numeric eff-table__cell--dense">{{ ethnic_group.dimension_count }}</td>
                 </tr>

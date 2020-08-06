@@ -12,7 +12,7 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-xl">{{ ethnic_group }}</h1>
+      <h1 class="govuk-heading-xl">{{ ethnic_group.replace(" inc ", " including ").replace(" inc. ", " including ") }}</h1>
 
         {% if measure_count > 1 %}
             <p class="govuk-body-l">There are <strong>{{ measure_count }}</strong> published pages using this ethnic group.</p>

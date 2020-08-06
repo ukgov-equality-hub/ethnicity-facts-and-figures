@@ -83,9 +83,6 @@ function barchartHighchartObject(chartObject) {
       },
       labels: {
         formatter: function () {
-          this.value = this.value
-            .replace('inc', 'including')
-            .replace('inc.', 'including');
           return $.inArray(this.value, chartObject.parents) < 0
             ? this.value
             : '<b>' + this.value + '</b>';
@@ -301,23 +298,29 @@ function componentChart(container_id, chartObject) {
     },
     colors: setColour(chartObject),
     title: {
-      text: chartObject.title.text? chartObject.title.text
-      .replace('inc', 'including')
-      .replace('inc.', 'including'): '',
+      text: chartObject.title.text
+        ? chartObject.title.text
+            .replace(' inc ', ' including ')
+            .replace(' inc. ', ' including ')
+        : '',
     },
     xAxis: {
       categories: chartObject.xAxis.categories,
       title: {
-        text: chartObject.xAxis.title.text? chartObject.xAxis.title.text
-          .replace('inc', 'including')
-          .replace('inc.', 'including'): '',
+        text: chartObject.xAxis.title.text
+          ? chartObject.xAxis.title.text
+              .replace(' inc ', ' including ')
+              .replace(' inc. ', ' including ')
+          : '',
       },
     },
     yAxis: {
       title: {
-        text: chartObject.yAxis.title.text? chartObject.yAxis.title.text
-          .replace('inc', 'including')
-          .replace('inc.', 'including'): '',
+        text: chartObject.yAxis.title.text
+          ? chartObject.yAxis.title.text
+              .replace(' inc ', ' including ')
+              .replace(' inc. ', ' including ')
+          : '',
       },
       min: 0,
       max: 100,
@@ -385,8 +388,8 @@ function panelBarchart(container_id, chartObject) {
       ? ''
       : "<div class='small-chart-title'>" +
         chartObject.title
-          .replace('inc', 'including')
-          .replace('inc.', 'including') +
+          .replace(' inc ', ' including ')
+          .replace(' inc. ', ' including ') +
         '</div>';
 
   for (var c in chartObject.panels) {
@@ -518,9 +521,11 @@ function smallBarchart(container_id, chartObject, yAxisMax) {
       },
     },
     title: {
-      text: chartObject.title.text? chartObject.title.text
-        .replace('inc', 'including')
-        .replace('inc.', 'including'): '',
+      text: chartObject.title.text
+        ? chartObject.title.text
+            .replace(' inc ', ' including ')
+            .replace(' inc. ', ' including ')
+        : '',
     },
     xAxis: {
       categories: chartObject.xAxis.categories,
@@ -703,9 +708,11 @@ function smallLinechart(container_id, chartObject, max, min) {
 
   var yaxis = {
     title: {
-      text: chartObject.yAxis.title.text? chartObject.yAxis.title.text
-      .replace('inc', 'including')
-      .replace('inc.', 'including'): '',
+      text: chartObject.yAxis.title.text
+        ? chartObject.yAxis.title.text
+            .replace(' inc ', ' including ')
+            .replace(' inc. ', ' including ')
+        : '',
     },
     labels: {
       format:
@@ -742,9 +749,11 @@ function smallLinechart(container_id, chartObject, max, min) {
     },
     colors: setColour(chartObject),
     title: {
-      text: chartObject.title.text? chartObject.title.text
-      .replace('inc', 'including')
-      .replace('inc.', 'including'): '',
+      text: chartObject.title.text
+        ? chartObject.title.text
+            .replace(' inc ', ' including ')
+            .replace(' inc. ', ' including ')
+        : '',
       useHTML: true,
     },
     legend: {
@@ -1019,10 +1028,29 @@ function replaceOldSeriesColors(chartObject) {
 
 function replaceIncValues(chartObject) {
   var i;
-  for (i = 0; i < chartObject.series.length; i++) {
-    chartObject.series[i].name = chartObject.series[i].name
-      .replace('inc', 'including')
-      .replace('inc.', 'including');
+
+  if (chartObject.series && chartObject.series.length) {
+    for (i = 0; i < chartObject.series.length; i++) {
+      chartObject.series[i].name = chartObject.series[i].name
+        .replace(' inc ', ' including ')
+        .replace(' inc. ', ' including ');
+    }
+  }
+
+  if (chartObject.xAxis.categories && chartObject.xAxis.categories.length) {
+    for (i = 0; i < chartObject.xAxis.categories.length; i++) {
+      chartObject.xAxis.categories[i] = chartObject.xAxis.categories[i]
+        .replace(' inc ', ' including ')
+        .replace(' inc. ', ' including ');
+    }
+  }
+
+  if (chartObject.parents && chartObject.parents.length) {
+    for (i = 0; i < chartObject.parents.length; i++) {
+      chartObject.parents[i] = chartObject.parents[i]
+        .replace(' inc ', ' including ')
+        .replace(' inc. ', ' including ');
+    }
   }
 
   return chartObject;
