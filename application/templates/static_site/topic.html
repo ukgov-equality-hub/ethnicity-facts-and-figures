@@ -54,7 +54,7 @@
                         <a href="{{ url_for('cms.create_measure', topic_slug=topic.slug, subtopic_slug=subtopic.slug) }}"
                            class="govuk-button">Create a new page
                            <span class="sr-only"> within
-                                {{ topic.title }}</span></a>
+                                {{ subtopic.title }} subtopic</span></a>
                         {% endif %}
                         {% endif %}
                         {% if measures_by_subtopic[subtopic.id] %}
