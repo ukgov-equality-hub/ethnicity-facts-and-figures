@@ -441,6 +441,7 @@ function chartMax(panelChartObject) {
 function yAxisMaxValue(panelChartData) {
   var max = 0;
   var hasOnePercent = false;
+  var hasLessThanOnePercent = false;
 
   var series = panelChartData;
   for (var i = 0; i < panelChartData.length; i++) {
@@ -451,14 +452,21 @@ function yAxisMaxValue(panelChartData) {
         if (seriesValue === 1) {
           hasOnePercent = true;
         }
+
+        if (seriesValue < 1 && seriesValue > 0) {
+          hasLessThanOnePercent = true;
+        }
       }
     }
   }
-
+  console.log(max)
   if (hasOnePercent && max < 50) {
     return 60;
   } else if (hasOnePercent) {
     return 75;
+  }
+  else if (hasLessThanOnePercent) {
+    return 10;
   }
 
   return max;
@@ -466,6 +474,10 @@ function yAxisMaxValue(panelChartData) {
 
 function smallBarchart(container_id, chartObject, yAxisMax) {
   preprocessChartObject(chartObject);
+
+
+  var yMax = yAxisMax === 10 ? yAxisMax : (yAxisMax < 50 ? 60 : yAxisMax) * 1.05;
+
 
   var showLastLabel = small_barchart_show_last_label(chartObject);
 
@@ -544,7 +556,7 @@ function smallBarchart(container_id, chartObject, yAxisMax) {
       },
     },
     yAxis: {
-      max: (yAxisMax < 50 ? 60 : yAxisMax) * 1.05,
+      max: yMax ,
       title: {
         text: '',
       },
@@ -565,8 +577,11 @@ function smallBarchart(container_id, chartObject, yAxisMax) {
           enabled: true,
           color: ['#000', '#fff'],
           verticalAlign: 'middle',
+          align: 'right',
           useHTML: true,
+          inside: yMax === 10 ? true : false,
           y: 3,
+          x:  yMax === 10 ? 45 : null,
           style: {
             textOutline: false,
             fontSize: chartObject.series.length <= 1 ? '17px' : '14px',
