@@ -271,9 +271,9 @@
                 {{ manage_measure_version_data_source(measure_version=measure_version, data_source=measure_version.primary_data_source, description="primary") }}
             </div>
 
-            {% if measure_version.primary_data_source %}
-            {{ manage_measure_version_data_source(measure_version=measure_version, data_source=measure_version.secondary_data_source, description="secondary") }}
-            {% endif %}
+                {% if measure_version.primary_data_source %}
+                 {{ manage_measure_version_data_source(measure_version=measure_version, data_source=measure_version.secondary_data_source, description="secondary") }}
+                {% endif %}
             {% endif %}
         </div>
     </div>

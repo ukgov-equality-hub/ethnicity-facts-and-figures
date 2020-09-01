@@ -334,6 +334,28 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('table-options-error').classList.remove('hidden')
         }
         if (tipsOfType(tips, MISSING_FIELD_ERROR).length > 0) {
+
+            switch (tips[0].field) {
+                case 'custom_classification__selector':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Set custom classification"
+                    break;
+                case 'ethnicity-as-row__columns':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Set required column groups"
+                    break;
+                case 'ethnicity-as-row__column-order':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Set column group order"
+                    break;
+                case 'ethnicity-as-column__rows':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Set required table rows"
+                    break;
+                case 'ethnicity-as-column__row-order':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Set table row order"
+                    break;
+                case 'table_column_1':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Set table header for first column"
+                    break;
+            }
+
             document.getElementById('tip__required-settings').classList.remove('hidden')
             document.getElementById("settings-error-anchor-link").href = "#" + tips[0].field + "-error";
             var el = document.getElementById(tips[0].field + "-error")

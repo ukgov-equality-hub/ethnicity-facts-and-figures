@@ -36,7 +36,7 @@ def get_form_errors(forms=None, extra_non_form_errors=None):
     for form in forms:
         for field_name, error_message in form.errors.items():
             form_field = getattr(form, field_name)
-            errors.append(ErrorSummaryMessage(text=error_message[0], href=f"#{form_field.id}-label"))
+            errors.append(ErrorSummaryMessage(text=error_message[0], href=f"#{form_field.id}"))
 
     if extra_non_form_errors:
         errors.extend(extra_non_form_errors)
