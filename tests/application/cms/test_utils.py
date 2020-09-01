@@ -42,16 +42,16 @@ class TestGetErrorSummaryDetails:
         form = self.FormForTest()
         form.validate()
 
-        assert get_form_errors(forms=[form]) == [ErrorSummaryMessage(href="#field-label", text="invalid field")]
+        assert get_form_errors(forms=[form]) == [ErrorSummaryMessage(href="#field", text="invalid field")]
 
     def test_get_errors_appends_extra_non_form_errors(self):
         form = self.FormForTest()
         form.validate()
-        additional_error_message = ErrorSummaryMessage(href="#other-label", text="bad field")
+        additional_error_message = ErrorSummaryMessage(href="#other", text="bad field")
 
         assert get_form_errors(forms=[form], extra_non_form_errors=[additional_error_message]) == [
-            ErrorSummaryMessage(href="#field-label", text="invalid field"),
-            ErrorSummaryMessage(href="#other-label", text="bad field"),
+            ErrorSummaryMessage(href="#field", text="invalid field"),
+            ErrorSummaryMessage(href="#other", text="bad field"),
         ]
 
     def test_base_template_renders_error_summary(self):

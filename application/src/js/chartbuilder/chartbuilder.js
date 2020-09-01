@@ -305,10 +305,41 @@ $(document).ready(function () {
         if (tipsOfType(tips, DATA_ERROR_MISSING_DATA).length > 0) {
             document.getElementById('tip__missing-data').classList.remove('hidden')
         }
-        // if (tipsOfType(tips, MISSING_FIELD_ERROR).length > 0) {
-        //     document.getElementById('notes_container').classList.remove('hidden')
-        // }
         if (tipsOfType(tips, MISSING_FIELD_ERROR).length > 0) {
+
+            console.log(tips)
+
+            switch (tips[0].field) {
+                case 'custom_classification__selector':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Set custom classification"
+                    break;
+                case 'chart_type_selector':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Select appropriate chart type"
+                    break;
+                case 'line__x-axis_column':
+                case 'panel-line__x-axis_column':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Select a value for the horizontal (X) axis"
+                        break;
+                case 'grouped-bar__bar_column':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Set sub-grouping value"
+                    break;
+                case 'grouped-bar__groups_column':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Set major grouping value"
+                    break;
+                case 'component__bar_column':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Select bars value"
+                    break;
+                case 'component__section_column':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Select sections value"
+                    break;
+                case 'panel-bar__bar_column':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Select bars value"
+                    break;
+                case 'panel-bar__panel_column':
+                    document.getElementById("settings-error-anchor-link").innerHTML = "Select panels value"
+                    break;
+            }
+
             document.getElementById('tip__required-settings').classList.remove('hidden')
             document.getElementById("settings-error-anchor-link").href = "#" + tips[0].field + "-error";
             var el = document.getElementById(tips[0].field + "-error")
