@@ -12,6 +12,7 @@ class DesignSystemMarkdownProcessor(Treeprocessor):
             a.set("class", "govuk-link")
             if ".pdf" in a.get("href"):
                 a.set("target", "_blank")
+                a.text = a.text + " (opens in a new window or tab)"
 
         for ul in root.iter("ul"):
             ul.set("class", "govuk-list govuk-list--bullet eff-list--sparse")
