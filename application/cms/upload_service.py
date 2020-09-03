@@ -67,6 +67,7 @@ class UploadService(Service):
         return encoding.upper()
 
     def sanitise_file(self, filename):
+        self.logger.info("Sanitising file")
         with open(filename, "r+") as to_sanitise:
             contents = to_sanitise.read()
 
@@ -115,6 +116,7 @@ class UploadService(Service):
             except UploadError:
                 raise
 
+            self.logger.info("Uploading file to AWS")
             page_file_system.write(tmp_file, "source/%s" % secure_filename(filename))
 
         return page_file_system

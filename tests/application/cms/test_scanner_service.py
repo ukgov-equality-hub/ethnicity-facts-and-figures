@@ -19,7 +19,7 @@ def test_file_is_posted_to_remote_api(scanner_service, requests_mocker):
         with TemporaryFile() as tmpfile:
             scanner_service.scan_file(filename="test", fileobj=tmpfile)
 
-    requests_mocker.post("http://scanner-service/requests", json={"status": "ok"})
+    requests_mocker.post("http://scanner-service", json={"status": "ok"})
 
     # Check that we no longer get an exception after mocking the intended target endpoint
     with TemporaryFile() as tmpfile:
@@ -31,7 +31,7 @@ def test_scanner_service_respects_config_enabled(enabled, scanner_service, reque
     scanner_service.enabled = enabled
 
     if enabled:
-        requests_mocker.post("http://scanner-service/requests", json={"status": "ok"})
+        requests_mocker.post("http://scanner-service", json={"status": "ok"})
 
     with TemporaryFile() as tmpfile:
         assert scanner_service.scan_file(filename="test", fileobj=tmpfile) is enabled
@@ -48,7 +48,7 @@ def test_scanner_service_respects_config_enabled(enabled, scanner_service, reque
     ),
 )
 def test_exception_raised_for_scan_results(status, expected_exception, scanner_service, requests_mocker):
-    requests_mocker.post("http://scanner-service/requests", json={"status": status})
+    requests_mocker.post("http://scanner-service", json={"status": status})
 
     context_manager = pytest.raises(expected_exception) if expected_exception else suppress()
     with context_manager:
@@ -70,7 +70,7 @@ def test_exception_raised_for_scan_results(status, expected_exception, scanner_s
 def test_scanner_service_logging(enabled, status, expected_log_message, scanner_service, requests_mocker):
     scanner_service.enabled = enabled
 
-    requests_mocker.post("http://scanner-service/requests", json={"status": status})
+    requests_mocker.post("http://scanner-service", json={"status": status})
 
     with LogCapture("application.cms.scanner_service") as log_catcher:
         with TemporaryFile() as tmpfile:
