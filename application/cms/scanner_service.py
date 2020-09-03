@@ -31,7 +31,7 @@ class ScannerService(Service):
         """
         if self.enabled:
             response = requests.post(
-                f"{self.base_url}/requests", headers={"Authorization": f"Bearer {self.token}"}, files={"file": fileobj}
+                f"{self.base_url}", headers={"Authorization": f"Bearer {self.token}"}, files={"file": fileobj}
             )
 
             status = response.json()["status"].lower()
