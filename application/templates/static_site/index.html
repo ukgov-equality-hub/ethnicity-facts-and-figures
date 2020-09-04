@@ -86,10 +86,22 @@ outcomes for people in the UK, produced by the Race Disparity Audit{% endblock %
     </div>
 
     <ul class="govuk-list">
-      {% for topic_batch in (topics|selectattr('has_published_measures') if static_mode else topics)|batch(3) %}
+
+
       <div class="govuk-grid-row topic-row govuk-!-margin-bottom-3">
+
+        <div class="govuk-grid-column-one-third govuk-!-margin-bottom-3">
+          <li>
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">
+              <a class="govuk-link"
+                 href="{{ url_for('static_site.covid19') }}">Coronavirus (COVID-19)</a>
+            </h3>
+            <p class="govuk-body">Deaths and other disparities, risk factors, economic and educational impacts</p>
+          </li>
+        </div>
+        {% for topic_batch in (topics|selectattr('has_published_measures') if static_mode else topics)|batch(3) %}
         {% for topic in topic_batch %}
-        <div class="govuk-grid-column-one-third topic">
+        <div class="govuk-grid-column-one-third topic govuk-!-margin-bottom-3">
           <li>
             <h3 class="govuk-heading-s govuk-!-margin-bottom-1">
               <a class="govuk-link"
@@ -100,8 +112,9 @@ outcomes for people in the UK, produced by the Race Disparity Audit{% endblock %
           </li>
         </div>
         {% endfor %}
+        {% endfor %}
       </div>
-      {% endfor %}
+
     </ul>
 
     <div class="govuk-grid-row govuk-!-margin-bottom-3"

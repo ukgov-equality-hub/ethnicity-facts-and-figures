@@ -329,3 +329,8 @@ def style_guide_ethnic_groups():
 @static_site_blueprint.route("/newsletter")
 def newsletter():
     return render_template("static_site/static_pages/newsletter.html")
+
+
+@static_site_blueprint.route("/covid-19")
+def covid19():
+    return render_template("static_site/static_pages/covid-19.html")

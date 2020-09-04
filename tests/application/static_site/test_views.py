@@ -619,6 +619,7 @@ def test_view_measure_page(test_app_client, logged_in_rdu_user):
 
 
 @flaky(max_runs=10, min_passes=1)
+@pytest.mark.skip(reason="Template has been changed. There is only one row now")
 @pytest.mark.parametrize(["number_of_topics", "row_counts"], ((1, (1,)), (3, (3,)), (5, (3, 2)), (9, (3, 3, 3))))
 def test_homepage_topics_display_in_rows_with_three_columns(
     number_of_topics, row_counts, test_app_client, logged_in_rdu_user
