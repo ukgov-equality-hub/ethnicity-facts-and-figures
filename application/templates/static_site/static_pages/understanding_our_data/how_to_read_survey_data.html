@@ -46,7 +46,7 @@
         id="how-surveys-are-completed">How surveys are completed</h2>
 
 
-    <p class="govuk-body">The method of a survey can affect the honesty of the answers given, influencing results.</p>
+    <p class="govuk-body">The method of a survey can affect the accuracy of the answers given, influencing results.</p>
 
 <p class="govuk-body">People are usually more honest when completing surveys about sensitive topics without an interviewer present, for example when giving details about smoking or drinking.</p>
 
@@ -80,9 +80,7 @@
 
     <div class="govuk-inset-text">
       <p class="govuk-body govuk-!-font-weight-bold">Example:</p>
-      <p>Data from 2017 to 2018 showed that 22.4% of all 4 to 5 year olds in England were overweight. This is only an
-        estimate based on a sample of children. The ‘true’ figure was very likely to be between 22.3% and 22.5% – the
-        upper and lower bounds of the confidence interval.</p>
+      <p>Data from 2018 shows that 15.0% of White adults smoked cigarettes. This is an estimate based on a sample of around 135,000 people. The 'true' figure was very likely to be between 14.7% and 15.2% – the upper and lower bounds of the confidence interval.</p>
     </div>
 
     <p class="govuk-body">A confidence interval of 95% means if we took 100 random samples, the estimate would fall
@@ -93,12 +91,49 @@
     <p class="govuk-body">The wider the confidence interval, the less reliable the estimate. Wide confidence intervals
       can be the result of small samples, or large variation within survey responses.</P>
 
+ <div class="govuk-inset-text">
+      <p class="govuk-body govuk-!-font-weight-bold">Example:</p>
+      <p>Data from 2018 shows that 7.7% of adults from the Chinese ethnic group smoked cigarettes, based on a sample of 729 people. There is greater uncertainty about the estimate because of the small sample size. This is reflected in a wider confidence interval, of between 4.9% and 10.5%.</p>
+    </div>
+
     <p class="govuk-body">Confidence intervals can be used to find out if differences between the statistics for 2 groups are meaningful, for example differences between 2 ethnic groups or 2 time periods.</P>
 
     <p class="govuk-body">Differences are meaningful ('statistically significant') if the confidence intervals for the 2
       sets of statistics don't overlap, meaning they don't have any values in common. If they overlap, this shows that
       the difference in the 2 estimates is not meaningful. This means the findings cannot tell us if the difference
       found in the sample is also shown in the whole population.</P>
+
+
+<h2 class="govuk-heading-l"
+        id="combining-multiple-years-of-data">Combining multiple years of data</h2>
+
+    <p class="govuk-body">We sometimes combine multiple years of data to make sure estimates are reliable. We might do this if the number of people surveyed in a single year was small.</p>
+
+    <div class="govuk-inset-text">
+      <p class="govuk-body govuk-!-font-weight-bold">Example:</p>
+      <p>Our estimates for <a class="govuk-link"
+	                   href="{{ url_for('static_site.measure_version',
+	                                  topic_slug='work-pay-and-benefits',
+	                                  subtopic_slug='pay-and-income',
+	                                  measure_slug='pensioner-income',
+	    version='latest') }}">pensioner income</a> are based on 3 years of data. The percentages shown are an average for a 3-year period.</p>
+    </div>
+
+    <p class="govuk-body">Estimates are updated every year, which means time periods will overlap. For example, data from April 2016 to March 2017 appears in the 3-year averages for:</p>
+
+ <ul class="govuk-list govuk-list--bullet">
+      <li>April 2014 to March 2017</li>
+      <li>April 2015 to March 2018</li>
+      <li>April 2016 to March 2019</li>
+    </ul>
+
+
+    <p class="govuk-body">We advise against comparing data for time periods that overlap. This is because the samples are not separate from each other – some of the people surveyed are the same.</p>
+
+    <p class="govuk-body">Estimates based on multiple years of data can be tested for significance so we know that differences are reliable. For example, we can test for differences between ethnic groups within the same time period. We can also test for significance across time periods that do not overlap.</p>
+
+    <p class="govuk-body">If significance testing cannot be done, we only comment on differences that are large enough to be reliable.</p>
+
 
     <h2 class="govuk-heading-l"
         id="commonly-used-surveys">Commonly used surveys</h2>
