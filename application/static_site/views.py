@@ -334,3 +334,13 @@ def newsletter():
 @static_site_blueprint.route("/covid-19")
 def covid19():
     return render_template("static_site/static_pages/covid-19.html")
+
+
+@static_site_blueprint.route("/accessibility-statement")
+def accessibility_statement():
+    return render_template("static_site/static_pages/accessibility-statement.html")
+
+
+@static_site_blueprint.route("/blog-posts")
+def blog_posts():
+    return render_template("static_site/static_pages/blog-posts.html")
