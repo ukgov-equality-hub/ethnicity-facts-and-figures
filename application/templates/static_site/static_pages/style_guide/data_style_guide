@@ -1,0 +1,526 @@
+{% extends "base.html" %}
+{% from "_macros/_back_to_top.html" import appBackToTop %}
+
+{% from "_macros/_accordion.html" import govukAccordion %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for("static_site.style_guide"), "text": "Style guide"},
+    {"url": "", "text": "Data style guide"}
+  ]
+%}
+
+{% block pageTitle %}Data style guide for Ethnicity facts and figures - GOV.UK{% endblock %}
+{% block metaDescription %}{% endblock %}
+{% block socialTitle %}Data style guide{% endblock %}
+{% block socialDescription %}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Ethnicity in the UK');{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2">
+      Data style guide
+    </h1>
+
+    <p class="govuk-body">Intro blurb.</p>
+
+    <div id="toc">
+      <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+      <ol class="eff-table-of-contents">
+        <li><a class="govuk-link"
+             href="#types of chart">
+            <span class="eff-table-of-contents__number">1. </span><span class="eff-table-of-contents__content">Types of chart</span></a>
+        </li>
+        <li><a class="govuk-link"
+             href="#ethnic-categories">
+            <span class="eff-table-of-contents__number">2. </span><span class="eff-table-of-contents__content">Ethnic categories</span></a>
+        </li>
+        <li><a class="govuk-link"
+             href="#update-this3">
+            <span class="eff-table-of-contents__number">3. </span><span class="eff-table-of-contents__content">3rd heading</span></a></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+
+<h2 class="govuk-heading-l govuk-!-margin-top-4"
+        id="types-of-chart">1. Types of chart</h2>
+
+    <p class="govuk-body">There are 5 types of chart:</p>
+
+   <ul class="govuk-list govuk-list--bullet">
+      <li>bar chart</li>
+      <li>component bar chart</li>
+          <li>multiple bar charts</li>
+      <li>line chart</li>
+      <li>multiple line charts</li>
+  
+    </ul>
+
+    <h3 class="govuk-heading-m"
+        id="bar-charts-component-charts-multiple-bar-charts">Bar charts, component charts and multiple bar charts</h3>
+
+    <p class="govuk-body">Use bar charts, component charts and multiple bar charts for cross-sectional data, or for very short time series (2 or 3 years).</p>
+    
+        <p class="govuk-body">Use a bar chart if:</p>
+
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the data is broken down by ethnicity only – show the values for both ‘parent’ and ‘child’ ethnic groups if they’re available</li>
+      <li>the data is broken down by ethnicity and a second factor, and the second factor has 3 groups or fewer</li>
+    </ul>
+
+ <p class="govuk-body">Use a component chart if:</p>
+
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the percentages for all ethnic groups add up to 100%</li>
+      <li>the data is broken down by ethnicity and an additional variable (for example, gender) and the percentages for either ethnicity or the additional variable add up to 100%</li>
+    </ul>
+
+ <p class="govuk-body">It's best to use a component chart to display data divided into 2 categories. This allows users to easily compare values in the chart.</p>
+
+ <p class="govuk-body">For charts showing data divided into 3 or 4 categories, you can use a component chart but it’s recommended that you use a multiple bar chart instead.</p>
+
+ <p class="govuk-body">Use a multiple bar chart if:</p>
+
+  <ul class="govuk-list govuk-list--bullet">
+      <li>the data is broken down by ethnicity and an additional variable, and the additional variable has 4 groups or more</li>
+    </ul>
+
+ <p class="govuk-body">If you’re using a multiple bar chart to represent data broken down by ethnicity and an additional variable (for example, regions in the UK), there should be a chart for each category of the additional variable (instead of for each ethnic group). For example, if the data is broken down by ethnicity and regions/countries in the UK, there should be a chart for each region/country, so that all ethnic groups are shown in each chart.</p>
+
+ <p class="govuk-body">There should be no more than 16 smaller charts, and no more than 10 bars within each chart.</p>
+
+    <h3 class="govuk-heading-m"
+        id="line-charts-multiple-line-charts">Line charts and multiple line charts</h3>
+
+    <p class="govuk-body">Use line charts and multiple line charts for most time series data.</p>
+    
+    <p class="govuk-body">A single line chart is preferable to a multiple line chart.</p>
+
+    <p class="govuk-body">A multiple line chart should be used if a single line chart would be difficult to read because:</p>
+
+
+  <ul class="govuk-list govuk-list--bullet">
+      <li>there are more than 6 groups to compare</li>
+      <li>the lines are very close together or overlapping</li>
+    </ul>
+
+    <p class="govuk-body">Multiple line charts must all have the same horizontal and vertical scales, and they should show a single line only.</p>
+
+    <p class="govuk-body">The vertical axis should start from zero where the metric is a percentage.</p>
+
+    <p class="govuk-body">When there are few lines to compare but they are very close together, they can be presented in a line chart (rather than multiple line charts) but changing the minimum value in the y axis. However, testing has shown this approach is less easily read. Read how this is done in the section ‘Chart values and labels’ in this guide.</p>
+
+<h2 class="govuk-heading-l govuk-!-margin-top-4"
+        id="ethnic-categories">2. Ethnic categories</h2>
+
+Ethnic categories should follow those listed in the [style guide A to Z](/a-z) where possible.
+
+If departments have submitted different categories, amend them to match the [style guide A to Z](/a-z) if you can. For example, if the original dataset uses ‘White’ and ‘BME’, rename ‘BME’ to ‘Other’.
+
+If the original dataset uses categories that don’t fit with any of the groupings in the [style guide A to Z](/a-z), don’t update them. (For example, [Internet Use](https://www.ethnicity-facts-figures.service.gov.uk/culture-and-community/digital/internet-use/latest) uses the following 4 ethnic categories: Asian, Black, White, Other (including Mixed)).
+
+Make sure the ethnic categories used in a measure are the same across tables and charts. Don’t change the categories in data download files.
+
+Use the label ‘Unknown’ for categories where the ethnicity isn’t known or stated.
+
+### Broad and specific ethnic groups
+
+When the data provided by departments includes specific ethnic categories (‘child’ categories), you should group them by broad categories (‘parent’ categories) so that charts and tables display both broad and specific categories. For example, see [Time spent living in current home](https://www.ethnicity-facts-figures.service.gov.uk/housing/owning-and-renting/time-spent-living-in-current-home/latest) (first dimension).
+
+For example, you can group the specific categories ‘Black African’, ‘Black Caribbean’ and ‘Black other’ under the broad category ‘Black’.
+
+Include statistics for both broad and specific groups where they’re provided by departments, but don’t include statistics for broad groups if the department’s statistics only include specific groups (that is, don’t manually create totals for broad groups).
+
+### People with ‘unknown’ ethnicity
+
+Statistics on ‘Ethnicity facts and figures’ should be consistent with those presented by departments.
+
+Include information on the number of people with unknown ethnicity, and whether they are used in the calculations, in the section ‘What the data measures’. If no data on unknowns is provided, specify this in ‘The ethnic categories used in this data’.
+
+Don’t include an analysis of people with unknown ethnicity in the commentary unless there’s an important reason for doing so (for example, an unusually high number of people of unknown ethnicity).
+
+## Tables
+
+All dimensions must include a table. They give the user an alternative way to view the data, and can be used to include extra information (like sample sizes).
+
+When creating tables in the table builder, select the ‘Standard ethnicity’ option in all relevant fields (such as ‘Rows’ and ‘Grouping’). If the field has a text box, enter ‘Ethnicity’.
+
+### Which data to include
+
+In addition to percentages or rates, tables can also include other data, such as sample sizes, to help the user understand the data presented.
+
+As a general rule:
+
+* in survey data, include the sample size or total number of respondents (denominator) in tables – make sure it’s clearly labelled in the header row of the table (for example, ‘All respondents’)
+* in administrative data, include both the sample size (denominator) and the numerator
+
+For standardised data (like age-standardised data for health measures), don’t include the sample size (denominator) or numerator. Instead only express results in terms of a percentage of the group being measured.
+
+The data you include in a table will depend on:
+
+* the type of data the measure is based on (survey or administrative data)
+* the size of the table
+
+There isn’t a minimum or maximum number of columns and rows a table should have, but you should:
+
+* avoid overwhelming the user with figures in tables for dimensions cut by ethnicity and other factors
+* preview your tables after you’ve built them – if they are too wide and the user has to scroll horizontally in order to view the full table, you should try to find other ways to present your data, like putting ethnic groups in columns instead of rows, or excluding the numerator or denominator if they’re not essential to understanding the data
+
+### Columns and rows
+
+Table rows should usually be labelled by ethnic group, while columns should be labelled by other factors for cutting the data (years, age groups, etc).
+
+Only label columns by ethnic group if:
+
+* the table is part of a ‘by area’ dimension, showing regions, local authorities or other geographic breakdowns
+* the number of ethnic groups is smaller than the number of categories in the other factor, and putting ethnic groups in columns would mean less or no scrolling – for example, see [Statutory homelessness](https://www.ethnicity-facts-figures.service.gov.uk/housing/homelessness/statutory-homelessness/latest) where there are 10 categories for ‘year’ and 8 ethnic groups
+
+Group columns in tables if they present different statistics for the same variable – for example, see [Self-inflicted deaths in prison custody](https://www.ethnicity-facts-figures.service.gov.uk/crime-justice-and-the-law/prison-and-custody-incidents/self-inflicted-deaths-in-prison-custody/latest).
+
+### Header rows
+
+Use the following labels in table header rows:
+
+* ‘Ethnicity’ for ethnic groups – this should be used when you are presenting ethnic groups
+* % (a percentage sign) where relevant – don’t use percentage signs alongside values within the table
+* ‘Region’ or ‘Local authority’ for areas and regions – or the type of geography that corresponds to the data presented
+
+Numbers in the table should include commas to separate thousands.
+
+## Ordering data
+
+Use the ‘ordering’ options in the content management system (CMS) to select the right order for categories in charts and tables. Use alphabetical ordering except when you’re ordering:
+
+* ethnic groups
+* socio-economic classifications
+* UK regions
+* workforce grades and military ranks
+
+### Ethnic groups
+
+Order the groups using the ‘parent-child’ option – this lists the ethnic groups alphabetically, with ‘All’ appearing first, and ‘Other’ and ‘Unknown’ at the end.
+
+### Socio-economic classifications (NS-SEC)
+
+Follow the standard order for that classification, with higher-level occupations appearing at the top and lower-level occupations at the end.
+
+### UK regions and countries
+
+Follow the North-South zig-zag pattern through England, with other UK countries at the end:
+
+
+* North East
+* North West
+* Yorkshire and the Humber
+* East Midlands
+* West Midlands
+* East of England
+* London
+* South East
+* South West
+* Wales
+* Scotland
+* Northern Ireland
+
+
+### Workforce grades and military ranks
+
+Put in grade order, from highest to lowest.
+
+## Data
+
+### Missing data
+
+There should not be any empty cells in charts, tables and data downloads.
+
+Use the following symbols where data is missing:
+
+<ul class="symbols-list">
+<li><kbd>!</kbd> data withheld for confidentiality</li>
+<li><kbd>?</kbd> data not shown because small sample size makes it unreliable</li>
+<li><kbd>-</kbd> data not collected [or otherwise unavailable]</li>
+<li><kbd>N/A</kbd> data not applicable (eg no meaningful numerator)</li>
+</ul>
+
+The CMS automatically adds footnotes explaining what the symbols mean.
+
+### Rounding
+
+Depending on the quality of the data, round numbers in charts and tables to either:
+
+* whole numbers
+* 1 decimal place
+
+As a rule of thumb, round good quality data to 1 decimal place, and poor quality data to whole numbers.
+
+When you’ve decided which approach to take, make a note in the ‘Rounding’ section of the commentary template explaining what you did and why.
+
+Rounding must be consistent across tables, charts and commentary in the same measure.
+
+The data in download files should be unrounded.
+
+
+
+### Chart values and labels
+
+When creating charts in the chart builder, select the ‘Standard ethnicity’ group in all fields that refer to ethnicity categories (‘Primary grouping’, ‘Secondary grouping’, ‘Panels’, etc). If the field has a text box, enter ‘Ethnicity’.
+
+If the values in the data are percentages, import the data as numbers rather than percentages in all data files (chart, table and download files).
+
+The ‘Number format’ section in the CMS chart builder lets you choose between ‘Percentage’ and ‘Other’.
+
+Choose ‘Percentage’ if you want the y axis to start at 0% and end at 100%.
+
+Choose ‘Other’ if you want the y axis to have a range different than 0% to 100%. You should always have 0% as the minimum value, but some situations may call for a different maximum value: for example to avoid graph lines being too close together or if all the data ranges between 0% and 30%. The chart builder will automatically set 0% as the minimum value and an appropriate maximum value for the data presented, but if you want to select these values yourself, enter them in the ‘Minimum’ and ‘Maximum’ fields. Finally, if you select the ‘Other’ option, you must add the sign ‘%’ in the ‘Suffix’ field.
+
+Don’t add any labels to charts because:
+
+* the description for both axes should be included within the chart title (for example, ‘Percentage of…’)
+* the values of the horizontal axis should also be evident from the grid line labels
+* labels inside charts are added automatically by the CMS
+
+### Download files
+
+Download files contain all the data used in the charts and tables, as well as some additional data.
+
+Use the following names for the variables within download files to make sure they’re consistent across different measures:
+
+* measure
+* ethnicity
+* time
+* gender or sex – use the same term provided by the department/in the source data
+* age
+* geography
+* value
+* numerator
+* denominator
+* upper bound
+* lower bound
+
+The names of the variables listed in the ‘Download description’ for each measure should be broadly the same as those in the download file – but say ‘confidence intervals’ rather than ‘upper bound’ and ‘lower bound’. Explain any other differences in the download description.
+
+The variables listed depend on the content of the download file.
+
+
+
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-4"
+        id="ethnic-minorities-and-ethnic-groups">1. Ethnic minorities and ethnic groups</h2>
+
+    <p class="govuk-body">Ethnicity facts and figures generally follows the <a class="govuk-link"
+         rel="external"
+         href="https://style.ons.gov.uk/category/house-style/language-and-spelling/#race-and-ethnicity">ethnicity
+        guidelines in the ONS style guide</a>. We have developed additional ways to write about ethnicity, ethnic
+      minorities and specific ethnic groups.</p>
+
+    <h3 class="govuk-heading-m"
+        id="ethnicity-and-race">Ethnicity and race</h3>
+
+    <p class="govuk-body">We refer to ethnicity and not race. This is because:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>surveys usually ask for your ethnicity and not your race</li>
+      <li>using consistent terms helps people to understand our data</li>
+    </ul>
+
+    <h3 class="govuk-heading-m"
+        id="ethnic-minorities">Ethnic minorities</h3>
+
+    <p class="govuk-body">We use ‘ethnic minorities’ to refer to all ethnic groups except the White British group.
+      Ethnic minorities
+      include
+      White minorities, such as Irish Travellers.</p>
+
+    <p class="govuk-body">For comparisons with the White group as a whole, we use ‘all other ethnic groups combined’ or
+      ‘ethnic minorities
+      (excluding White minorities)’. We also refer to ‘White’ and ‘Other than White’ if space is limited.</p>
+
+    <p class="govuk-body">We do not use ‘Non-White’ because defining groups in relation to the White majority was not
+      well received in user
+      testing.</p>
+
+    <h3 class="govuk-heading-m"
+        id="bame-bme-and-people-of-colour">BAME, BME and people of colour</h3>
+
+    <p class="govuk-body">We do not use Black, Asian and minority ethnic (BAME) or Black and minority ethnic (BME)
+      because:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the UK’s ethnic minorities include White minorities</li>
+      <li>they highlight some groups and not others – for example, Black and Asian people are included but not people of
+        a Mixed ethnicity</li>
+      <li>in user research, the acronyms BAME and BME were not well understood by our audience</li>
+    </ul>
+
+    <p class="govuk-body">Similarly, we do not use ‘people of colour’ as it does not include White minorities.</p>
+
+    <h3 class="govuk-heading-m"
+        id="broad-and-specific-ethnic-groups">Broad and specific ethnic groups</h3>
+
+    <p class="govuk-body">We avoid using ‘broad’ and ‘specific’ when referring to ethnic groups. For example, the ‘broad
+      Asian group’ or
+      the ‘specific Pakistani group’. This is because these terms aren’t widely used outside of data collection.</p>
+
+    <p class="govuk-body">If we need to, we refer to ethnic groups ‘as a whole’. For example, ‘the Black ethnic group as
+      a whole’.</p>
+
+    <h3 class="govuk-heading-m"
+        id="phrasing">Phrasing</h3>
+
+    <p class="govuk-body">In research, ‘People from a Black Caribbean background’, ‘the Black ethnic group’ and ‘Black
+      people’ were all
+      acceptable phrases. ‘Blacks’ was not.</p>
+
+    <p class="govuk-body">Similarly ‘People from a White British background’, ‘the White ethnic group’ and ‘White
+      people’ are all
+      acceptable.
+    </p>
+
+    <p class="govuk-body">However, don’t say ‘Mixed people’ or ‘Mixed race people’. Say ‘people from a Mixed ethnic
+      background’, ‘people
+      with a Mixed ethnicity’ or ‘people from the Mixed ethnic group’.</p>
+
+    <h3 class="govuk-heading-m"
+        id="gypsy-roma-and-traveller-ethnic-groups">Gypsy, Roma and Traveller ethnic groups</h3>
+
+    <p class="govuk-body">We differentiate between Gypsy, Roma and Irish Traveller communities.</p>
+
+    <p class="govuk-body">‘Gypsy or Irish Traveller’ is one of the <a class="govuk-link"
+         rel="external"
+         href="{{ url_for('static_site.style_guide_ethnic_groups').rstrip('/') }}">18 standardised ethnic groups</a>.
+      However data is sometimes collected for a Gypsy/Roma group or White Gypsy/Traveller group, for example.</p>
+
+    <p class="govuk-body">We don’t use slashes (/) in commentary as this can imply these terms are the same. Instead we
+      refer to:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>‘the Gypsy and Roma ethnic group’ or ‘Gypsy and Roma people’</li>
+      <li>‘the Gypsy and Traveller ethnic group’ or ‘Gypsy and Traveller people’</li>
+    </ul>
+
+    <p class="govuk-body">For example:</p>
+
+    <div class="govuk-inset-text">
+      29% of White Gypsy and Roma pupils met the expected standard in reading compared with 31% of
+      White Irish Traveller pupils</div>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="ordering-and-style">Ordering and style</h2>
+
+    <h3 class="govuk-heading-m"
+        id="capitalisation">Capitalisation</h3>
+
+    <p class="govuk-body">We capitalise all ethnic groups. For example, Asian, Black, Mixed, White, Gypsy, Irish
+      Traveller, and Other.</p>
+
+    <p class="govuk-body">This is because:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>ethnic groups such as Asian and Indian must take a capital so this maintains a consistent approach for all
+        groups
+      </li>
+      <li>it makes our content easier to read if we’re comparing ‘the Other ethnic group’ with other ethnic groups</li>
+    </ul>
+
+    <p class="govuk-body">For this reason in commentary we write, for example, ‘people from the Asian Other ethnic
+      group’. This is despite
+      the
+      fact the category is usually ‘Any other Asian background’.</p>
+
+    <h3 class="govuk-heading-m"
+        id="order-of-ethnic-categories">Order of ethnic categories</h3>
+
+    <p class="govuk-body">Generally, ONS orders categories in order of size. However, in research users were sometimes
+      offended when White
+      was
+      placed first in commentary, charts and tables. They were also confused by the way ethnic categories found in
+      different
+      contexts were presented in varying orders.</p>
+
+    <p class="govuk-body">Ethnic groups are therefore ordered alphabetically in charts and tables, with ‘Other’, and
+      occasionally
+      ‘Unknown’, as
+      a final category.</p>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="ethnicities-and-nationalities">Ethnicities and nationalities</h2>
+
+    <p class="govuk-body">These ethnic groups are also nationalities:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Bangladeshi</li>
+      <li>Chinese</li>
+      <li>Indian</li>
+      <li>Pakistani</li>
+    </ul>
+
+    <p class="govuk-body">Where there’s a risk of users mistaking ethnicities for nationalities, we avoid ambiguity by
+      writing:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>‘people from the Indian ethnic group’, not ‘Indian people’</li>
+      <li>‘pupils from the Chinese ethnic group’, not ‘Chinese pupils’</li>
+    </ul>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="help-us-stay-up-to-date">4. Help us stay up to date</h2>
+
+    <p class="govuk-body">Language usage and acceptability change over time. We want to make sure our content reflects
+      those changes. Contact us at <a class="govuk-link"
+         href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a> with your
+      thoughts and research.</p>
+
+  </div>
+
+  <div class="govuk-grid-column-one-third">
+    <div class="gem-c-contextual-sidebar">
+      <div class="gem-c-related-navigation">
+
+        <h2 id="related-nav-related_items"
+            class="govuk-heading-s govuk-!-padding-top-5">
+          Related content
+        </h2>
+
+        <nav role="navigation"
+             class="gem-c-related-navigation__nav-section"
+             aria-labelledby="related-nav-related_items">
+
+          <ul class="gem-c-related-navigation__link-list"
+              data-module="track-click">
+
+            <li class="gem-c-related-navigation__link">
+              <a class="govuk-link"
+                 href="{{ url_for('static_site.style_guide_principles').rstrip('/') }}"
+                 data-on="click"
+                 data-event-category="Related links"
+                 data-event-action="Clicked"
+                 data-event-label="Our writing principles">Our writing principles</a>
+            </li>
+
+            <li class="gem-c-related-navigation__link">
+              <a class="govuk-link"
+                 href="{{ url_for('static_site.style_guide_a_z').rstrip('/') }}"
+                 data-on="click"
+                 data-event-category="Related links"
+                 data-event-action="Clicked"
+                 data-event-label="Style guide A to Z">Style guide A to Z</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+</div>
+{{ appBackToTop(anchor="toc",text="Contents",attributes={"data-on": "click", "data-event-category":"Back to Top", "data-event-action": "Clicked", "data-event-label": "Contents"}) }}
+{% endblock %}
