@@ -854,7 +854,7 @@
         if ( chartObject ) {
           // code writes title as html and creates sub-container
           var chartContainer = 'chart_' + dimensions[ d ].guid;
-          var chartHtml = '<div class="govuk-grid-column-two-thirds">';
+          var chartHtml = '<div class="govuk-grid-column-full">';
           chartHtml = chartObject.title.text ? chartHtml + '<h3 class="govuk-heading-s">' + chartObject.title.text + '</h3>' : chartHtml;
           chartHtml = chartHtml + '<div id="' + chartContainer + '_image"></div>';
           chartHtml = chartHtml + '</div>';
