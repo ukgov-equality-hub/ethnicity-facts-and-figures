@@ -321,9 +321,13 @@ def style_guide_a_z():
 
 
 @static_site_blueprint.route("/style-guide/ethnic-groups")
-@login_required
 def style_guide_ethnic_groups():
     return render_template("static_site/static_pages/style_guide/ethnic_groups.html")
+
+
+@static_site_blueprint.route("style-guide/data-style-guide")
+def data_style_guide():
+    return render_template("static_site/static_pages/style_guide/data_style_guide.html")
 
 
 @static_site_blueprint.route("/newsletter")
