@@ -1,0 +1,485 @@
+{% extends "base.html" %}
+{% from "_macros/_back_to_top.html" import appBackToTop %}
+
+{% from "_macros/_accordion.html" import govukAccordion %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for("static_site.style_guide"), "text": "Style guide"},
+    {"url": "", "text": "Data style guide"}
+  ]
+%}
+
+{% block pageTitle %}Data style guide for Ethnicity facts and figures - GOV.UK{% endblock %}
+{% block metaDescription %}{% endblock %}
+{% block socialTitle %}Data style guide{% endblock %}
+{% block socialDescription %}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','Ethnicity in the UK');{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2">
+      Data style guide
+    </h1>
+
+    <p class="govuk-body">An introduction to charts and tables, including when to use the different types of chart, and
+      guidance on presenting data and using the chart and table builder in the Publisher.</p>
+
+    <div id="toc">
+      <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+      <ol class="eff-table-of-contents">
+        <li><a class="govuk-link"
+             href="#types of chart">
+            <span class="eff-table-of-contents__number">1. </span><span class="eff-table-of-contents__content">Types of
+              chart</span></a>
+        </li>
+        <li><a class="govuk-link"
+             href="#ethnic-categories">
+            <span class="eff-table-of-contents__number">2. </span><span class="eff-table-of-contents__content">Ethnic
+              categories</span></a>
+        </li>
+        <li><a class="govuk-link"
+             href="#tables">
+            <span class="eff-table-of-contents__number">3. </span><span
+                  class="eff-table-of-contents__content">Tables</span></a></li>
+        <li><a class="govuk-link"
+             href="#ordering-data">
+            <span class="eff-table-of-contents__number">4. </span><span class="eff-table-of-contents__content">Ordering
+              data</span></a></li>
+        <li><a class="govuk-link"
+             href="#data">
+            <span class="eff-table-of-contents__number">5. </span><span
+                  class="eff-table-of-contents__content">Data</span></a></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-4"
+        id="types-of-chart">1. Types of chart</h2>
+
+    <p class="govuk-body">There are 5 types of chart:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>bar chart</li>
+      <li>component bar chart</li>
+      <li>multiple bar charts</li>
+      <li>line chart</li>
+      <li>multiple line charts</li>
+
+    </ul>
+
+    <h3 class="govuk-heading-m"
+        id="bar-charts-component-charts-multiple-bar-charts">Bar charts, component charts and multiple bar charts</h3>
+
+    <p class="govuk-body">Use bar charts, component charts and multiple bar charts for cross-sectional data, or for very
+      short time series (2 or 3 years).</p>
+
+    <p class="govuk-body">Use a bar chart if:</p>
+
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the data is broken down by ethnicity only – show the values for both ‘parent’ and ‘child’ ethnic groups if
+        they’re available</li>
+      <li>the data is broken down by ethnicity and a second factor, and the second factor has 3 groups or fewer</li>
+    </ul>
+
+    <p class="govuk-body">Use a component chart if:</p>
+
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the percentages for all ethnic groups add up to 100%</li>
+      <li>the data is broken down by ethnicity and an additional variable (for example, gender) and the percentages for
+        either ethnicity or the additional variable add up to 100%</li>
+    </ul>
+
+    <p class="govuk-body">It's best to use a component chart to display data divided into 2 categories. This allows
+      users to easily compare values in the chart.</p>
+
+    <p class="govuk-body">For charts showing data divided into 3 or 4 categories, you can use a component chart but it’s
+      recommended that you use a multiple bar chart instead.</p>
+
+    <p class="govuk-body">Use a multiple bar chart if:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the data is broken down by ethnicity and an additional variable, and the additional variable has 4 groups or
+        more</li>
+    </ul>
+
+    <p class="govuk-body">If you’re using a multiple bar chart to represent data broken down by ethnicity and an
+      additional variable (for example, regions in the UK), there should be a chart for each category of the additional
+      variable (instead of for each ethnic group). For example, if the data is broken down by ethnicity and
+      regions/countries in the UK, there should be a chart for each region/country, so that all ethnic groups are shown
+      in each chart.</p>
+
+    <p class="govuk-body">There should be no more than 16 smaller charts, and no more than 10 bars within each chart.
+    </p>
+
+    <h3 class="govuk-heading-m"
+        id="line-charts-multiple-line-charts">Line charts and multiple line charts</h3>
+
+    <p class="govuk-body">Use line charts and multiple line charts for most time series data.</p>
+
+    <p class="govuk-body">A single line chart is preferable to a multiple line chart.</p>
+
+    <p class="govuk-body">A multiple line chart should be used if a single line chart would be difficult to read
+      because:</p>
+
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>there are more than 6 groups to compare</li>
+      <li>the lines are very close together or overlapping</li>
+    </ul>
+
+    <p class="govuk-body">Multiple line charts must all have the same horizontal and vertical scales, and they should
+      show a single line only.</p>
+
+    <p class="govuk-body">The vertical axis should start from zero where the metric is a percentage.</p>
+
+    <p class="govuk-body">When there are few lines to compare but they are very close together, they can be presented in
+      a line chart (rather than multiple line charts) but changing the minimum value in the y axis. However, testing has
+      shown this approach is less easily read. Read how this is done in the section ‘Chart values and labels’ in this
+      guide.</p>
+
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-4"
+        id="ethnic-categories">2. Ethnic categories</h2>
+
+    <p class="govuk-body">Ethnic categories should follow those in the [list of ethnic groups] where possible.</p>
+
+    <p class="govuk-body">If departments have submitted different categories, amend them to match the standardised list
+      if you can. For example, if the original dataset uses ‘White’ and ‘BME’, rename ‘BME’ to ‘Other than White’.</p>
+
+    <p class="govuk-body">If the original dataset uses categories that don’t fit with any of the common groupings (2011
+      Census 18 groups or 5 groups, 2001 Census 16 groups or 5 groups), don’t update them.</p>
+
+    <p class="govuk-body">Make sure the ethnic categories used in a measure are consistent in the charts, tables and
+      download file.</p>
+
+    <p class="govuk-body">Use the label ‘Unknown’ for categories where the ethnicity isn’t known or stated.</p>
+
+
+    <h3 class="govuk-heading-m"
+        id="aggregated-and-individual-ethnic-groups">Aggregated and individual ethnic groups</h3>
+
+    <p class="govuk-body">When the data provided by departments includes individual ethnic categories (‘child’
+      categories), you should group them by aggregated categories (‘parent’ categories) so that charts and tables
+      display both aggregated and individual categories.</p>
+
+    <p class="govuk-body">For example, you can group the specific categories ‘Black African’, ‘Black Caribbean’ and
+      ‘Black other’ under the broad category ‘Black’.</p>
+
+    <p class="govuk-body">Include statistics for both aggregated and individual ethnic groups where they’re provided by
+      departments, but don’t include statistics for aggregated groups if the department’s statistics only include
+      individual groups (that is, don’t manually create totals for aggregated groups).</p>
+
+    <h3 class="govuk-heading-m"
+        id="people-with-unknown-ethnicity">People with ‘unknown’ ethnicity</h3>
+
+    <p class="govuk-body">Statistics on ‘Ethnicity facts and figures’ should be consistent with those presented by
+      departments.</p>
+
+    <p class="govuk-body">Include information on the number of people with unknown ethnicity, and whether they are used
+      in the calculations, in the section ‘Things you need to know’.</p>
+
+    <p class="govuk-body">Don’t include an analysis of people with unknown ethnicity in the commentary unless there’s an
+      important reason for doing so (for example, an unusually high number of people of unknown ethnicity).</p>
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-4"
+        id="tables">3. Tables</h2>
+
+
+    <p class="govuk-body">All dimensions must include a table. They give the user an alternative way to view the data,
+      and can be used to include extra information (like sample sizes).</p>
+
+    <p class="govuk-body">When creating tables in the table builder, select the ‘Standard ethnicity’ option in all
+      relevant fields (such as ‘Rows’ and ‘Grouping’). If the field has a text box, enter ‘Ethnicity’.</p>
+
+
+    <h3 class="govuk-heading-m"
+        id="which-data-to-include">Which data to include</h3>
+
+
+    <p class="govuk-body">In addition to percentages or rates, tables can also include other data, such as sample sizes,
+      to help the user understand the data presented.</p>
+
+    <p class="govuk-body">As a general rule:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>in survey data, include the sample size or total number of respondents (denominator) in tables – make sure
+        it’s clearly labelled in the header row of the table (for example, ‘All respondents’)</li>
+      <li>in administrative data, include both the sample size (denominator) and the numerator</li>
+    </ul>
+
+    <p class="govuk-body">For standardised data (like age-standardised data for health measures), don’t include the
+      sample size (denominator) or numerator. Instead only express results in terms of a percentage of the group being
+      measured.</p>
+
+    <p class="govuk-body">The data you include in a table will depend on:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the type of data the measure is based on (survey or administrative data)</li>
+      <li>the size of the table</li>
+    </ul>
+
+    <p class="govuk-body">There isn’t a minimum or maximum number of columns and rows a table should have, but you
+      should:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>avoid overwhelming the user with figures in tables for dimensions cut by ethnicity and other factors</li>
+      <li>preview your tables after you’ve built them – if they are too wide and the user has to scroll horizontally in
+        order to view the full table, you should try to find other ways to present your data, like putting ethnic groups
+        in columns instead of rows, or excluding the numerator or denominator if they’re not essential to understanding
+        the data</li>
+    </ul>
+
+    <h3 class="govuk-heading-m"
+        id="columns-and-rows">Columns and rows</h3>
+
+    <p class="govuk-body">Table rows should usually be labelled by ethnic group, while columns should be labelled by
+      other factors for cutting the data (years, age groups, etc).</p>
+
+    <p class="govuk-body">Only label columns by ethnic group if:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the table is part of a ‘by area’ dimension, showing regions, local authorities or other geographic breakdowns
+      </li>
+      <li>the number of ethnic groups is smaller than the number of categories in the other factor, and putting ethnic
+        groups in columns would mean less or no scrolling</li>
+    </ul>
+
+    <p class="govuk-body">Group columns in tables if they present different statistics for the same variable.</p>
+
+    <h3 class="govuk-heading-m"
+        id="header-rows">Header rows</h3>
+
+    <p class="govuk-body">Use the following labels in table header rows:</p>
+
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>‘Ethnicity’ for ethnic groups – this should be used when you are presenting ethnic groups</li>
+      <li>% (a percentage sign) where relevant – don’t use percentage signs alongside values within the table</li>
+      <li>‘Region’ or ‘Local authority’ for areas and regions – or the type of geography that corresponds to the data
+        presented</li>
+    </ul>
+
+    <p class="govuk-body">Numbers in the table should include commas to separate thousands.</p>
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-4"
+        id="ordering-data">4. Ordering data</h2>
+
+
+    <p class="govuk-body">Use the ‘ordering’ options in the Publisher to select the right order for categories in charts
+      and tables. Use alphabetical ordering except when you’re ordering:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>ethnic groups</li>
+      <li>socio-economic classifications</li>
+      <li>UK regions</li>
+      <li>workforce grades and military ranks</li>
+    </ul>
+
+    <h3 class="govuk-heading-m"
+        id="ethnic-groups">Ethnic groups</h3>
+
+    <p class="govuk-body">Order the groups using the ‘parent-child’ option – this lists the ethnic groups
+      alphabetically, with ‘All’ appearing first, and ‘Other’ and ‘Unknown’ at the end.</p>
+
+    <h3 class="govuk-heading-m"
+        id="socioeconomic-classifications">Socio-economic classifications (NS-SEC)</h3>
+
+    <p class="govuk-body">Follow the standard order for that classification, with higher-level occupations appearing at
+      the top and lower-level occupations at the end.</p>
+
+    <h3 class="govuk-heading-m"
+        id="uk-regions-and-countries">UK regions and countries</h3>
+
+    <p class="govuk-body">Follow the North-South zig-zag pattern through England, with other UK countries at the end:
+    </p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>North East</li>
+      <li>North West</li>
+      <li>Yorkshire and the Humber</li>
+      <li>East Midlands</li>
+      <li>West Midlands</li>
+      <li>East of England</li>
+      <li>London</li>
+      <li>South East</li>
+      <li>South West</li>
+      <li>Wales</li>
+      <li>Scotland</li>
+      <li>Northern Ireland</li>
+    </ul>
+
+    <h3 class="govuk-heading-m"
+        id="workforce-grades-and-military-ranks">Workforce grades and military ranks</h3>
+
+    <p class="govuk-body">Put in grade order, from highest to lowest.</p>
+
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-4"
+        id="data">5. Data</h2>
+
+
+    <h3 class="govuk-heading-m"
+        id="missing-data">Missing data</h3>
+
+    <p class="govuk-body">There should not be any empty cells in charts, tables and data downloads.</p>
+
+    <p class="govuk-body">Use the following symbols where data is missing:</p>
+
+    <ul class="symbols-list">
+      <li><kbd>!</kbd> data withheld for confidentiality</li>
+      <li><kbd>?</kbd> data not shown because small sample size makes it unreliable</li>
+      <li><kbd>-</kbd> data not collected [or otherwise unavailable]</li>
+      <li><kbd>N/A</kbd> data not applicable (eg no meaningful numerator)</li>
+      <li><kbd>~0</kbd> value rounded to 0 but is above 0 before rounding</li>
+    </ul>
+
+    <p class="govuk-body">The Publisher automatically adds footnotes explaining what the symbols mean.</p>
+
+    <h3 class="govuk-heading-m"
+        id="rounding">Rounding</h3>
+
+    <p class="govuk-body">Depending on the quality of the data, round numbers in charts and tables to either:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>whole numbers</li>
+      <li>1 decimal place</li>
+    </ul>
+
+    <p class="govuk-body">As a rule of thumb, round good quality data to 1 decimal place, and poor quality data to whole
+      numbers.</p>
+
+    <p class="govuk-body">When you’ve decided which approach to take, make a note in the ‘Rounding’ section of the
+      commentary template explaining what you did and why.</p>
+
+    <p class="govuk-body">Rounding must be consistent across tables, charts and commentary in the same measure.</p>
+
+    <p class="govuk-body">The data in download files should be unrounded.</p>
+
+
+    <h3 class="govuk-heading-m"
+        id="chart-values-and-labels">Chart values and labels</h3>
+
+    <p class="govuk-body">When creating charts in the chart builder, select the ‘Standard ethnicity’ group in all fields
+      that refer to ethnicity categories (‘Primary grouping’, ‘Secondary grouping’, ‘Panels’, etc). If the field has a
+      text box, enter ‘Ethnicity’.</p>
+
+    <p class="govuk-body">If the values in the data are percentages, import the data as numbers rather than percentages
+      in all data files (chart, table and download files).</p>
+
+    <p class="govuk-body">The ‘Number format’ section in the Publisher chart builder lets you choose between
+      ‘Percentage’ and ‘Other’.</p>
+
+    <p class="govuk-body">Choose ‘Percentage’ if you want the y axis to start at 0% and end at 100%.</p>
+
+    <p class="govuk-body">Choose ‘Other’ if you want the y axis to have a range different than 0% to 100%. You should
+      always have 0% as the minimum value, but some situations may call for a different maximum value: for example to
+      avoid graph lines being too close together or if all the data ranges between 0% and 30%. The chart builder will
+      automatically set 0% as the minimum value and an appropriate maximum value for the data presented, but if you want
+      to select these values yourself, enter them in the ‘Minimum’ and ‘Maximum’ fields. Finally, if you select the
+      ‘Other’ option, you must add the sign ‘%’ in the ‘Suffix’ field.</p>
+
+    <p class="govuk-body">Don’t add any labels to charts because:</p>
+
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the description for both axes should be included within the chart title (for example, ‘Percentage of…’)</li>
+      <li>the values of the horizontal axis should also be evident from the grid line labels</li>
+      <li>labels inside charts are added automatically by the Publisher</li>
+    </ul>
+
+
+    <h3 class="govuk-heading-m"
+        id="download-files">Download files</h3>
+
+    <p class="govuk-body">Download files contain all the data used in the charts and tables, as well as some additional
+      data.</p>
+
+    <p class="govuk-body">Use the following names for the variables within download files to make sure they’re
+      consistent across different measures:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>measure</li>
+      <li>ethnicity</li>
+      <li>time</li>
+      <li>gender or sex – use the same term provided by the department/in the source data</li>
+      <li>age</li>
+      <li>geography</li>
+      <li>value</li>
+      <li>numerator</li>
+      <li>denominator</li>
+      <li>upper bound</li>
+      <li>lower bound</li>
+    </ul>
+
+
+    <p class="govuk-body">The names of the variables listed in the ‘Download description’ for each measure should be
+      broadly the same as those in the download file – but say ‘confidence intervals’ rather than ‘upper bound’ and
+      ‘lower bound’. Explain any other differences in the download description.</p>
+
+    <p class="govuk-body">The variables listed depend on the content of the download file.</p>
+
+
+
+
+
+
+
+  </div>
+
+  <div class="govuk-grid-column-one-third">
+    <div class="gem-c-contextual-sidebar">
+      <div class="gem-c-related-navigation">
+
+        <h2 id="related-nav-related_items"
+            class="govuk-heading-s govuk-!-padding-top-5">
+          Related content
+        </h2>
+
+        <nav role="navigation"
+             class="gem-c-related-navigation__nav-section"
+             aria-labelledby="related-nav-related_items">
+
+          <ul class="gem-c-related-navigation__link-list"
+              data-module="track-click">
+
+            <li class="gem-c-related-navigation__link">
+              <a class="govuk-link"
+                 href="{{ url_for('static_site.style_guide_principles').rstrip('/') }}"
+                 data-on="click"
+                 data-event-category="Related links"
+                 data-event-action="Clicked"
+                 data-event-label="Our writing principles">Our writing principles</a>
+            </li>
+
+            <li class="gem-c-related-navigation__link">
+              <a class="govuk-link"
+                 href="{{ url_for('static_site.style_guide_a_z').rstrip('/') }}"
+                 data-on="click"
+                 data-event-category="Related links"
+                 data-event-action="Clicked"
+                 data-event-label="Style guide A to Z">Style guide A to Z</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+</div>
+{{ appBackToTop(anchor="toc",text="Contents",attributes={"data-on": "click", "data-event-category":"Back to Top", "data-event-action": "Clicked", "data-event-label": "Contents"}) }}
+{% endblock %}
