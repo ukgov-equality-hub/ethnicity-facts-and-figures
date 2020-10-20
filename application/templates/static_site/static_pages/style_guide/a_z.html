@@ -26,8 +26,7 @@
         A to Z
       </h1>
 
-      <p class="govuk-body">This A to Z is for anyone writing content for the Ethnicity facts and figures website and
-        publications. It
+      <p class="govuk-body">This A to Z is for anyone writing content for Ethnicity facts and figures. It
         includes:</p>
 
       <ul class="govuk-list govuk-list--bullet">
@@ -38,13 +37,7 @@
       <p class="govuk-body">It should be used alongside guidance on <a class="govuk-link"
            href="{{ url_for('static_site.style_guide_writing_about_ethnicity').rstrip('/') }}">writing about
           ethnicity</a> and <a class="govuk-link"
-           href="{{ url_for('static_site.style_guide_principles').rstrip('/') }}">our writing principles</a>. You can
-        also check <a class="govuk-link"
-           rel="external"
-           href="https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style">the GDS style guide</a> or <a
-           class="govuk-link"
-           rel="external"
-           href="https://style.ons.gov.uk/category/house-style/">the ONS style guide</a>.</p>
+           href="{{ url_for('static_site.style_guide_principles').rstrip('/') }}">our writing principles</a>.</p>
 
     </div>
 
@@ -67,8 +60,7 @@
                href="#g">G</a></li>
           <li><a class="govuk-link"
                href="#h">H</a></li>
-          <li><a class="govuk-link"
-               href="#i">I</a></li>
+          <li><span>I</span></li>
           <li><span>J</span></li>
           <li><span>K</span></li>
           <li><a class="govuk-link"
@@ -81,14 +73,12 @@
                href="#o">O</a></li>
           <li><a class="govuk-link"
                href="#p">P</a></li>
-          <li><a class="govuk-link"
-               href="#q">Q</a></li>
+          <li><span>Q</span></li>
           <li><a class="govuk-link"
                href="#r">R</a></li>
           <li><a class="govuk-link"
                href="#s">S</a></li>
-          <li><a class="govuk-link"
-               href="#t">T</a></li>
+          <li><span>T</span></li>
           <li><a class="govuk-link"
                href="#u">U</a></li>
           <li><span>V</span></li>
@@ -127,20 +117,10 @@
       <h3 class="govuk-heading-m"
           id="age-standardisation">Age standardisation</h3>
 
-      <p class="govuk-body">If figures have been age standardised, add this content to ‘Things you need to know’:</p>
+      <p class="govuk-body">If figures have been age standardised, add this content to the ‘Methodology’ subsection in ‘Things you need to know’:</p>
 
       <div class="govuk-inset-text">
-        <p class="govuk-body">These figures are not the actual percentages of people who [insert text relevant to
-          measure]. They have been
-          adjusted because:</p>
-
-        <ul class="govuk-list govuk-list--bullet">
-          <li>people’s age can affect their [insert text relevant to measure]</li>
-          <li>different ethnic groups have different <a class="govuk-link"
-               rel="external"
-               href="https://www.ethnicity-facts-figures.service.gov.uk/uk-population-by-ethnicity/demographics/age-groups/latest">age
-              profiles</a>.</li>
-        </ul>
+        <p class="govuk-body">The statistics have been age-standardised so comparisons can be made between ethnic groups as if they had the same age profile (the number of people of different ages within an ethnic group). They do not show the actual percentage of people in each ethnic group who [insert text relevant to topic].</p>
       </div>
 
       <h3 class="govuk-heading-m"
@@ -157,6 +137,9 @@
       </ul>
 
       <p class="govuk-body">There are some exceptions. For example, say ‘people aged 65 and over’, not ‘over 64s’.</p>
+      
+  <p class="govuk-body">See <a class="govuk-link"
+           href="#working-age">Working age</a>.</p>
 
       <h3 class="govuk-heading-m"
           id="academic-years">Academic years</h3>
@@ -167,21 +150,10 @@
       <h3 class="govuk-heading-m"
           id="averages">Averages</h3>
 
-      <p class="govuk-body">Don’t use ‘mean’ or ‘median’ in bullet points. Say ‘average’ instead.</p>
+      <p class="govuk-body">Don’t only use ‘mean’ or ‘median’ in bullet points. Say ‘average (median)’ instead.</p>
 
-      <p class="govuk-body">You can explain the type of average used in ‘Methodology’.</p>
-
-      <p class="govuk-body">Plain English version of median:</p>
-
-      <div class="govuk-inset-text">
-        <p class="govuk-body">The middle point of a range of numbers arranged in order.</p>
-      </div>
-
-      <p class="govuk-body">Plain English version of mean:</p>
-
-      <div class="govuk-inset-text">
-        <p class="govuk-body">The sum of all the numbers, divided by how many numbers there are.</p>
-      </div>
+      <p class="govuk-body">Explain the type of average used in the ‘Methodology’ subsection in ‘Things you need to know’, and link to <a class="govuk-link"
+           href="{{ url_for('static_site.our_statistical_principles').rstrip('/') }}">Our statistical principles</a>.</p>
 
       <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
 
@@ -189,12 +161,11 @@
           class="govuk-heading-m govuk-!-margin-top-7 govuk-!-margin-bottom-7 atoz-section">B</h2>
 
       <h3 class="govuk-heading-m"
-          id="bame-and-bme-black-asian-and-minority-ethnicblack-and-minority-ethnic">BAME and BME (Black, Asian and
-        minority ethnic/Black and minority ethnic)</h3>
+          id="bame-and-bme-black-asian-and-minority-ethnicblack-and-minority-ethnic">BAME and BME</h3>
 
       <p class="govuk-body">Don’t use these terms.</p>
 
-      <p class="govuk-body">Refer to guidance in <a class="govuk-link"
+      <p class="govuk-body">See <a class="govuk-link"
            href="{{ url_for('static_site.style_guide_writing_about_ethnicity').rstrip('/') }}#bame-bme-and-people-of-colour">Writing
           about
           ethnicity</a>.</p>
@@ -202,9 +173,9 @@
       <h3 class="govuk-heading-m"
           id="blacks">Blacks</h3>
 
-      <p class="govuk-body">Do not use this term.</p>
+      <p class="govuk-body">Don't use this term.</p>
 
-      <p class="govuk-body">Refer to guidance in <a class="govuk-link"
+      <p class="govuk-body">See <a class="govuk-link"
            href="{{ url_for('static_site.style_guide_writing_about_ethnicity').rstrip('/') }}#phrasing">Writing about
           ethnicity</a>.</p>
 
@@ -213,7 +184,7 @@
 
       <p class="govuk-body">Don’t use these terms.</p>
 
-      <p class="govuk-body">Refer to guidance in <a class="govuk-link"
+      <p class="govuk-body">See <a class="govuk-link"
            href="{{ url_for('static_site.style_guide_writing_about_ethnicity').rstrip('/') }}#broad-and-specific-ethnic-groups">Writing
           about
           ethnicity</a>.</p>
@@ -229,9 +200,6 @@
       <p class="govuk-body">There’s one exception. Don’t add a lead-in line above the bullet points in ‘Main facts and
         figures’.</p>
 
-      <p class="govuk-body">See also <a class="govuk-link"
-           href="{{ url_for('static_site.style_guide_principles').rstrip('/') }}">Our writing principles</a>.</p>
-
       <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
 
       <h2 id="c"
@@ -245,15 +213,14 @@
            href="https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style#capitalisation">GOV.UK
           guidance on capitalisation</a>.</p>
 
-      <p class="govuk-body">See also <a class="govuk-link"
+      <p class="govuk-body">See also guidance about capitalising ethnic groups in <a class="govuk-link"
            href="{{ url_for('static_site.style_guide_writing_about_ethnicity').rstrip('/') }}#capitalisation">Writing
           about ethnicity</a>.</p>
 
       <h3 class="govuk-heading-m"
           id="census">Census</h3>
 
-      <p class="govuk-body">A population census happens every 10 years in England and Wales, Scotland, and Northern
-        Ireland. Write ‘Census’
+      <p class="govuk-body">Write ‘Census’
         with a capital ‘C’ when you’re referring to a specific census.</p>
 
       <p class="govuk-body">For example:</p>
@@ -280,22 +247,25 @@
       <p class="govuk-body">For example:</p>
 
       <div class="govuk-inset-text">
-        <p class="govuk-body">from 2017 to 2018, there were 3 stop and searches for every 1,000 White people, compared
-          with 29 stop and
-          searches for every 1,000 Black people</p>
+        <p class="govuk-body">between April 2018 and March 2019, there were 4 stop and searches for every 1,000 White people, compared with 38 for every 1,000 Black people</p>
       </div>
 
       <h3 class="govuk-heading-m"
           id="confidence-intervals">Confidence intervals</h3>
 
-      <p class="govuk-body">Use this in the Methodology section:</p>
+      <p class="govuk-body">If the data download includes confidence intervals, add this to the ‘In the data file’ subsection in ‘Things you need to know’:</p>
 
       <div class="govuk-inset-text">
-        <p class="govuk-body">Download the data to see confidence intervals for the estimates on this page.</p>
-
-        <p class="govuk-body">Read more about how confidence intervals are used to judge the reliability of survey data.
-        </p>
+        <p class="govuk-body">See [Download the data](#download-the-data) for confidence intervals for each ethnic group – find out more about how [confidence intervals](/understanding-our-data/how-to-read-survey-data#confidence-intervals) are used to determine how reliable estimates are.</p>
       </div>
+      
+      <h3 class="govuk-heading-m"
+          id="covid-19">Coronavirus (COVID-19)</h3>
+
+      <p class="govuk-body">Follow the <a class="govuk-link"
+           rel="external"
+           href="https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style#coronavirus-covid-19">GOV.UK
+          guidance on COVID-19</a>.</p>
 
       <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
 
@@ -310,7 +280,7 @@
            href="https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style#data">GOV.UK style guide</a>
         and write data as a singular noun:</p>
 
-      <p class="govuk-body">‘This data shows that…’, not ‘These data show that…’.</p>
+      <p class="govuk-body">‘The data shows that…’, not ‘These data show that…’.</p>
 
       <h3 class="govuk-heading-m"
           id="dates">Dates</h3>
@@ -318,9 +288,9 @@
       <p class="govuk-body">Follow the <a class="govuk-link"
            rel="external"
            href="https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style#dates">GOV.UK style guide on
-          dates</a>. Write ‘2018 to 2019’, not ‘2018/19’ or ‘2018-19’.</p>
+          dates</a>.</p>
 
-      <p class="govuk-body">Dashes (-) and slashes (/) make it harder for users to read and don’t work well for those
+      <p class="govuk-body">Dashes (-) and slashes (/) make it harder for users to read, and don’t work well for those
         who use screen
         readers.</p>
 
@@ -330,17 +300,15 @@
       <p class="govuk-body">Let users know if you’re referring to a date range other than a calendar year:</p>
 
       <ul class="govuk-list govuk-list--bullet">
-        <li>The financial year ending March 2019</li>
-        <li>The academic year ending July 2019</li>
-        <li>The tax year 2017 to 2018</li>
+        <li>the year ending March 2019</li>
+        <li>the academic year ending July 2019</li>
+        <li>April 2018 to March 2019</li>
       </ul>
 
       <p class="govuk-body">For example:</p>
 
       <div class="govuk-inset-text">
-        <p class="govuk-body">there were 277,378 stop and search incidents in England and Wales in the financial year
-          ending March 2018, at
-          a rate of 5 per 1,000 people</p>
+        <p class="govuk-body">between April 2018 and March 2019, there were 375,588 stop and searches in England and Wales (excluding vehicle searches)</p>
       </div>
 
       <h4 class="govuk-heading-s"
@@ -351,15 +319,14 @@
       <p class="govuk-body">Use or adapt one of the following:</p>
 
       <ul class="govuk-list govuk-list--bullet">
-        <li>3 years ending March 2019 (combined)</li>
-        <li>In the 5 years ending August 2019, an average of…</li>
-        <li>On average for 2017 and 2018 combined, …</li>
+        <li>3 years to March 2019</li>
+        <li>in the 3 years to August 2020, an average of...</li>
       </ul>
 
       <p class="govuk-body">For example:</p>
 
       <div class="govuk-inset-text">
-        <p class="govuk-body">in the 2 years ending March 2017, 17% of households in England rented social housing</p>
+        <p class="govuk-body">in the 2 years to March 2019, an average of 3% of households in England had damp in at least one room of their home</p>
       </div>
 
       <h4 class="govuk-heading-s"
@@ -371,15 +338,14 @@
 
       <ul class="govuk-list govuk-list--bullet">
         <li>2002 to 2019</li>
-        <li>10 academic years ending August 2019</li>
-        <li>Financial years ending March 2003 to March 2019</li>
+        <li>the [number] years to [month] [year]</li>
       </ul>
+      
+       <p class="govuk-body">For example:</p>
 
-      <h3 class="govuk-heading-m"
-          id="deciles">Deciles</h3>
-
-      <p class="govuk-body">See <a class="govuk-link"
-           href="#quintiles">Quintiles</a>.</p>
+      <div class="govuk-inset-text">
+        <p class="govuk-body">the data shows that, in the 13 years to March 2020, the overall arrest rate in England and Wales went down from 27 to 12 arrests per 1,000 people</p>
+      </div>
 
       <h3 class="govuk-heading-m"
           id="decimals">Decimals</h3>
@@ -390,13 +356,8 @@
       <h3 class="govuk-heading-m"
           id="denominators-and-numerators">Denominators and numerators</h3>
 
-      <p class="govuk-body">Don’t refer to ‘numerators’ or ‘denominators’ except in data download files.</p>
+      <p class="govuk-body">Don’t use the terms ‘numerators’ or ‘denominators’ except in data download files.</p>
 
-      <h3 class="govuk-heading-m"
-          id="deprivation">Deprivation</h3>
-
-      <p class="govuk-body">See <a class="govuk-link"
-           href="#index-of-multiple-deprivation">Index of multiple deprivation</a>.</p>
 
       <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
 
@@ -469,11 +430,10 @@
       <h3 class="govuk-heading-m"
           id="fractions">Fractions</h3>
 
-      <p class="govuk-body">Only use meaningful fractions such as a quarter, a half, three-quarters or one-third. Follow
-        the <a class="govuk-link"
-           rel="external"
-           href="https://style.ons.gov.uk/category/house-style/numbers/#fractions">ONS guidance</a> by writing them out
-        rather than expressing numerically (not ½ or ¾).</p>
+      <p class="govuk-body">Don’t use fractions. Use percentages. For example, say ‘20%’ instead of ‘one-fifth’ or ‘one in five’.</p>
+      
+       <p class="govuk-body">See also <a class="govuk-link"
+           href="{{ url_for('static_site.style_guide_principles').rstrip('/') }}">Our writing principles</a>.</p>
 
       <h3 class="govuk-heading-m"
           id="free-school-meals">Free school meals</h3>
@@ -492,18 +452,6 @@
         </p>
       </div>
 
-      <p class="govuk-body">Add this content to the Methodology section:</p>
-
-      <div class="govuk-inset-text">
-        <p class="govuk-body">Figures for free school meals include pupils who are eligible for FSM. To be eligible,
-          their families must:
-        </p>
-        <ul class="govuk-list govuk-list--bullet">
-          <li>have applied for FSM at the time of the school census in January</li>
-          <li>be receiving a qualifying benefit like Jobseeker’s Allowance</li>
-        </ul>
-      </div>
-
       <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
 
       <h2 id="g"
@@ -512,10 +460,10 @@
       <h3 class="govuk-heading-m"
           id="gender-and-sex">Gender and sex</h3>
 
-      <p class="govuk-body">Use the same term as in the data source. The ONS explains <a class="govuk-link"
+      <p class="govuk-body">Use the same term as in the data source. The Office for National Statistics explains <a class="govuk-link"
            rel="external"
            href="https://www.ons.gov.uk/economy/environmentalaccounts/articles/whatisthedifferencebetweensexandgender/2019-02-21">the
-          difference between the two terms</a>.</p>
+          difference between the 2 terms</a>.</p>
 
       <p class="govuk-body">See also <a class="govuk-link"
            href="#women-and-men">Women and men</a>.</p>
@@ -540,51 +488,13 @@
 
       <h3 class="govuk-heading-m"
           id="household">Household</h3>
-      <p class="govuk-body">Use this Plain English definition of household:</p>
+      <p class="govuk-body">Use this Plain English definition of household in the ‘What the data measures’ subsection in ‘Things you need to know’:</p>
 
       <div class="govuk-inset-text">
-        <p class="govuk-body">A household is a person or group of people whose accommodation is their main home. If it
-          is a group, they
-          must share cooking facilities and a living room, sitting room or dining area.</p>
+        <p class="govuk-body">The information relates to households of either one person or a group of people sharing cooking facilities and a living room or dining area. It must be their main or only home.</p>
       </div>
 
-      <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
-
-      <h2 id="i"
-          class="govuk-heading-m govuk-!-margin-top-7 govuk-!-margin-bottom-7 atoz-section">I</h2>
-
-      <h3 class="govuk-heading-m"
-          id="index-of-multiple-deprivation">Index of multiple deprivation</h3>
-
-      <p class="govuk-body">Do not refer to indices of deprivation in commentary. Use Plain English instead, with a
-        simple definition if
-        necessary.</p>
-
-      <p class="govuk-body">For example:</p>
-
-      <div class="govuk-inset-text">
-        <ul class="govuk-list govuk-list--bullet">
-          <li>the neighbourhood’s deprivation is defined using the <a class="govuk-link"
-               rel="external"
-               href="https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019">Index of Multiple
-              Deprivation 2019</a>.</li>
-          <li>Black students from all but the least deprived neighbourhoods had the highest rates of leaving their
-            course</li>
-        </ul>
-      </div>
-
-      <p class="govuk-body">You can add a longer definition to ‘Things You Need to Know’:</p>
-
-      <div class="govuk-inset-text">
-        <p class="govuk-body">The Index of Multiple Deprivation (IMD) 2015 splits England into neighbourhoods by
-          population size (roughly,
-          1,500 people). IMD describes relative, not absolute, deprivation: that is, neighbourhoods are grouped into the
-          most deprived 20% through to the least deprived 20%.</p>
-      </div>
-
-      <p class="govuk-body">See also <a class="govuk-link"
-           href="#quintiles">Quintiles</a>.</p>
-
+     
       <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
 
       <h2 id="l"
@@ -593,9 +503,7 @@
       <h3 class="govuk-heading-m"
           id="likelihood">Likelihood</h3>
 
-      <p class="govuk-body">You can use ‘more/most likely’ and ‘less/least likely’ to compare ethnic groups where there
-        are statistically
-        significant differences.</p>
+      <p class="govuk-body">You can use ‘more likely’, ‘most likely’, ‘less likely’ and ‘least likely’ to compare ethnic groups where there are reliable differences between them.</p>
 
       <p class="govuk-body">Always make it clear what you’re comparing.</p>
 
@@ -610,7 +518,7 @@
         </ul>
       </div>
 
-      <p class="govuk-body">You can also use ‘as likely’ for relative likelihoods.</p>
+      <p class="govuk-body">You should also use ‘as likely’ for relative likelihoods.</p>
 
       <p class="govuk-body">For example:</p>
 
@@ -622,19 +530,6 @@
 
       <h3 class="govuk-heading-m"
           id="links">Links</h3>
-
-      <p class="govuk-body">Avoid linking to PDFs. If you do, the document link text should be labelled as a PDF with
-        the file size and
-        number of pages.
-        For example:</p>
-
-      <div class="govuk-inset-text">
-        <p class="govuk-body">This is consistent with <a class="govuk-link"
-             rel="external"
-             target="_blank"
-             href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/773124/External_confidentiality_policy.pdf">DfE’s
-            statistical policy statement on confidentiality (PDF opens in a new window or tab)</a> (PDF, 336KB, 13 pages).</p>
-      </div>
 
       <p class="govuk-body">Follow the <a class="govuk-link"
            rel="external"
@@ -680,7 +575,7 @@
 
       <p class="govuk-body">Don’t say ‘Non-White’.</p>
 
-      <p class="govuk-body">Refer to guidance in <a class="govuk-link"
+      <p class="govuk-body">See <a class="govuk-link"
            href="{{ url_for('static_site.style_guide_writing_about_ethnicity').rstrip('/') }}#ethnic-minorities">Writing
           about ethnicity</a>.</p>
 
@@ -713,29 +608,7 @@
 
       <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
 
-      <h2 id="q"
-          class="govuk-heading-m govuk-!-margin-top-7 govuk-!-margin-bottom-7 atoz-section">Q</h2>
-
-      <h3 class="govuk-heading-m"
-          id="quintiles">Quintiles</h3>
-
-      <p class="govuk-body">Don’t use ‘quintile’ or ‘decile’. Instead refer directly to what the quintiles or deciles
-        relate to.</p>
-
-      <p class="govuk-body">For example, don’t say this:</p>
-
-      <div class="govuk-inset-text">
-        <p class="govuk-body">43% of Indian households fell into the 2 highest income quintiles</p>
-      </div>
-
-      <p class="govuk-body">Say this:</p>
-
-      <div class="govuk-inset-text">
-        <p class="govuk-body">43% of Indian households had a total income of £34,700 a year or more</p>
-      </div>
-
-      <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
-
+    
       <h2 id="r"
           class="govuk-heading-m govuk-!-margin-top-7 govuk-!-margin-bottom-7 atoz-section">R</h2>
 
@@ -744,7 +617,7 @@
 
       <p class="govuk-body">Use ‘ethnicity’ instead of ‘race’.</p>
 
-      <p class="govuk-body">See also <a class="govuk-link"
+      <p class="govuk-body">See <a class="govuk-link"
            href="{{ url_for('static_site.style_guide_writing_about_ethnicity').rstrip('/') }}#ethnicity-and-race">Writing
           about ethnicity</a>.</p>
 
@@ -754,9 +627,9 @@
       <p class="govuk-body">The <a class="govuk-link"
            rel="external"
            href="https://www.gov.uk/government/publications/race-disparity-audit">Race Disparity Audit</a> was
-        published on GOV.UK in October 2017.</p>
+        published in October 2017.</p>
 
-      <p class="govuk-body">It’s a standalone publication, and not the same as the Ethnicity facts and figures website.
+      <p class="govuk-body">It’s a standalone publication, and not the same as Ethnicity facts and figures.
       </p>
 
       <p class="govuk-body">If you need to refer to it, write ‘the Race Disparity Audit’, not ‘the race disparity
@@ -769,7 +642,7 @@
       <p class="govuk-body">The <a class="govuk-link"
            rel="external"
            href="https://www.gov.uk/government/organisations/race-disparity-unit">Race Disparity Unit</a> is the
-        team that produced the Race Disparity Audit and now manages the Ethnicity facts and figures website.</p>
+        team that produced the Race Disparity Audit and now manages Ethnicity facts and figures.</p>
 
       <p class="govuk-body">Write ‘the Race Disparity Unit’, not ‘the Race disparity unit’ or ‘the race disparity unit’.
       </p>
@@ -786,13 +659,11 @@
       <p class="govuk-body">You can use ‘rate’ as in these examples:</p>
 
       <div class="govuk-inset-text">
-        <p class="govuk-body">Black people had the highest unemployment rate out of all the ethnic groups (9%).</p>
+        <p class="govuk-body">Black people had the highest unemployment rate out of all ethnic groups (9%).</p>
       </div>
 
       <div class="govuk-inset-text">
-        <p class="govuk-body">There were 698,737 arrests in England and Wales in 2017 to 2018, at a rate of 13 arrests
-          per 1,000 people.
-        </p>
+        <p class="govuk-body">There were 698,737 arrests in England and Wales in the year to March 2018 – a rate of 13 arrests per 1,000 people.</p>
       </div>
 
       <p class="govuk-body">See also <a class="govuk-link"
@@ -801,21 +672,17 @@
       <h3 class="govuk-heading-m"
           id="rolling-averages">Rolling averages</h3>
 
-      <p class="govuk-body">Do not use rolling averages.</p>
+      <p class="govuk-body">Do not use the term 'rolling averages'.</p>
 
-      <p class="govuk-body">Refer to guidance in <a class="govuk-link"
+      <p class="govuk-body">See <a class="govuk-link"
            href="#dates">Dates</a>.</p>
 
       <h3 class="govuk-heading-m"
           id="rounding">Rounding</h3>
 
-      <p class="govuk-body">Generally you should be consistent in your use of rounding in a measure page. So 1.2%, 5.8%
-        and 10.1%, not
-        1.2%, 6% and 10.146%. Keep the decimal point even if it’s a zero. So 10.0%, not 10%.</p>
+      <p class="govuk-body">Be consistent in your use of rounding. Write 1.2%, 6.0% and 10.1%, not 1.20%, 6% and 10.146%.</p>
 
-      <p class="govuk-body">The exception is when linking to measures with different rounding rules, for example from a
-        summary report. In
-        this case, use the same rounding that has been used within each measure page.</p>
+      <p class="govuk-body">If you are rounding figures to 1 decimal place, whole numbers should be written as ‘10.0%’, not ‘10%’.</p>
 
       <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
 
@@ -831,11 +698,7 @@
       <h3 class="govuk-heading-m"
           id="socio-economic-groups">Socio-economic groups</h3>
 
-      <p class="govuk-body">Write ‘socio-economic groups’. Don’t write ‘socioeconomic groups’ or ‘NS-SEC groups’
-        (including in charts and
-        tables).</p>
-
-      <p class="govuk-body">You don’t need to list the groups other than in the charts and tables.</p>
+      <p class="govuk-body">Write ‘socio-economic groups’. Don’t write ‘socioeconomic groups’ or ‘NS-SEC groups’.</p>
 
       <h3 class="govuk-heading-m"
           id="statistical-significance">Statistical significance</h3>
@@ -843,22 +706,6 @@
       <p class="govuk-body">See <a class="govuk-link"
            href="{{ url_for('static_site.style_guide_principles').rstrip('/') }}#explain-if-figures-arent-reliable">Our
           writing principles</a>.</p>
-
-      <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
-
-      <h2 id="t"
-          class="govuk-heading-m govuk-!-margin-top-7 govuk-!-margin-bottom-7 atoz-section">T</h2>
-
-      <h3 class="govuk-heading-m"
-          id="total-household-income">Total household income</h3>
-
-      <p class="govuk-body">If needed, use this definition of total household income:</p>
-
-      <div class="govuk-inset-text">
-        <p class="govuk-body">Total household income is the combined income of everyone in a household. It includes
-          income from all
-          sources. For example, work, pensions, benefits, and interest from savings.</p>
-      </div>
 
       <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
 
@@ -872,18 +719,6 @@
 
       <p class="govuk-body">Write ‘England, Wales and Scotland’, not Great Britain.</p>
 
-      <p class="govuk-body">If data covers regions in England, plus Wales and/or Scotland as a whole, write ‘all
-        regions’ in commentary.
-      </p>
-
-      <p class="govuk-body">For example:</p>
-
-      <div class="govuk-inset-text">
-        <p class="govuk-body">out of all regions, London had the smallest percentage of White British people, at 44.9%,
-          and the North East
-          had the highest percentage, at 93.6%</p>
-      </div>
-
       <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
 
       <h2 id="w"
@@ -891,11 +726,10 @@
 
       <h3 class="govuk-heading-m"
           id="weighting">Weighting</h3>
-      <p class="govuk-body">Use this in the Methodology section where applicable:</p>
+      <p class="govuk-body">Use this in the ‘Methodology’ subsection in ‘Things you need to know’ where applicable:</p>
 
       <div class="govuk-inset-text">
-        <p class="govuk-body">Download the data to see unweighted samples.
-          Read more about how weighting is used to make samples representative of the population.</p>
+        <p class="govuk-body">The figures on this page are based on survey data. Find out more about [how weighting is used](/understanding-our-data/how-to-read-survey-data#weighting) to make survey data more representative of the whole group being studied.</p>
       </div>
 
       <h3 class="govuk-heading-m"
@@ -929,6 +763,9 @@
         <p class="govuk-body">75% of working age people (people aged 16 to 64) in England, Wales and Scotland were
           employed in 2018</p>
       </div>
+      
+       <p class="govuk-body">See <a class="govuk-link"
+           href="#ages">Ages</a>.</p>
 
       <h2 class="govuk-heading-l govuk-!-margin-top-9"
           id="related-guidance">Related guidance</h2>
@@ -945,11 +782,10 @@
       <h2 class="govuk-heading-l govuk-!-margin-top-9"
           id="help-us-stay-up-to-date">Help us stay up to date</h2>
 
-      <p class="govuk-body">Language usage and acceptability change over time. We want to make sure our content reflects
-        those changes.
-        Contact us at <a class="govuk-link"
-           href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a> with your
-        thoughts and research.</p>
+      <p class="govuk-body">We want to make sure our content reflects changes in language usage and acceptability over time.</p>
+      
+     <p class="govuk-body">Contact us at <a class="govuk-link"
+           href="mailto:ethnicity@cabinetoffice.gov.uk">ethnicity@cabinetoffice.gov.uk</a> with your feedback.</p>
 
     </div>
   </div>
