@@ -108,11 +108,14 @@ def measure_version_markdown(topic_slug, subtopic_slug, measure_slug, version):
         if measure_version.status not in ["DEPARTMENT_REVIEW", "APPROVED"]:
             return render_template("static_site/not_ready_for_review.html")
 
+    # define template
+    template = "static_site/export/measure_export.html"
+
+    if measure_version.template_version != "1":
+        template = f"static_site/export/measure_export_v{measure_version.template_version}.html"
+
     return render_template(
-        "static_site/export/measure_export.html",
-        topic_slug=topic_slug,
-        subtopic_slug=subtopic_slug,
-        measure_version=measure_version,
+        template, topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_version=measure_version,
     )
 
 
