@@ -1,0 +1,342 @@
+{% extends "static_site/export/_base_export.html" %}
+{% set version = 'latest' if measure_version.has_no_later_published_versions() else measure_version.version %}
+{% set field_empty_string = '[blank]' %}
+
+{% block pageTitle %}Export - {{ measure_version.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block content %}
+
+<div class="govuk-grid-column-two-thirds">
+    <p class="govuk-heading-s  govuk-!-margin-bottom-1">Title</p>
+    <h1 class="govuk-heading-l">{{ measure_version.title }}</h1>
+
+    <div id="metadata-section">
+        <div id="description">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Description for search engines</p>
+            <p class="govuk-body">{{ measure_version.description or field_empty_string }}</p>
+        </div>
+
+        <div id="time_covered">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Time period covered</p>
+            <p class="govuk-body">{{ measure_version.time_covered or field_empty_string }}</p>
+        </div>
+
+        <div id="area_covered">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Areas covered</p>
+            <p class="govuk-body">{{ measure_version.format_area_covered() or field_empty_string }}</p>
+        </div>
+
+        <div id="lowest_level_of_geography_id">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Geographic breakdown</p>
+            <p class="govuk-body">{{ measure_version.lowest_level_of_geography.name or field_empty_string }}</p>
+        </div>
+    </div>
+
+    <div id="data-sources-section">
+        <h2 class="govuk-heading-l">Data sources</h2>
+        <h3 class="govuk-heading-m">Primary source</h3>
+        <div id="data-source-1-source-url">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Link to data source</p>
+            <p class="govuk-body">
+                {% if measure_version.primary_data_source and measure_version.primary_data_source.source_url %}
+                    {{ measure_version.primary_data_source.source_url }}
+                {% else %}
+                    {{ field_empty_string }}
+                {% endif %}
+            </p>
+        </div>
+
+        <div id="data-source-1-title">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Title of data source</p>
+            <p class="govuk-body">
+                {% if measure_version.primary_data_source and measure_version.primary_data_source.title %}
+                    {{ measure_version.primary_data_source.title }}
+                {% else %}
+                    {{ field_empty_string }}
+                {% endif %}
+            </p>
+        </div>
+
+        <div id="data-source-1-publisher_id">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Source data published by</p>
+            <p class="govuk-body">
+                {% if measure_version.primary_data_source and measure_version.primary_data_source.publisher %}
+                    {{ measure_version.primary_data_source.publisher.name }}
+                {% else %}
+                    {{ field_empty_string }}
+                {% endif %}
+            </p>
+        </div>
+
+        <div id="data-source-1-publication_date">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Source data publication date</p>
+            <p class="govuk-body">
+                {% if measure_version.primary_data_source and measure_version.primary_data_source.publication_date %}
+                    {{ measure_version.primary_data_source.publication_date }}
+                {% else %}
+                    {{ field_empty_string }}
+                {% endif %}
+            </p>
+        </div>
+
+        <div id="data-source-1-frequency_of_release_id">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">How often is the source data published?</p>
+            <p class="govuk-body">
+                {% if measure_version.primary_data_source and measure_version.primary_data_source.frequency_of_release.description %}
+                    {{ measure_version.primary_data_source.frequency_of_release.description }}
+                {% else %}
+                    {{ field_empty_string }}
+                {% endif %}
+            </p>
+        </div>
+
+        <div id="data-source-1-type_of_data">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Type of data</p>
+            <p class="govuk-body">
+                {% if measure_version.primary_data_source and measure_version.primary_data_source.type_of_data %}
+                    {{ measure_version.primary_data_source.type_of_data | join_enum_display_names(' and ') }} data
+                {% else %}
+                    {{ field_empty_string }}
+                {% endif %}
+            </p>
+        </div>
+
+        <div id="data-source-1-type_of_statistic_id">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Type of statistic</p>
+            <p class="govuk-body">
+                {% if measure_version.primary_data_source and measure_version.primary_data_source.type_of_statistic.external %}
+                    {{ measure_version.primary_data_source.type_of_statistic.external }}
+                {% else %}
+                    {{ field_empty_string }}
+                {% endif %}
+            </p>
+        </div>
+
+        <div id="data-source-1-purpose">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Purpose of data source</p>
+            <p class="govuk-body">
+                {% if measure_version.primary_data_source and measure_version.primary_data_source.purpose %}
+                    {{ measure_version.primary_data_source.purpose | render_markdown }}
+                {% else %}
+                    {{ field_empty_string }}
+                {% endif %}
+            </p>
+        </div>
+
+        <div id="data-source-1-note_on_corrections_or_updates">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Corrections or updates (optional)</p>
+            <p class="govuk-body">
+                {% if measure_version.primary_data_source and measure_version.primary_data_source.note_on_corrections_or_updates %}
+                    {{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown }}
+                {% else %}
+                    {{ field_empty_string }}
+                {% endif %}
+            </p>
+        </div>
+
+        <h3 class="govuk-heading-m">Secondary source (optional)</h3>
+
+        {% if measure_version.secondary_data_source %}
+            <div id="data-source-2-source-url">
+                <p class="govuk-heading-s govuk-!-margin-bottom-1">Link to data source</p>
+                <p class="govuk-body">
+                    {% if measure_version.secondary_data_source and measure_version.secondary_data_source.source_url %}
+                        {{ measure_version.secondary_data_source.source_url }}
+                    {% else %}
+                        {{ field_empty_string }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <div id="data-source-2-title">
+                <p class="govuk-heading-s govuk-!-margin-bottom-1">Title of data source</p>
+                <p class="govuk-body">
+                    {% if measure_version.secondary_data_source %}
+                        {{ measure_version.secondary_data_source.title }}
+                    {% else %}
+                        {{ field_empty_string }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <div id="data-source-2-publisher_id">
+                <p class="govuk-heading-s govuk-!-margin-bottom-1">Source data published by</p>
+                <p class="govuk-body">
+                    {% if measure_version.secondary_data_source.publisher %}
+                        {{ measure_version.secondary_data_source.publisher.name }}
+                    {% else %}
+                        {{ field_empty_string }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <div id="data-source-2-publication_date">
+                <p class="govuk-heading-s govuk-!-margin-bottom-1">Source data publication date</p>
+                <p class="govuk-body">
+                    {% if measure_version.secondary_data_source and measure_version.secondary_data_source.publication_date %}
+                        {{ measure_version.secondary_data_source.publication_date }}
+                    {% else %}
+                        {{ field_empty_string }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <div id="data-source-2-frequency_of_release_id">
+                <p class="govuk-heading-s govuk-!-margin-bottom-1">How often is the source data published?</p>
+                <p class="govuk-body">
+                    {% if measure_version.secondary_data_source and measure_version.secondary_data_source.frequency_of_release.description %}
+                        {{ measure_version.secondary_data_source.frequency_of_release.description }}
+                    {% else %}
+                        {{ field_empty_string }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <div id="data-source-2-type_of_data-0">
+                <p class="govuk-heading-s govuk-!-margin-bottom-1">Type of data</p>
+                <p class="govuk-body">
+                    {% if measure_version.secondary_data_source and measure_version.secondary_data_source.type_of_data %}
+                        {{ measure_version.secondary_data_source.type_of_data | join_enum_display_names(' and ') }} data
+                    {% else %}
+                        {{ field_empty_string }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <div id="data-source-2-type_of_statistic_id">
+                <p class="govuk-heading-s govuk-!-margin-bottom-1">Type of statistic</p>
+                <p class="govuk-body">
+                    {% if measure_version.secondary_data_source and measure_version.secondary_data_source.type_of_statistic and measure_version.secondary_data_source.type_of_statistic.external %}
+                        {{ measure_version.secondary_data_source.type_of_statistic.external }}
+                    {% else %}
+                        {{ field_empty_string }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <div id="data-source-2-purpose">
+                <p class="govuk-heading-s govuk-!-margin-bottom-1">Purpose of data source</p>
+                <p class="govuk-body">
+                    {% if measure_version.secondary_data_source and measure_version.secondary_data_source.purpose %}
+                        {{ measure_version.secondary_data_source.purpose | render_markdown }}
+                    {% else %}
+                        {{ field_empty_string }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <div id="data-source-2-note_on_corrections_or_updates">
+                <p class="govuk-heading-s govuk-!-margin-bottom-1">Corrections or updates</p>
+                <p class="govuk-body">
+                    {% if measure_version.secondary_data_source and measure_version.secondary_data_source.note_on_corrections_or_updates %}
+                        {{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown }}
+                    {% else %}
+                        {{ field_empty_string }}
+                    {% endif %}
+                </p>
+            </div>
+        {% else %}
+            <p class="govuk-body">{{ field_empty_string }}</p>
+        {% endif %}
+    </div>
+
+    <div id="commentary-section">
+        <h2 class="govuk-heading-l">Commentary</h2>
+        <div id="summary">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Main points</p>
+            <p class="govuk-body">{{ measure_version.summary | html_line_breaks or field_empty_string }}</p>
+        </div>
+
+        <div id="need_to_know">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Things you need to know</p>
+            <p class="govuk-body">{{ measure_version.need_to_know | html_line_breaks or field_empty_string }}</p>
+        </div>
+    </div>
+
+    <div id="updates-and-corrections-section">
+        <h2 class="govuk-heading-l">Updates and corrections</h2>
+        {% if measure_version.is_minor_version %}
+        <div id="update_corrects_data_mistake">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Are you correcting something that's factually incorrect?</p>
+            <p class="govuk-body">{{ measure_version.update_corrects_data_mistake | yesno | title or field_empty_string }}</p>
+        </div>
+        {% endif %}
+
+        <div id="external_edit_summary">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Changes to previous version</p>
+            <p class="govuk-body">{{ measure_version.external_edit_summary or field_empty_string }}</p>
+        </div>
+
+        <div id="internal_edit_summary">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Notes (optional)</p>
+            <p class="govuk-body">{{ measure_version.internal_edit_summary or field_empty_string }}</p>
+        </div>
+
+        <div id="internal_reference">
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Measure code (optional)</p>
+            <p class="govuk-body">{{ measure_version.measure.reference or field_empty_string }}</p>
+        </div>
+    </div>
+
+    <div id="dimensions-section">
+        <h2 class="govuk-heading-l">Dimensions</h2>
+        {% if measure_version.dimensions %}
+            {% for dimension in measure_version.dimensions %}
+                <h2 class="govuk-heading-m" id="dimension-{{ loop.index }}-title">{{ loop.index }}. {{ dimension.title }}</h2>
+                <div id="dimension-{{ loop.index }}-time_period">
+                    <p class="govuk-heading-s govuk-!-margin-bottom-1">Time period covered</p>
+                    <p class="govuk-body">{{ dimension.time_period or field_empty_string }}</p>
+                </div>
+
+                <div id="dimension-{{ loop.index }}-summary">
+                    <p class="govuk-heading-s govuk-!-margin-bottom-1">Summary</p>
+                    <p class="govuk-body">{{ dimension.summary | html_line_breaks or field_empty_string }}</p>
+                </div>
+
+                <div id="dimension-{{ loop.index }}-chart">
+                    <p class="govuk-heading-s govuk-!-margin-bottom-1">Chart title</p>
+                    <p class="govuk-body">
+                    {% if dimension.dimension_chart and dimension.dimension_chart.chart_object %}
+                        {{ dimension.dimension_chart.chart_object.title.text or field_empty_string }}
+                    {% else %}
+                        {{ field_empty_string }}
+                    {% endif %}
+                    </p>
+                </div>
+
+                <div id="dimension-{{ loop.index }}-table">
+                    <p class="govuk-heading-s govuk-!-margin-bottom-1">Table title</p>
+                    <p class="govuk-body">
+                    {% if dimension.dimension_table and dimension.dimension_table.table_object %}
+                        {{ dimension.dimension_table.table_object.header or field_empty_string }}
+                    {% else %}
+                        {{ field_empty_string }}
+                    {% endif %}
+                    </p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="govuk-body">{{ field_empty_string }}</p>
+        {% endif %}
+    </div>
+
+    <div id="data-section">
+        <h2 class="govuk-heading-l">Data</h2>
+        {% if measure_version.uploads %}
+            {% for upload in measure_version.uploads %}
+                <h2 class="govuk-heading-m">{{ loop.index }}. {{ upload.title}}</h2>
+                <div id="upload-{{ loop.index }}-file_name">
+                    <p class="govuk-heading-s govuk-!-margin-bottom-1">File name</p>
+                    <p class="govuk-body">{{ upload.file_name}}</p>
+                </div>
+
+                <div id="upload-{{ loop.index }}-description">
+                    <p class="govuk-heading-s govuk-!-margin-bottom-1">Description</p>
+                    <p class="govuk-body">{{ upload.description}}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="govuk-body">{{ field_empty_string }}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
