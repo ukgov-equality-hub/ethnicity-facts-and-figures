@@ -616,7 +616,7 @@ def copy_data_to_lake():
 
             filename = filename.replace("-", "_")
 
-            target = "eff/%s/%s.csv" % (filename, filename)
+            target = "public/eff/%s/%s.csv" % (filename, filename)
 
             destination_bucket.copy(copy_source, target)
             print(target)
