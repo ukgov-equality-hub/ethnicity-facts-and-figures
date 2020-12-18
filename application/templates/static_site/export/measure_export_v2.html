@@ -256,7 +256,7 @@
         <h2 class="govuk-heading-l">Updates and corrections</h2>
         {% if measure_version.is_minor_version %}
         <div id="update_corrects_data_mistake">
-            <p class="govuk-heading-s govuk-!-margin-bottom-1">Are you correcting something that's factually incorrect?</p>
+            <p class="govuk-heading-s govuk-!-margin-bottom-1">Are you correcting something that is factually incorrect?</p>
             <p class="govuk-body">{{ measure_version.update_corrects_data_mistake | yesno | title or field_empty_string }}</p>
         </div>
         {% endif %}

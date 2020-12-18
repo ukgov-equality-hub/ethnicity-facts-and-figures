@@ -246,8 +246,8 @@ class MeasureVersionForm(FlaskForm):
         label="Description for search engines",
         validators=[RequiredForReviewValidator(message="Enter a description for search engines")],
         hint=(
-            "Choose an up‐to‐date statistic that shows a key disparity or change over time. The figure should work as "
-            "a stand-alone statement and end with a full stop."
+            "Choose a figure that highlights a disparity or change over time. The description "
+            "should work as a stand-alone statement and end with a full stop."
         ),
         extended_hint="_description.html",
         character_count_limit=160,
@@ -302,7 +302,7 @@ class MeasureVersionForm(FlaskForm):
 
     # Edit summaries
     update_corrects_data_mistake = RDURadioField(
-        label="Are you correcting something that’s factually incorrect?",
+        label="Are you correcting something that is factually incorrect?",
         hint="For example, in the data or commentary",
         choices=((True, "Yes"), (False, "No")),
         coerce=lambda value: None if value is None else get_bool(value),
@@ -324,12 +324,12 @@ class MeasureVersionForm(FlaskForm):
         label="Changes to previous version",
         validators=[RequiredForReviewValidator(message="Summarise changes to the previous version")],
         hint=(
-            "If you’ve corrected the data, explain what’s changed and why. Otherwise, summarise what you’ve updated "
-            "(for example, ‘Updated with the latest available data’)."
+            "If you have corrected the data, explain what has changed and why. Otherwise, "
+            "summarise what you have updated (for example, ‘Updated with the latest available data’)."
         ),
     )
     internal_edit_summary = RDUTextAreaField(
-        label="Notes (for internal use - optional)",
+        label="Notes (for internal use – optional)",
         hint="Include any additional information someone might need if they’re working on this page in the future",
     )
 
