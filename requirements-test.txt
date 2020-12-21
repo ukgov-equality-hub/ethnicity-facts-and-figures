@@ -9,7 +9,7 @@ flake8==3.8.1          # must also update `.pre-commit-config.yml` if this chang
 glob2==0.7
 pluggy==0.13.1         # Required by pytest
 pre-commit==2.4.0
-py==1.8.1
+py==1.10.0
 pycodestyle==2.6.0
 pytest==5.4.2
 pytest-cov==2.8.1
