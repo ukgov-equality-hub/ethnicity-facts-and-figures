@@ -600,14 +600,14 @@ def copy_data_to_lake():
 
             filename = paths[5].replace(".csv", "").replace("-", "_")
             if filename.startswith("by_ethnicity"):
-                filename = paths[1] + paths[2] + "_" + filename
+                filename = paths[2] + paths[3] + "_" + filename
 
             filename = filename[0:220:] if len(filename) > 220 else filename
 
             if filename not in filenames:
                 filenames.append(filename)
             else:
-                filename = paths[0].replace("-", "_") + "_" + filename
+                filename = paths[1].replace("-", "_") + "_" + filename
                 filename = filename[0:100:] + filename[-120:] if len(filename) > 220 else filename
                 if filename not in filenames:
                     filenames.append(filename)
@@ -619,7 +619,8 @@ def copy_data_to_lake():
             target = "public/eff/%s/%s.csv" % (filename, filename)
 
             destination_bucket.copy(copy_source, target)
-            print(target)
+
+            print(filename)
 
 
 if __name__ == "__main__":
