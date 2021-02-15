@@ -37,7 +37,7 @@
                   <th colspan="{{ dimension.dimension_table.table_object.columns|length }}"
                       scope='colgroup'
                       class="govuk-table__header govuk-table__header--numeric eff-table__header--dense eff-table__header--align-top eff-table__header--border-bottom-0  {{ '' if loop.last else 'eff-table__header--border-right' }}">
-                    {{ group_column.replace('inc', 'including').replace('inc.', 'including')|safe }}</th>
+                    {{ group_column.replace(' inc ', ' including ').replace(' inc. ', ' including ')|safe }}</th>
                   {% endif %}
                 {% endfor %}
               </tr>
@@ -150,7 +150,7 @@
                     <th class="govuk-table__header eff-table__header--border-right eff-table__header--dense {{ th_class }}"
                         data-sort-value="{{ data_order }}"
                         scope="{{ row_scope }}"
-                        role="rowheader">{% if data.category is defined %}{{ data.category.replace('inc', 'including').replace('inc.', 'including') }}{% endif %}</th>
+                        role="rowheader">{% if data.category is defined %}{{ data.category.replace(' inc ', ' including ').replace(' inc. ', ' including ') }}{% endif %}</th>
                   {% endif %}
 
                   {# We only want the 'eff-table-__header-border-right' class on the last column within each group #}
