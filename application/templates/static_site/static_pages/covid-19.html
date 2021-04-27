@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% set breadcrumbs =
-  [
-    {"url": url_for("static_site.index"), "text": "Home"},
-  ]
+[
+{"url": url_for("static_site.index"), "text": "Home"},
+]
 %}
 
 {% block pageTitle %}Ethnicity and COVID-19 from Race Disparity Unit - GOV.UK{% endblock %}
@@ -20,401 +20,640 @@ Unit.{% endblock %}
 
     <h1 class="govuk-heading-xl">Ethnicity and COVID-19</h1>
 
-    <p class="govuk-body">Includes data on deaths and disparities, risk factors and economic, educational and emotional impacts.</p>
+    <p class="govuk-body">Includes data on deaths and disparities, risk factors and economic, educational and emotional
+      impacts.</p>
 
- <h2 id="deaths-disparities"
-          class="govuk-heading-l govuk-!-margin-top-8">Deaths and disparities</h2>
+    <h2 id="deaths-disparities"
+        class="govuk-heading-l govuk-!-margin-top-8">Deaths and disparities</h2>
 
-      <div class="govuk-inset-text">
-        <p class="govuk-body">The following links are to data and analysis that has not been published on Ethnicity facts and figures.</p>
-      </div>
+    <div class="govuk-inset-text">
+      <p class="govuk-body">The following links are to data and analysis that has not been published on Ethnicity facts
+        and figures.</p>
+    </div>
 
-      <div class="govuk-accordion"
-           data-module="govuk-accordion"
-           id="accordion-default">
-        <div class="govuk-accordion__section ">
-          <div class="govuk-accordion__section-header">
-            <h3 class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button"
-                    id="accordion-default-heading-1">
-                Deaths
-              </span>
-            </h3>
-          </div>
-          <div id="accordion-default-content-1"
-               class="govuk-accordion__section-content"
-               aria-labelledby="accordion-default-heading-1">
-
-           <ul class="govuk-list ">
-        <li><a class="govuk-link" href="https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/articles/coronaviruscovid19relateddeathsbyethnicgroupenglandandwales/2march2020to15may2020">Deaths
-            by ethnic group</a> (Office for National Statistics – ONS)</li>
-        <li><a class="govuk-link" href="https://www.england.nhs.uk/statistics/statistical-work-areas/covid-19-daily-deaths/">Daily deaths</a> (NHS) – see the ‘weekly file’ for deaths by ethnicity</li>
-        <li><a class="govuk-link"
-             href="https://www.nature.com/articles/s41586-020-2521-4">Factors associated with COVID-19-related deaths</a> (Williamson, E.J. et al)</li>
-      </ul>
-
-
-          </div>
+    <div class="govuk-accordion"
+         data-module="govuk-accordion"
+         id="accordion-default">
+      <div class="govuk-accordion__section ">
+        <div class="govuk-accordion__section-header">
+          <h3 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button"
+                  id="accordion-default-heading-1">
+              Deaths
+            </span>
+          </h3>
         </div>
+        <div id="accordion-default-content-1"
+             class="govuk-accordion__section-content"
+             aria-labelledby="accordion-default-heading-1">
+
+          <ul class="govuk-list ">
+            <li><a class="govuk-link"
+                 href="https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/articles/coronaviruscovid19relateddeathsbyethnicgroupenglandandwales/2march2020to15may2020">Deaths
+                by ethnic group</a> (Office for National Statistics – ONS)</li>
+            <li><a class="govuk-link"
+                 href="https://www.england.nhs.uk/statistics/statistical-work-areas/covid-19-daily-deaths/">Daily
+                deaths</a> (NHS) – see the ‘weekly file’ for deaths by ethnicity</li>
+            <li><a class="govuk-link"
+                 href="https://www.nature.com/articles/s41586-020-2521-4">Factors associated with COVID-19-related
+                deaths</a> (Williamson, E.J. et al)</li>
+          </ul>
 
 
-        <div class="govuk-accordion__section ">
-          <div class="govuk-accordion__section-header">
-            <h3 class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button"
-                    id="accordion-default-heading-2">
-                Other disparities
-              </span>
-            </h3>
-          </div>
-          <div id="accordion-default-content-2"
-               class="govuk-accordion__section-content"
-               aria-labelledby="accordion-default-heading-2">
-
- <ul class="govuk-list ">
-        
-<li><a class="govuk-link" rel="external" href="https://www.gov.uk/government/publications/covid-19-review-of-disparities-in-risks-and-outcomes">Review of disparities in risks and outcomes</a> (Public Health England)</li>
-
-<li><a class="govuk-link" rel="external" href="https://www.gov.uk/government/publications/covid-19-pre-existing-health-conditions-and-ethnicity">Pre-existing health conditions and ethnicity</a> (Public Health England)</li>       
-
-<li><a class="govuk-link" rel="external" href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/conditionsanddiseases/articles/coronaviruscovid19/latestinsights#ethnicity">Latest insights</a> (ONS)</li>
-
-<li><a class="govuk-link" rel="external" href="https://www.ons.gov.uk/peoplepopulationandcommunity/culturalidentity/ethnicity/articles/coronavirusandthesocialimpactsondifferentethnicgroupsintheuk/2020">Social impacts on different ethnic groups in the UK</a> (ONS)</li>
-
-<li><a class="govuk-link" rel="external" href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/conditionsanddiseases/articles/whyhaveblackandsouthasianpeoplebeenhithardestbycovid19/2020-12-14">Why Black and South Asian people have been hit hardest</a> (ONS)</li>
-
-<li><a class="govuk-link" rel="external" href="https://www.gov.uk/government/publications/drivers-of-the-higher-covid-19-incidence-morbidity-and-mortality-among-minority-ethnic-groups-23-september-2020">Higher incidence, morbidity and mortality in ethnic minority groups</a> (SAGE)</li>
-
-<li><a class="govuk-link" rel="external" href="https://www.medrxiv.org/content/10.1101/2020.09.22.20198754v1">Ethnic differences in infection, hospitalisation, and mortality</a> (OpenSAFELY)</li>
-
-<li><a class="govuk-link" rel="external" href="https://www.sciencedirect.com/science/article/pii/S0264410X20313219">Parents’ and guardians’ views on a future vaccine</a> (Bell, S and others)</li>
-
-<li><a class="govuk-link" rel="external" href="https://www.icnarc.org/Our-Audit/Audits/Cmp/Reports">COVID-19 report</a> (Intensive Care National Audit and Research Centre)</li>
-
-
-      </ul>
-
-
-          </div>
         </div>
-
       </div>
 
 
-      <h2 id="risk-factors"
-          class="govuk-heading-l govuk-!-margin-top-8">Risk factors</h2>
+      <div class="govuk-accordion__section ">
+        <div class="govuk-accordion__section-header">
+          <h3 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button"
+                  id="accordion-default-heading-2">
+              Other disparities
+            </span>
+          </h3>
+        </div>
+        <div id="accordion-default-content-2"
+             class="govuk-accordion__section-content"
+             aria-labelledby="accordion-default-heading-2">
 
-      <p class="govuk-body">Certain risk factors are associated with getting and dying from COVID-19. </p>
+          <ul class="govuk-list ">
 
-      <div class="govuk-inset-text">
-        <p class="govuk-body">Most data relates to time periods before the
-          COVID-19 pandemic. Population data is from the 2011 Census.</p>
+            <li><a class="govuk-link"
+                 rel="external"
+                 href="https://www.gov.uk/government/publications/covid-19-review-of-disparities-in-risks-and-outcomes">Review
+                of disparities in risks and outcomes</a> (Public Health England)</li>
+
+            <li><a class="govuk-link"
+                 rel="external"
+                 href="https://www.gov.uk/government/publications/covid-19-pre-existing-health-conditions-and-ethnicity">Pre-existing
+                health conditions and ethnicity</a> (Public Health England)</li>
+
+            <li><a class="govuk-link"
+                 rel="external"
+                 href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/conditionsanddiseases/articles/coronaviruscovid19/latestinsights#ethnicity">Latest
+                insights</a> (ONS)</li>
+
+            <li><a class="govuk-link"
+                 rel="external"
+                 href="https://www.ons.gov.uk/peoplepopulationandcommunity/culturalidentity/ethnicity/articles/coronavirusandthesocialimpactsondifferentethnicgroupsintheuk/2020">Social
+                impacts on different ethnic groups in the UK</a> (ONS)</li>
+
+            <li><a class="govuk-link"
+                 rel="external"
+                 href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/conditionsanddiseases/articles/whyhaveblackandsouthasianpeoplebeenhithardestbycovid19/2020-12-14">Why
+                Black and South Asian people have been hit hardest</a> (ONS)</li>
+
+            <li><a class="govuk-link"
+                 rel="external"
+                 href="https://www.gov.uk/government/publications/drivers-of-the-higher-covid-19-incidence-morbidity-and-mortality-among-minority-ethnic-groups-23-september-2020">Higher
+                incidence, morbidity and mortality in ethnic minority groups</a> (SAGE)</li>
+
+            <li><a class="govuk-link"
+                 rel="external"
+                 href="https://www.medrxiv.org/content/10.1101/2020.09.22.20198754v1">Ethnic differences in infection,
+                hospitalisation, and mortality</a> (OpenSAFELY)</li>
+
+            <li><a class="govuk-link"
+                 rel="external"
+                 href="https://www.sciencedirect.com/science/article/pii/S0264410X20313219">Parents’ and guardians’
+                views on a future vaccine</a> (Bell, S and others)</li>
+
+            <li><a class="govuk-link"
+                 rel="external"
+                 href="https://www.icnarc.org/Our-Audit/Audits/Cmp/Reports">COVID-19 report</a> (Intensive Care National
+              Audit and Research Centre)</li>
+
+
+          </ul>
+
+
+        </div>
       </div>
 
-      <div class="govuk-accordion"
-           data-module="govuk-accordion"
-           id="accordion-default">
-        <div class="govuk-accordion__section ">
-          <div class="govuk-accordion__section-header">
-            <h3 class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button"
-                    id="accordion-default-heading-1">
-                Age and health
-              </span>
-            </h3>
-          </div>
-          <div id="accordion-default-content-1"
-               class="govuk-accordion__section-content"
-               aria-labelledby="accordion-default-heading-1">
-            <ul class="govuk-list ">
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+    </div>
+
+
+    <h2 id="risk-factors"
+        class="govuk-heading-l govuk-!-margin-top-8">Risk factors</h2>
+
+    <p class="govuk-body">Certain risk factors are associated with getting and dying from COVID-19. </p>
+
+    <div class="govuk-inset-text">
+      <p class="govuk-body">Most data relates to time periods before the
+        COVID-19 pandemic. Population data is from the 2011 Census.</p>
+    </div>
+
+    <div class="govuk-accordion"
+         data-module="govuk-accordion"
+         id="accordion-default">
+      <div class="govuk-accordion__section ">
+        <div class="govuk-accordion__section-header">
+          <h3 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button"
+                  id="accordion-default-heading-1">
+              Age and health
+            </span>
+          </h3>
+        </div>
+        <div id="accordion-default-content-1"
+             class="govuk-accordion__section-content"
+             aria-labelledby="accordion-default-heading-1">
+          <ul class="govuk-list ">
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='uk-population-by-ethnicity',
                                   subtopic_slug='demographics',
                                   measure_slug='age-groups',
     version='latest') }}">Age groups</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='uk-population-by-ethnicity',
                                   subtopic_slug='demographics',
                                   measure_slug='working-age-population',
     version='latest') }}">Working age population</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='health',
                                   subtopic_slug='alcohol-smoking-and-drug-use',
                                   measure_slug='adult-smokers',
     version='latest') }}">Cigarette smoking among adults</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='health',
                                   subtopic_slug='diet-and-exercise',
                                   measure_slug='overweight-adults',
     version='latest') }}">Overweight adults</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='health',
                                   subtopic_slug='physical-health',
                                   measure_slug='cancer-diagnosis-at-an-early-stage',
     version='latest') }}">Early cancer diagnosis</a></li>
-            </ul>
-          </div>
+          </ul>
         </div>
+      </div>
 
-        <div class="govuk-accordion__section ">
-          <div class="govuk-accordion__section-header">
-            <h3 class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button"
-                    id="accordion-default-heading-2">
-                Housing and deprivation
-              </span>
-            </h3>
-          </div>
-          <div id="accordion-default-content-2"
-               class="govuk-accordion__section-content"
-               aria-labelledby="accordion-default-heading-2">
+      <div class="govuk-accordion__section ">
+        <div class="govuk-accordion__section-header">
+          <h3 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button"
+                  id="accordion-default-heading-2">
+              Housing and deprivation
+            </span>
+          </h3>
+        </div>
+        <div id="accordion-default-content-2"
+             class="govuk-accordion__section-content"
+             aria-labelledby="accordion-default-heading-2">
 
-            <ul class="govuk-list ">
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+          <ul class="govuk-list ">
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='housing',
                                   subtopic_slug='housing-conditions',
                                   measure_slug='overcrowded-households',
     version='latest') }}">Overcrowded households</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='housing',
                                   subtopic_slug='housing-conditions',
                                   measure_slug='housing-with-damp-problems',
     version='latest') }}">Housing with damp problems</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='housing',
                                   subtopic_slug='housing-conditions',
                                   measure_slug='non-decent-homes',
     version='latest') }}">People without decent homes</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='uk-population-by-ethnicity',
                                   subtopic_slug='demographics',
                                   measure_slug='people-living-in-deprived-neighbourhoods',
     version='latest') }}">People living in deprived neighbourhoods</a></li>
-            </ul>
+          </ul>
 
-          </div>
         </div>
+      </div>
 
 
-        <div class="govuk-accordion__section ">
-          <div class="govuk-accordion__section-header">
-            <h3 class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button"
-                    id="accordion-default-heading-3">
-                Work and transport
-              </span>
-            </h3>
-          </div>
-          <div id="accordion-default-content-3"
-               class="govuk-accordion__section-content"
-               aria-labelledby="accordion-default-heading-3">
+      <div class="govuk-accordion__section ">
+        <div class="govuk-accordion__section-header">
+          <h3 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button"
+                  id="accordion-default-heading-3">
+              Work and transport
+            </span>
+          </h3>
+        </div>
+        <div id="accordion-default-content-3"
+             class="govuk-accordion__section-content"
+             aria-labelledby="accordion-default-heading-3">
 
-            <ul class="govuk-list ">
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+          <ul class="govuk-list ">
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='culture-and-community',
                                   subtopic_slug='transport',
                                   measure_slug='travel-by-distance-trips-type-of-transport-and-purpose',
     version='latest') }}">Travel by distance, trips, type of transport and purpose</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='work-pay-and-benefits',
                                   subtopic_slug='employment',
                                   measure_slug='employment-by-occupation',
     version='latest') }}">Employment by occupation</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='work-pay-and-benefits',
                                   subtopic_slug='employment',
                                   measure_slug='employment-by-sector',
     version='latest') }}">Employment by sector</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='workforce-and-business',
                                   subtopic_slug='workforce-diversity',
                                   measure_slug='nhs-workforce',
     version='latest') }}">NHS workers</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='workforce-and-business',
                                   subtopic_slug='workforce-diversity',
                                   measure_slug='police-workforce',
     version='latest') }}">Police workforce</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='workforce-and-business',
                                   subtopic_slug='workforce-diversity',
                                   measure_slug='school-teacher-workforce',
     version='latest') }}">School teacher workforce</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='workforce-and-business',
                                   subtopic_slug='workforce-diversity',
                                   measure_slug='prison-officer-workforce',
     version='latest') }}">Prison officer workforce</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='workforce-and-business',
                                   subtopic_slug='workforce-diversity',
                                   measure_slug='social-workers-for-children-and-families',
     version='latest') }}">Social workers for children and families</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='workforce-and-business',
                                   subtopic_slug='workforce-diversity',
                                   measure_slug='fire-and-rescue-services-workforce',
     version='latest') }}">Fire and rescue services workforce</a></li>
-            </ul>
+          </ul>
 
-          </div>
         </div>
-
       </div>
 
-      <h2 id="economic-educational-and-emotional-impacts"
-          class="govuk-heading-l govuk-!-margin-top-8">Economic, educational and emotional impacts</h2>
+    </div>
 
-      <p class="govuk-body">COVID-19 may have a disproportionate economic, educational or emotional impact on
-        people from ethnic minorities.</p>
+    <h2 id="economic-educational-and-emotional-impacts"
+        class="govuk-heading-l govuk-!-margin-top-8">Economic, educational and emotional impacts</h2>
 
-      <div class="govuk-inset-text">
-        <p class="govuk-body">Most data relates to time periods before the
-          COVID-19 pandemic but will help measure the impact of COVID-19 as new data becomes available.</p>
-      </div>
+    <p class="govuk-body">COVID-19 may have a disproportionate economic, educational or emotional impact on
+      people from ethnic minorities.</p>
 
-      <div class="govuk-accordion"
-           data-module="govuk-accordion"
-           id="accordion-default">
-        <div class="govuk-accordion__section ">
-          <div class="govuk-accordion__section-header">
-            <h3 class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button"
-                    id="accordion-default-heading-1">
-                Income and pay
-              </span>
-            </h3>
-          </div>
-          <div id="accordion-default-content-1"
-               class="govuk-accordion__section-content"
-               aria-labelledby="accordion-default-heading-1">
+    <div class="govuk-inset-text">
+      <p class="govuk-body">Most data relates to time periods before the
+        COVID-19 pandemic but will help measure the impact of COVID-19 as new data becomes available.</p>
+    </div>
 
-            <ul class="govuk-list ">
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+    <div class="govuk-accordion"
+         data-module="govuk-accordion"
+         id="accordion-default">
+      <div class="govuk-accordion__section ">
+        <div class="govuk-accordion__section-header">
+          <h3 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button"
+                  id="accordion-default-heading-1">
+              Income and pay
+            </span>
+          </h3>
+        </div>
+        <div id="accordion-default-content-1"
+             class="govuk-accordion__section-content"
+             aria-labelledby="accordion-default-heading-1">
+
+          <ul class="govuk-list ">
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='work-pay-and-benefits',
                                   subtopic_slug='pay-and-income',
                                   measure_slug='household-income',
     version='latest') }}">Household income</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='work-pay-and-benefits',
                                   subtopic_slug='pay-and-income',
                                   measure_slug='sources-of-household-income',
     version='latest') }}">Sources of household income</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='work-pay-and-benefits',
                                   subtopic_slug='benefits',
                                   measure_slug='state-support',
     version='latest') }}">State support</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='work-pay-and-benefits',
                                   subtopic_slug='pay-and-income',
                                   measure_slug='average-hourly-pay',
     version='latest') }}">Average hourly pay</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='work-pay-and-benefits',
                                   subtopic_slug='pay-and-income',
                                   measure_slug='low-income',
     version='latest') }}">Persistent low income</a></li>
-            </ul>
+          </ul>
 
-          </div>
         </div>
+      </div>
 
 
-        <div class="govuk-accordion__section ">
-          <div class="govuk-accordion__section-header">
-            <h3 class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button"
-                    id="accordion-default-heading-2">
-                School results
-              </span>
-            </h3>
-          </div>
-          <div id="accordion-default-content-2"
-               class="govuk-accordion__section-content"
-               aria-labelledby="accordion-default-heading-2">
+      <div class="govuk-accordion__section ">
+        <div class="govuk-accordion__section-header">
+          <h3 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button"
+                  id="accordion-default-heading-2">
+              School results
+            </span>
+          </h3>
+        </div>
+        <div id="accordion-default-content-2"
+             class="govuk-accordion__section-content"
+             aria-labelledby="accordion-default-heading-2">
 
-            <ul class="govuk-list ">
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+          <ul class="govuk-list ">
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='education-skills-and-training',
                                   subtopic_slug='11-to-16-years-old',
                                   measure_slug='gcse-results-attainment-8-for-children-aged-14-to-16-key-stage-4',
     version='latest') }}">GCSE results ('Attainment 8')</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='education-skills-and-training',
                                   subtopic_slug='11-to-16-years-old',
                                   measure_slug='a-to-c-in-english-and-maths-gcse-attainment-for-children-aged-14-to-16-key-stage-4',
     version='latest') }}">GCSE English and maths results</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='education-skills-and-training',
                                   subtopic_slug='a-levels-apprenticeships-further-education',
                                   measure_slug='students-aged-16-to-18-achieving-3-a-grades-or-better-at-a-level',
     version='latest') }}">Students getting 3 A grades or better at A level</a></li>
-            </ul>
-          </div>
+          </ul>
         </div>
+      </div>
 
 
-        <div class="govuk-accordion__section ">
-          <div class="govuk-accordion__section-header">
-            <h3 class="govuk-accordion__section-heading">
-              <span class="govuk-accordion__section-button"
-                    id="accordion-default-heading-3">
-                Mental health
-              </span>
-            </h3>
-          </div>
-          <div id="accordion-default-content-3"
-               class="govuk-accordion__section-content"
-               aria-labelledby="accordion-default-heading-3">
-            <ul class="govuk-list ">
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+      <div class="govuk-accordion__section ">
+        <div class="govuk-accordion__section-header">
+          <h3 class="govuk-accordion__section-heading">
+            <span class="govuk-accordion__section-button"
+                  id="accordion-default-heading-3">
+              Mental health
+            </span>
+          </h3>
+        </div>
+        <div id="accordion-default-content-3"
+             class="govuk-accordion__section-content"
+             aria-labelledby="accordion-default-heading-3">
+          <ul class="govuk-list ">
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='health',
                                   subtopic_slug='mental-health',
                                   measure_slug='adults-using-nhs-funded-mental-health-and-learning-disability-services',
     version='latest') }}">Use of NHS mental health services</a></li>
-              <li><a class="govuk-link"
-                   href="{{ url_for('static_site.measure_version',
+            <li><a class="govuk-link"
+                 href="{{ url_for('static_site.measure_version',
                                   topic_slug='health',
                                   subtopic_slug='mental-health',
                                   measure_slug='detentions-under-the-mental-health-act',
     version='latest') }}">Detentions under the Mental Health Act</a></li>
 
-            </ul>
+          </ul>
 
-          </div>
         </div>
-
       </div>
 
-
     </div>
+
+
   </div>
-  {% endblock %}
+</div>
+
+<h2 id="data-publication-schedule"
+    class="govuk-heading-l govuk-!-margin-top-8">Data publication schedule</h2>
+
+<p class="govuk-body">This publication schedule forms part of the recommendations made in the <a class="govuk-link"
+     href="https://www.gov.uk/government/publications/second-quarterly-report-on-progress-to-address-covid-19-health-inequalities/annexes#annex-c-further-data-and-evidence"></a>second
+  quarterly report on progress to address COVID-19 health inequalities.</p>
+
+<table class="govuk-table">
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th scope="col"
+          class="govuk-table__header">Measure title</th>
+      <th scope="col"
+          class="govuk-table__header">Expected department publication</th>
+      <th scope="col"
+          class="govuk-table__header">Expected publication on Ethnicity facts and figures</th>
+    </tr>
+  </thead>
+  <tbody class="govuk-table__body">
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Detentions under the Mental Health Act</td>
+      <td class="govuk-table__cell">October 2020</td>
+      <td class="govuk-table__cell">February 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Patient satisfaction with hospital care</td>
+      <td class="govuk-table__cell">August 2020</td>
+      <td class="govuk-table__cell">February 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Prison officer workforce</td>
+      <td class="govuk-table__cell">November 2020</td>
+      <td class="govuk-table__cell">February 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Fire and rescue services workforce</td>
+      <td class="govuk-table__cell">October 2020</td>
+      <td class="govuk-table__cell">February 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Domestic abuse</td>
+      <td class="govuk-table__cell">November 2020</td>
+      <td class="govuk-table__cell">February 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Use of NHS mental health, learning disability and autism services</td>
+      <td class="govuk-table__cell">January 2021</td>
+      <td class="govuk-table__cell">March 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">GCSE results (Attainment 8)</td>
+      <td class="govuk-table__cell">January 2021*</td>
+      <td class="govuk-table__cell">March 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">GCSE English and maths results</td>
+      <td class="govuk-table__cell">January 2021*</td>
+      <td class="govuk-table__cell">March 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Students getting 3 A grades or better at A level</td>
+      <td class="govuk-table__cell">January 2021*</td>
+      <td class="govuk-table__cell">March 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Average score for students taking A levels and other qualifications</td>
+      <td class="govuk-table__cell">January 2021*</td>
+      <td class="govuk-table__cell">March 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Social workers for children and families</td>
+      <td class="govuk-table__cell">February 2021</td>
+      <td class="govuk-table__cell">April 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Confidence in the local police</td>
+      <td class="govuk-table__cell">February 2021</td>
+      <td class="govuk-table__cell">April 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Physical activity</td>
+      <td class="govuk-table__cell">April 2021</td>
+      <td class="govuk-table__cell">May 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Overweight adults</td>
+      <td class="govuk-table__cell">May 2021</td>
+      <td class="govuk-table__cell">June 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Sources of household income</td>
+      <td class="govuk-table__cell">March 2021</td>
+      <td class="govuk-table__cell">June 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Household income</td>
+      <td class="govuk-table__cell">March 2021</td>
+      <td class="govuk-table__cell">June 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">State support</td>
+      <td class="govuk-table__cell">March 2021</td>
+      <td class="govuk-table__cell">June 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Persistent low income</td>
+      <td class="govuk-table__cell">March 2021</td>
+      <td class="govuk-table__cell">June 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">People in low income households</td>
+      <td class="govuk-table__cell">March 2021</td>
+      <td class="govuk-table__cell">June 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Self employment</td>
+      <td class="govuk-table__cell">May 2021</td>
+      <td class="govuk-table__cell">July 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Average hourly pay</td>
+      <td class="govuk-table__cell">May 2021</td>
+      <td class="govuk-table__cell">July 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Employment</td>
+      <td class="govuk-table__cell">May 2021</td>
+      <td class="govuk-table__cell">August 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Unemployment</td>
+      <td class="govuk-table__cell">May 2021</td>
+      <td class="govuk-table__cell">August 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Economic inactivity</td>
+      <td class="govuk-table__cell">May 2021</td>
+      <td class="govuk-table__cell">August 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Employment by occupation</td>
+      <td class="govuk-table__cell">May 2021</td>
+      <td class="govuk-table__cell">August 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Employment by sector</td>
+      <td class="govuk-table__cell">May 2021</td>
+      <td class="govuk-table__cell">August 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Travel by distance, trips, type of transport and purpose</td>
+      <td class="govuk-table__cell">September 2021</td>
+      <td class="govuk-table__cell">October 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Overcrowded households</td>
+      <td class="govuk-table__cell">September 2021</td>
+      <td class="govuk-table__cell">October 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">Housing with damp problems</td>
+      <td class="govuk-table__cell">September 2021</td>
+      <td class="govuk-table__cell">October 2021</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row"
+          class="govuk-table__header">People without decent homes</td>
+      <td class="govuk-table__cell">September 2021</td>
+      <td class="govuk-table__cell">October 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="govuk-body">* DfE would usually publish revised attainment statistics in January but because of the special
+  circumstances in 2020, only provisional data is available</p>
+
+{% endblock %}
