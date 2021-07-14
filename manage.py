@@ -5,6 +5,7 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
+from slugify import slugify
 
 from flask_migrate import Migrate, MigrateCommand, upgrade
 from flask_script import Manager, Server
@@ -27,6 +28,7 @@ from application.sitebuilder.build import build_and_upload_error_pages
 from application.sitebuilder.exceptions import StalledBuildException
 from application.sitebuilder.models import Build, BuildStatus
 from application.utils import create_and_send_activation_email, send_email, TimedExecution
+
 
 if os.environ.get("ENVIRONMENT", "DEVELOPMENT").lower().startswith("dev"):
     app = create_app(DevConfig)
@@ -587,34 +589,27 @@ def copy_data_to_lake():
 
     source_bucket = s3.Bucket(os.environ.get("S3_STATIC_SITE_BUCKET"))
     destination_bucket = s3.Bucket(os.environ.get("S3_EFF_LAKE_BUCKET"))
-    filenames = []
+    # filenames = []
 
     for obj in source_bucket.objects.all():
         if obj.key[-1] == "/":
             continue
-        elif obj.key[-3:] == "csv" and obj.key.find("latest/downloads") != -1:
+        elif (
+            obj.key[-3:] == "csv"
+            and obj.key.find("/downloads")
+            and obj.key.find("latest") == -1
+            and obj.key.find("table") == -1
+        ):
 
             copy_source = {"Bucket": os.environ.get("S3_STATIC_SITE_BUCKET"), "Key": obj.key}
 
+            ################
+            # lake filename pattern
             paths = obj.key.split("/")
-
-            filename = paths[5].replace(".csv", "").replace("-", "_")
-            if filename.startswith("by_ethnicity"):
-                filename = paths[2] + paths[3] + "_" + filename
-
-            filename = filename[0:220:] if len(filename) > 220 else filename
-
-            if filename not in filenames:
-                filenames.append(filename)
-            else:
-                filename = paths[1].replace("-", "_") + "_" + filename
-                filename = filename[0:100:] + filename[-120:] if len(filename) > 220 else filename
-                if filename not in filenames:
-                    filenames.append(filename)
-                else:
-                    continue
-
-            filename = filename.replace("-", "_")
+            filename = paths[2] + "_" + paths[5].replace(".csv", "") + "_v" + paths[3]
+            filename = slugify(filename).replace("-", "_")
+            filename = filename[-120:] if len(filename) >= 120 else filename
+            ###########
 
             target = "public/eff/%s/%s.csv" % (filename, filename)
 
