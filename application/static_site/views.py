@@ -351,3 +351,8 @@ def accessibility_statement():
 @static_site_blueprint.route("/blog-posts")
 def blog_posts():
     return render_template("static_site/static_pages/blog-posts.html")
+
+
+@static_site_blueprint.route("/changes-to-data")
+def changes_to_data():
+    return render_template("static_site/static_pages/changes_to_data.html")
