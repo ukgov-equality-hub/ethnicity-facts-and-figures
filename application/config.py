@@ -67,7 +67,7 @@ class Config:
 
     SIMPLE_CHART_BUILDER = get_bool(os.environ.get("SIMPLE_CHART_BUILDER", False))
     RDU_SITE = os.environ.get("RDU_SITE", "https://www.ethnicity-facts-figures.service.gov.uk")
-    RDU_EMAIL = os.environ.get("RDU_EMAIL", "ethnicity@cabinetoffice.gov.uk")
+    RDU_EMAIL = os.environ.get("RDU_EMAIL", "noreply@ethnicity-facts-figures.service.gov.uk")
 
     LOCAL_BUILD = get_bool(os.environ.get("LOCAL_BUILD", False))
 
