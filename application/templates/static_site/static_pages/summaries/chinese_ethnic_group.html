@@ -2,9 +2,9 @@
 {% from "_macros/_back_to_top.html" import appBackToTop %}
 
 {% set breadcrumbs =
-  [
-    {"url": url_for("static_site.index"), "text": "Home"},
-  ]
+[
+{"url": url_for("static_site.index"), "text": "Home"},
+]
 %}
 
 {% block pageTitle %}Chinese ethnic group - GOV.UK Ethnicity facts and figures{% endblock %}
@@ -17,7 +17,7 @@
 
 {% block content %}
 
-{# Page title and TOC  #}
+{# Page title and TOC #}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-three-quarters">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2">
@@ -81,14 +81,15 @@
     </div>
   </div>
 </div>
-{# end of Page title and TOC  #}
+{# end of Page title and TOC #}
 
 {# summary section (optional) #}
 <div class="govuk-grid-row govuk-!-margin-top-6">
   <div class="govuk-grid-column-three-quarters">
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="about-this-page">
-      <span class="number">1. </span>About this page</h2>
+      <span class="number">1. </span>About this page
+    </h2>
 
     <p class="govuk-body">This is a summary of statistics about people from the Chinese ethnic group (also referred to
       here as ‘Chinese
@@ -124,7 +125,8 @@
   <div class="govuk-grid-column-three-quarters">
     <h2 class="govuk-heading-l"
         id="population">
-      <span class="number">2. </span>Population</h2>
+      <span class="number">2. </span>Population
+    </h2>
 
     <div role="note"
          aria-label="Information"
@@ -142,7 +144,8 @@
 
     <h3 class="govuk-heading-m"
         id="where-chinese-people-live">
-      <span class="number">2.1 </span>Where Chinese people live</h3>
+      <span class="number">2.1 </span>Where Chinese people live
+    </h3>
 
     <p class="govuk-body">There were 348 local authorities in England and Wales at the time of the 2011 Census. Just
       over a quarter (26.1%)
@@ -267,7 +270,8 @@
 
     <h3 class="govuk-heading-m"
         id="age-profile">
-      <span class="number">2.2 </span>Age profile</h3>
+      <span class="number">2.2 </span>Age profile
+    </h3>
 
     <p class="govuk-body">The Chinese ethnic group had a younger age profile than the White British group in 2011.</p>
 
@@ -304,11 +308,123 @@
            src="/static/images/summaries/Chinese_Report_AgeProfile_v2-0.svg"
            alt="A chart showing that the Chinese ethnic group has a younger age profile than the White British ethnic group, with a much higher percentage of 18 to 34 year olds.">
     </div>
+
+    <h4 class="govuk-heading-s"
+        id="table-age-profiles">
+      Table 2: Percentage of White British and Chinese people in each age group</h4>
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Age group</th>
+          <th scope="col"
+              class="govuk-table__header">White British</th>
+          <th scope="col"
+              class="govuk-table__header">Chinese</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">85 and over</td>
+          <td class="govuk-table__cell">2.6%</td>
+          <td class="govuk-table__cell">0.4%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">80 to 84</td>
+          <td class="govuk-table__cell">2.8%</td>
+          <td class="govuk-table__cell">0.6%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">75 to 79</td>
+          <td class="govuk-table__cell">3.6%</td>
+          <td class="govuk-table__cell">1.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">70 to 74</td>
+          <td class="govuk-table__cell">4.4%</td>
+          <td class="govuk-table__cell">1.4%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">65 to 69</td>
+          <td class="govuk-table__cell">5.4%</td>
+          <td class="govuk-table__cell">1.6%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">60 to 64</td>
+          <td class="govuk-table__cell">6.8%</td>
+          <td class="govuk-table__cell">3.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">55 to 59</td>
+          <td class="govuk-table__cell">6.2%</td>
+          <td class="govuk-table__cell">4.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">50 to 54</td>
+          <td class="govuk-table__cell">6.8%</td>
+          <td class="govuk-table__cell">5.1%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">45 to 49</td>
+          <td class="govuk-table__cell">7.6%</td>
+          <td class="govuk-table__cell">5.8%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">40 to 44</td>
+          <td class="govuk-table__cell">7.3%</td>
+          <td class="govuk-table__cell">6.3%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">35 to 39</td>
+          <td class="govuk-table__cell">6.2%</td>
+          <td class="govuk-table__cell">7.7%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">30 to 34</td>
+          <td class="govuk-table__cell">5.6%</td>
+          <td class="govuk-table__cell">9.8%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">25 to 29</td>
+          <td class="govuk-table__cell">5.8%</td>
+          <td class="govuk-table__cell">12.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">18 to 24</td>
+          <td class="govuk-table__cell">8.9%</td>
+          <td class="govuk-table__cell">25.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">15 to 17</td>
+          <td class="govuk-table__cell">3.7%</td>
+          <td class="govuk-table__cell">3.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">10 to 14</td>
+          <td class="govuk-table__cell">5.6%</td>
+          <td class="govuk-table__cell">3.8%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">5 to 9</td>
+          <td class="govuk-table__cell">5.2%</td>
+          <td class="govuk-table__cell">3.3%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">0 to 4</td>
+          <td class="govuk-table__cell">5.6%</td>
+          <td class="govuk-table__cell">4.7%</td>
+        </tr>
+      </tbody>
+    </table>
+
+
     <p class="govuk-body">Source: Census of England and Wales, 2011</p>
 
     <h3 class="govuk-heading-m"
         id="families-and-households">
-      <span class="number">2.3 </span>Families and households</h3>
+      <span class="number">2.3 </span>Families and households
+    </h3>
 
     <p class="govuk-body"><a
          href="/uk-population-by-ethnicity/demographics/families-and-households/1.1#asian-ethnic-group-by-household-type"
@@ -329,7 +445,8 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="education">
-      <span class="number">3. </span>Education</h2>
+      <span class="number">3. </span>Education
+    </h2>
 
     <div role="note"
          aria-label="Information"
@@ -342,14 +459,54 @@
       highest level of
       attainment out of all ethnic groups.</p>
 
-    <h4 class="govuk-heading-s"
+    <h3 class="govuk-heading-s"
         id="figure-3-educational-attainment-among-chinese-and-white-british-pupils">Figure 3: Educational attainment
-      among Chinese and White British pupils</h4>
+      among Chinese and White British pupils</h3>
 
     <div><img class="govuk-!-width-full"
            src="/static/images/summaries/Chinese_Report_Education_v1-2.svg"
            alt="A chart showing that pupils from the Chinese ethnic group perform better than White British pupils at every key stage, with the difference getting bigger as pupils get older.">
     </div>
+
+    <h3 class="govuk-heading-s"
+        id="table-educational-attainment">Table 3: Educational attainment among Chinese and White British pupils</h3>
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Attainment</th>
+          <th scope="col"
+              class="govuk-table__header">Chinese pupils</th>
+          <th scope="col"
+              class="govuk-table__header">White British pupils</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Early years<br>Expected standard in development goals</td>
+          <td class="govuk-table__cell">76%</td>
+          <td class="govuk-table__cell">73%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Primary education<br>Expected standard in reading, writing and maths</td>
+          <td class="govuk-table__cell">80%</td>
+          <td class="govuk-table__cell">65%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">GCSEs<br>Grade 5 and over in English and maths</td>
+          <td class="govuk-table__cell">75%</td>
+          <td class="govuk-table__cell">43%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">A levels<br>Grade A or above in 3 subjects</td>
+          <td class="govuk-table__cell">23%</td>
+          <td class="govuk-table__cell">11%</td>
+        </tr>
+      </tbody>
+    </table>
+
+
     <p class="govuk-body">Source: Department for Education, England. Key stage 2 statistics 2018/19; Key stage 4
       statistics, 207/18; A
       level and other 16 to 18 results, 2017/18. Figures for key stage 2 are rounded to whole numbers by DFE.
@@ -358,7 +515,8 @@
 
     <h3 class="govuk-heading-m"
         id="early-years">
-      <span class="number">3.1 </span>Early years</h3>
+      <span class="number">3.1 </span>Early years
+    </h3>
 
     <p class="govuk-body"><a rel="external"
          target="_blank"
@@ -369,7 +527,8 @@
 
     <h3 class="govuk-heading-m"
         id="primary-education">
-      <span class="number">3.2 </span>Primary education</h3>
+      <span class="number">3.2 </span>Primary education
+    </h3>
 
     <p class="govuk-body">For <a rel="external"
          target="_blank"
@@ -380,7 +539,8 @@
 
     <h3 class="govuk-heading-m"
         id="gcse-english-and-maths">
-      <span class="number">3.3 </span>GCSE English and maths</h3>
+      <span class="number">3.3 </span>GCSE English and maths
+    </h3>
 
     <div role="note"
          aria-label="Information"
@@ -405,7 +565,8 @@
 
     <h3 class="govuk-heading-m"
         id="further-education">
-      <span class="number">3.4 </span>Further education</h3>
+      <span class="number">3.4 </span>Further education
+    </h3>
 
     <p class="govuk-body"><a
          href="/education-skills-and-training/after-education/destinations-of-school-pupils-after-key-stage-4-usually-aged-16-years/3.1#by-ethnicity"
@@ -424,7 +585,8 @@
 
     <h3 class="govuk-heading-m"
         id="school-exclusions">
-      <span class="number">3.5 </span>School exclusions</h3>
+      <span class="number">3.5 </span>School exclusions
+    </h3>
 
     <p class="govuk-body"><a rel="external"
          target="_blank"
@@ -435,7 +597,8 @@
 
     <h3 class="govuk-heading-m"
         id="higher-education">
-      <span class="number">3.6 </span>Higher education</h3>
+      <span class="number">3.6 </span>Higher education
+    </h3>
 
     <p class="govuk-body">Pupils from the Chinese ethnic group had the <a
          href="/education-skills-and-training/higher-education/entry-rates-into-higher-education/2.2#by-ethnicity"
@@ -450,11 +613,158 @@
            src="/static/images/summaries/Chinese_Report_HigherEd_v1-0__1_.svg"
            alt="A chart showing that pupils from the Chinese ethnic group had by far the highest entry rate into higher education every year between 2006 and 2018.">
     </div>
+
+    <h4 class="govuk-heading-s"
+        id="table-income-distribution">
+      Table 4: Percentage of state school pupils aged 18 getting a higher education place</h4>
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Year</th>
+          <th scope="col"
+              class="govuk-table__header">Asian</th>
+          <th scope="col"
+              class="govuk-table__header">Black</th>
+          <th scope="col"
+              class="govuk-table__header">Chinese</th>
+          <th scope="col"
+              class="govuk-table__header">Mixed</th>
+          <th scope="col"
+              class="govuk-table__header">White</th>
+          <th scope="col"
+              class="govuk-table__header">Other</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2006</td>
+          <td class="govuk-table__cell">34.5%</td>
+          <td class="govuk-table__cell">21.6%</td>
+          <td class="govuk-table__cell">53.6%</td>
+          <td class="govuk-table__cell">22.9%</td>
+          <td class="govuk-table__cell">21.8%</td>
+          <td class="govuk-table__cell">27.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2007</td>
+          <td class="govuk-table__cell">34.6%</td>
+          <td class="govuk-table__cell">23.1%</td>
+          <td class="govuk-table__cell">52.8%</td>
+          <td class="govuk-table__cell">24.3%</td>
+          <td class="govuk-table__cell">22.2%</td>
+          <td class="govuk-table__cell">27.1%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2008</td>
+          <td class="govuk-table__cell">35.7%</td>
+          <td class="govuk-table__cell">25.7%</td>
+          <td class="govuk-table__cell">52.0%</td>
+          <td class="govuk-table__cell">25.0%</td>
+          <td class="govuk-table__cell">23.5%</td>
+          <td class="govuk-table__cell">27.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2009</td>
+          <td class="govuk-table__cell">36.1%</td>
+          <td class="govuk-table__cell">27.0%</td>
+          <td class="govuk-table__cell">52.6%</td>
+          <td class="govuk-table__cell">25.7%</td>
+          <td class="govuk-table__cell">24.1%</td>
+          <td class="govuk-table__cell">27.8%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2010</td>
+          <td class="govuk-table__cell">35.0%</td>
+          <td class="govuk-table__cell">28.4%</td>
+          <td class="govuk-table__cell">52.6%</td>
+          <td class="govuk-table__cell">25.6%</td>
+          <td class="govuk-table__cell">24.2%</td>
+          <td class="govuk-table__cell">27.8%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2011</td>
+          <td class="govuk-table__cell">37.0%</td>
+          <td class="govuk-table__cell">31.7%</td>
+          <td class="govuk-table__cell">60.1%</td>
+          <td class="govuk-table__cell">28.9%</td>
+          <td class="govuk-table__cell">25.8%</td>
+          <td class="govuk-table__cell">30.5%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2012</td>
+          <td class="govuk-table__cell">36.1%</td>
+          <td class="govuk-table__cell">31.4%</td>
+          <td class="govuk-table__cell">57.1%</td>
+          <td class="govuk-table__cell">27.8%</td>
+          <td class="govuk-table__cell">24.7%</td>
+          <td class="govuk-table__cell">30.6%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2013</td>
+          <td class="govuk-table__cell">38.6%</td>
+          <td class="govuk-table__cell">34.7%</td>
+          <td class="govuk-table__cell">57.4%</td>
+          <td class="govuk-table__cell">29.2%</td>
+          <td class="govuk-table__cell">26.1%</td>
+          <td class="govuk-table__cell">32.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2014</td>
+          <td class="govuk-table__cell">39.8%</td>
+          <td class="govuk-table__cell">36.0%</td>
+          <td class="govuk-table__cell">59.3%</td>
+          <td class="govuk-table__cell">31.0%</td>
+          <td class="govuk-table__cell">27.3%</td>
+          <td class="govuk-table__cell">34.3%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2015</td>
+          <td class="govuk-table__cell">42.3%</td>
+          <td class="govuk-table__cell">38.4%</td>
+          <td class="govuk-table__cell">61.0%</td>
+          <td class="govuk-table__cell">32.3%</td>
+          <td class="govuk-table__cell">27.9%</td>
+          <td class="govuk-table__cell">36.8%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2016</td>
+          <td class="govuk-table__cell">44.1%</td>
+          <td class="govuk-table__cell">39.1%</td>
+          <td class="govuk-table__cell">60.9%</td>
+          <td class="govuk-table__cell">33.4%</td>
+          <td class="govuk-table__cell">28.9%</td>
+          <td class="govuk-table__cell">38.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2017</td>
+          <td class="govuk-table__cell">45.8%</td>
+          <td class="govuk-table__cell">40.3%</td>
+          <td class="govuk-table__cell">63.0%</td>
+          <td class="govuk-table__cell">34.0%</td>
+          <td class="govuk-table__cell">29.3%</td>
+          <td class="govuk-table__cell">40.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2018</td>
+          <td class="govuk-table__cell">46.7%</td>
+          <td class="govuk-table__cell">41.2%</td>
+          <td class="govuk-table__cell">66.3%</td>
+          <td class="govuk-table__cell">33.9%</td>
+          <td class="govuk-table__cell">29.5%</td>
+          <td class="govuk-table__cell">40.1%</td>
+        </tr>
+      </tbody>
+    </table>
+
+
     <p class="govuk-body">Source: UCAS End Of Cycle Report 2018</p>
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="work-and-income">
-      <span class="number">4. </span>Work and income</h2>
+      <span class="number">4. </span>Work and income
+    </h2>
 
     <div role="note"
          aria-label="Information"
@@ -465,7 +775,8 @@
 
     <h3 class="govuk-heading-m"
         id="young-people-not-in-employment-education-or-training">
-      <span class="number">4.1 </span>Young people not in employment, education or training</h3>
+      <span class="number">4.1 </span>Young people not in employment, education or training
+    </h3>
 
     <p class="govuk-body">6.2% of 16 to 24 year olds from the Chinese ethnic group were <a
          href="/work-pay-and-benefits/unemployment-and-economic-inactivity/young-people-not-in-employment-education-or-training-neet/1.1#by-ethnicity"
@@ -474,7 +785,8 @@
 
     <h3 class="govuk-heading-m"
         id="graduate-work-and-pay">
-      <span class="number">4.2 </span>Graduate work and pay</h3>
+      <span class="number">4.2 </span>Graduate work and pay
+    </h3>
 
     <p class="govuk-body">5 years after graduating, 72.7% of Chinese graduates were <a
          href="/education-skills-and-training/after-education/destinations-and-earnings-of-graduates-after-higher-education/2.0#graduate-destinations-by-ethnicity"
@@ -489,7 +801,8 @@
 
     <h3 class="govuk-heading-m"
         id="socio-economic-groups">
-      <span class="number">4.3 </span>Socio-economic groups</h3>
+      <span class="number">4.3 </span>Socio-economic groups
+    </h3>
 
     <div role="note"
          aria-label="Information"
@@ -509,7 +822,8 @@
 
     <h3 class="govuk-heading-m"
         id="household-income">
-      <span class="number">4.4 </span>Household income</h3>
+      <span class="number">4.4 </span>Household income
+    </h3>
 
     <div role="note"
          aria-label="Information"
@@ -531,6 +845,47 @@
            src="/static/images/summaries/Chinese_Report_IncomeDistribution_v1-1.svg"
            alt="A chart showing that the percentage of Chinese households in the top 2 income groups was about the same as for White British households, but higher than for Asian households as a whole.">
     </div>
+
+    <h4 class="govuk-heading-s"
+        id="table-income-distribution">
+      Table 5: Income distribution among Indian, White British and all Asian households</h4>
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Ethnic group</th>
+          <th scope="col"
+              class="govuk-table__header">2 lowest income groups</th>
+          <th scope="col"
+              class="govuk-table__header">Middle</th>
+          <th scope="col"
+              class="govuk-table__header">2 highest income groups</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Chinese</td>
+          <td class="govuk-table__cell">42%</td>
+          <td class="govuk-table__cell">20%</td>
+          <td class="govuk-table__cell">38%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">White British</td>
+          <td class="govuk-table__cell">38%</td>
+          <td class="govuk-table__cell">21%</td>
+          <td class="govuk-table__cell">42%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Asian</td>
+          <td class="govuk-table__cell">53%</td>
+          <td class="govuk-table__cell">17%</td>
+          <td class="govuk-table__cell">29%</td>
+        </tr>
+      </tbody>
+    </table>
+
+
     <p class="govuk-body">Source: Department for Work and Pensions (DWP) Households below average income: 1994/95 to
       2017/18. Please
       note: Values are given to the nearest whole percentage. Due to this rounding, some figures may not add up to
@@ -543,7 +898,8 @@
 
     <h3 class="govuk-heading-m"
         id="civil-service-workforce-and-pay">
-      <span class="number">4.5 </span>Civil Service workforce and pay</h3>
+      <span class="number">4.5 </span>Civil Service workforce and pay
+    </h3>
 
     <div role="note"
          aria-label="Information"
@@ -567,7 +923,8 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="crime-and-policing">
-      <span class="number">5. </span>Crime and policing</h2>
+      <span class="number">5. </span>Crime and policing
+    </h2>
 
     <div role="note"
          aria-label="Information"
@@ -579,7 +936,8 @@
 
     <h3 class="govuk-heading-m"
         id="stop-and-search">
-      <span class="number">5.1 </span>Stop and search</h3>
+      <span class="number">5.1 </span>Stop and search
+    </h3>
 
     <p class="govuk-body">There was <a rel="external"
          target="_blank"
@@ -595,7 +953,8 @@
 
     <h3 class="govuk-heading-m"
         id="fear-of-crime-and-confidence-in-the-police">
-      <span class="number">5.2 </span>Fear of crime and confidence in the police</h3>
+      <span class="number">5.2 </span>Fear of crime and confidence in the police
+    </h3>
 
     <p class="govuk-body"><a
          href="/crime-justice-and-the-law/crime-and-reoffending/fear-of-crime/1.4#by-ethnicity-over-time"
@@ -608,7 +967,8 @@
 
     <h3 class="govuk-heading-m"
         id="victims-of-crime">
-      <span class="number">5.3 </span>Victims of crime</h3>
+      <span class="number">5.3 </span>Victims of crime
+    </h3>
 
     <p class="govuk-body">14% of Chinese people aged 16 and over said they were a victim of crime in the previous 12
       months. This was
@@ -616,7 +976,8 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="home-ownership-and-renting">
-      <span class="number">6. </span>Home ownership and renting</h2>
+      <span class="number">6. </span>Home ownership and renting
+    </h2>
 
     <div role="note"
          aria-label="Information"
@@ -639,7 +1000,8 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="health">
-      <span class="number">7. </span>Health</h2>
+      <span class="number">7. </span>Health
+    </h2>
 
     <div role="note"
          aria-label="Information"
@@ -649,7 +1011,8 @@
 
     <h3 class="govuk-heading-m"
         id="mental-health">
-      <span class="number">7.1 </span>Mental health</h3>
+      <span class="number">7.1 </span>Mental health
+    </h3>
 
     <p class="govuk-body">Chinese people had the <a
          href="/health/mental-health/detentions-under-the-mental-health-act/2.1#by-ethnicity-16-ethnic-groups"
@@ -664,7 +1027,8 @@
 
     <h3 class="govuk-heading-m"
         id="diet-and-exercise">
-      <span class="number">7.2 </span>Diet and exercise</h3>
+      <span class="number">7.2 </span>Diet and exercise
+    </h3>
 
     <p class="govuk-body"><a href="/health/diet-and-exercise/overweight-adults/3.0#by-ethnicity-over-time"
          class="govuk-link">34.5% of adults from the Chinese ethnic group were overweight or obese</a>, the lowest

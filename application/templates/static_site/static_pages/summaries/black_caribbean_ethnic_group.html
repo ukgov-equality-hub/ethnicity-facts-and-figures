@@ -2,9 +2,9 @@
 {% from "_macros/_back_to_top.html" import appBackToTop %}
 
 {% set breadcrumbs =
-  [
-    {"url": url_for("static_site.index"), "text": "Home"},
-  ]
+[
+{"url": url_for("static_site.index"), "text": "Home"},
+]
 %}
 
 {% block pageTitle %}Black Caribbean ethnic group - GOV.UK Ethnicity facts and figures{% endblock %}
@@ -16,7 +16,7 @@
 
 {% block content %}
 
-{# Page title and TOC  #}
+{# Page title and TOC #}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-three-quarters">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2">
@@ -94,14 +94,15 @@
     </div>
   </div>
 </div>
-{# end of Page title and TOC  #}
+{# end of Page title and TOC #}
 
 {# summary section (optional) #}
 <div class="govuk-grid-row govuk-!-margin-top-6">
   <div class="govuk-grid-column-three-quarters">
     <h2 class="govuk-heading-l"
         id="about-this-page">
-      <span class="number">1. </span>About this page</h2>
+      <span class="number">1. </span>About this page
+    </h2>
 
     <p class="govuk-body">This is a summary of statistics about Black Caribbean people in England and Wales.</p>
 
@@ -135,7 +136,8 @@
   <div class="govuk-grid-column-three-quarters">
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="population">
-      <span class="number">2. </span>Population</h2>
+      <span class="number">2. </span>Population
+    </h2>
 
     <p class="govuk-body">In 2011, there were 594,825 Black Caribbean people in England and Wales, making up <a
          href="/uk-population-by-ethnicity/national-and-regional-populations/population-of-england-and-wales/1.4"
@@ -143,7 +145,8 @@
 
     <h3 class="govuk-heading-m"
         id="where-black-caribbean-people-live">
-      <span class="number">2.1 </span>Where Black Caribbean people live</h3>
+      <span class="number">2.1 </span>Where Black Caribbean people live
+    </h3>
 
     <p class="govuk-body">There were 348 local authorities in England and Wales at the time of the 2011 Census. Half of
       the Black Caribbean
@@ -155,18 +158,20 @@
 
     <h4 class="govuk-heading-s"
         id="map-percentage-of-the-black-caribbean-population-of-england-and-wales-living-in-each-local-authority-area-top-13-areas-labelled">
-      Map: Percentage of the Black Caribbean population of England and Wales living in each local authority area (top 13
+      Figure 1: Percentage of the Black Caribbean population of England and Wales living in each local authority area
+      (top 13
       areas labelled)</h4>
 
     <div><img class="govuk-!-width-full"
            src="/static/images/summaries/black-caribbean-population-2011-map.svg"
-           alt="Map of England and Wales showing the 13 local authorities where half of the Black Caribbean population of England and Wales lives">
+           alt="Map of England and Wales showing that 8.0% of Black Caribbean people live in Birmingham, the highest percentage out of all local authorities. 5.3% live in Croydon, and 5.2% in Lewisham.">
     </div>
     <p class="govuk-body">Source: Census of England and Wales, 2011</p>
 
     <h4 class="govuk-heading-s"
         id="table-percentage-of-the-black-caribbean-population-of-england-and-wales-living-in-each-local-authority-area-top-13">
-      Table: Percentage of the Black Caribbean population of England and Wales living in each local authority area (top
+      Table 1: Percentage of the Black Caribbean population of England and Wales living in each local authority area
+      (top
       13)</h4>
 
     <table class="govuk-table">
@@ -273,7 +278,8 @@
 
     <h3 class="govuk-heading-m"
         id="age-profile">
-      <span class="number">2.2 </span>Age profile</h3>
+      <span class="number">2.2 </span>Age profile
+    </h3>
 
     <p class="govuk-body">The Black Caribbean ethnic group had a younger age profile than the White British group at the
       time of the 2011
@@ -291,19 +297,131 @@
       people.</p>
 
     <h4 class="govuk-heading-s"
-        id="chart-age-profile-of-black-caribbean-and-white-british-people">Chart: Age profile of Black Caribbean and
+        id="chart-age-profile-of-black-caribbean-and-white-british-people">Figure 2: Age profile of Black Caribbean and
       White British people</h4>
 
     <div><img class="govuk-!-width-full"
            src="/static/images/summaries/black-caribbean-age-profile.svg"
-           alt="Charts showing the percentage of the Black Caribbean and White British populations of England and Wales that are in each age band">
+           alt="Chart showing that the Black Caribbean population who were aged 40 to 55 years at the 2011 Census made up nearly 30% of people in this ethnic group, compared with nearly 22% of White British people.">
     </div>
+
+    <h4 class="govuk-heading-s"
+        id="table-age-profiles">
+      Table 2: Percentage of White British and Black Caribbean people in each age group</h4>
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Age group</th>
+          <th scope="col"
+              class="govuk-table__header">White British</th>
+          <th scope="col"
+              class="govuk-table__header">Black Caribbean</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">85 and over</td>
+          <td class="govuk-table__cell">2.6%</td>
+          <td class="govuk-table__cell">1.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">80 to 84</td>
+          <td class="govuk-table__cell">2.8%</td>
+          <td class="govuk-table__cell">1.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">75 to 79</td>
+          <td class="govuk-table__cell">3.6%</td>
+          <td class="govuk-table__cell">3.4%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">70 to 74</td>
+          <td class="govuk-table__cell">4.4%</td>
+          <td class="govuk-table__cell">4.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">65 to 69</td>
+          <td class="govuk-table__cell">5.4%</td>
+          <td class="govuk-table__cell">3.4%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">60 to 64</td>
+          <td class="govuk-table__cell">6.8%</td>
+          <td class="govuk-table__cell">3.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">55 to 59</td>
+          <td class="govuk-table__cell">6.2%</td>
+          <td class="govuk-table__cell">4.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">50 to 54</td>
+          <td class="govuk-table__cell">6.8%</td>
+          <td class="govuk-table__cell">8.3%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">45 to 49</td>
+          <td class="govuk-table__cell">7.6%</td>
+          <td class="govuk-table__cell">11.6%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">40 to 44</td>
+          <td class="govuk-table__cell">7.3%</td>
+          <td class="govuk-table__cell">9.6%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">35 to 39</td>
+          <td class="govuk-table__cell">6.2%</td>
+          <td class="govuk-table__cell">6.5%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">30 to 34</td>
+          <td class="govuk-table__cell">5.6%</td>
+          <td class="govuk-table__cell">6.1%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">25 to 29</td>
+          <td class="govuk-table__cell">5.8%</td>
+          <td class="govuk-table__cell">6.5%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">20 to 24</td>
+          <td class="govuk-table__cell">6.3%</td>
+          <td class="govuk-table__cell">6.7%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">15 to 19</td>
+          <td class="govuk-table__cell">6.2%</td>
+          <td class="govuk-table__cell">6.7%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">10 to 14</td>
+          <td class="govuk-table__cell">5.6%</td>
+          <td class="govuk-table__cell">5.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">5 to 9</td>
+          <td class="govuk-table__cell">5.2%</td>
+          <td class="govuk-table__cell">5.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">0 to 4</td>
+          <td class="govuk-table__cell">5.6%</td>
+          <td class="govuk-table__cell">5.0%</td>
+        </tr>
+      </tbody>
+    </table>
+
+
     <p class="govuk-body">Source: Census of England and Wales, 2011</p>
 
 
     <h3 class="govuk-heading-m"
         id="families-and-households">
-      <span class="number">2.3 </span>Families and households</h3>
+      <span class="number">2.3 </span>Families and households
+    </h3>
 
     <p class="govuk-body">16.6% of <a
          href="/uk-population-by-ethnicity/demographics/families-and-households/1.1#black-ethnic-group-by-household-type"
@@ -322,19 +440,60 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="education">
-      <span class="number">3. </span>Education</h2>
+      <span class="number">3. </span>Education
+    </h2>
 
     <p class="govuk-body">In all subjects and at all key stages, Black Caribbean pupils’ attainment was below the
       average for England.
       (2017/18)</p>
 
-    <h4 class="govuk-heading-s"
-        id="chart-educational-attainment-among-black-caribbean-and-white-british-pupils">Chart: Educational attainment
-      among Black Caribbean and White British pupils</h4>
+    <h3 class="govuk-heading-s"
+        id="chart-educational-attainment-among-black-caribbean-and-white-british-pupils">Figure 3: Educational
+      attainment
+      among Black Caribbean and White British pupils</h3>
 
     <div><img class="govuk-!-width-full"
            src="/static/images/summaries/black-caribbean-education-statistics.svg"
-           alt="Chart comparing the attainment of Black Caribbean pupils with White British pupils"></div>
+           alt="Chart showing that Black Caribbean pupils had lower attainment than White British pupils in primary education, GCSEs and A levels.">
+    </div>
+
+    <h3 class="govuk-heading-s"
+        id="table-educational-attainment">
+      Table 3: Educational attainment among Black Caribbean and White British pupils</h3>
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Attainment</th>
+          <th scope="col"
+              class="govuk-table__header">Black Caribbean pupils</th>
+          <th scope="col"
+              class="govuk-table__header">White British pupils</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Primary education<br>Expected standard in reading, writing and maths</td>
+          <td class="govuk-table__cell">55%</td>
+          <td class="govuk-table__cell">65%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">GCSEs<br>Grade 5 and over in English and maths</td>
+          <td class="govuk-table__cell">26.9%</td>
+          <td class="govuk-table__cell">42.7%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">A levels<br>Grade A or above in 3 subjects</td>
+          <td class="govuk-table__cell">3.5%</td>
+          <td class="govuk-table__cell">10.9%</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+
+
     <p class="govuk-body">Source: England, Key Stage 1 Statistics, 2017/18; Key Stage 4 Statistics, 2016/17; and A Level
       and other 16
       to 18 results, 2016/17. Ethnicity facts and figures and Department for Education (DfE). Figures for Key Stage
@@ -342,7 +501,8 @@
 
     <h3 class="govuk-heading-m"
         id="primary-education">
-      <span class="number">3.1 </span>Primary education</h3>
+      <span class="number">3.1 </span>Primary education
+    </h3>
 
     <p class="govuk-body">In year 6, 55% of Black Caribbean pupils met the expected standard in <a
          href="/education-skills-and-training/7-to-11-years-old/reading-writing-and-maths-attainments-for-children-aged-7-to-11-key-stage-2/3.0#by-ethnicity"
@@ -352,7 +512,8 @@
 
     <h3 class="govuk-heading-m"
         id="secondary-education">
-      <span class="number">3.2 </span>Secondary education</h3>
+      <span class="number">3.2 </span>Secondary education
+    </h3>
 
     <p class="govuk-body">26.9% of Black Caribbean pupils achieved <a rel="external"
          target="_blank"
@@ -368,7 +529,8 @@
 
     <h3 class="govuk-heading-m"
         id="school-exclusions">
-      <span class="number">3.3 </span>School exclusions</h3>
+      <span class="number">3.3 </span>School exclusions
+    </h3>
 
     <p class="govuk-body">Black Caribbean pupils were <a
          href="/education-skills-and-training/absence-and-exclusions/pupil-exclusions/2.2#temporary-exclusions-by-ethnicity"
@@ -382,7 +544,8 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="stop-and-search">
-      <span class="number">4. </span>Stop and search</h2>
+      <span class="number">4. </span>Stop and search
+    </h2>
 
     <p class="govuk-body">Black Caribbean people were <a
          href="/crime-justice-and-the-law/policing/stop-and-search/3.2#by-ethnicity"
@@ -401,14 +564,82 @@
       people. As a result, the disparity has widened since 2013/14 when Black Caribbean people were 4.7 times as likely
       to be stopped and searched as White British people.</p>
 
-    <h4 class="govuk-heading-s"
-        id="chart-stop-and-search-rate-per-1000-people-over-time-among-black-caribbean-and-white-british-people">Chart:
-      Stop and Search rate (per 1,000 people) over time among Black Caribbean and White British people</h4>
+    <h3 class="govuk-heading-s"
+        id="chart-stop-and-search-rate-per-1000-people-over-time-among-black-caribbean-and-white-british-people">Figure
+      4:
+      Stop and Search rate (per 1,000 people) over time among Black Caribbean and White British people</h3>
 
     <div><img class="govuk-!-width-full"
            src="/static/images/summaries/black-caribbean-stop-and-search.svg"
-           alt="Chart showing the stop and search rates for Black Caribbean and White British people between 2009/10 and 2017/18">
+           alt="Line graph showing that in the 9 years ending March 2018, the stop and search rate went down for both the Black Caribbean and White British ethnic groups. It went down at a faster rate for the Black Caribbean group, from 153 to 26 stop and search incidents per 1,000 people.">
     </div>
+
+    <h3 class="govuk-heading-s"
+        id="table-stop-search">
+      Table 4: Stop and Search rate (per 1,000 people) over time among Black Caribbean and White British people</h3>
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Year</th>
+          <th scope="col"
+              class="govuk-table__header">Black Caribbean</th>
+          <th scope="col"
+              class="govuk-table__header">White British</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2009 to 2010</td>
+          <td class="govuk-table__cell">153</td>
+          <td class="govuk-table__cell">17</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2010 to 2011</td>
+          <td class="govuk-table__cell">139</td>
+          <td class="govuk-table__cell">16</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2011 to 2012</td>
+          <td class="govuk-table__cell">112</td>
+          <td class="govuk-table__cell">15</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2012 to 2013</td>
+          <td class="govuk-table__cell">74</td>
+          <td class="govuk-table__cell">14</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2013 to 2014</td>
+          <td class="govuk-table__cell">59</td>
+          <td class="govuk-table__cell">12</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2014 to 2015</td>
+          <td class="govuk-table__cell">36</td>
+          <td class="govuk-table__cell">7</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2015 to 2016</td>
+          <td class="govuk-table__cell">31</td>
+          <td class="govuk-table__cell">4</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2016 to 2017</td>
+          <td class="govuk-table__cell">28</td>
+          <td class="govuk-table__cell">3</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">2017 to 2018</td>
+          <td class="govuk-table__cell">26</td>
+          <td class="govuk-table__cell">3</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+
     <p class="govuk-body">Source: England and Wales, Police Powers and Procedures, 2017/18</p>
 
     <p class="govuk-body">A higher percentage of <a rel="external"
@@ -426,7 +657,8 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="arrests">
-      <span class="number">5. </span>Arrests</h2>
+      <span class="number">5. </span>Arrests
+    </h2>
 
     <p class="govuk-body">Black Caribbean people were <a
          href="/crime-justice-and-the-law/policing/number-of-arrests/3.1#by-ethnicity"
@@ -441,7 +673,8 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="fear-of-crime">
-      <span class="number">6. </span>Fear of crime</h2>
+      <span class="number">6. </span>Fear of crime
+    </h2>
 
     <p class="govuk-body">28% of Black Caribbean people said they thought <a
          href="/crime-justice-and-the-law/crime-and-reoffending/fear-of-crime/1.4#by-ethnicity-over-time"
@@ -450,16 +683,56 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="home-ownership-and-renting">
-      <span class="number">7. </span>Home ownership and renting</h2>
+      <span class="number">7. </span>Home ownership and renting
+    </h2>
 
-    <h4 class="govuk-heading-s"
-        id="chart-home-ownership-and-renting-among-black-caribbean-and-white-british-households">Chart: Home ownership
-      and renting among Black Caribbean and White British households</h4>
+    <h3 class="govuk-heading-s"
+        id="chart-home-ownership-and-renting-among-black-caribbean-and-white-british-households">Figure 5: Home
+      ownership
+      and renting among Black Caribbean and White British households</h3>
 
     <div><img class="govuk-!-width-full"
            src="/static/images/summaries/black-caribbean-housing.svg"
-           alt="Chart showing the percentage of White British and Black Caribbean households that own their own home, rent privately, and rent social housing">
+           alt="Chart showing that 37% Black Caribbean households owned their own home, compared with 68% of White British households. 45% of Black Caribbean households rented social housing, compared with 16% of White British households.">
     </div>
+
+    <h3 class="govuk-heading-s"
+        id="table-home-ownership">
+      Table 5: Home ownership and renting among Black Caribbean and White British households</h3>
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Ethnic group</th>
+          <th scope="col"
+              class="govuk-table__header">Own their own home</th>
+          <th scope="col"
+              class="govuk-table__header">Rent privately</th>
+          <th scope="col"
+              class="govuk-table__header">Rent social housing</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Black Caribbean</td>
+          <td class="govuk-table__cell">37%</td>
+          <td class="govuk-table__cell">18%</td>
+          <td class="govuk-table__cell">45%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">White British</td>
+          <td class="govuk-table__cell">68%</td>
+          <td class="govuk-table__cell">16%</td>
+          <td class="govuk-table__cell">16%</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+
+
+
     <p class="govuk-body">Source: England, English Housing Survey, 2015/16 and 2016/17 combined</p>
 
     <p class="govuk-body"><a href="/housing/owning-and-renting/home-ownership/2.1#by-ethnicity"
@@ -473,7 +746,8 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="mental-health">
-      <span class="number">8. </span>Mental health</h2>
+      <span class="number">8. </span>Mental health
+    </h2>
 
     <p class="govuk-body">Black Caribbean people had the highest rate of detention under the Mental Health Act out of
       all ethnic groups, at
@@ -490,7 +764,8 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-9"
         id="blog-post">
-      <span class="number">9. </span>Blog post</h2>
+      <span class="number">9. </span>Blog post
+    </h2>
 
     <p class="govuk-body">Read a blog post on <a rel="external"
          target="_blank"
