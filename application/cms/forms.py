@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from flask import abort, render_template
 from markupsafe import Markup
 from wtforms import StringField, TextAreaField, FileField, IntegerField, HiddenField
-from wtforms.fields.html5 import DateField
+from wtforms.fields import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length, StopValidation, InputRequired
 
 from wtforms.widgets import HiddenInput
