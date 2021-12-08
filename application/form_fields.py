@@ -14,7 +14,7 @@ from flask import render_template
 from markupsafe import Markup
 from wtforms.fields import SelectMultipleField, RadioField, StringField
 from wtforms.validators import ValidationError
-from wtforms.widgets import HTMLString, html_params
+from wtforms.widgets import html_params
 
 
 class _ChoiceInputs(Enum):
@@ -84,7 +84,7 @@ class _FormFieldTemplateRenderer:
         if disabled:
             field_params["disabled"] = True
 
-        return HTMLString(
+        return Markup(
             render_template(
                 self.TEMPLATE,
                 field=field,
@@ -95,7 +95,7 @@ class _FormFieldTemplateRenderer:
                 diffs=diffs,
                 disabled=disabled,  # This needs to be sent both to the template and to the field (for choice inputs)
                 **render_params,
-                field_params=HTMLString(html_params(**field_params)),
+                field_params=Markup(html_params(**field_params)),
             )
         )
 
