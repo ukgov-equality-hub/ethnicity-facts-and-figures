@@ -61,6 +61,6 @@ sqreen>=1.19.0,<2.0
 Unidecode==1.1.1       # Required by python-slugify
 urllib3==1.25.9
 Werkzeug==2.0.2
-WTForms==2.3.1
+WTForms==3.0.0
 password-strength>=0.0.3.post2
 email-validator==1.1.0

@@ -4,12 +4,12 @@
 {% from "_macros/_back_to_top.html" import appBackToTop %}
 
 {% set breadcrumbs =
-  [
-    {"url": url_for("static_site.index"), "text": "Home"},
-    {"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_version.measure.subtopic.topic.title},
-  ]
-  if preview | default(true) else
-  none
+[
+{"url": url_for("static_site.index"), "text": "Home"},
+{"url": url_for("static_site.topic", topic_slug=topic_slug), "text": measure_version.measure.subtopic.topic.title},
+]
+if preview | default(true) else
+none
 %}
 
 {% block pageTitle %}{{ measure_version.title }} - GOV.UK Ethnicity facts and figures{% endblock %}
@@ -128,7 +128,7 @@
       {{ measure_version.title }}
     </h1>
 
-    {%  if measure_version.first_published_date %}
+    {% if measure_version.first_published_date %}
     <p class="govuk-body-s govuk-!-margin-bottom-2">Published <time itemprop="datePublished"
             datetime="{{ measure_version.first_published_date | format_iso8601_date }}">{{ measure_version.first_published_date | format_friendly_date }}</time>
     </p>
@@ -137,7 +137,7 @@
         {{ measure_version.published_at|format_friendly_date }}</span> - <a href="#full-page-history"
          class="govuk-link">see all updates</a></p>
     {% endif %}
-    {%  endif %}
+    {% endif %}
 
   </div>
 </div>
@@ -206,13 +206,23 @@
                   class="sr-only">Navigate to</span><span class="eff-table-of-contents__content">Download the data<span
                     class="sr-only"> section</span></span></a></li>
 
-        {#  TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
-        {#  Temporarily disabled due to experimenting changes #}
+        {# TODO: Remove this or revert depending on results of
+        https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
+        {# Temporarily disabled due to experimenting changes #}
         {#
-            {% if measure_version.measure.slug == "number-of-arrests" or measure_version.measure.slug == "household-income" or measure_version.measure.slug == "stop-and-search" or measure_version.measure.slug == "employment" or measure_version.measure.slug == "average-hourly-pay" %}
-              <li><a class="govuk-link" href="#related-content" data-on="click" data-event-category="Table of contents link clicked" data-event-action="Related links" data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 6 }}. </span><span class="sr-only">Navigate to</span><span class="eff-table-of-contents__content">Related content<span class="sr-only"> section</span></span></a></li>
-            {% endif %}
-          #}
+        {% if measure_version.measure.slug == "number-of-arrests" or measure_version.measure.slug == "household-income"
+        or measure_version.measure.slug == "stop-and-search" or measure_version.measure.slug == "employment" or
+        measure_version.measure.slug == "average-hourly-pay" %}
+        <li><a class="govuk-link"
+             href="#related-content"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="Related links"
+             data-event-label=""><span class="eff-table-of-contents__number">{{ dimensions_count + 6 }}. </span><span
+                  class="sr-only">Navigate to</span><span class="eff-table-of-contents__content">Related content<span
+                    class="sr-only"> section</span></span></a></li>
+        {% endif %}
+        #}
 
       </ol>
     </div>
@@ -232,26 +242,26 @@
     {% endif %}
   </div>
 
-  {#  TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
+  {# TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
   {# New design approach of related content #}
 
 
   {% if
-      measure_version.measure.slug == "age-groups" or
-      measure_version.measure.slug == "population-of-england-and-wales" or
-      measure_version.measure.slug == "regional-ethnic-diversity" or
-      measure_version.measure.slug == "male-and-female-populations" or
-      measure_version.measure.slug == "stop-and-search" or
-      measure_version.measure.slug == "number-of-arrests" or
-      measure_version.measure.slug == "low-income" or
-      measure_version.measure.slug == "nhs-workforce" or
-      measure_version.measure.slug == "employment" %}
+  measure_version.measure.slug == "age-groups" or
+  measure_version.measure.slug == "population-of-england-and-wales" or
+  measure_version.measure.slug == "regional-ethnic-diversity" or
+  measure_version.measure.slug == "male-and-female-populations" or
+  measure_version.measure.slug == "stop-and-search" or
+  measure_version.measure.slug == "number-of-arrests" or
+  measure_version.measure.slug == "low-income" or
+  measure_version.measure.slug == "nhs-workforce" or
+  measure_version.measure.slug == "employment" %}
 
   {# {% if measure_version.measure.slug == "number-of-arrests" or
-          measure_version.measure.slug == "household-income" or
-          measure_version.measure.slug == "stop-and-search" or
-          measure_version.measure.slug == "employment" or
-          measure_version.measure.slug == "average-hourly-pay" %} #}
+  measure_version.measure.slug == "household-income" or
+  measure_version.measure.slug == "stop-and-search" or
+  measure_version.measure.slug == "employment" or
+  measure_version.measure.slug == "average-hourly-pay" %} #}
 
   <div class="govuk-grid-column-one-third">
     {% if measure_version.measure.slug == "age-groups" %}
@@ -330,7 +340,8 @@
 </div>
 
 {% if dimension.dimension_chart %}
-{% set chart_and_downloadable = (dimension.dimension_chart.chart_object.type not in ['panel_bar_chart', 'panel_line_chart']) %}
+{% set chart_and_downloadable = (dimension.dimension_chart.chart_object.type not in ['panel_bar_chart',
+'panel_line_chart']) %}
 <div class="chart-and-footer hidden">
   <div class="govuk-grid-row">
     <div class="rd_chart"
@@ -343,7 +354,8 @@
     <div class="govuk-grid-column-full chart-footer">
       {% set chart_text_data = dimension.dimension_chart.chart_object | flatten_chart %}
 
-      {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data or "~0" in chart_text_data %}
+      {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data or
+      "~0" in chart_text_data %}
       <p class="missing-data-explanation">
 
         {% if "~0" in chart_text_data %}
@@ -569,7 +581,8 @@
           {% if measure_version.secondary_data_source.type_of_data %}
           <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of data</h3>
           <p class="govuk-body">
-            {{ measure_version.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
+            {{ measure_version.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data
+          </p>
           {% endif %}
 
           {% if measure_version.secondary_data_source.type_of_statistic %}
@@ -587,16 +600,17 @@
           {% endif %}
 
           {# We aren't showing this until dates in the database have been reviewed for consistency and correctness
-                {% if measure_version.secondary_data_source.publication_date %}
-                  <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publication release date</h3>
-                  <p class="govuk-body">{{ measure_version.secondary_data_source.publication_date }}</p>
-                {% endif %}
-              #}
+          {% if measure_version.secondary_data_source.publication_date %}
+          <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Publication release date</h3>
+          <p class="govuk-body">{{ measure_version.secondary_data_source.publication_date }}</p>
+          {% endif %}
+          #}
 
           {% if measure_version.secondary_data_source.note_on_corrections_or_updates %}
           <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Note on corrections or updates</h3>
           <p class="govuk-body">
-            {{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
+            {{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown }}
+          </p>
           {% endif %}
 
           {% if measure_version.secondary_data_source.frequency_of_release %}
@@ -638,22 +652,22 @@
         <meta itemprop="description"
               content="{{ measure_version.social_description | render_markdown | striptags }}">
 
-        {% for file in measure_version.uploads  %}
+        {% for file in measure_version.uploads %}
         {% if file.file_name %}
         {% set measure_version_data_url =
-                  url_for('static_site.measure_version_file_download', topic_slug=topic_slug,
-                          subtopic_slug=subtopic_slug,
-                          measure_slug=measure_version.measure.slug,
-                          version=version,
-                          filename=file.file_name)
-                  if static_mode else
-                  url_for('static_site.measure_version_file_download',
-                          topic_slug=topic_slug,
-                          subtopic_slug=subtopic_slug,
-                          measure_slug=measure_version.measure.slug,
-                          version=measure_version.version,
-                          filename=file.file_name)
-                %}
+        url_for('static_site.measure_version_file_download', topic_slug=topic_slug,
+        subtopic_slug=subtopic_slug,
+        measure_slug=measure_version.measure.slug,
+        version=version,
+        filename=file.file_name)
+        if static_mode else
+        url_for('static_site.measure_version_file_download',
+        topic_slug=topic_slug,
+        subtopic_slug=subtopic_slug,
+        measure_slug=measure_version.measure.slug,
+        version=measure_version.version,
+        filename=file.file_name)
+        %}
 
         <div itemprop="distribution"
              itemscope
@@ -703,18 +717,18 @@
     </div>
 
     {# TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1
-          {% if measure_version.measure.slug == "number-of-arrests" %}
-            {% include "static_site/related_links/_number_of_arrests.html" %}
-          {% elif measure_version.measure.slug == "household-income" %}
-            {% include "static_site/related_links/_household_income.html" %}
-          {% elif measure_version.measure.slug == "stop-and-search" %}
-            {% include "static_site/related_links/_stop_and_search.html" %}
-          {% elif measure_version.measure.slug == "employment" %}
-            {% include "static_site/related_links/_employment.html" %}
-          {% elif measure_version.measure.slug == "average-hourly-pay" %}
-            {% include "static_site/related_links/_average_hourly_pay.html" %}
-          {% endif %}
-        #}
+    {% if measure_version.measure.slug == "number-of-arrests" %}
+    {% include "static_site/related_links/_number_of_arrests.html" %}
+    {% elif measure_version.measure.slug == "household-income" %}
+    {% include "static_site/related_links/_household_income.html" %}
+    {% elif measure_version.measure.slug == "stop-and-search" %}
+    {% include "static_site/related_links/_stop_and_search.html" %}
+    {% elif measure_version.measure.slug == "employment" %}
+    {% include "static_site/related_links/_employment.html" %}
+    {% elif measure_version.measure.slug == "average-hourly-pay" %}
+    {% include "static_site/related_links/_average_hourly_pay.html" %}
+    {% endif %}
+    #}
     <div class="eff-document-footer">
 
       <div class="history-information"
@@ -801,7 +815,7 @@
           From:
           <span class="definition">{{ measure_version.primary_data_source.publisher.name }}</span>
         </p>
-        {%  endif %}
+        {% endif %}
 
         {% if measure_version.previous_major_versions %}
         {% set version_count = measure_version.previous_major_versions|length %}
@@ -817,7 +831,8 @@
                             topic_slug=topic_slug,
                             subtopic_slug=subtopic_slug,
                             measure_slug=page_version.measure.slug,
-                            version=page_version.version) }}"><span class="govuk-visually-hidden">Edition published on </span>{{ page_version.published_at|format_friendly_date }}</a>
+                            version=page_version.version) }}"><span class="govuk-visually-hidden">Edition published on
+                </span>{{ page_version.published_at|format_friendly_date }}</a>
             </li>
             {% endfor %}
           </ol>
