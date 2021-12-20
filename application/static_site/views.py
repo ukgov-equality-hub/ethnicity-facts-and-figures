@@ -302,6 +302,11 @@ def public_sector_workforces():
     return render_template("static_site/static_pages/summaries/public_sector_workforces.html")
 
 
+@static_site_blueprint.route("/summaries/gypsy-roma-irish-traveller")
+def gypsy_roma_irish_traveller():
+    return render_template("static_site/static_pages/summaries/gypsy_roma_irish_traveller.html")
+
+
 # style guide
 @static_site_blueprint.route("/style-guide")
 def style_guide():

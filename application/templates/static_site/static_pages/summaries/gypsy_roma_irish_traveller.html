@@ -1,0 +1,1289 @@
+{% extends "base.html" %}
+{% from "_macros/_back_to_top.html" import appBackToTop %}
+
+{% set breadcrumbs =
+[
+{"url": url_for("static_site.index"), "text": "Home"},
+]
+%}
+
+{% block pageTitle %}Gypsy, Roma and Irish Traveller ethnicity summary - GOV.UK Ethnicity facts and figures{% endblock
+%}
+{% block metaDescription %}{% endblock %}
+{% block socialTitle %}Gypsy, Roma and Irish Traveller ethnicity summary{% endblock %}
+{% block socialDescription %}{% endblock %}
+{% block googleAnalytics %}ga('set','contentGroup1','GRT ethnicity summary');{% endblock %}
+
+
+{% block content %}
+
+{# Page title and TOC #}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4  govuk-!-margin-top-2">
+      Gypsy, Roma and Irish Traveller ethnicity summary
+    </h1>
+    <p class="govuk-body-s">Published 31 January 2022</p>
+
+    <div id="toc">
+      <div class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1 govuk-!-margin-top-5">Contents</div>
+      <ol class="eff-table-of-contents">
+        <li><a class="govuk-link"
+             href="#about-this-page"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="GRT ethnicity summary"
+             data-event-label=""><span class="eff-table-of-contents__number">1. </span><span
+                  class="eff-table-of-contents__content">About this page</span></a></li>
+        <li><a class="govuk-link"
+             href="#the-gypsy-roma-traveller-group"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="GRT ethnicity summary"
+             data-event-label=""><span class="eff-table-of-contents__number">2. </span><span
+                  class="eff-table-of-contents__content">The Gypsy, Roma and Traveller group</span></a></li>
+        <li><a class="govuk-link"
+             href="#classifications"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="GRT ethnicity summary"
+             data-event-label=""><span class="eff-table-of-contents__number">3. </span><span
+                  class="eff-table-of-contents__content">Classifications</span></a></li>
+        <li><a class="govuk-link"
+             href="#improving-data-availability-and-quality"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="GRT ethnicity summary"
+             data-event-label=""><span class="eff-table-of-contents__number">4. </span><span
+                  class="eff-table-of-contents__content">Improving data availability and quality</span></a></li>
+        <li><a class="govuk-link"
+             href="#population-data"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="GRT ethnicity summary"
+             data-event-label=""><span class="eff-table-of-contents__number">5. </span><span
+                  class="eff-table-of-contents__content">Population data</span></a></li>
+        <li><a class="govuk-link"
+             href="#education-data"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="GRT ethnicity summary"
+             data-event-label=""><span class="eff-table-of-contents__number">6. </span><span
+                  class="eff-table-of-contents__content">Education data</span></a></li>
+        <li><a class="govuk-link"
+             href="#economic-activity-and-employment-data"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="GRT ethnicity summary"
+             data-event-label=""><span class="eff-table-of-contents__number">7. </span><span
+                  class="eff-table-of-contents__content">Economic activity and employment data</span></a></li>
+        <li><a class="govuk-link"
+             href="#home-ownership-data"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="GRT ethnicity summary"
+             data-event-label=""><span class="eff-table-of-contents__number">8. </span><span
+                  class="eff-table-of-contents__content">Home ownership data data</span></a></li>
+        <li><a class="govuk-link"
+             href="#health"
+             data-on="click"
+             data-event-category="Table of contents link clicked"
+             data-event-action="GRT ethnicity summary"
+             data-event-label=""><span class="eff-table-of-contents__number">9. </span><span
+                  class="eff-table-of-contents__content">Health data</span></a></li>
+      </ol>
+    </div>
+  </div>
+</div>
+{# end of Page title and TOC #}
+
+{# summary section (optional) #}
+<div class="govuk-grid-row govuk-!-margin-top-6">
+  <div class="govuk-grid-column-three-quarters">
+    <h2 class="govuk-heading-l"
+        id="about-this-page">
+      <span class="number">1. </span>About this page
+    </h2>
+
+    <p class="govuk-body">This is a summary of statistics about people from the Gypsy, Roma and Traveller ethnic groups
+      living in England and Wales.</p>
+
+    <p class="govuk-body">It is part of a series of <a
+         href="https://www.gov.uk/government/collections/ethnicity-facts-and-figures-ethnic-group-summaries"
+         class="govuk-link"
+         rel="external">summaries about different ethnic groups</a>.</p>
+
+    <p class="govuk-body">Gypsy, Roma and Traveller (GRT) is a term used to describe people from a range of ethnicities
+      who are believed to face similar challenges. These groups are distinct, but are often reported together.</p>
+
+    <p class="govuk-body">This page includes:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>information about GRT data and its reliability</li>
+      <li>some statistics from the 2011 Census</li>
+      <li>other statistics on the experiences of people from the GRT groups in topics including education, housing and
+        health</li>
+    </ul>
+
+    <p class="govuk-body">This is an overview based on a selection of data published on <a href="/"
+         class="govuk-link">Ethnicity facts and figures</a> or analyses of other sources. Some published data (for
+      example, on higher education) is only available for the aggregated White ethnic group, and is not included here.
+    </p>
+
+    <p class="govuk-body">Through this report, we sometimes make comparisons with national averages. While in other
+      reports we might compare with another ethnic group (usually White British), we have made this decision here
+      because of the relatively small impact the GRT group has on the overall national average.</p>
+
+
+  </div>
+</div>
+{# end of summary section #}
+
+{# content #}
+
+
+
+
+<div class="govuk-grid-row govuk-!-margin-top-6">
+  <div class="govuk-grid-column-three-quarters">
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="the-gypsy-roma-traveller-group">
+      <span class="number">2. </span>The Gypsy, Roma and Traveller group
+    </h2>
+
+    <p class="govuk-body">The term Gypsy, Roma and Traveller has been used to describe a range of ethnic groups or
+      people with nomadic ways of life who are not from a specific ethnicity.</p>
+
+    <p class="govuk-body">In the UK, it is common in data collections to differentiate between:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Gypsies (including English Gypsies, Scottish Gypsies or Travellers, Welsh Gypsies and other Romany people)
+      </li>
+      <li>Irish Travellers (who have specific Irish roots)</li>
+      <li>Roma, understood to be more recent migrants from Central and Eastern Europe</li>
+    </ul>
+
+
+    <p class="govuk-body">The term Traveller can also encompass groups that travel. This includes, but is not limited
+      to, New Travellers, Boaters, Bargees and Showpeople. (See the House of Commons Committee report on <a
+         rel="external"
+         class="govuk-link"
+         href="https://publications.parliament.uk/pa/cm201719/cmselect/cmwomeq/360/full-report.html">Tackling
+        inequalities faced by Gypsy, Roma and Traveller communities</a>.)</p>
+
+
+    <h2 class="
+         govuk-heading-l
+         govuk-!-margin-top-9"
+        id="classifications">
+      <span class="number">3. </span>Classifications
+    </h2>
+
+    <p class="govuk-body">For the first time, the 2011 Census ethnic group question included a tick box for the
+      ethnic group ‘Gypsy or Irish Traveller’. This was not intended for people who identify as Roma because they
+      are a distinct group with different needs to Gypsy or Irish Travellers.</p>
+
+    <p class="govuk-body">The 2021 Census had a ‘Gypsy or Irish Traveller’ category, and a new ‘Roma’ category.</p>
+
+    <p class="govuk-body">A 2018 YouGov poll found that 66% of people in the UK wrongly viewed GRT not to be an
+      ethnic group, with <a rel="external"
+         class="govuk-link"
+         href="https://yjresourcehub.uk/over-representation-and-disproportionality/item/download/929_6a5a2811d4e6a146d93f3e2a3ec46be1.html">many
+        mistaking them as a single group</a> (PDF). It is therefore important that GRT communities are categorised
+      correctly on data forms, using separate tick boxes when possible to reflect this.</p>
+
+    <p class="
+             govuk-body">The 2011 Census figures used in this report and on Ethnicity facts and figures are based on
+      respondents who chose to identify with the Gypsy or Irish Traveller ethnic group. People who chose to write
+      in Roma as their ethnicity were allocated to the White Other group, and data for them is not included here.
+      Other data, such as that from the Department for Education, includes Roma as a category combined with Gypsy,
+      with Irish Traveller shown separately.</p>
+
+    <p class="govuk-body">The commentary in this report uses the specific classifications in each dataset. Users
+      should exercise caution when comparing different datasets, for example between education data (which uses
+      Gypsy/Roma, and Irish Traveller in 2 separate categories) and the Census (which uses Gypsy and Irish Traveller
+      together, but excludes data for people who identify as Roma).</p>
+
+    <p class="govuk-body">Finally, it should be noted that there is also a distinction that the government makes, for
+      the purposes of planning policy, between those who travel and the Gypsy, Roma and Traveller ethnicities. The
+      Department for Communities and
+      Local Government (at the time, now the Department for Levelling Up, Housing and Communities) <a rel="external"
+         class="govuk-link"
+         href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/457420/Final_planning_and_travellers_policy.pdf">planning
+        policy for traveller sites</a> (PDF) defines "gypsies and travellers" as:</p>
+
+    <p class="
+             govuk-body">"Persons of nomadic habit of life whatever their race or origin, including such persons who on
+      grounds only of their own or their family’s or dependants’ educational or health needs or old age have
+      ceased to travel temporarily, but excluding members of an organised group of travelling showpeople or circus
+      people travelling together as such."</p>
+
+    <p class="govuk-body">This definition for planning purposes includes any person with a nomadic habit, whether or
+      not they might have identified as Gypsy, Roma or Traveller in a data collection.</p>
+
+
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="improving-data-availability-and-quality">
+      <span class="number">4. </span>Improving data availability and quality
+    </h2>
+
+    <p class="govuk-body">The April 2019 House of Commons Women and Equalities Select Committee <a rel="external"
+         class="govuk-link"
+         href="https://publications.parliament.uk/pa/cm201719/cmselect/cmwomeq/360/full-report.html">report on
+        inequalities faced by Gypsy, Roma and Traveller communities</a> noted that there was a lack of data on these
+      groups.</p>
+
+    <p class="
+             govuk-body">The next section highlights some of the problems associated with collecting data on these
+      groups, and what is available. Some of the points made about surveys, sample sizes and administrative data
+      are generally applicable to any group with a small population.
+    </p>
+
+    <p class="govuk-body">Improving data for the Gypsy, Roma and Traveller populations, as well as other
+      under-represented groups in the population is part of the <a rel="external"
+         class="govuk-link"
+         href="https://uksa.statisticsauthority.gov.uk/publication/inclusive-data-taskforce-recommendations-report-leaving-no-one-behind-how-can-we-be-more-inclusive-in-our-data/">recommendations
+        in the Inclusive Data Taskforce report</a> and the key activities described in the <a rel="
+             external"
+         class="govuk-link"
+         href="https://uksa.statisticsauthority.gov.uk/publication/response-by-the-national-statistician-to-the-inclusive-data-taskforce-idtf-report-and-recommendations/">ONS
+        response</a> to them. For example, in response to recommendation 3 of the report, ONS, RDU and others will
+      "build on existing work and develop new collaborative initiatives and action plans to improve inclusion of
+      under-represented population groups in UK data in partnership with others across government and more widely".</p>
+
+    <p class="
+             govuk-body">Also, the ONS response to recommendation 4 notes the development of a range of strategies to
+      improve the UK data infrastructure and fill data gaps to provide more granular data through new or boosted surveys
+      and data linkage. Recommendation 6 notes that research will be undertaken using innovative methods best suited to
+      the research question and prospective participants, to understand more about the lived experiences of several
+      groups under-represented in UK data and evidence, such as people from Gypsy, Roma and Traveller groups.
+    </p>
+
+    <h3 class="govuk-heading-m"
+        id="improving-classifications"> <span class="number">4.1 </span>Classifications</h3>
+
+    <p class="govuk-body">In some data collections, the option for people to identify as Gypsy, Roma or Traveller is
+      not available. Any data grouped to the 5 aggregated ethnic groups does not show the groups separately. Data
+      based on the 2001 Census does not show them separately as there was no category for people identifying as
+      Gypsy, Roma or Traveller. As part of our Quality Improvement Plan, the Race Disparity Unit (RDU) has committed
+      to working with government departments to maintain a harmonised approach to collecting data about Gypsy, Roma
+      and Traveller people using the GSS harmonised classification. The harmonised classification is currently based
+      on the 2011 Census, and an update is currently being considered by the Office for National Statistics (ONS).
+    </p>
+
+    <p class="govuk-body">In particular, RDU has identified working with DHSC and NHS Digital colleagues as a priority –
+      the
+      NHS classification is based on 2001 Census classifications and does not capture information on any of the GRT
+      groups separately (they were categorised as White Other in the 2001 Census). Some of these issues have been
+      outlined in the <a rel="external"
+         class="govuk-link"
+         href="https://www.gov.uk/government/collections/quarterly-reports-on-progress-to-address-covid-19-health-inequalities">quarterly
+        reports on progress to address COVID-19 health inequalities</a>.</p>
+
+    <p class="govuk-body">Research into <a rel="external"
+         class="govuk-link"
+         href="https://www.gov.uk/government/publications/ethnicity-data-how-similar-or-different-are-aggregated-ethnic-groups">how
+        similar or different the aggregate ethnic groups are</a> shows how many datasets are available for the GRT
+      group.</p>
+
+    <p class="
+             govuk-body">Further information on the <a rel="external"
+         class="govuk-link"
+         href="https://dataingovernment.blog.gov.uk/2021/01/29/why-data-harmonisation-is-important/">importance of
+        harmonisation</a> is also available.</p>
+
+
+    <h3 class="
+               govuk-heading-m"
+        id="census-data"> <span class="number">4.2 </span>Census data</h3>
+
+    <p class="govuk-body">A main source of data on the Gypsy and Irish Traveller groups is the 2011 Census.
+      This will be replaced by the 2021 Census when results are published by the ONS. The statistics in this
+      summary use information from Ethnicity facts and figures and the Census section of ONS’s NOMIS website.
+    </p>
+
+    <h3 class="govuk-heading-m"
+        id="census-data"> <span class="number">4.3 </span>Survey data</h3>
+
+    <p class="govuk-body">It is often difficult to conclude at any one point in time whether a disparity is
+      significant for the GRT population, as the population is so small in comparison to other ethnic groups.
+    </p>
+
+    <p class="govuk-body">Even a large sample survey like the Annual Population Survey (APS) has a small
+      number of responses from the Gypsy and Irish Traveller ethnic group each year. Analysis of 3 years of
+      combined data for 2016, 2017 and 2018 showed there were 62 people in the sample (out of around 500,000
+      sampled cases in total over those 3 years) in England and Wales. Another large survey, the Department
+      for Transport’s National Travel Survey, recorded 58 people identifying as Gypsy or Traveller out of
+      157,000 people surveyed between 2011 and 2019.</p>
+
+    <p class="govuk-body">Small sample sizes need not be a barrier to presenting data if confidence intervals
+      are provided to help the user. But smaller sample sizes will mean wider confidence intervals, and these
+      will provide limited analytical value. For the 2016 to 2018 APS dataset – and using the standard error
+      approximation method given in the <a rel="external"
+         class="govuk-link"
+         href="https://www.ons.gov.uk/file?uri=/employmentandlabourmarket/peopleinwork/employmentandemployeetypes/methodologies/labourforcesurveyuserguidance/volume6.pdf">LFS
+        User Guide volume 6</a> with a fixed design factor of 1.6 (the formula is 1.6 * √p(1 − p)/n where p is the
+      proportion in employment and n is the sample size.) – the employment rate of 35% for working age people in the
+      Gypsy and Traveller group in England and Wales would be between 16% and 54% (based on a 95% confidence interval).
+      This uses the same methodology as the ONS’s <a rel="
+                   external"
+         class="govuk-link"
+         href="https://www.ons.gov.uk/file?uri=/employmentandlabourmarket/peopleinwork/employmentandemployeetypes/adhocs/13009samplingvariabilityestimatesforlabourmarketstatusbyethnicity/lfsethnicityciod19od20.xlsx">Sampling
+        variability estimates for labour market status by ethnicity</a>.</p>
+
+    <p class="
+                   govuk-body">A further reason for smaller sample sizes might be lower response rates. The Women and
+      Select Committee report on the <a rel="external"
+         class="govuk-link"
+         href="https://publications.parliament.uk/pa/cm201719/cmselect/cmwomeq/360/full-report.html#heading-8">inequalities
+        faced by Gypsy, Roma and Traveller communities</a> noted that people in these groups may be reluctant to
+      self-identify, even where the option is available to them. This is because Gypsy, Roma and Traveller people might
+      mistrust the intent behind data collection.
+    </p>
+
+    <p class="
+                     govuk-body">The RDU recently published a <a rel="external"
+         class="govuk-link"
+         href="https://www.gov.uk/government/publications/ethnicity-data-which-differences-in-ethnic-group-data-are-real">method
+        and quality report on working out significant differences</a> between estimates for small groups using different
+      analytical techniques.</p>
+
+    <h3 class="govuk-heading-m"
+        id="administrative-data"> <span class="number">4.4 </span>Administrative data</h3>
+
+    <p class="govuk-body">While administrative data does not suffer from the same issues of sampling
+      variability, small numbers of respondents can mean that data is either disclosive and needs to be
+      suppressed to protect the identity of individuals, or results can fluctuate over time.</p>
+
+    <p class="govuk-body">An example of this is the measure of <a class="govuk-link"
+         href="{{ url_for('static_site.measure_version', topic_slug='education-skills-and-training', subtopic_slug='a-levels-apprenticeships-further-education', measure_slug='students-aged-16-to-18-achieving-3-a-grades-or-better-at-a-level', version='latest') }}">students
+        getting 3 A grades or better at A level</a>. In 2019 to 2020, no Irish Traveller students achieved
+      this (there were 6 students in the cohort). In 2017 to 2018, 2 out of 7 Irish Traveller students
+      achieved 3 A grades, or 28.6% – the highest percentage of all ethnic groups.</p>
+
+    <p class="govuk-body">Aggregating time periods might help with this, although data collected in
+      administrative datasets can change over time to reflect the information that needs to be collected for
+      the administrative process. The data collected would not necessarily be governed by trying to maintain a
+      consistent time series in the same way that data collected through surveys sometimes are.</p>
+
+    <h3 class="govuk-heading-m"
+        id="administrative-data"> <span class="number">4.5 </span>Data linkage</h3>
+
+    <p class="govuk-body">Linking datasets together provides a way of producing more robust data for the GRT
+      groups, or in fact, any ethnic group. This might improve the quality of the ethnicity coding in the
+      dataset being analysed if an ethnicity classification that is known to be more reliable is linked from
+      another dataset.</p>
+
+    <p class="govuk-body">Data linkage does not always increase the sample size or the number of records
+      available in the dataset to be analysed, but it might do if records that have missing ethnicity are
+      replaced by a known ethnicity classification from a linked dataset.</p>
+
+    <p class="govuk-body">An example is the linking of the Census data to <a rel="external"
+         class="govuk-link"
+         href="https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/articles/coronaviruscovid19relateddeathsbyethnicgroupenglandandwales/2march2020to15may2020">Hospital
+        Episode Statistics (HES) data and death registrations</a> by the ONS. The ethnicity classifications for GRT
+      groups are not included in the HES data, and are not collected in the death registrations process at the moment.
+      So this data linking gives a way to provide some information for Gypsy and Irish Travellers and other smaller
+      groups. The report with data up to 15 May 2020 noted 16 Gypsy or Irish Traveller deaths from COVID-19.</p>
+
+    <p class="
+                   govuk-body">RDU will be working with ONS and others to explore the potential for using data linking
+      to get more information for the GRT groups.</p>
+
+
+    <h3 class="govuk-heading-m"
+        id="administrative-data"> <span class="number">4.6 </span>Bespoke surveys and sample boosts</h3>
+
+    <p class="govuk-body">A country-wide, or even local authority, boost of a sample survey is unlikely to
+      make estimates for the GRT groups substantially more robust. This is because of the relatively small
+      number in the groups to begin with.</p>
+
+    <p class="govuk-body">Bespoke surveys can be used to get specific information about these groups. The
+      Department for Levelling Up, Housing and Communities list of traveller sites available through their
+      <a rel="external"
+         class="govuk-link"
+         href="https://www.gov.uk/government/collections/traveller-caravan-count">Traveller caravan count statistics</a>
+      can help target sampling for surveys, for example. Bespoke surveys might be limited in geographical
+      coverage, and more suitable for understanding GRT views in a local area and then developing local policy
+      responses. An example of a bespoke survey is the <a rel="
+                   external"
+         class="govuk-link"
+         href="https://fra.europa.eu/en/publication/2020/roma-travellers-survey">Roma and Travellers in 6 countries
+        survey</a>.
+    </p>
+
+    <p class="
+                   govuk-body">Another method that could be useful is snowball sampling. Snowball sampling (or
+      chain-referral sampling) is a <a rel="external"
+         class="govuk-link"
+         href="https://www.questionpro.com/blog/non-probability-sampling/">sampling technique</a> in which the
+      respondents have traits that are rare to find. In snowball sampling, existing survey respondents provide referrals
+      to recruit further people for the survey, which helps the survey grow larger.</p>
+
+    <p class="
+                     govuk-body">There are advantages to snowball sampling. It can target hidden or difficult to reach
+      populations. It can be a good way to sample hesitant respondents, as a person might be more likely
+      to participate in a survey if they have been referred by a friend or family member. It can also be
+      quick and cost effective. Snowball sampling may also be facilitated with a GRT community lead or
+      cultural mediator. This would help bridge the gap between the GRT communities and the commissioning
+      department to encourage respondent participation.</p>
+
+    <p class="govuk-body">However, one statistical disadvantage is that the sampling is non-random. This
+      reduces the knowledge of whether the sample is representative, and can invalidate some of the usual
+      statistical tests for statistical significance, for example.
+    </p>
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="population-data">
+      <span class="number">5. </span>Population data
+    </h2>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p>All data in this section comes from the 2011 Census of England and Wales, unless stated otherwise.
+      </p>
+    </div>
+
+    <p class="govuk-body">In 2011, there were 57,680 people from the Gypsy or Irish Traveller ethnic group in
+      England and Wales, making up 0.1% of the total population. In terms of population, it is the smallest of
+      the 18 groups used in the 2011 Census.</p>
+
+    <p class="govuk-body">Further ONS analysis of write-in responses in the Census estimated the Roma
+      population as 730, and 1,712 people as Gypsy/Romany.
+    </p>
+
+    <h4 class="govuk-heading-s"
+        id="census-write-in-ethnicity-responses">Table A: Gypsy, Roma and Traveller write-in ethnicity responses on the
+      2011 Census</h4>
+
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Write-in response</th>
+          <th scope="col"
+              class="govuk-table__header">2011 Census population</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Gypsy or Irish Traveller</td>
+          <td class="govuk-table__cell">54,962</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Traveller</td>
+          <td class="govuk-table__cell">1,165</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Irish Traveller</td>
+          <td class="govuk-table__cell">52</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Gypsy/Romany</td>
+          <td class="govuk-table__cell">1,712</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Welsh Traveller</td>
+          <td class="govuk-table__cell">37</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Scottish Traveller</td>
+          <td class="govuk-table__cell">2</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Gypsy/Traveller</td>
+          <td class="govuk-table__cell">23</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Roma</td>
+          <td class="govuk-table__cell">730</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p>Source: <a rel="external"
+           class="govuk-link"
+           href="https://www.ons.gov.uk/peoplepopulationandcommunity/culturalidentity/ethnicity/adhocs/008065ct07692011censusethnicgroupwriteinresponsegypsytravellerromagypsyromanynationaltocounty">Census
+          - Ethnic group (write-in response) Gypsy, Traveller, Roma, GypsyRomany - national to county</a> (ONS). The
+        figures do not add to the 57,680 classified as White: Gypsy/Traveller because Roma is included as White Other,
+        and some people in the other categories shown will have classified themselves in an ethnic group other than
+        White.</p>
+    </div>
+
+    <p class="
+                     govuk-body">An ONS report in 2014 noted that variations in the definitions used for this ethnic
+      group has made comparisons between estimates difficult. For example, some previous estimates for
+      Gypsy or Irish Travellers have included Roma or have been derived from counts of caravans rather
+      than people's own self-identity. It noted that other sources of data estimate the UK’s Gypsy, Roma
+      and Traveller population to be in the region of <a rel="external"
+         class="govuk-link"
+         href="http://www.coe.int/t/dg3/romatravellers/archive/documentation/strategies/statistiques_en.asp">150,000 to
+        300,000</a>, or <a rel="
+                       external"
+         class="govuk-link"
+         href="http://hub.salford.ac.uk/care-shusu/wp-content/uploads/sites/125/2020/06/Migrant_Roma_in_the_UK_final_report_October_2013.pdf">as
+        high as 500,000</a> (PDF).
+    </p>
+
+
+    <h3 class="govuk-heading-m"
+        id="where-indian-people-live">
+      <span class="number">5.1 </span>Where Gypsy and Irish Traveller people live
+    </h3>
+
+    <p class="govuk-body">There were 348 local authorities in England and Wales in 2011. The Gypsy or
+      Irish Traveller population was evenly spread throughout them. The 10 local authorities with the
+      largest Gypsy or Irish Traveller populations constituted 11.9% of the total population.</p>
+
+    <h4 class="govuk-heading-s"
+        id="local-authority-map">Figure 1: Percentage of the Gypsy or Irish Traveller population of England and Wales
+      living in each local authority area (top 10 areas labelled)</h4>
+
+
+    <div> <img class="govuk-!-width-full"
+           src="{{ url_for('static', filename='images/summaries/GRT_202106_fig1_v1-0.svg') }}"
+           alt="Map of England and Wales which shows that the Gypsy or Irish Traveller population is spread evenly throughout the country.">
+    </div><br><br>
+
+    <p class="govuk-body">Basildon was home to the largest Gypsy or Irish Traveller population, with
+      1.5% of all Gypsy or Irish Traveller people living there, followed by Maidstone (also 1.5%,
+      although it had a smaller population).</p>
+
+    <h4 class="govuk-heading-s"
+        id="local-authority-table">Table 1: Percentage of the Gypsy or Irish Traveller population of England and Wales
+      living in each local authority area (top 10)</h4>
+
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Local authority</th>
+          <th scope="col"
+              class="govuk-table__header">Percentage of Gypsy or Irish Traveller people living there
+          </th>
+          <th scope="col"
+              class="govuk-table__header">Number of Gypsy or irish Traveller residents</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Basildon</td>
+          <td class="govuk-table__cell">1.5%</td>
+          <td class="govuk-table__cell">873</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Maidstone</td>
+          <td class="govuk-table__cell">1.5%</td>
+          <td class="govuk-table__cell">838</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Wiltshire</td>
+          <td class="govuk-table__cell">1.3%</td>
+          <td class="govuk-table__cell">757</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Swale</td>
+          <td class="govuk-table__cell">1.3%</td>
+          <td class="govuk-table__cell">730</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Leeds</td>
+          <td class="govuk-table__cell">1.2%</td>
+          <td class="govuk-table__cell">687</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Cornwall</td>
+          <td class="govuk-table__cell">1.1%</td>
+          <td class="govuk-table__cell">635</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Bexley</td>
+          <td class="govuk-table__cell">1.1%</td>
+          <td class="govuk-table__cell">624</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Doncaster</td>
+          <td class="govuk-table__cell">1.0%</td>
+          <td class="govuk-table__cell">587</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Bromley</td>
+          <td class="govuk-table__cell">1.0%</td>
+          <td class="govuk-table__cell">580</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Peterborough</td>
+          <td class="govuk-table__cell">1.0%</td>
+          <td class="govuk-table__cell">560</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="govuk-body">28 local authorities had fewer than 20 Gypsy or Irish Traveller residents
+      each. This is around 1 in 12 of all local authorities.</p>
+
+    <p class="govuk-body">11.7% of <a class="govuk-link"
+         href="{{ url_for('static_site.measure_version', topic_slug='uk-population-by-ethnicity', subtopic_slug='demographics', measure_slug='people-living-in-deprived-neighbourhoods', version='latest') }}">Gypsy
+        or Irish Traveller people lived in the most deprived 10% of neighbourhoods</a>, higher than
+      the national average of 9.9% (England, 2019 Indices of Multiple Deprivation).</p>
+
+    <p class="govuk-body">81.6% of people from the Gypsy or Irish Traveller ethnic group were born in
+      England, and 6.1% in the other countries of the UK. 3.0% were born in Ireland and 8.3% were born
+      somewhere else in Europe (other than the UK and Ireland). Less than 1.0% of Gypsy or Irish
+      Traveller people were born outside of Europe.
+    </p>
+
+    <h3 class="govuk-heading-m"
+        id="age-profile">
+      <span class="number">5.2 </span>Age profile
+    </h3>
+
+    <p class="govuk-body">The Gypsy or Irish Traveller ethnic group had a younger age profile than the
+      national average in England and Wales in 2011.</p>
+
+    <p class="govuk-body">People aged under 18 made up over a third (36%) of the Gypsy or Irish
+      Traveller population, higher than the national average of 21%.</p>
+
+    <p class="govuk-body"><a class="govuk-link"
+         href="{{ url_for('static_site.measure_version', topic_slug='uk-population-by-ethnicity', subtopic_slug='demographics', measure_slug='age-groups', version='latest') }}">18.0%
+        of Gypsy or Irish Traveller people were aged 50 and above</a>, lower than the national average
+      of 35.0%.</p>
+
+    <h4 class="govuk-heading-s"
+        id="figure-age-profiles">Figure 2: Age profile of Gypsy or Irish Traveller and the England and Wales average
+    </h4>
+
+    <strong></strong>
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/GRT_202106_fig2_v1-0.svg"
+           alt="Chart showing that the Gypsy or Irish Traveller ethnic group has a lower age profile compared with all ethnic groups combined.">
+    </div><br><br>
+
+    <h4 class="govuk-heading-s"
+        id="table-age-profiles">Table 2: Age profile of Gypsy or Irish Traveller and
+      the England and Wales average</h4>
+
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Age group</th>
+          <th scope="col"
+              class="govuk-table__header">All ethnic groups</th>
+          <th scope="col"
+              class="govuk-table__header">Gypsy/Irish Traveller</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">85 and over</td>
+          <td class="govuk-table__cell">2.2%</td>
+          <td class="govuk-table__cell">0.4%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">80 to 84</td>
+          <td class="govuk-table__cell">2.4%</td>
+          <td class="govuk-table__cell">0.6%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">75 to 79</td>
+          <td class="govuk-table__cell">3.2%</td>
+          <td class="govuk-table__cell">1.1%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">70 to 74</td>
+          <td class="govuk-table__cell">3.9%</td>
+          <td class="govuk-table__cell">1.7%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">65 to 69</td>
+          <td class="govuk-table__cell">4.8%</td>
+          <td class="govuk-table__cell">2.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">60 to 64</td>
+          <td class="govuk-table__cell">6.0%</td>
+          <td class="govuk-table__cell">3.2%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">55 to 59</td>
+          <td class="govuk-table__cell">5.7%</td>
+          <td class="govuk-table__cell">3.8%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">50 to 54</td>
+          <td class="govuk-table__cell">6.4%</td>
+          <td class="govuk-table__cell">5.1%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">45 to 49</td>
+          <td class="govuk-table__cell">7.3%</td>
+          <td class="govuk-table__cell">6.5%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">40 to 44</td>
+          <td class="govuk-table__cell">7.3%</td>
+          <td class="govuk-table__cell">7.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">35 to 39</td>
+          <td class="govuk-table__cell">6.7%</td>
+          <td class="govuk-table__cell">6.8%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">30 to 34</td>
+          <td class="govuk-table__cell">6.6%</td>
+          <td class="govuk-table__cell">7.0%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">25 to 29</td>
+          <td class="govuk-table__cell">6.8%</td>
+          <td class="govuk-table__cell">7.6%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">18 to 24</td>
+          <td class="govuk-table__cell">9.4%</td>
+          <td class="govuk-table__cell">11.4%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">15 to 17</td>
+          <td class="govuk-table__cell">3.7%</td>
+          <td class="govuk-table__cell">5.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">10 to 14</td>
+          <td class="govuk-table__cell">5.8%</td>
+          <td class="govuk-table__cell">9.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">5 to 9</td>
+          <td class="govuk-table__cell">5.6%</td>
+          <td class="govuk-table__cell">9.5%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">0 to 4</td>
+          <td class="govuk-table__cell">6.2%</td>
+          <td class="govuk-table__cell">10.5%</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <h3 class="govuk-heading-m"
+        id="families-and-households">
+      <span class="number">5.3 </span>Families and households
+    </h3>
+
+    <p class="govuk-body"><a class="govuk-link"
+         href="{{ url_for('static_site.measure_version', topic_slug='uk-population-by-ethnicity', subtopic_slug='demographics', measure_slug='families-and-households', version='latest') }}">20.4%
+        of Gypsy or Irish Traveller households were made up of lone parents with dependent
+        children</a>, compared with 7.2% on average for England and Wales.</p>
+
+    <p class="govuk-body">Across all household types, 44.9% of Gypsy or Irish Traveller households had
+      dependent children, compared with an average of 29.1%.</p>
+
+    <p class="govuk-body"><a class="govuk-link"
+         href="{{ url_for('static_site.measure_version', topic_slug='uk-population-by-ethnicity', subtopic_slug='demographics', measure_slug='families-and-households', version='latest') }}">8.4%
+        of Gypsy or Irish Traveller households were made up of pensioners</a> (either couples, single
+      pensioners, or other households where everyone was aged 65 and over), compared with 20.9% on
+      average.</p>
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="education-data"> <span class="number">6. </span>Education data</h2>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">All data in this section covers pupil performance in state-funded
+        mainstream schools in England.
+      </p>
+    </div>
+
+    <p class="govuk-body">At all key stages, Gypsy, Roma and Irish Traveller pupils’ attainment was
+      below the national average.</p>
+
+    <h4 class="govuk-heading-s"
+        id="figure-education-attainment">Figure 3: Educational attainment among Gypsy, Roma, Irish Traveller and pupils
+      from all
+      ethnic groups</h4>
+
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/GRT_202106_fig3_v3-0.svg"
+           alt="Chart showing that the attainment of Gypsy and Roma pupils is much lower than the national average at all key stages. Attainment of Irish Traveller pupils is higher than Gypsy and Roma pupils, but still much lower than the national average.">
+    </div><br><br>
+
+    <h4 class="govuk-heading-s"
+        id="table-education-attainment">Table 3: Educational attainment among Gypsy, Roma,
+      Irish Traveller and pupils from all
+      ethnic groups</h4>
+
+
+    <table class="
+          govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Ethnic group</th>
+          <th scope="col"
+              class="govuk-table__header">Gypsy and Roma</th>
+          <th scope="col"
+              class="govuk-table__header">Irish Traveller</th>
+          <th scope="col"
+              class="govuk-table__header">All ethnic groups</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Primary education<br>Expected standard at early years</td>
+          <td class="govuk-table__cell">19%</td>
+          <td class="govuk-table__cell">26%</td>
+          <td class="govuk-table__cell">65%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">GCSEs<br>Grade 5 and over in English and maths</td>
+          <td class="govuk-table__cell">8.1%</td>
+          <td class="govuk-table__cell">20.0%</td>
+          <td class="govuk-table__cell">49.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">A levels<br>Grade A or above in 3 subjects</td>
+          <td class="govuk-table__cell">14.3%</td>
+          <td class="govuk-table__cell">0.0%</td>
+          <td class="govuk-table__cell">22.5%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">Source: England, Key Stage 2 Statistics, 2018/19; Key Stage 4 Statistics,
+        2019/20; and A Level and other 16 to 18 results, 2020/21. Ethnicity facts and figures and
+        Department for Education (DfE). Figures for Key Stage 2 are rounded to whole numbers by DfE.
+      </p>
+    </div>
+
+
+    <h3 class="govuk-heading-m"
+        id="primary-education">
+      <span class="number">6.1 </span>Primary education
+    </h3>
+
+    <p class="govuk-body">In the 2018 to 2019 school year, 19% of White Gypsy or Roma pupils, and 26%
+      of Irish Traveller pupils met the expected standard in <a class="govuk-link"
+         href="{{ url_for('static_site.measure_version', topic_slug='education-skills-and-training', subtopic_slug='7-to-11-years-old', measure_slug='reading-writing-and-maths-attainments-for-children-aged-7-to-11-key-stage-2', version='latest') }}">key
+        stage 2 reading, writing and maths</a>. These were the 2 lowest percentages out of all ethnic
+      groups.</p>
+
+    <h3 class="govuk-heading-m"
+        id="secondary-education">
+      <span class="number">6.2 </span>Secondary education
+    </h3>
+
+    <p class="govuk-body">In the 2019 to 2020 school year, 8.1% of White Gypsy or Roma pupils in
+      state-funded schools in England got a grade 5 or above in GCSE English and maths, the lowest
+      percentage of all ethnic groups.</p>
+
+    <p class="govuk-body">Gypsy or Roma (58%) and Irish Traveller (59%) pupils were the <a rel="external"
+         class="govuk-link"
+         href="https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-destination-measures/2019-20">least
+        likely to stay in education</a> after GCSEs (and equivalent qualifications). They were the most likely to go
+      into employment (8% and 9% respectively) – however, it is not possible to draw firm conclusions about these groups
+      due to the small number of pupils in key stage 4.</p>
+
+    <h3 class="
+                           govuk-heading-m"
+        id="school-exclusions">
+      <span class="number">6.3 </span>Further education
+    </h3>
+
+    <p class="govuk-body">Gypsy or Roma students were least likely to <a class="govuk-link"
+         href="{{ url_for('static_site.measure_version', topic_slug='education-skills-and-training', subtopic_slug='a-levels-apprenticeships-further-education', measure_slug='students-aged-16-to-18-achieving-3-a-grades-or-better-at-a-level', version='latest') }}">get
+        at least 3 A grades</a> at A level, with 10.8% of students doing so in the 2020 to 2021
+      school year. 20.0% of Irish Traveller students achieved at least 3 A grades, compared to the
+      national average of 28.9%. The figures for Gypsy or Roma (61) and Irish Traveller (19)
+      students are based on small numbers, so any generalisations are unreliable.</p>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">Due to the impact of the COVID-19 pandemic, the summer exam series was
+        cancelled in 2021, and alternative processes were set up to award grades. In 2020/21
+        attainment is higher than would be expected in a typical year. This likely reflects the
+        changes to the way A/AS level grades were awarded rather than improvements in student
+        performance.
+      </p>
+    </div>
+
+    <h3 class="govuk-heading-m"
+        id="school-exclusions">
+      <span class="number">6.4 </span>School exclusions
+    </h3>
+
+    <p class="govuk-body">In the 2019 to 2020 school year, <a rel="external"
+         class="govuk-link"
+         href="https://explore-education-statistics.service.gov.uk/find-statistics/permanent-and-fixed-period-exclusions-in-england">the
+        suspension rates</a> were 15.28% for Gypsy or Roma pupils, and 10.12% for Irish Traveller pupils – the highest
+      rates out of all ethnic groups.</p>
+
+    <p class="
+                               govuk-body">Also, the highest permanent exclusion rates were among Gypsy or Roma pupils
+      (0.23%, or 23 exclusions for every 10,000 pupils). Irish Traveller pupils were permanently
+      excluded at a rate of 0.14%, or 14 exclusions for every 10,000 pupils.</p>
+
+    <h3 class="govuk-heading-m"
+        id="school-exclusions">
+      <span class="number">6.5 </span>School absence
+    </h3>
+
+    <p class="govuk-body">In the autumn term of the 2020 to 2021 school year, 52.6% of Gypsy or
+      Roma pupils, and 56.7% of Irish Traveller pupils were <a rel="external"
+         class="govuk-link"
+         href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england-autumn-term">persistently
+        absent from school</a>. Pupils from these ethnic groups had the highest rates of overall absence and persistent
+      absence.
+    </p>
+
+    <div role="
+                               note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">For the 2020 to 2021 school year, not attending in circumstances
+        related to coronavirus (COVID-19) was not counted toward the overall absence rate and
+        persistent absence rates.
+      </p>
+    </div>
+
+
+
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="economic-activity-and-employment-data">
+      <span class="number">7. </span>Economic activity and employment data
+    </h2>
+
+    <div role="note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">Data in this section is from the 2011 Census for England and Wales, and for people
+        aged 16 and over. Economic activity and employment rates might vary from other published figures that
+        are based on people of working age.</p>
+    </div>
+
+    <p class="govuk-body">47% of Gypsy or Irish Traveller people aged 16 and over were economically active,
+      compared to an average of 63% in England and Wales. </p>
+
+    <p class="govuk-body">Of economically active people, 51% of Gypsy or Irish Traveller people were
+      employees, and 26% were self-employed. 20% of Gypsy or Irish Traveller people were unemployed, compared
+      to an average for all ethnic groups of 7%.
+    </p>
+
+    <h3 class="govuk-heading-m"
+        id="socio-economic-group"> <span class="number">7.1 </span>Socio-economic group</h3>
+
+    <h4 class="govuk-heading-s"
+        id="figure-socioeconomic-groups">Figure 4: Socio-economic group of Gypsy or Irish Traveller and average for all
+      ethnic groups for people aged 16 and over</h4>
+
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/GRT_202106_fig4_v1-2.svg"
+           alt="Chart showing that people from Gypsy and Traveller ethnic groups are much more likely to be long-term unemployed (31.2%) compared with the average for all ethnic groups (5.9%).">
+    </div><br><br>
+
+
+    <h4 class="govuk-heading-s"
+        id="table-socioeconomic-groups">Table 4: Socio-economic group of Gypsy or Irish
+      Traveller and average for all ethnic groups for
+      people aged 16 and over</h4>
+
+
+    <table class="
+              govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Socio-economic group</th>
+          <th scope="col"
+              class="govuk-table__header">Gypsy and Traveller</th>
+          <th scope="col"
+              class="govuk-table__header">All ethnic groups</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Higher managerial, administrative, professional</td>
+          <td class="govuk-table__cell">2.5%</td>
+          <td class="govuk-table__cell">9.8%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Lower managerial, administrative, professional</td>
+          <td class="govuk-table__cell">8.2%</td>
+          <td class="govuk-table__cell">21.3%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Intermediate occupations</td>
+          <td class="govuk-table__cell">4.4%</td>
+          <td class="govuk-table__cell">13.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Small employers and own account workers</td>
+          <td class="govuk-table__cell">15.1%</td>
+          <td class="govuk-table__cell">9.5%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Lower supervisory and technical</td>
+          <td class="govuk-table__cell">4.5%</td>
+          <td class="govuk-table__cell">7.6%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Semi-routine occupations</td>
+          <td class="govuk-table__cell">11.6%</td>
+          <td class="govuk-table__cell">14.8%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Routine occupations</td>
+          <td class="govuk-table__cell">14.6%</td>
+          <td class="govuk-table__cell">11.9%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Never worked or long-term unemployed</td>
+          <td class="govuk-table__cell">31.2%</td>
+          <td class="govuk-table__cell">4.7%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Full-time students</td>
+          <td class="govuk-table__cell">7.8%</td>
+          <td class="govuk-table__cell">6.6%</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <div role="
+                               note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">Source: 2011 Census</p>
+    </div>
+
+
+
+    <p class="govuk-body">31.2% of people in the Gypsy or Irish Traveller group were in the <a class="govuk-link"
+         href="{{ url_for('static_site.measure_version', topic_slug='uk-population-by-ethnicity', subtopic_slug='demographics', measure_slug='socioeconomic-status', version='latest') }}">socio-economic
+        group</a> of ‘never worked or long-term unemployed’. This was the highest percentage of all ethnic
+      groups.</p>
+
+    <p class="govuk-body">The Gypsy or Irish Traveller group had the smallest percentage of people in the
+      highest socio-economic groups. 2.5% were in the ‘higher, managerial, administrative, professional’
+      group.</p>
+
+    <p class="govuk-body">15.1% of Gypsy or Irish Traveller people were small employers and own account
+      workers. These are people who are generally self-employed and have responsibility for a small number of
+      workers. </p>
+
+    <p class="govuk-body">For Gypsy or Irish Travellers, who were 16 and over and in employment, the largest
+      group worked in elementary occupations (22%). This can include occupations such as farm workers, process
+      plant workers, cleaners, or service staff (for example, bar or cleaning staff). </p>
+
+    <p class="govuk-body">The second highest occupation group was skilled trades (19%), which can include
+      farmers, electrical and building trades. The Gypsy or Irish Traveller group had the highest percentage
+      of elementary and skilled trade workers out of all ethnic groups.</p>
+
+    <h3 class="govuk-heading-m"
+        id="employment-gender-gap"> <span class="number">7.2 </span>Employment gender gap</h3>
+
+    <p class="govuk-body">The gender gap in employment rates for the Gypsy or Irish Traveller group aged 16
+      and over was nearly twice as large as for all ethnic groups combined. In the Gypsy or Irish Traveller
+      ethnic group, 46% of men and 29% of women were employed, a gap of 17%. For all ethnic groups combined,
+      64% of men and 54% of women were employed, a gap of 10%.</p>
+
+    <p class="govuk-body">This is likely to be due to the fact that Gypsy or Irish Traveller women (63%) were
+      about 1.5 times as likely as Gypsy or Irish Traveller men (43%) to be economically inactive, which means
+      they were out of work and not looking for work.</p>
+
+    <h3 class="govuk-heading-m"
+        id="economic-inactivity"> <span class="number">7.3 </span>Economic inactivity</h3>
+
+    <p class="govuk-body">There are a range of reasons why people can be economically inactive. The most
+      common reason for Gypsy or Irish Travellers being economically inactive was looking after the home or
+      family (27%). This is higher than the average for England and Wales (11%). The second most common reason
+      was being long term sick or disabled (26%) – the highest percentage out of all ethnic groups.</p>
+
+
+
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="home-ownership-data">
+      <span class="number">8. </span>Home ownership data
+    </h2>
+
+    <h3 class="govuk-heading-s"
+        id="figure-home-ownership">Figure 5: Home ownership and renting among Gypsy or Irish Traveller households and
+      all households</h3>
+
+
+    <div><img class="govuk-!-width-full"
+           src="/static/images/summaries/GRT_202106_fig5_v1-0.svg"
+           alt="Bar chart showing that 34% of households from Gypsy and Traveller ethnic groups own their own home, compared with 64% of all households.">
+    </div><br><br>
+
+    <h3 class="govuk-heading-s"
+        id="table-home-ownership">Table 5: Home ownership and renting among Gypsy or
+      Irish Traveller households and all
+      households</h3>
+
+
+
+    <table class="
+              govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col"
+              class="govuk-table__header">Ethnic group</th>
+          <th scope="col"
+              class="govuk-table__header">Own their own home</th>
+          <th scope="col"
+              class="govuk-table__header">Rent privately</th>
+          <th scope="col"
+              class="govuk-table__header">Rent social housing</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Gypsy/Traveller</td>
+          <td class="govuk-table__cell">34%</td>
+          <td class="govuk-table__cell">24%</td>
+          <td class="govuk-table__cell">42%</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">All ethnic groups</td>
+          <td class="govuk-table__cell">64%</td>
+          <td class="govuk-table__cell">18%</td>
+          <td class="govuk-table__cell">18%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div role="
+                               note"
+         aria-label="Information"
+         class="govuk-inset-text">
+      <p class="govuk-body">Source: England, 2011 Census</p>
+    </div>
+
+    <p class="govuk-body">In 2011, 34% of Gypsy or Irish Traveller households owned their own home, compared
+      with a national average of 64%. 42% lived in social rented accommodation, compared with a national
+      average of 18%.</p>
+
+    <p class="govuk-body">In 2016 to 2017, 0.1% of <a class="govuk-link"
+         href="{{ url_for('static_site.measure_version', topic_slug='housing', subtopic_slug='social-housing', measure_slug='new-social-housing-lettings', version='latest') }}">new
+        social housing lettings</a> went to people from Gypsy or Irish Traveller backgrounds (429 lettings).
+    </p>
+
+    <p class="govuk-body">In 2011, a whole house or bungalow was the most common type of accommodation for
+      Gypsy or Irish Traveller households (61%). This was lower than for all usual residents in England and
+      Wales (84%).</p>
+
+    <p class="govuk-body">Caravans or other mobile or temporary homes accounted for 24% of Gypsy or Irish
+      Travellers accommodation, a far higher percentage than for the whole of England and Wales (0.3%). </p>
+
+    <p class="govuk-body">The percentage of people living in a flat, maisonette or apartment was 15% for both
+      Gypsy or Irish Travellers and all usual residents in England and Wales.</p>
+
+
+
+
+
+
+
+
+
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-9"
+        id="health">
+      <span class="number">9. </span>Health
+    </h2>
+
+    <p class="govuk-body">In 2011, 14.1% of Gypsy and Irish Traveller people in England and Wales rated their
+      health as bad or very bad, compared with 5.6% on average for all ethnic groups.</p>
+
+    <p class="govuk-body">In 2016 to 2017, Gypsy or Irish Traveller people aged 65 and over had the lowest <a
+         class="govuk-link"
+         href="{{ url_for('static_site.measure_version', topic_slug='health', subtopic_slug='physical-health', measure_slug='health-related-quality-of-life-for-people-aged-65-and-over', version='latest') }}">health-related
+        quality of life</a> of all ethnic groups (average score of 0.509 out of 1). The quality of life scores
+      for the White Gypsy or Irish Traveller ethnic group are based on a small number of responses (around 35
+      each year) and are less reliable as a result.</p>
+
+    <p class="govuk-body">Ethnicity facts and figures has information on satisfaction of different health
+      services for different ethnic groups. For the results presented below, the Gypsy or Irish Traveller
+      figures are based on a relatively small number of respondents, and are less reliable than figures for
+      other ethnic groups.</p>
+
+    <p class="govuk-body">In 2014 to 2015 (the most recent data available), these groups were the most
+      satisfied with their <a class="govuk-link"
+         href="{{ url_for('static_site.measure_version', topic_slug='health', subtopic_slug='patient-experience', measure_slug='patient-satisfaction-with-gp-out-of-hours-services', version='latest') }}">experience
+        of GP-out-of-hours service</a>, with 75.2% reporting a positive experience.</p>
+
+    <p class="govuk-body">In 2018 to 2019, they were less satisfied with their <a rel="external"
+         class="govuk-link"
+         href="https://digital.nhs.uk/data-and-information/publications/statistical/nhs-outcomes-framework/february-2021/domain-4-ensuring-that-people-have-a-positive-experience-of-care-nof/4a.i-patient-experience-of-gp-services">experience
+        of GP services</a> than most ethnic groups – 73.0% reported a positive experience.</p>
+
+    <p class="
+                   govuk-body">They were also among the groups that had least success when booking an <a rel="external"
+         class="govuk-link"
+         href="https://digital.nhs.uk/data-and-information/publications/statistical/nhs-outcomes-framework/february-2021/domain-4-ensuring-that-people-have-a-positive-experience-of-care-nof/4.4.ii-access-to-nhs-dental-services">NHS
+        dentist appointment</a> – 89.0% reported successfully booking an appointment in 2018 to 2019.</p>
+
+    <p class="
+                     govuk-body">The Gypsy or Irish Traveller group were also less satisfied with their <a
+         rel="external"
+         class="govuk-link"
+         href="https://digital.nhs.uk/data-and-information/publications/statistical/nhs-outcomes-framework/february-2021/domain-4-ensuring-that-people-have-a-positive-experience-of-care-nof/4.4.i-access-to-gp-services">access
+        to GP services</a> in 2018 to 2019 – 56.9% reported a positive experience of making a GP appointment, compared
+      to an average of 67.4% for all respondents.</p>
+
+  </div>
+</div>
+{# end of content #}
+
+{{ appBackToTop(anchor="
+                       toc",text="Contents"
+                       ,attributes={"data-on": "click"
+                       , "data-event-category"
+                       :"Back
+                       to
+                       Top", "data-event-action"
+                       : "Clicked"
+                       , "data-event-label"
+                       : "Contents"
+                       })
+                       }}
+{%
+endblock
+%}
+{%
+block
+bodyEnd
+%}
+{{
+                       super()
+                       }}
+{%
+endblock
+%}
