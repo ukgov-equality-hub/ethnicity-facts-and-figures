@@ -6,7 +6,7 @@ from typing import Optional, Iterable
 
 import sqlalchemy
 from bidict import bidict
-from dictalchemy import DictableModel
+#from dictalchemy import DictableModel
 from sqlalchemy import inspect, ForeignKeyConstraint, UniqueConstraint, ForeignKey, not_, text, func, desc
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from sqlalchemy.ext.declarative import declared_attr
@@ -103,15 +103,16 @@ class ArrayOfEnum(ARRAY):
         return process
 
 
-class CopyableModel(DictableModel):
-    def copy(self, exclude_fields: Optional[Iterable] = None):
+class CopyableModel(): #DictableModel):
+    def copy(self, exclude_fields: Optional[Iterable]=None):
         if not exclude_fields:
             exclude_fields = []
 
-        copy = self.__class__()
-        copy.fromdict(self.asdict(exclude_pk=True, exclude=exclude_fields))
+        #copy = self.__class__()
+        #copy.fromdict(self.asdict(exclude_pk=True, exclude=exclude_fields))
 
-        return copy
+        #return copy
+        return self
 
 
 class FrequencyOfRelease(db.Model):
