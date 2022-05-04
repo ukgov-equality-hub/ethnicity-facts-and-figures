@@ -1,3 +1,4 @@
+setuptools==58
 aadict==0.2.3
 alembic==1.4.2
 asset==0.6.13
@@ -66,4 +67,3 @@ Werkzeug==2.0.2
 WTForms==3.0.0
 password-strength>=0.0.3.post2
 email-validator==1.1.0
-setuptools==58
