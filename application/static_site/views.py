@@ -307,6 +307,11 @@ def gypsy_roma_irish_traveller():
     return render_template("static_site/static_pages/summaries/gypsy_roma_irish_traveller.html")
 
 
+@static_site_blueprint.route("/summaries/data-only-page")
+def data_only_page():
+    return render_template("static_site/static_pages/summaries/data-only-page.html")
+
+
 # style guide
 @static_site_blueprint.route("/style-guide")
 def style_guide():

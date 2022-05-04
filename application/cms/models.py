@@ -110,9 +110,10 @@ class CopyableModel(): #DictableModel):
 
         #copy = self.__class__()
         #copy.fromdict(self.asdict(exclude_pk=True, exclude=exclude_fields))
+        #exclude_fields.append('id')
+        #copy = [x for x in dict(copy).keys() if x not in exclude_fields]
 
-        #return copy
-        return self
+        return self #copy
 
 
 class FrequencyOfRelease(db.Model):
