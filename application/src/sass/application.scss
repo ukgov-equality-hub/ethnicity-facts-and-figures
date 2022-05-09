@@ -44,6 +44,7 @@ $govuk-assets-path: '/static/assets/';
 // Page specific
 @import 'page-specific/style-guide';
 @import 'page-specific/measure-template_v2';
+@import 'page-specific/dataonly-page';
 
 /* Import other custom styles that need converting, with care and consideration, to components in the future */
 @import 'accessible-autocomplete';
