@@ -281,6 +281,16 @@ def our_statistical_principles():
     return render_template("static_site/static_pages/understanding_our_data/our_statistical_principles.html")
 
 
+@static_site_blueprint.route("/consultation-ethnicity-only-measure-page.html")
+def consultation_ethnicity_only_measure_page():
+    return render_template("static_site/static_pages/consultation-ethnicity-only-measure-page.html")
+
+
+@static_site_blueprint.route("/consultation-data-only-measure-page.html")
+def consultation_data_only_measure_page():
+    return render_template("static_site/static_pages/consultation-data-only-measure-page.html")
+
+
 # summaries
 @static_site_blueprint.route("/summaries/indian-ethnic-group")
 def indian_ethnic_group():

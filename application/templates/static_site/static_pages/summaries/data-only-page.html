@@ -42,7 +42,7 @@
   <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
-          <h2 class="govuk-heading-l" id="download-the-data" style="border-top: 1px solid #b1b4b6; padding-top:.75em;">1. Download the data</h2>
+          <h2 class="govuk-heading-l" id="download-the-data" style="padding-top:.75em;">1. Download the data</h2>
           <div class="call-to-action">
             <div itemprop="distribution" itemscope="" itemtype="http://schema.org/DataDownload">
               <meta itemprop="encodingFormat" content="text/csv">
@@ -115,10 +115,12 @@
       <div itemprop="spatialCoverage" itemscope="" itemtype="http://schema.org/Place">
         <meta itemprop="name" content="United Kingdom">
       </div>
-      <meta itemprop="dateModified" content="2021-08-02">      <meta itemprop="datePublished" content="2021-08-02">      <div itemprop="creator" itemscope="" itemtype="http://schema.org/Organization">
-        <meta itemprop="name" content="Race Disparity Unit">
-        <meta itemprop="url" content="https://www.gov.uk/government/organisations/race-disparity-unit">
-      </div>
+      <meta itemprop="dateModified" content="2021-08-02">
+        <meta itemprop="datePublished" content="2021-08-02">
+        <div itemprop="creator" itemscope="" itemtype="http://schema.org/Organization">
+            <meta itemprop="name" content="Race Disparity Unit">
+            <meta itemprop="url" content="https://www.gov.uk/government/organisations/race-disparity-unit">
+        </div>
 
       <h2 class="govuk-heading-l" id="data-sources">
         3. Data sources
@@ -145,82 +147,9 @@
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Purpose of data source</h3>
         <p class="govuk-body">The Pensioners’ incomes series is based on data from the Family Resources Survey (FRS). The main purpose of the FRS is to give the Department for Work and Pensions data to develop, monitor and evaluate social welfare policy.</p>
         <p class="govuk-body">The survey is also used by other government departments, including for tax and benefit policy modelling by HM Treasury and HM Revenue and Customs. The FRS is also used by academics and research institutes for social and economic research.</p>
-
-    <div class="eff-document-footer">
-
-      <div class="history-information" id="history">
-
-        <p>
-          Publication release date:
-          <span class="published definition">
-            2 December 2021
-          </span>
-        </p>
-
-
-        <div class="change-notes">
-
-
-            <details id="full-page-history" class="govuk-details eff-details--page-history" data-module="govuk-details" data-event-action="Opened" data-event-category="Disclosure" data-event-label="Full page history" data-on="click">
-  <summary class="govuk-details__summary">
-    <span class="govuk-details__summary-text">
-      full page history
-    </span>
-  </summary>
-  <div class="govuk-details__text">
-              <ol class="govuk-list">
-            <li>
-              <a class="govuk-link" href="/education-skills-and-training/higher-education/first-year-entrants-onto-undergraduate-degrees/4.0"><time datetime="2021-08-02" class="timestamp">2 August 2021</time></a>
-              Update with latest available data.
-            </li>
-          </ol>
-
-  </div>
-</details>
-
-
         </div>
       </div>
-      <div class="related-information">
-        <p>
-          From:
-          <span class="definition">Higher Education Statistics Agency</span>
-        </p>
-
-
-        <div class="previous-editions">
-          Previous editions:
-
-          <ol class="govuk-list">
-            <li>
-              <a class="govuk-link" href="/education-skills-and-training/higher-education/first-year-entrants-onto-undergraduate-degrees/3.0"><span class="govuk-visually-hidden">Edition published on
-                </span>11 December 2020</a>
-            </li>
-            <li>
-              <a class="govuk-link" href="/education-skills-and-training/higher-education/first-year-entrants-onto-undergraduate-degrees/2.0"><span class="govuk-visually-hidden">Edition published on
-                </span>20 May 2019</a>
-            </li>
-            <li>
-              <a class="govuk-link" href="/education-skills-and-training/higher-education/first-year-entrants-onto-undergraduate-degrees/1.2"><span class="govuk-visually-hidden">Edition published on
-                </span>14 May 2019</a>
-            </li>
-          </ol>
         </div>
-
-      </div>
-
-    </div>
-
-
-      <div class="app-back-to-top app-back-to-top--hidden app-back-to-top--fixed" data-module="app-back-to-top">
-    <div class="app-back-to-top__container">
-      <a class="govuk-link govuk-link--no-visited-state app-back-to-top__link" href="#title" data-event-action="Clicked" data-event-category="Back to Top" data-event-label="Contents" data-on="click">        <svg role="presentation" focusable="false" class="app-back-to-top__icon" xmlns="http://www.w3.org/2000/svg" width="13" height="17" viewBox="0 0 13 17">
-          <path fill="currentColor" d="M6.5 0L0 6.5 1.4 8l4-4v12.7h2V4l4.3 4L13 6.4z"></path>
-        </svg>Contents
-      </a>
-    </div>
-  </div>
-
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -240,6 +169,4 @@
 </div>
 
 {# end of content #}
-
-{{ appBackToTop(anchor="toc",text="Contents",attributes={"data-on": "click", "data-event-category":"Back to Top", "data-event-action": "Clicked", "data-event-label": "Contents"}) }}
 {% endblock %}
