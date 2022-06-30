@@ -104,6 +104,13 @@ def request_static_build():
 
 
 @manager.command
+def clear_stalled_builds():
+    from application.sitebuilder.build_service import clear_stalled_build
+
+    clear_stalled_build()
+
+
+@manager.command
 def force_build_static_site():
     if app.config["BUILD_SITE"]:
         from application.sitebuilder.build_service import request_build, build_site, clear_stalled_build
