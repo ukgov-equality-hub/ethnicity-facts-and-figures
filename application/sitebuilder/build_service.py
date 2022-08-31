@@ -3,12 +3,12 @@ import atexit
 import traceback
 import uuid
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import date, datetime, timedelta
 
 import shutil
 
 import os
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from sqlalchemy.orm import sessionmaker
 
 from application import db
@@ -24,6 +24,28 @@ FIFTEEN_MINUTES_IN_SECONDS = 60 * 15
 class BuildException(Exception):
     def __init__(self, original_exception):
         self.original_exception = original_exception
+
+
+def clear_stalled_build():
+    an_hour_ago = datetime.now() - timedelta(minutes=60)
+    stalled = (
+        db.session.query(Build)
+        .filter(
+            Build.status == BuildStatus.STARTED,
+            func.DATE(Build.created_at) == date.today(),
+            Build.created_at <= an_hour_ago,
+        )
+        .all()
+    )
+
+    if stalled:
+        for stalled_build in stalled:
+            stalled_build.status = BuildStatus.FAILED
+            stalled_build.failed_at = datetime.utcnow()
+
+            db.session.add(stalled_build)
+
+        db.session.commit()
 
 
 def request_build():
