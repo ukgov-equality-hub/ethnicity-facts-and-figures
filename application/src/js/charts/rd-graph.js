@@ -476,7 +476,7 @@ function smallBarchart(container_id, chartObject, yAxisMax) {
   preprocessChartObject(chartObject);
 
 
-  var yMax = yAxisMax === 10 ? yAxisMax : (yAxisMax < 50 ? 60 : yAxisMax) * 1.05;
+  var yMax = yAxisMax === 10.00001/* 10 AK  01/09/2021 scaling issue on charts when yAxisMax = 10 */ ? yAxisMax : (yAxisMax < 50 ? 60 : yAxisMax) * 1.05;
 
 
   var showLastLabel = small_barchart_show_last_label(chartObject);
