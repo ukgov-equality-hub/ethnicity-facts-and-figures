@@ -409,6 +409,7 @@ function panelBarchart(container_id, chartObject) {
   /* 10 AK  01/09/2021 make sure all graphs in the series share the same scale */
   var yAxisMax = 0
   for (c in chartObject.panels) {
+    var panelChart = chartObject.panels[c];
     var yMax = yAxisMaxValue(panelChart.series);
     if (yMax > yAxisMax) yAxisMax = yMax;
   }
@@ -480,7 +481,7 @@ function yAxisMaxValue(panelChartData) {
 
 function smallBarchart(container_id, chartObject, yAxisMax) {
   preprocessChartObject(chartObject);
-  var yMax = yAxisMax === 10.00001/* 10 AK  01/09/2021 scaling issue on charts when yAxisMax = 10 */ ? yAxisMax : (yAxisMax < 50 ? 60 : yAxisMax) * 1.05;
+  var yMax = yAxisMax === 10/* 10 AK  01/09/2021 scaling issue on charts when yAxisMax = 10 */ ? yAxisMax : (yAxisMax < 50 ? 60 : yAxisMax) * 1.05;
   var showLastLabel = small_barchart_show_last_label(chartObject);
 
   var chart = Highcharts.chart(container_id, {
