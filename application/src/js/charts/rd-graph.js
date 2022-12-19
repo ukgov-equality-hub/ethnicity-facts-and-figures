@@ -406,12 +406,19 @@ function panelBarchart(container_id, chartObject) {
   $('#' + container_id).html(internal_divs);
 
   var charts = [];
+  // AK  01/09/2021 make sure all graphs in the series share the same scale
+  var yAxisMax = 0
+  for (c in chartObject.panels) {
+    var panelChart = chartObject.panels[c];
+    var yMax = yAxisMaxValue(panelChart.series);
+    if (yMax > yAxisMax) yAxisMax = yMax;
+  }
   for (c in chartObject.panels) {
     var panel_container_id = container_id + '_' + c;
     var panelChart = chartObject.panels[c];
 
-    // caclulate yAxis max value
-    var yAxisMax = yAxisMaxValue(panelChart.series);
+    // caclulate yAxis max value (see above)
+    //var yAxisMax = yAxisMaxValue(panelChart.series);
 
     charts.push(smallBarchart(panel_container_id, panelChart, yAxisMax));
   }
@@ -474,11 +481,7 @@ function yAxisMaxValue(panelChartData) {
 
 function smallBarchart(container_id, chartObject, yAxisMax) {
   preprocessChartObject(chartObject);
-
-
   var yMax = yAxisMax === 10 ? yAxisMax : (yAxisMax < 50 ? 60 : yAxisMax) * 1.05;
-
-
   var showLastLabel = small_barchart_show_last_label(chartObject);
 
   var chart = Highcharts.chart(container_id, {
