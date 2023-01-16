@@ -1,7 +1,7 @@
 'use strict';
 
 const gulp = require('gulp'),
-  sass = require('gulp-sass'),
+  sass = require('gulp-sass')(require('sass')),
   concat = require('gulp-concat'),
   sourcemaps = require('gulp-sourcemaps'),
   rev = require('gulp-rev'),
