@@ -226,7 +226,13 @@ def _create_default_users_with_password(password_for_default_users):
         "rdu@eff.gov.uk": TypeOfUser.RDU_USER,
     }
 
-    whitelisted_accounts = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "{}"))
+    account_whitelist = os.environ.get("ACCOUNT_WHITELIST", "{}")
+    if ',' in account_whitelist:
+        email_whitelist = account_whitelist.split(',')
+        whitelisted_accounts = { email: None for email in email_whitelist }
+    else:
+        whitelisted_accounts = ast.literal_eval(account_whitelist)
+
     for email in whitelisted_accounts:
         default_accounts[email] = getattr(TypeOfUser, whitelisted_accounts[email])
 

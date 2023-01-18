@@ -164,6 +164,7 @@ def send_reactivation_email(email, app, devmode=False):
 
 
 def send_email(sender, email, message, subject):
+    # SWITCH TO NOTIFY..........
     msg = Message(html=message, subject=subject, sender=sender, recipients=[email])
     mail.send(msg)
 

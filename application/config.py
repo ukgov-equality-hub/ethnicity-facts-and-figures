@@ -101,7 +101,7 @@ class Config:
     REDIRECT_PROTOCOL = os.environ.get("REDIRECT_PROTOCOL", "http")
     REDIRECT_HOSTNAME = os.environ.get("REDIRECT_HOSTNAME", "localhost")
 
-    NEWSLETTER_SUBSCRIBE_URL = os.environ.get("NEWSLETTER_SUBSCRIBE_URL")
+    NEWSLETTER_SUBSCRIBE_URL = os.environ.get("NEWSLETTER_SUBSCRIBE_URL", "").replace('__AND__', '&')
 
 
 class DevConfig(Config):

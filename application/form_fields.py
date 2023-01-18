@@ -62,7 +62,12 @@ def _strip_whitespace_extended(value):
 def is_whitelisted_or_government_email(email):
     email = email.lower()
 
-    email_whitelist = ast.literal_eval(os.environ.get("ACCOUNT_WHITELIST", "{}"))
+    account_whitelist = os.environ.get("ACCOUNT_WHITELIST", "{}")
+    email_whitelist = []
+    if ',' in account_whitelist:
+        email_whitelist = account_whitelist.split(',')
+    else:
+        email_whitelist = ast.literal_eval(account_whitelist)
     if email in email_whitelist:
         return True
 
