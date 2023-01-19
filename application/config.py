@@ -86,6 +86,7 @@ class Config:
     MAIL_PORT = int(os.environ.get("MAILGUN_SMTP_PORT", 465))
     MAIL_USERNAME = os.environ.get("MAILGUN_SMTP_LOGIN")
     MAIL_PASSWORD = os.environ.get("MAILGUN_SMTP_PASSWORD")
+    NOTIFY_API = os.environ.get("NOTIFY_API", "")
     TOKEN_MAX_AGE_SECONDS = 60 * 60 * 48
     PREVIEW_TOKEN_MAX_AGE_DAYS = int(os.environ.get("PREVIEW_TOKEN_MAX_AGE_DAYS", 14))
     SURVEY_ENABLED = get_bool(os.environ.get("SURVEY_ENABLED", False))

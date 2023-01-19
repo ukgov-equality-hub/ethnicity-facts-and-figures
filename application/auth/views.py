@@ -1,3 +1,4 @@
+import os
 import passwordmeter
 from flask import render_template, flash, redirect, url_for, current_app, abort, session
 from flask_mail import Message
@@ -33,19 +34,34 @@ def forgot_password():
 
         html = render_template("auth/email/reset_instructions.html", confirmation_url=confirmation_url)
 
-        msg = Message(
-            html=html,
-            subject="Password reset for the Ethnicity Facts and Figures content management system",
-            sender=current_app.config["RDU_EMAIL"],
-            recipients=[form.email.data],
-        )
-        try:
-            mail.send(msg)
-            flash("Instructions for updating your password have been sent to %s" % email)
+        NOTIFY_API = os.environ.get("NOTIFY_API", "")
+        if NOTIFY_API != '':
+            from notifications_python_client.notifications import NotificationsAPIClient
+            notifications_client = NotificationsAPIClient(NOTIFY_API)
 
-        except Exception as ex:
-            flash("Failed to send password reset email to: %s" % email, "error")
-            current_app.logger.error(ex)
+            template_id = '3a3ef2d8-df35-4516-a4ee-fd2f4d989ea6'
+
+            response = notifications_client.send_email_notification(
+                email_address=form.email.data,
+                template_id=template_id,
+                personalisation={
+                    'confirmation_url': confirmation_url
+                }
+            )
+        else:
+            msg = Message(
+                html=html,
+                subject="Password reset for the Ethnicity Facts and Figures content management system",
+                sender=current_app.config["RDU_EMAIL"],
+                recipients=[form.email.data],
+            )
+            try:
+                mail.send(msg)
+                flash("Instructions for updating your password have been sent to %s" % email)
+
+            except Exception as ex:
+                flash("Failed to send password reset email to: %s" % email, "error")
+                current_app.logger.error(ex)
 
         return redirect(url_for("auth.forgot_password"))
 

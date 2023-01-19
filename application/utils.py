@@ -139,7 +139,7 @@ def create_and_send_activation_email(email, app, devmode=False):
     html = render_template("admin/confirm_account.html", confirmation_url=confirmation_url, user=email)
     try:
         send_email(
-            app.config["RDU_EMAIL"], email, html, "Access to the Ethnicity Facts and Figures content management system"
+            app.config["RDU_EMAIL"], email, html, "Access to the Ethnicity Facts and Figures content management system", { 'confirmation_url': confirmation_url, 'user': email }
         )
         flash("User account invite sent to: %s." % email)
     except Exception as ex:
@@ -157,16 +157,32 @@ def send_reactivation_email(email, app, devmode=False):
     html = render_template("admin/reactivate_account.html", confirmation_url=confirmation_url, user=email)
     try:
         send_email(
-            app.config["RDU_EMAIL"], email, html, "Your Ethnicity facts and figures account has been deactivated"
+            app.config["RDU_EMAIL"], email, html, "Your Ethnicity facts and figures account has been deactivated", { 'confirmation_url': confirmation_url }
         )
     except Exception as ex:
         app.logger.error(ex)
 
 
-def send_email(sender, email, message, subject):
-    # SWITCH TO NOTIFY..........
-    msg = Message(html=message, subject=subject, sender=sender, recipients=[email])
-    mail.send(msg)
+def send_email(sender, email, message, subject, data = ''):
+    NOTIFY_API = os.environ.get("NOTIFY_API", "")
+    if NOTIFY_API != '':
+        from notifications_python_client.notifications import NotificationsAPIClient
+        notifications_client = NotificationsAPIClient(NOTIFY_API)
+
+        template_id = ''
+        if subject == 'Access to the Ethnicity Facts and Figures content management system':
+            template_id = 'b74efa99-932f-4072-9665-fec8a4b42297'
+        elif subject == 'Your Ethnicity facts and figures account has been deactivated':
+            template_id = 'c8f3ece1-bb6c-45b2-bc16-7bb1c286c9a8'
+
+        response = notifications_client.send_email_notification(
+            email_address=email,
+            template_id=template_id,
+            personalisation=data
+        )
+    else:
+        msg = Message(html=message, subject=subject, sender=sender, recipients=[email])
+        mail.send(msg)
 
 
 def write_dimension_csv(dimension):
