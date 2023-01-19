@@ -66,3 +66,4 @@ Werkzeug==2.0.2
 WTForms==3.0.0
 password-strength>=0.0.3.post2
 email-validator==1.1.0
+notifications-python-client==6.4.1

@@ -77,6 +77,7 @@
   </head>
 
   <body class="govuk-template__body {% block bodyClasses %}{% endblock %}">
+    <!--{{ url_for(request.endpoint) }}-->
     {% block bodyStart %}
       <script>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
