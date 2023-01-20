@@ -260,6 +260,7 @@ class PageService(Service):
             # We insert to the front of the `measure.versions` relationship so that we maintain ordering of
             # desc(measure_version.version) as defined by the relationship on the model, as otherwise the list is not
             # updated by sqlalchemy until a commit.
+            new_version.version = next_version_number
             measure_version.measure.versions.insert(0, new_version)
 
         new_version.version = next_version_number
@@ -283,7 +284,7 @@ class PageService(Service):
             new_version.data_sources = measure_version.data_sources
 
         db.session.add(new_version)
-        #db.session.flush()
+        db.session.flush()
 
         upload_service.copy_uploads_between_measure_versions(
             from_measure_version=measure_version, to_measure_version=new_version

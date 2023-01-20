@@ -104,16 +104,21 @@ class ArrayOfEnum(ARRAY):
 
 
 class CopyableModel(): #DictableModel):
-    def copy(self, exclude_fields: Optional[Iterable]=None):
+    def copy(self, exclude_fields: Optional[Iterable] = None):
         if not exclude_fields:
             exclude_fields = []
+        exclude_fields.append('id')
 
-        #copy = self.__class__()
+        d = dict(self.__dict__)
+        d.pop('_sa_instance_state')
+        for field in exclude_fields:
+            d.pop(field)
+        copy = self.__class__(**d)
+
         #copy.fromdict(self.asdict(exclude_pk=True, exclude=exclude_fields))
-        #exclude_fields.append('id')
-        #copy = [x for x in dict(copy).keys() if x not in exclude_fields]
 
-        return self #copy
+        return copy
+        #return self
 
 
 class FrequencyOfRelease(db.Model):
