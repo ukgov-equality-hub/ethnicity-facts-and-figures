@@ -76,7 +76,9 @@ class User(db.Model, RoleFreeUserMixin):
     __table_args__ = (UniqueConstraint(email, name="uq_users_email"),)
 
     def user_name(self):
-        return self.email.split("@")[0]
+        if '@' in self.email:
+            return self.email.split("@")[0]
+        return self.email
 
     def is_departmental_user(self):
         return self.user_type == TypeOfUser.DEPT_USER
