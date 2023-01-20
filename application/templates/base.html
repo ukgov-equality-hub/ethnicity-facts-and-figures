@@ -74,13 +74,6 @@
 
     {% block headEnd %}
     {% endblock %}
-    {% if url_for(request.endpoint) == "/" %}
-    <style>
-      header.govuk-header {
-        border-bottom: none;
-      }
-    </style>
-    {% endif %}
   </head>
 
   <body class="govuk-template__body {% block bodyClasses %}{% endblock %}">
@@ -141,6 +134,11 @@
     {% block bodyEnd %}
         <script type="text/javascript" src="/static/javascripts/{{ 'all.js' | version_filter }}"></script>
         <script>window.GOVUKFrontend.initAll()</script>
+        <script>
+          if (window.location.pathname == '/') {
+            document.getElementById('global-header').style.borderBottom = 'none'
+          }
+        </script>
 
         {% if not static_mode %}
             <script>var user_csrf_token = "{{ csrf_token() }}"</script>
