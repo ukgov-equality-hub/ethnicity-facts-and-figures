@@ -283,7 +283,7 @@ class PageService(Service):
             new_version.data_sources = measure_version.data_sources
 
         db.session.add(new_version)
-        db.session.flush()
+        #db.session.flush()
 
         upload_service.copy_uploads_between_measure_versions(
             from_measure_version=measure_version, to_measure_version=new_version
