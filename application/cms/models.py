@@ -112,7 +112,8 @@ class CopyableModel(): #DictableModel):
         d = dict(self.__dict__)
         d.pop('_sa_instance_state')
         for field in exclude_fields:
-            d.pop(field)
+            if field in d:
+                d.pop(field)
         copy = self.__class__(**d)
 
         #copy.fromdict(self.asdict(exclude_pk=True, exclude=exclude_fields))
