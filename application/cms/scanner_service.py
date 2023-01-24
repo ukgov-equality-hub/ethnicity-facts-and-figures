@@ -1,5 +1,4 @@
 import enum
-
 import requests
 
 from application.cms.exceptions import (
@@ -34,24 +33,35 @@ class ScannerService(Service):
                 f"{self.base_url}", headers={"Authorization": f"Bearer {self.token}"}, files={"file": fileobj}
             )
 
-            status = response.json()["status"].lower()
+            response_json = response.json()
+            if 'status' in response_json:
+                status = response_json['status'].lower()
 
-            if status == ScannerService.Status.OK.value:
-                return True
-            elif status == ScannerService.Status.PENDING.value:
-                self.logger.warning(f"Upload scan pending for `{filename}`: check back for result later")
-                raise UploadCheckPending("Upload check did not complete (pending)")
-            elif status == ScannerService.Status.FAILED.value:
-                self.logger.error(f"Upload scan failed for `{filename}`: {response.json()}")
-                raise UploadCheckFailed("Upload check could not be completed (an error occurred)")
-            elif status == ScannerService.Status.FOUND.value:
-                self.logger.error(f"Upload scan detected a virus in `{filename}`: {response.json()}")
-                raise UploadCheckVirusFound("Virus scan has found something suspicious")
-            else:
-                self.logger.warning(f"Unrecognised status from scanning service for `{filename}`: {response.json()}")
-                raise UnknownFileScanStatus(
-                    f"Unrecognised status from scanning service for `{filename}`: {response.json()}"
-                )
+                if status == ScannerService.Status.OK.value:
+                    return True
+                elif status == ScannerService.Status.PENDING.value:
+                    self.logger.warning(f"Upload scan pending for `{filename}`: check back for result later")
+                    raise UploadCheckPending("Upload check did not complete (pending)")
+                elif status == ScannerService.Status.FAILED.value:
+                    self.logger.error(f"Upload scan failed for `{filename}`: {response_json}")
+                    raise UploadCheckFailed("Upload check could not be completed (an error occurred)")
+                elif status == ScannerService.Status.FOUND.value:
+                    self.logger.error(f"Upload scan detected a virus in `{filename}`: {response_json}")
+                    raise UploadCheckVirusFound("Virus scan has found something suspicious")
+                else:
+                    self.logger.warning(f"Unrecognised status from scanning service for `{filename}`: {response_json}")
+                    raise UnknownFileScanStatus(
+                        f"Unrecognised status from scanning service for `{filename}`: {response_json}"
+                    )
+
+            elif 'data' in response_json:
+                if 'result' in response_json['data']:
+                    if not response_json['data']['result'][0]['is_infected']:
+                        filename = response_json['data']['result'][0]['name']
+                        virusname = ', '.join(response_json['data']['result'][0]['viruses'])
+                        self.logger.error(f"Upload scan detected a virus in `{filename}`: {virusname}")
+                        raise UploadCheckVirusFound("Virus scan has found something suspicious")
+                    return True
 
         else:
             self.logger.warning(f"File upload scanning disabled: writing `{filename}` without virus check")
@@ -60,3 +70,10 @@ class ScannerService(Service):
 
 
 scanner_service = ScannerService()
+
+
+
+
+
+
+test = '{"data": {"result": [{"is_infected": false,"name": "1Mfile01.rnd","viruses": []},{"is_infected": true,"name": "eicar_com.zip","viruses": ["Win.Test.EICAR_HDB-1"]}]},"success": true}'
