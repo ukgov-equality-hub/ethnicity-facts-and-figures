@@ -3,3 +3,9 @@
     @extend %govuk-heading-m
   }
 }
+
+span.call-to-action {
+  display: block;
+  background: #f3f2f1;
+  padding: 2em;
+}
