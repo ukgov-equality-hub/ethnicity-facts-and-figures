@@ -2,6 +2,7 @@ import bleach
 
 import json
 import jinja2
+import html
 
 from flask import Markup
 from hurry.filesize import size, alternative
@@ -12,7 +13,18 @@ from wtforms.widgets import html_params as wtforms_html_params
 
 
 def render_markdown(string):
-    return Markup(markdown(bleach.clean(string) if string else ""))
+    def gov_markdown(string):
+        result = string
+        while '$CTA' in result:
+            result = result.replace('$CTA', '<span class="call-to-action">', 1)
+            result = result.replace('$CTA', '</span>', 1)
+        return html.unescape(result)
+
+    result = string
+    result = Markup(markdown(bleach.clean(result) if result else ""))
+    result = gov_markdown(result)
+
+    return result
 
 
 def filesize(string):

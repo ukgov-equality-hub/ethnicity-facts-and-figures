@@ -72,11 +72,9 @@ none
        class="govuk-link">Version history</a></span>
 
   {% endif %}
-
 </div>
+
 <div class="right">
-
-
   <span class="info">
     <a href="{{ url_for('static_site.measure_version_markdown',
               topic_slug=topic_slug,
@@ -107,8 +105,6 @@ none
   </span>
 
   {% if measure_version.status == 'DRAFT' %}
-
-
   <a class="govuk-button eff-button--warning"
      href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Delete<span
           class="govuk-visually-hidden"> page: {{ measure_version.title }}</a>
@@ -117,8 +113,6 @@ none
 </div>
 {% endcall %}
 {% endif %}
-
-
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
@@ -138,7 +132,6 @@ none
          class="govuk-link">see all updates</a></p>
     {% endif %}
     {% endif %}
-
   </div>
 </div>
 
@@ -174,20 +167,18 @@ none
                 section</span></span></a></li>
 
         {% for dimension in measure_version.dimensions %}
-
         <li><a class="govuk-link"
              href="#{{ dimension.title|slugify_value }}"
              data-on="click"
              data-event-category="Table of contents link clicked"
              data-event-action="Dimension"
              data-event-label="{{ dimension.title }}"><span class="eff-table-of-contents__number">{{ loop.index + 2 }}.
-            </span><span class="sr-only">Navigate to</span><span
+            </span><span class="sr-only">Navigate to</span> <span
                   class="eff-table-of-contents__content">{{ dimension.title }}<span class="sr-only">
                 section</span></span></a></li>
-
         {% endfor %}
 
-        {% set dimensions_count = measure_version.dimensions.all()|length %}
+        {% set dimensions_count = measure_version.dimensions.all() | length %}
 
         <li><a class="govuk-link"
              href="#data-sources"
@@ -230,17 +221,15 @@ none
 </div>
 
 <div class="govuk-grid-row">
+  {% if measure_version.summary %}
   <div class="govuk-grid-column-two-thirds">
+    <h2 class="govuk-heading-l govuk-!-margin-top-4" id="main-facts-and-figures">1. Main facts and figures</h2>
 
-    <h2 class="govuk-heading-l govuk-!-margin-top-4"
-        id="main-facts-and-figures">1. Main facts and figures</h2>
-
-    {% if measure_version.summary %}
     <div class="eff-summary--with-bullets-spaced-out">
-      {{ measure_version.summary | render_markdown }}
+      {{ measure_version.summary | render_markdown | safe }}
     </div>
-    {% endif %}
   </div>
+  {% endif %}
 
   {# TODO: Remove this or revert depending on results of https://trello.com/c/MZAFngBO/2259-hardcode-related-links-1 #}
   {# New design approach of related content #}
@@ -290,13 +279,12 @@ none
 
 <!-- New Section  -->
 <div class="govuk-grid-row">
+  {% if measure_version.need_to_know %}
   <div class="govuk-grid-column-two-thirds things-you-need-to-know">
-    <h2 class="govuk-heading-l govuk-!-margin-top-9"
-        id="things-you-need-to-know">2. Things you need to know</h2>
-    {% if measure_version.need_to_know %}
-    {{measure_version.need_to_know | render_markdown}}
-    {% endif %}
+    <h2 class="govuk-heading-l govuk-!-margin-top-9" id="things-you-need-to-know">2. Things you need to know</h2>
+    {{ measure_version.need_to_know | render_markdown | safe }}
   </div>
+  {% endif %}
 </div>
 <!-- ./New Section  -->
 
@@ -305,8 +293,7 @@ none
   {% for dimension in measure_version.dimensions %}
 
   <div class="govuk-grid-column-two-thirds">
-    <h2 class="govuk-heading-l govuk-!-margin-top-9"
-        id="{{ dimension.title | slugify_value }}">{{ loop.index + 2}}. {{ dimension.title }}</h2>
+    <h2 class="govuk-heading-l govuk-!-margin-top-9" id="{{ dimension.title | slugify_value }}">{{ loop.index + 2}}. {{ dimension.title }}</h2>
     <div class="metadata">
       <dl>
         {% if measure_version.area_covered %}
@@ -340,8 +327,7 @@ none
 </div>
 
 {% if dimension.dimension_chart %}
-{% set chart_and_downloadable = (dimension.dimension_chart.chart_object.type not in ['panel_bar_chart',
-'panel_line_chart']) %}
+{% set chart_and_downloadable = (dimension.dimension_chart.chart_object.type not in ['panel_bar_chart', 'panel_line_chart']) %}
 <div class="chart-and-footer hidden">
   <div class="govuk-grid-row">
     <div class="rd_chart"
@@ -354,8 +340,7 @@ none
     <div class="govuk-grid-column-full chart-footer">
       {% set chart_text_data = dimension.dimension_chart.chart_object | flatten_chart %}
 
-      {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data or
-      "~0" in chart_text_data %}
+      {% if "N/A" in chart_text_data or "-" in chart_text_data or "!" in chart_text_data or "?" in chart_text_data or "~0" in chart_text_data %}
       <p class="missing-data-explanation">
 
         {% if "~0" in chart_text_data %}
@@ -371,13 +356,11 @@ none
         {% endif %}
 
         {% if "!" in chart_text_data %}
-        <span class="explanation"><span class="missing-data confidential"></span> Data withheld to protect
-          confidentiality</span>
+        <span class="explanation"><span class="missing-data confidential"></span> Data withheld to protect confidentiality</span>
         {% endif %}
 
         {% if "?" in chart_text_data %}
-        <span class="explanation"><span class="missing-data sample-too-small"></span> Data withheld because a small
-          sample size makes it unreliable</span>
+        <span class="explanation"><span class="missing-data sample-too-small"></span> Data withheld because a small sample size makes it unreliable</span>
         {% endif %}
 
       </p>
@@ -461,13 +444,14 @@ none
 {% endif %}
 
 <div class="govuk-grid-row">
+  {% if dimension.summary and dimension.summary != "" %}
   <div class="govuk-grid-column-two-thirds">
-    <h3 class="govuk-heading-s"><span class="sr-only">Summary of {{ measure_version.title }} {{dimension.title}} </span>
-      Summary </h3>
+    <h3 class="govuk-heading-s"><span class="sr-only">Summary of {{ measure_version.title }} {{dimension.title}}</span> Summary</h3>
     <div class="govuk-!-margin-bottom-8 eff-summary--with-bullets-spaced-out">
-      {{ dimension.summary | render_markdown }}
+      {{ dimension.summary | render_markdown | safe }}
     </div>
   </div>
+  {% endif %}
   {% endfor %}
   {% endif %}
 </div>
@@ -522,8 +506,7 @@ none
 
         {% if measure_version.primary_data_source.type_of_data %}
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of data</h3>
-        <p class="govuk-body">{{ measure_version.primary_data_source.type_of_data| join_enum_display_names(' and ') }}
-          data</p>
+        <p class="govuk-body">{{ measure_version.primary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
         {% endif %}
 
         {% if measure_version.primary_data_source.type_of_statistic %}
@@ -542,8 +525,7 @@ none
 
         {% if measure_version.primary_data_source.note_on_corrections_or_updates %}
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Note on corrections or updates</h3>
-        <p class="govuk-body">{{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown }}
-        </p>
+        <p class="govuk-body">{{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown | safe }}</p>
         {% endif %}
 
         {% if measure_version.primary_data_source.frequency_of_release %}
@@ -557,7 +539,7 @@ none
 
         {% if measure_version.primary_data_source.purpose %}
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Purpose of data source</h3>
-        {{ measure_version.primary_data_source.purpose | render_markdown }}
+        {{ measure_version.primary_data_source.purpose | render_markdown | safe }}
         {% endif %}
         {% endif %}
 
@@ -580,9 +562,7 @@ none
 
           {% if measure_version.secondary_data_source.type_of_data %}
           <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type of data</h3>
-          <p class="govuk-body">
-            {{ measure_version.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data
-          </p>
+          <p class="govuk-body">{{ measure_version.secondary_data_source.type_of_data| join_enum_display_names(' and ') }} data</p>
           {% endif %}
 
           {% if measure_version.secondary_data_source.type_of_statistic %}
@@ -608,9 +588,7 @@ none
 
           {% if measure_version.secondary_data_source.note_on_corrections_or_updates %}
           <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Note on corrections or updates</h3>
-          <p class="govuk-body">
-            {{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown }}
-          </p>
+          <p class="govuk-body">{{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown | safe }}</p>
           {% endif %}
 
           {% if measure_version.secondary_data_source.frequency_of_release %}
@@ -624,16 +602,13 @@ none
 
           {% if measure_version.secondary_data_source.purpose %}
           <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Purpose of data source</h3>
-          {{ measure_version.secondary_data_source.purpose | render_markdown }}
+          {{ measure_version.secondary_data_source.purpose | render_markdown | safe }}
           {% endif %}
         </div>
 
         {% endif %}
 
-
-
-        <h2 class="govuk-heading-l"
-            id="download-the-data">
+        <h2 class="govuk-heading-l" id="download-the-data">
           {{ dimensions_count + 4 }}. Download the data
         </h2>
       </div>
@@ -730,10 +705,7 @@ none
     {% endif %}
     #}
     <div class="eff-document-footer">
-
-      <div class="history-information"
-           id="history">
-
+      <div class="history-information" id="history">
         <p>
           Publication release date:
           <span class="published definition">
@@ -843,7 +815,6 @@ none
 
     </div>
 
-
     {{ appBackToTop(anchor="title",text="Contents",attributes={"data-on": "click", "data-event-category":"Back to Top", "data-event-action": "Clicked", "data-event-label": "Contents"}) }}
 
     {% include "static_site/_share.html" %}
@@ -855,9 +826,7 @@ none
 {% block bodyEnd %}
 {{ super() }}
 
-<script type="text/javascript"
-        src="/static/javascripts/{{ 'charts.js' | version_filter }}"></script>
-
+<script type="text/javascript" src="/static/javascripts/{{ 'charts.js' | version_filter }}"></script>
 <script type="text/javascript">
 
   var dimensions = {{ measure_version.dimensions | models_to_dicts | tojson }};

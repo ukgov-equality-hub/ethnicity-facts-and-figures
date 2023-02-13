@@ -455,14 +455,14 @@ class NewVersionForm(FlaskForm):
                 NewVersionType.MINOR_UPDATE.value,
                 Markup(
                     f"<strong class='govuk-!-margin-right-4'>"
-                    f"{next_minor_version}</strong>Edit this edition (eg for clarifications or corrections)"
+                    f"{next_minor_version}</strong>Edit this edition (e.g. for clarifications or corrections)"
                 ),
             ),
             (
                 NewVersionType.MAJOR_UPDATE.value,
                 Markup(
                     f"<strong class='govuk-!-margin-right-4'>"
-                    f"{next_major_version}</strong>Create new edition (eg after new data becomes available)"
+                    f"{next_major_version}</strong>Create new edition (e.g. after new data becomes available)"
                 ),
             ),
         ]
