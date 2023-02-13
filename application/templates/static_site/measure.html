@@ -235,7 +235,7 @@
 
     {% if measure_version.summary %}
     <div class="eff-summary--with-bullets-spaced-out">
-      {{ measure_version.summary | render_markdown }}
+      {{ measure_version.summary | render_markdown | safe }}
     </div>
     {% endif %}
 
@@ -243,7 +243,7 @@
 
     {{ govukDetails(
           summaryText="Things you need to know",
-          html=measure_version.need_to_know | render_markdown,
+          html=measure_version.need_to_know | render_markdown | safe,
           classes="govuk-!-margin-bottom-0",
           id="things-you-need-to-know",
           attributes={
@@ -260,7 +260,7 @@
 
     {{ govukDetails(
           summaryText="What the data measures",
-          html=measure_version.measure_summary | render_markdown,
+          html=measure_version.measure_summary | render_markdown | safe,
           classes="govuk-!-margin-bottom-0",
           id="what-the-data-measures",
           attributes={
@@ -277,7 +277,7 @@
 
     {{ govukDetails(
           summaryText="The ethnic categories used in this data",
-          html=measure_version.ethnicity_definition_summary | render_markdown,
+          html=measure_version.ethnicity_definition_summary | render_markdown | safe,
           id="the-ethnic-categories-used-in-this-data",
           attributes={
             "data-on":"click",
@@ -515,22 +515,22 @@
     </h2>
 
     {% if measure_version.methodology %}
-    {{ measure_version.methodology | render_markdown  }}
+    {{ measure_version.methodology | render_markdown | safe }}
     {% endif %}
 
     {% if measure_version.suppression_and_disclosure %}
     <h3 class="govuk-heading-s">Suppression rules and disclosure control</h3>
-    {{ measure_version.suppression_and_disclosure | render_markdown }}
+    {{ measure_version.suppression_and_disclosure | render_markdown | safe }}
     {% endif %}
 
     {% if measure_version.estimation %}
     <h3 class="govuk-heading-s">Rounding</h3>
-    {{ measure_version.estimation  | render_markdown  }}
+    {{ measure_version.estimation | render_markdown | safe }}
     {% endif %}
 
     {% if measure_version.related_publications %}
     <h3 class="govuk-heading-s">Related publications</h3>
-    {{ measure_version.related_publications | render_markdown }}
+    {{ measure_version.related_publications | render_markdown | safe }}
     {% endif %}
 
     {% if measure_version.qmi_url %}
@@ -547,7 +547,7 @@
       Further technical information
     </h3>
 
-    {{ measure_version.further_technical_information | render_markdown }}
+    {{ measure_version.further_technical_information | render_markdown | safe }}
     {% endif %}
 
     <div itemscope
@@ -618,7 +618,7 @@
 
         {% if measure_version.primary_data_source.note_on_corrections_or_updates %}
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Note on corrections or updates</h3>
-        <p class="govuk-body">{{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown }}
+        <p class="govuk-body">{{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown | safe }}
         </p>
         {% endif %}
 
@@ -633,7 +633,7 @@
 
         {% if measure_version.primary_data_source.purpose %}
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Purpose of data source</h3>
-        {{ measure_version.primary_data_source.purpose | render_markdown }}
+        {{ measure_version.primary_data_source.purpose | render_markdown | safe }}
         {% endif %}
         {% endif %}
 
@@ -684,7 +684,7 @@
           {% if measure_version.secondary_data_source.note_on_corrections_or_updates %}
           <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Note on corrections or updates</h3>
           <p class="govuk-body">
-            {{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
+            {{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown | safe }}</p>
           {% endif %}
 
           {% if measure_version.secondary_data_source.frequency_of_release %}
@@ -698,7 +698,7 @@
 
           {% if measure_version.secondary_data_source.purpose %}
           <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Purpose of data source</h3>
-          {{ measure_version.secondary_data_source.purpose | render_markdown }}
+          {{ measure_version.secondary_data_source.purpose | render_markdown | safe }}
           {% endif %}
         </div>
 

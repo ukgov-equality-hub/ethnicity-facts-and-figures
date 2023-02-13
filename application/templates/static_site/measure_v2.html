@@ -226,7 +226,7 @@ none
     <h2 class="govuk-heading-l govuk-!-margin-top-4" id="main-facts-and-figures">1. Main facts and figures</h2>
 
     <div class="eff-summary--with-bullets-spaced-out">
-      {{ measure_version.summary | render_markdown }}
+      {{ measure_version.summary | render_markdown | safe }}
     </div>
   </div>
   {% endif %}
@@ -282,7 +282,7 @@ none
   {% if measure_version.need_to_know %}
   <div class="govuk-grid-column-two-thirds things-you-need-to-know">
     <h2 class="govuk-heading-l govuk-!-margin-top-9" id="things-you-need-to-know">2. Things you need to know</h2>
-    {{ measure_version.need_to_know | render_markdown }}
+    {{ measure_version.need_to_know | render_markdown | safe }}
   </div>
   {% endif %}
 </div>
@@ -525,7 +525,7 @@ none
 
         {% if measure_version.primary_data_source.note_on_corrections_or_updates %}
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Note on corrections or updates</h3>
-        <p class="govuk-body">{{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
+        <p class="govuk-body">{{ measure_version.primary_data_source.note_on_corrections_or_updates | render_markdown | safe }}</p>
         {% endif %}
 
         {% if measure_version.primary_data_source.frequency_of_release %}
@@ -539,7 +539,7 @@ none
 
         {% if measure_version.primary_data_source.purpose %}
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Purpose of data source</h3>
-        {{ measure_version.primary_data_source.purpose | render_markdown }}
+        {{ measure_version.primary_data_source.purpose | render_markdown | safe }}
         {% endif %}
         {% endif %}
 
@@ -588,7 +588,7 @@ none
 
           {% if measure_version.secondary_data_source.note_on_corrections_or_updates %}
           <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Note on corrections or updates</h3>
-          <p class="govuk-body">{{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown }}</p>
+          <p class="govuk-body">{{ measure_version.secondary_data_source.note_on_corrections_or_updates | render_markdown | safe }}</p>
           {% endif %}
 
           {% if measure_version.secondary_data_source.frequency_of_release %}
@@ -602,7 +602,7 @@ none
 
           {% if measure_version.secondary_data_source.purpose %}
           <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Purpose of data source</h3>
-          {{ measure_version.secondary_data_source.purpose | render_markdown }}
+          {{ measure_version.secondary_data_source.purpose | render_markdown | safe }}
           {% endif %}
         </div>
 
