@@ -21,7 +21,7 @@
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="hidden" name="build" value="y">
           <div class="govuk-grid-column-one-third">
-            <button class="govuk-button govuk-button"{% if site_builds[0].status == BuildStatus.STARTED %} disabled{% endif %}>Build site</button>
+            <button class="govuk-button govuk-button"{% if site_builds[0].status == BuildStatus.STARTED or msg == 'Build requested' %} disabled{% endif %}>Build site</button>
           </div>
         </form>
       </div>
