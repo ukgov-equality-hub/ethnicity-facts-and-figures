@@ -600,8 +600,8 @@ def copy_data_to_lake():
 
     s3 = boto3.resource("s3")
 
-    source_bucket = s3.Bucket(os.environ.get("S3_STATIC_SITE_BUCKET"))
-    destination_bucket = s3.Bucket(os.environ.get("S3_EFF_LAKE_BUCKET"))
+    source_bucket = s3.Bucket(os.environ.get("S3_STATIC_SITE_BUCKET"))    # ethnicity-facts-and-figures-production
+    destination_bucket = s3.Bucket(os.environ.get("S3_EFF_LAKE_BUCKET"))  # eds-lake-prod1
     # filenames = []
 
     for obj in source_bucket.objects.all():

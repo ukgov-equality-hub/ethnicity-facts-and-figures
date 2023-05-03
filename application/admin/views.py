@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from application import db
 from application.admin import admin_blueprint
-from application.admin.forms import AddUserForm, DataSourceSearchForm, DataSourceMergeForm
+from application.admin.forms import AddUserForm, SiteBuildSearchForm, DataSourceSearchForm, DataSourceMergeForm
 from application.auth.models import (
     User,
     TypeOfUser,
@@ -17,9 +17,11 @@ from application.auth.models import (
 )
 from application.cms.forms import SelectMultipleDataSourcesForm
 from application.cms.models import user_measure, DataSource, Topic, Subtopic
+from application.sitebuilder.models import Build, BuildStatus
 from application.cms.page_service import page_service
 from application.utils import create_and_send_activation_email, user_can
 from application.cms.utils import get_form_errors
+from manage import force_build_static_site
 
 
 @admin_blueprint.route("")
@@ -204,11 +206,37 @@ def make_rdu_user(user_id):
     return redirect(url_for("admin.user_by_id", user_id=user.id))
 
 
-@admin_blueprint.route("/site-build")
+@admin_blueprint.route("/site-build", methods=["GET", "POST"])
 @login_required
 @user_can(MANAGE_SYSTEM)
 def site_build():
-    return render_template("admin/site_build.html")
+    q = request.args.get("q", "")
+    msg = ""
+
+    if q:
+        site_builds = Build.search(q).query.order_by(Build.created_at.desc())
+    else:
+        site_builds = Build.query.order_by(Build.created_at.desc()).limit(100).all()
+
+    site_build_search_form = SiteBuildSearchForm(data={"q": q})
+
+    if request.form.get("build", "") == "y":
+        msg = "Build requested"
+        from multiprocessing import Process
+        heavy_process = Process(
+            target=force_build_static_site,
+            daemon=True
+        )
+        heavy_process.start()
+
+    return render_template(
+        "admin/site_build.html",
+        msg=msg,
+        site_builds=site_builds,
+        BuildStatus=BuildStatus,
+        q=q,
+        site_build_search_form=site_build_search_form,
+    )
 
 
 @admin_blueprint.route("/data-sources")

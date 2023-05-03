@@ -18,6 +18,12 @@ def format_friendly_date(date):
     return date.strftime("%d %B %Y").lstrip("0")
 
 
+def format_friendly_datetime(date):
+    if date is None:
+        return ""
+    return date.strftime("%d %B %Y %H:%M").lstrip("0")
+
+
 def format_friendly_short_date_with_year(date):
     if date is None:
         return ""
