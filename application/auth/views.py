@@ -31,6 +31,7 @@ def forgot_password():
 
         token = generate_token(email, current_app)
         confirmation_url = url_for("auth.reset_password", token=token, _external=True)
+        print(confirmation_url, flush=True)
 
         html = render_template("auth/email/reset_instructions.html", confirmation_url=confirmation_url)
 

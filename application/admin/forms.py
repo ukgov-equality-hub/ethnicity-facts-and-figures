@@ -28,6 +28,10 @@ class AddUserForm(FlaskForm):
     )
 
 
+class SiteBuildSearchForm(FlaskForm):
+    q = RDUSearchField(label="Search site builds")
+
+
 class DataSourceSearchForm(FlaskForm):
     q = RDUSearchField(label="Search data sources")
 

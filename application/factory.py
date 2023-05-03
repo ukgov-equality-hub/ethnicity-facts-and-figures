@@ -22,6 +22,7 @@ from application.cms.file_service import FileService
 from application.cms.filters import (
     format_approve_button,
     format_friendly_date,
+    format_friendly_datetime,
     format_friendly_short_date,
     format_friendly_short_date_with_year,
     format_status,
@@ -138,6 +139,7 @@ def create_app(config_object):
     app.add_template_filter(render_markdown)
     app.add_template_filter(filesize)
     app.add_template_filter(format_friendly_date)
+    app.add_template_filter(format_friendly_datetime)
     app.add_template_filter(format_friendly_short_date)
     app.add_template_filter(format_friendly_short_date_with_year)
     app.add_template_filter(format_status)
