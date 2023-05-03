@@ -226,25 +226,7 @@ def site_build():
         import subprocess
 
         def build():
-
-            '''# clear_stalled_build
-            an_hour_ago = datetime.now() - timedelta(minutes=60)
-            stalled = Build.query.filter(
-                Build.status == BuildStatus.STARTED,
-                func.DATE(Build.created_at) == date.today(),
-                Build.created_at <= an_hour_ago,
-            ).all()
-
-            if stalled:
-                for stalled_build in stalled:
-                    stalled_build.status = BuildStatus.FAILED
-                    stalled_build.failed_at = datetime.utcnow()
-
-                    db.session.add(stalled_build)
-
-                db.session.commit()'''
             subprocess.call('/home/eff/ethnicity-facts-and-figures-publisher/scripts/build_site.sh')
-
 
         msg = "Build requested"
         build()
