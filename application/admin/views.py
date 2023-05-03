@@ -1,7 +1,8 @@
 from flask import abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import login_required, current_user
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from sqlalchemy.orm.exc import NoResultFound
+from datetime import date, datetime, timedelta
 
 from application import db
 from application.admin import admin_blueprint
@@ -221,13 +222,37 @@ def site_build():
     site_build_search_form = SiteBuildSearchForm(data={"q": q})
 
     if request.form.get("build", "") == "y":
-        msg = "Build requested"
         from multiprocessing import Process
-        heavy_process = Process(
-            target=force_build_static_site,
+        import subprocess
+
+        def build():
+
+            '''# clear_stalled_build
+            an_hour_ago = datetime.now() - timedelta(minutes=60)
+            stalled = Build.query.filter(
+                Build.status == BuildStatus.STARTED,
+                func.DATE(Build.created_at) == date.today(),
+                Build.created_at <= an_hour_ago,
+            ).all()
+
+            if stalled:
+                for stalled_build in stalled:
+                    stalled_build.status = BuildStatus.FAILED
+                    stalled_build.failed_at = datetime.utcnow()
+
+                    db.session.add(stalled_build)
+
+                db.session.commit()'''
+            subprocess.call('/home/eff/ethnicity-facts-and-figures-publisher/scripts/build_site.sh')
+
+
+        msg = "Build requested"
+        build()
+        '''heavy_process = Process(
+            target=build,
             daemon=True
         )
-        heavy_process.start()
+        heavy_process.start()'''
 
     return render_template(
         "admin/site_build.html",
