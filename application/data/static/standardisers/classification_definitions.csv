@@ -174,36 +174,36 @@ Code,Classification short name,Classification long name,Standard,Display,Parent,
 18A,ONS 2011 - 18+1,Office for National Statistics detailed census categories 2011,Unclassified,Unclassified,Unclassified,9990,
 18A,ONS 2011 - 18+1,Office for National Statistics detailed census categories 2011,Unmatched,Unmatched,Unmatched,9991,
 18A,ONS 2011 - 18+1,Office for National Statistics detailed census categories 2011,Not applicable,Not applicable,Not applicable,9999,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Bangladeshi,Bangladeshi,Asian,1100,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Indian,Indian,Asian,1300,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Pakistani,Pakistani,Asian,1400,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Asian other,Asian other,Asian,1900,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Black African,Black African,Black,2100,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Black Caribbean,Black Caribbean,Black,2200,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Black other,Black other,Black,2900,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Chinese,Chinese,Chinese,2990,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Mixed White/Asian,Mixed White/Asian,Mixed,3100,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Mixed White/Black African,Mixed White/Black African,Mixed,3200,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Mixed White/Black Caribbean,Mixed White/Black Caribbean,Mixed,3300,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Mixed other,Mixed other,Mixed,3900,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,White British,White British,White,4100,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,White Irish,White Irish,White,4200,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Gypsy/Roma,Gypsy/Roma,White,4310,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Irish Traveller,Irish Traveller,White,4330,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,White other,White other,White,4900,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Any other,Other,Other,9900,TRUE
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,All,All,All,0,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Asian,Asian,Asian,1000,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Asian excluding Chinese,Asian,Asian,1000,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Black,Black,Black,2000,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Mixed,Mixed,Mixed,3000,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,White,White,White,4000,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Other,Other,Other,9900,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Other inc Chinese,Other,Other,9900,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Unknown,Unknown,Unknown,9980,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Unclassified,Unclassified,Unclassified,9990,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Unmatched,Unmatched,Unmatched,9991,
-18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy/Roma and Irish Traveller,Not applicable,Not applicable,Not applicable,9999,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Bangladeshi,Bangladeshi,Asian,1100,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Indian,Indian,Asian,1300,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Pakistani,Pakistani,Asian,1400,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Asian other,Asian other,Asian,1900,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Black African,Black African,Black,2100,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Black Caribbean,Black Caribbean,Black,2200,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Black other,Black other,Black,2900,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Chinese,Chinese,Chinese,2990,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Mixed White/Asian,Mixed white and Asian,Mixed,3100,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Mixed White/Black African,Mixed white and black African,Mixed,3200,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Mixed White/Black Caribbean,Mixed white and black Caribbean,Mixed,3300,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Mixed other,Mixed other,Mixed,3900,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,White British,White British,White,4100,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,White Irish,White Irish,White,4200,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Gypsy/Roma,Gypsy or Roma,White,4310,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Irish Traveller,Irish Traveller,White,4330,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,White other,White other,White,4900,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Any other,Other,Other,9900,TRUE
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,All,All,All,0,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Asian,Asian,Asian,1000,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Asian excluding Chinese,Asian,Asian,1000,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Black,Black,Black,2000,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Mixed,Mixed,Mixed,3000,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,White,White,White,4000,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Other,Other,Other,9900,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Other inc Chinese,Other,Other,9900,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Unknown,Unknown,Unknown,9980,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Unclassified,Unclassified,Unclassified,9990,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Unmatched,Unmatched,Unmatched,9991,
+18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Not applicable,Not applicable,Not applicable,9999,
 2A,White and Other than White,White and Other than White,White,White,White,4000,TRUE
 2A,White and Other than White,White and Other than White,Other,Other than White,Other than White,9100,TRUE
 2A,White and Other than White,White and Other than White,All,All,All,0,
