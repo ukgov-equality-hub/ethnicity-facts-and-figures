@@ -926,6 +926,27 @@
         </div>
 
         {% endif %}
+
+        {% if (measure_version.measure.replaces_measures|length) > 0 %}
+            {% set replaces_measures_count = measure_version.measure.replaces_measures|length %}
+            <div class="previous-editions">
+                This measure replaces {{ replaces_measures_count }} older {{ "measures" if replaces_measures_count > 1 else "measure" }}:
+                <ol class="govuk-list">
+                    {% for replaced_measure in measure_version.measure.replaces_measures %}
+                        <li class="govuk-!-font-size-19">
+                            <a class="govuk-link"
+                               href="{{ url_for('static_site.measure_version',
+                                topic_slug=replaced_measure.subtopic.topic.slug,
+                                subtopic_slug=replaced_measure.subtopic.slug,
+                                measure_slug=replaced_measure.slug,
+                                version='latest') }}">
+                                {{ replaced_measure.latest_published_version.title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        {% endif %}
       </div>
 
     </div>
