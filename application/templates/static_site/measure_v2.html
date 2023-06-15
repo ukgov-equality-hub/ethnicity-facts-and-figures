@@ -145,6 +145,10 @@ none
   </div>
 </div>
 
+{% if measure_version.measure.retired %}
+    {% include "_shared/_measure_has_been_retired.html" %}
+{% endif %}
+
 {% if measure_version.has_known_statistical_errors %}
 {% include "_shared/_contains_factual_mistake.html" %}
 {% elif measure_version.has_known_statistical_corrections %}

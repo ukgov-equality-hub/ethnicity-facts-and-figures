@@ -1,0 +1,16 @@
+<div class="old-edition-notice" style="border-color: #d4351c;">
+    <p class="govuk-body">
+        This measure has been retired.
+        {% if measure_version.measure.replaced_by_measure %}
+            <br>
+            It has been replaced by
+            <a href="{{ url_for('static_site.measure_version',
+                                topic_slug=measure_version.measure.replaced_by_measure.subtopic.topic.slug,
+                                subtopic_slug=measure_version.measure.replaced_by_measure.subtopic.slug,
+                                measure_slug=measure_version.measure.replaced_by_measure.slug,
+                                version='latest') }}"
+               class="govuk-link">
+                {{ measure_version.measure.replaced_by_measure.latest_published_version.title }}</a>.
+        {% endif %}
+    </p>
+</div>
