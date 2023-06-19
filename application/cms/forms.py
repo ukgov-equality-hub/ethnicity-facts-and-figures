@@ -442,6 +442,10 @@ class RetireMeasureForm(FlaskForm):
     replaced_by_measure = SelectField(label="Replacement measure", validators=[Optional()])
 
 
+class UnRetireMeasureForm(FlaskForm):
+    pass
+
+
 class NewVersionForm(FlaskForm):
     version_type = RDURadioField(
         label=Markup("<b>New version type:</b>"),

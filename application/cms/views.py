@@ -36,6 +36,7 @@ from application.cms.forms import (
     SelectOrCreateDataSourceForm,
     CREATE_NEW_DATA_SOURCE,
     RetireMeasureForm,
+    UnRetireMeasureForm,
 )
 from application.cms.models import NewVersionType, MeasureVersion, Measure
 from application.cms.models import Organisation, DataSource
@@ -1009,6 +1010,22 @@ def retire_measure(topic_slug, subtopic_slug, measure_slug):
         return redirect(url_for("static_site.topic", topic_slug=topic_slug))
 
     return render_template("cms/retire_measure.html", form=form, measure_version=measure_version)
+
+
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/unretire", methods=["GET", "POST"])
+@login_required
+@user_can(DELETE_MEASURE)
+def unretire_measure(topic_slug, subtopic_slug, measure_slug):
+    form = UnRetireMeasureForm()
+
+    measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
+    measure_version = measure.latest_published_version
+
+    if form.validate_on_submit():
+        page_service.unretire_measure(measure)
+        return redirect(url_for("static_site.topic", topic_slug=topic_slug))
+
+    return render_template("cms/unretire_measure.html", form=form, measure_version=measure_version)
 
 
 def add_choice_for_replaced_by_measure_field(form):

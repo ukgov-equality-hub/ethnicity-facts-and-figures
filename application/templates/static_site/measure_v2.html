@@ -104,15 +104,27 @@ none
     {% endif %}
   </span>
 
-  <span class="info">
-    <a href="{{ url_for('cms.retire_measure', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug) }}"
-       class="govuk-button eff-button--warning">
-        Retire
-        <span class="govuk-visually-hidden">
+  {% if not measure_version.measure.retired %}
+    <span class="info">
+        <a href="{{ url_for('cms.retire_measure', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug) }}"
+           class="govuk-button eff-button--warning">
+            Retire
+            <span class="govuk-visually-hidden">
             page: {{ measure_version.title }}
-        </span>
-    </a>
-  </span>
+            </span>
+        </a>
+    </span>
+  {% else %}
+    <span class="info">
+        <a href="{{ url_for('cms.unretire_measure', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug) }}"
+           class="govuk-button eff-button--warning">
+            Un-retire
+            <span class="govuk-visually-hidden">
+            page: {{ measure_version.title }}
+            </span>
+        </a>
+    </span>
+  {% endif %}
 
   {% if measure_version.status == 'DRAFT' %}
   <a class="govuk-button eff-button--warning"
