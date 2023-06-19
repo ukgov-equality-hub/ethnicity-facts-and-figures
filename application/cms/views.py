@@ -1,5 +1,5 @@
 import json
-
+from typing import List
 
 from flask import redirect, render_template, request, url_for, abort, flash, current_app, jsonify, session
 from flask_login import login_required, current_user
@@ -35,6 +35,7 @@ from application.cms.forms import (
     DataSourceForm,
     SelectOrCreateDataSourceForm,
     CREATE_NEW_DATA_SOURCE,
+    RetireMeasureForm,
 )
 from application.cms.models import NewVersionType, MeasureVersion, Measure
 from application.cms.models import Organisation, DataSource
@@ -990,6 +991,35 @@ def delete_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         )
     else:
         return redirect(url_for("static_site.topic", topic_slug=topic.slug))
+
+
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/retire", methods=["GET", "POST"])
+@login_required
+@user_can(DELETE_MEASURE)
+def retire_measure(topic_slug, subtopic_slug, measure_slug):
+    form = RetireMeasureForm()
+    add_choice_for_replaced_by_measure_field(form)
+
+    measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
+    measure_version = measure.latest_published_version
+
+    if form.validate_on_submit():
+        replaced_by_measure = form.replaced_by_measure.data if form.replaced_by_measure.data else None
+        page_service.retire_measure(measure, replaced_by_measure)
+        return redirect(url_for("static_site.topic", topic_slug=topic_slug))
+
+    return render_template("cms/retire_measure.html", form=form, measure_version=measure_version)
+
+
+def add_choice_for_replaced_by_measure_field(form):
+    latest_measure_versions: List[MeasureVersion] = page_service.get_latest_version_of_all_measures()
+    latest_measure_versions.sort(key=lambda mv: mv.title)
+    latest_measure_versions.sort(key=lambda mv: mv.measure.subtopic.title)
+    latest_measure_versions.sort(key=lambda mv: mv.measure.subtopic.topic.title)
+
+    form.replaced_by_measure.choices = [
+        (mv.measure.id, f"{mv.measure.subtopic.topic.title} / {mv.measure.subtopic.title} / {mv.title}")
+        for mv in latest_measure_versions]
 
 
 @cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/<version>/new-version", methods=["GET", "POST"])

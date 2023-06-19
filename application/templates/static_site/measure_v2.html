@@ -104,6 +104,16 @@ none
     {% endif %}
   </span>
 
+  <span class="info">
+    <a href="{{ url_for('cms.retire_measure', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug) }}"
+       class="govuk-button eff-button--warning">
+        Retire
+        <span class="govuk-visually-hidden">
+            page: {{ measure_version.title }}
+        </span>
+    </a>
+  </span>
+
   {% if measure_version.status == 'DRAFT' %}
   <a class="govuk-button eff-button--warning"
      href="{{ url_for('cms.confirm_delete_measure_version', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug, version=measure_version.version) }}">Delete<span
