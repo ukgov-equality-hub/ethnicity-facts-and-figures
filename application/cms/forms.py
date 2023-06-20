@@ -3,7 +3,7 @@ from typing import Sequence
 from flask_wtf import FlaskForm
 from flask import abort, render_template
 from markupsafe import Markup
-from wtforms import StringField, TextAreaField, FileField, IntegerField, HiddenField
+from wtforms import StringField, TextAreaField, FileField, IntegerField, HiddenField, SelectField
 from wtforms.fields import DateField
 from wtforms.validators import DataRequired, Optional, ValidationError, Length, StopValidation, InputRequired
 
@@ -436,6 +436,14 @@ class NewUploadForm(UploadForm):
 class DimensionRequiredForm(DimensionForm):
     title = StringField(label="Title", validators=[DataRequired()])
     summary = TextAreaField(label="Summary", validators=[DataRequired()])
+
+
+class RetireMeasureForm(FlaskForm):
+    replaced_by_measure = SelectField(label="Replacement measure", validators=[Optional()])
+
+
+class UnRetireMeasureForm(FlaskForm):
+    pass
 
 
 class NewVersionForm(FlaskForm):

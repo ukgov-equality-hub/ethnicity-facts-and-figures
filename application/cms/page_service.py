@@ -398,6 +398,16 @@ class PageService(Service):
         db.session.delete(measure_version)
         db.session.commit()
 
+    def retire_measure(self, measure: Measure, replaced_by_measure_id: int = None):
+        measure.retired = True
+        measure.replaced_by_measure_id = replaced_by_measure_id
+        db.session.commit()
+
+    def unretire_measure(self, measure: Measure):
+        measure.retired = False
+        measure.replaced_by_measure_id = None
+        db.session.commit()
+
     def mark_measure_version_published(self, measure_version: MeasureVersion):
         if measure_version.published_at is None:
             measure_version.published_at = date.today()

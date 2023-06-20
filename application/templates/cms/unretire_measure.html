@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "cms/forms.html" import render_version_radio %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
+
+{% set breadcrumbs =
+    [
+        {
+            "url": url_for('static_site.index'),
+            "text": "Home"
+        },
+        {
+            "url": url_for('static_site.topic', topic_slug = measure_version.measure.subtopic.topic.slug),
+             "text": measure_version.measure.subtopic.topic.title},
+        {
+            "url": url_for(
+                'static_site.measure_version',
+                topic_slug = measure_version.measure.subtopic.topic.slug,
+                subtopic_slug = measure_version.measure.subtopic.slug,
+                measure_slug = measure_version.measure.slug,
+                version = 'latest'),
+             "text": measure_version.title
+        },
+    ]
+%}
+
+{% block pageTitle %}Un-retire measure - GOV.UK Ethnicity facts and figures{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl">
+                Un-retire measure
+            </h1>
+
+            <p class="govuk-body">
+                Are you sure you want to <strong>un-retire</strong> the measure:
+                <br>
+                <strong>{{ measure_version.title }}</strong>?
+            </p>
+
+            <form method="POST">
+                {{ form.csrf_token | default('') }}
+
+                <button class="govuk-button govuk-button--warning">
+                    Un-retire measure
+                </button>
+            </form>
+            <a class="govuk-link" href="{{
+                    url_for(
+                        'static_site.measure_version',
+                        topic_slug = measure_version.measure.subtopic.topic.slug,
+                        subtopic_slug = measure_version.measure.subtopic.slug,
+                        measure_slug = measure_version.measure.slug,
+                        version = 'latest')
+                }}">
+                Cancel and return to measure page
+            </a>
+
+        </div>
+    </div>
+{% endblock %}

@@ -64,25 +64,29 @@
                             class="govuk-list {% if not static_mode and current_user.is_authenticated and current_user.can(ORDER_MEASURES) %}js-reorderable{% endif %}">
                             {% for measure in measures_by_subtopic[subtopic.id] %}
                             {% with measure_version = measure.latest_version %}
-                            <li data-measure-id="{{ measure.id }}"
-                                data-subtopic-id="{{ subtopic.id }}"
-                                itemprop="dataset"
-                                itemscope
-                                itemtype="http://schema.org/Dataset">
-                                <span itemprop="name"><a class="govuk-link"
-                                       href="{{ url_for('static_site.measure_version',
-                                                                                    topic_slug=topic.slug,
-                                                                                    subtopic_slug=subtopic.slug,
-                                                                                    measure_slug=measure.slug,
-                                                                                    version='latest') }}"
-                                       itemprop="url">{{ measure_version.title }}
-                                    </a></span>
+                                {% if not (static_mode and measure.retired) %}
+                                    <li data-measure-id="{{ measure.id }}"
+                                        data-subtopic-id="{{ subtopic.id }}"
+                                        itemprop="dataset"
+                                        itemscope
+                                        itemtype="http://schema.org/Dataset">
+                                        <span itemprop="name"><a class="govuk-link"
+                                               href="{{ url_for('static_site.measure_version',
+                                                                                            topic_slug=topic.slug,
+                                                                                            subtopic_slug=subtopic.slug,
+                                                                                            measure_slug=measure.slug,
+                                                                                            version='latest') }}"
+                                               itemprop="url">{{ measure_version.title }}
+                                            </a></span>
 
-                                {% if not static_mode and not measure_version.status == "APPROVED" %}
-                                &nbsp;({{ measure_version.status | format_status | safe }}&nbsp;{{ measure_version.version }})
-
+                                        {% if not static_mode and not measure_version.status == "APPROVED" and not measure.retired %}
+                                            &nbsp;({{ measure_version.status | format_status | safe }}&nbsp;{{ measure_version.version }})
+                                        {% endif %}
+                                        {% if not static_mode and measure.retired %}
+                                            (Retired)
+                                        {% endif %}
+                                    </li>
                                 {% endif %}
-                            </li>
                             {% endwith %}
                             {% endfor %}
                         </ul>

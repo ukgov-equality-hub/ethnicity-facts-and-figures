@@ -1227,12 +1227,16 @@ class Measure(db.Model):
     slug = db.Column(db.String(255), nullable=False)
     position = db.Column(db.Integer, default=0)  # for ordering on the page
     reference = db.Column(db.String(32), nullable=True)  # optional internal reference
+    retired = db.Column(db.Boolean, nullable=False, default=False)
+    replaced_by_measure_id = db.Column(db.Integer, ForeignKey("measure.id", ondelete="restrict"), nullable=True)
 
     # relationships
     subtopics = db.relationship(
         "Subtopic", secondary="subtopic_measure", back_populates="measures", order_by="asc(Subtopic.id)"
     )
     versions = db.relationship("MeasureVersion", back_populates="measure", order_by="desc(MeasureVersion.version)")
+    replaced_by_measure = db.relationship("Measure", back_populates="replaces_measures", remote_side=[id])
+    replaces_measures = db.relationship("Measure", back_populates="replaced_by_measure", remote_side=[replaced_by_measure_id])
 
     template_version = 1
 
