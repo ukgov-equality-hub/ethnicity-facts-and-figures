@@ -108,7 +108,7 @@ none
     <span class="info">
         <a href="{{ url_for('cms.retire_measure', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug) }}"
            class="govuk-button eff-button--warning">
-            Retire
+            Archive
             <span class="govuk-visually-hidden">
             page: {{ measure_version.title }}
             </span>
@@ -118,7 +118,7 @@ none
     <span class="info">
         <a href="{{ url_for('cms.unretire_measure', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug) }}"
            class="govuk-button eff-button--warning">
-            Un-retire
+            Restore
             <span class="govuk-visually-hidden">
             page: {{ measure_version.title }}
             </span>
@@ -841,7 +841,7 @@ none
         {% if (measure_version.measure.replaces_measures|length) > 0 %}
             {% set replaces_measures_count = measure_version.measure.replaces_measures|length %}
             <div class="previous-editions">
-                This measure replaces {{ replaces_measures_count }} older {{ "measures" if replaces_measures_count > 1 else "measure" }}:
+                This page replaces {{ replaces_measures_count }} older {{ "pages" if replaces_measures_count > 1 else "page" }}:
                 <ol class="govuk-list">
                     {% for replaced_measure in measure_version.measure.replaces_measures %}
                         <li class="govuk-!-font-size-19">
