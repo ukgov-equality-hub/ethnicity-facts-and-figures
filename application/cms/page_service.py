@@ -398,12 +398,12 @@ class PageService(Service):
         db.session.delete(measure_version)
         db.session.commit()
 
-    def retire_measure(self, measure: Measure, replaced_by_measure_id: int = None):
+    def archive_measure(self, measure: Measure, replaced_by_measure_id: int = None):
         measure.retired = True
         measure.replaced_by_measure_id = replaced_by_measure_id
         db.session.commit()
 
-    def unretire_measure(self, measure: Measure):
+    def restore_measure(self, measure: Measure):
         measure.retired = False
         measure.replaced_by_measure_id = None
         db.session.commit()

@@ -111,7 +111,7 @@
 
   {% if not measure_version.measure.retired %}
     <span class="info">
-        <a href="{{ url_for('cms.retire_measure', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug) }}"
+        <a href="{{ url_for('cms.archive_measure', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug) }}"
            class="govuk-button eff-button--warning">
             Archive
             <span class="govuk-visually-hidden">
@@ -121,7 +121,7 @@
     </span>
   {% else %}
     <span class="info">
-        <a href="{{ url_for('cms.unretire_measure', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug) }}"
+        <a href="{{ url_for('cms.restore_measure', topic_slug=topic_slug, subtopic_slug=subtopic_slug, measure_slug=measure_version.measure.slug) }}"
            class="govuk-button eff-button--warning">
             Restore
             <span class="govuk-visually-hidden">
@@ -168,7 +168,7 @@
 </div>
 
 {% if measure_version.measure.retired %}
-    {% include "_shared/_measure_has_been_retired.html" %}
+    {% include "_shared/_measure_has_been_archived.html" %}
 {% endif %}
 
 {% if measure_version.has_known_statistical_errors %}

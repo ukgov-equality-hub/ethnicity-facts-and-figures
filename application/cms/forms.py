@@ -438,11 +438,11 @@ class DimensionRequiredForm(DimensionForm):
     summary = TextAreaField(label="Summary", validators=[DataRequired()])
 
 
-class RetireMeasureForm(FlaskForm):
+class ArchiveMeasureForm(FlaskForm):
     replaced_by_measure = SelectField(label="Replacement measure", validators=[Optional()])
 
 
-class UnRetireMeasureForm(FlaskForm):
+class RestoreMeasureForm(FlaskForm):
     pass
 
 
