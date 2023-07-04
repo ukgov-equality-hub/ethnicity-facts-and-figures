@@ -23,18 +23,18 @@
     ]
 %}
 
-{% block pageTitle %}Un-retire measure - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block pageTitle %}Restore page - GOV.UK Ethnicity facts and figures{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
             <h1 class="govuk-heading-xl">
-                Un-retire measure
+                Restore page
             </h1>
 
             <p class="govuk-body">
-                Are you sure you want to <strong>un-retire</strong> the measure:
+                Are you sure you want to restore this page:
                 <br>
                 <strong>{{ measure_version.title }}</strong>?
             </p>
@@ -43,7 +43,7 @@
                 {{ form.csrf_token | default('') }}
 
                 <button class="govuk-button govuk-button--warning">
-                    Un-retire measure
+                    Restore page
                 </button>
             </form>
             <a class="govuk-link" href="{{
@@ -54,7 +54,7 @@
                         measure_slug = measure_version.measure.slug,
                         version = 'latest')
                 }}">
-                Cancel and return to measure page
+                Cancel
             </a>
 
         </div>

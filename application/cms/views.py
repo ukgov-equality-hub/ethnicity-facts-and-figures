@@ -35,8 +35,8 @@ from application.cms.forms import (
     DataSourceForm,
     SelectOrCreateDataSourceForm,
     CREATE_NEW_DATA_SOURCE,
-    RetireMeasureForm,
-    UnRetireMeasureForm,
+    ArchiveMeasureForm,
+    RestoreMeasureForm,
 )
 from application.cms.models import NewVersionType, MeasureVersion, Measure
 from application.cms.models import Organisation, DataSource
@@ -994,11 +994,11 @@ def delete_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         return redirect(url_for("static_site.topic", topic_slug=topic.slug))
 
 
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/retire", methods=["GET", "POST"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/archive", methods=["GET", "POST"])
 @login_required
 @user_can(DELETE_MEASURE)
-def retire_measure(topic_slug, subtopic_slug, measure_slug):
-    form = RetireMeasureForm()
+def archive_measure(topic_slug, subtopic_slug, measure_slug):
+    form = ArchiveMeasureForm()
     add_choice_for_replaced_by_measure_field(form)
 
     measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
@@ -1006,26 +1006,26 @@ def retire_measure(topic_slug, subtopic_slug, measure_slug):
 
     if form.validate_on_submit():
         replaced_by_measure = form.replaced_by_measure.data if form.replaced_by_measure.data else None
-        page_service.retire_measure(measure, replaced_by_measure)
+        page_service.archive_measure(measure, replaced_by_measure)
         return redirect(url_for("static_site.topic", topic_slug=topic_slug))
 
-    return render_template("cms/retire_measure.html", form=form, measure_version=measure_version)
+    return render_template("cms/archive_measure.html", form=form, measure_version=measure_version)
 
 
-@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/unretire", methods=["GET", "POST"])
+@cms_blueprint.route("/<topic_slug>/<subtopic_slug>/<measure_slug>/restore", methods=["GET", "POST"])
 @login_required
 @user_can(DELETE_MEASURE)
-def unretire_measure(topic_slug, subtopic_slug, measure_slug):
-    form = UnRetireMeasureForm()
+def restore_measure(topic_slug, subtopic_slug, measure_slug):
+    form = RestoreMeasureForm()
 
     measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
     measure_version = measure.latest_published_version
 
     if form.validate_on_submit():
-        page_service.unretire_measure(measure)
+        page_service.restore_measure(measure)
         return redirect(url_for("static_site.topic", topic_slug=topic_slug))
 
-    return render_template("cms/unretire_measure.html", form=form, measure_version=measure_version)
+    return render_template("cms/restore_measure.html", form=form, measure_version=measure_version)
 
 
 def add_choice_for_replaced_by_measure_field(form):

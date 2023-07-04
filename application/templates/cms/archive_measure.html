@@ -23,18 +23,18 @@
     ]
 %}
 
-{% block pageTitle %}Retire measure - GOV.UK Ethnicity facts and figures{% endblock %}
+{% block pageTitle %}Archive page - GOV.UK Ethnicity facts and figures{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
             <h1 class="govuk-heading-xl">
-                Retire measure
+                Archive page
             </h1>
 
             <p class="govuk-body">
-                Are you sure you want to retire the measure:
+                Are you sure you want to archive this page:
                 <br>
                 <strong>{{ measure_version.title }}</strong>?
             </p>
@@ -45,13 +45,13 @@
                 <div class="govuk-form-group">
                     <label class="govuk-label"
                            for="replaced_by_measure">
-                        If the retired measure is being replaced by another measure, choose the replacement measure here
+                        If the archived page is being replaced, choose the new page here:
                     </label>
                     <select class="govuk-select"
                             id="replaced_by_measure"
                             name="replaced_by_measure">
                         <option value="">
-                            None - this measure is not being replaced by another measure
+                            None - this page is not being replaced
                         </option>
                         {% for choiceId, choiceLabel in form.replaced_by_measure.choices %}
                             <option value="{{ choiceId }}">
@@ -62,7 +62,7 @@
                 </div>
 
                 <button class="govuk-button govuk-button--warning">
-                    Retire measure
+                    Archive page
                 </button>
             </form>
             <a class="govuk-link" href="{{
@@ -73,7 +73,7 @@
                         measure_slug = measure_version.measure.slug,
                         version = 'latest')
                 }}">
-                Cancel and return to measure page
+                Cancel
             </a>
 
         </div>
