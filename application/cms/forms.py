@@ -435,7 +435,7 @@ class NewUploadForm(UploadForm):
 
 class DimensionRequiredForm(DimensionForm):
     title = StringField(label="Title", validators=[DataRequired()])
-    summary = TextAreaField(label="Summary", validators=[DataRequired()])
+    #summary = TextAreaField(label="Summary", validators=[DataRequired()])
 
 
 class ArchiveMeasureForm(FlaskForm):
