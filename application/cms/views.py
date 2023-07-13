@@ -506,16 +506,16 @@ def _send_to_review(topic_slug, subtopic_slug, measure_slug, version):  # noqa: 
             additional_errors = []
             dimension_errors = []
             data_not_uploaded_error = dimensions_not_complete_error = data_sources_not_added = False
-            if invalid_dimensions:
-                dimensions_not_complete_error = True
-                for invalid_dimension in invalid_dimensions:
-                    additional_errors.append(
-                        ErrorSummaryMessage(
-                            text=f'Your dimension "{invalid_dimension.title}" is missing a summary. Enter a summary.',
-                            href=f"#{invalid_dimension.guid}",
-                        )
-                    )
-                    dimension_errors.append(invalid_dimension.guid)
+            #if invalid_dimensions:
+            #    dimensions_not_complete_error = True
+            #    for invalid_dimension in invalid_dimensions:
+            #        additional_errors.append(
+            #            ErrorSummaryMessage(
+            #                text=f'Your dimension "{invalid_dimension.title}" is missing a summary. Enter a summary.',
+            #                href=f"#{invalid_dimension.guid}",
+            #            )
+            #        )
+            #        dimension_errors.append(invalid_dimension.guid)
 
             if not data_file_uploaded:
                 data_not_uploaded_error = True
