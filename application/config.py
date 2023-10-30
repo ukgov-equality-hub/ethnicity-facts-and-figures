@@ -28,12 +28,6 @@ class Config:
     SESSION_COOKIE_SECURE = True
     STATIC_MODE = False
 
-    GITHUB_ACCESS_TOKEN = os.environ["GITHUB_ACCESS_TOKEN"]
-    GITHUB_URL = os.environ.get("GITHUB_URL", "github.com/racedisparityaudit")
-    STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(
-        GITHUB_ACCESS_TOKEN, "/".join((GITHUB_URL, HTML_CONTENT_REPO))
-    )
-
     SQLALCHEMY_DATABASE_URI = os.environ["DATABASE_URL"]
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=int(os.environ.get("PERMANENT_SESSION_LIFETIME_MINS", 360)))
     SECURITY_PASSWORD_SALT = SECRET_KEY
@@ -71,7 +65,6 @@ class Config:
     LOCAL_BUILD = get_bool(os.environ.get("LOCAL_BUILD", False))
 
     BUILD_SITE = get_bool(os.environ.get("BUILD_SITE", False))
-    PUSH_SITE = get_bool(os.environ.get("PUSH_SITE", False))
     DEPLOY_SITE = get_bool(os.environ.get("DEPLOY_SITE", False))
 
     ATTACHMENT_SCANNER_ENABLED = get_bool(os.environ.get("ATTACHMENT_SCANNER_ENABLED", False))
