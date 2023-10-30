@@ -8,7 +8,6 @@ from datetime import datetime
 from uuid import uuid4
 
 from flask import current_app, render_template
-from git import Repo
 
 from application.cms.upload_service import upload_service
 from application.data.dimensions import DimensionObjectBuilder
@@ -40,9 +39,6 @@ def do_it(application, build):
         print("DEBUG: do_it()")
         build_dir = make_new_build_dir(application, build=build)
 
-        if application.config["PUSH_SITE"]:
-            pull_current_site(build_dir, application.config["STATIC_SITE_REMOTE_REPO"])
-
         print("DEBUG do_it(): Deleting files from repo...")
         delete_files_from_repo(build_dir)
         print("DEBUG do_it(): Creating versioned assets...")
@@ -58,10 +54,6 @@ def do_it(application, build):
 
         print("DEBUG do_it(): Building other static pages...")
         build_other_static_pages(build_dir)
-
-        print(f"{'Pushing' if application.config['PUSH_SITE'] else 'NOT pushing'} site to git")
-        if application.config["PUSH_SITE"]:
-            push_site(build_dir, _stringify_timestamp(build.created_at))
 
         print(f"{'Deploying' if application.config['DEPLOY_SITE'] else 'NOT deploying'} site to S3")
         if application.config["DEPLOY_SITE"]:
@@ -434,20 +426,6 @@ def build_error_pages(build_dir):
         write_html(os.path.join(output_dir, target_file_path), error_page_html)
 
 
-def pull_current_site(build_dir, remote_repo):
-    current_app.logger.debug("Starting pull_current_site")
-    repo = Repo.init(build_dir)
-    current_app.logger.debug("Repo.init complete")
-    origin = repo.create_remote("origin", remote_repo)
-    current_app.logger.debug("repo.create_remote complete")
-    origin.fetch("--depth=1")
-    current_app.logger.debug("origin.fetch complete")
-    repo.create_head("master", origin.refs.master).set_tracking_branch(origin.refs.master).checkout()
-    current_app.logger.debug("repo.create_head complete")
-    origin.pull("--depth=1")
-    current_app.logger.debug("origin.pull complete")
-
-
 def delete_files_from_repo(build_dir):
     contents = [file for file in os.listdir(build_dir) if file not in [".git", ".gitignore", "README.md"]]
     for file in contents:
@@ -456,16 +434,6 @@ def delete_files_from_repo(build_dir):
             shutil.rmtree(path)
         elif os.path.isfile(path):
             os.remove(path)
-
-
-def push_site(build_dir, build_timestamp):
-    repo = Repo(build_dir)
-    os.chdir(build_dir)
-    repo.git.add(A=True)
-    message = "Static site pushed with build timestamp %s" % build_timestamp
-    repo.index.commit(message)
-    repo.remotes.origin.push()
-    print(message)
 
 
 def clear_up(build_dir):
