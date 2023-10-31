@@ -164,10 +164,10 @@ def send_reactivation_email(email, app, devmode=False):
 
 
 def send_email(sender, email, message, subject, data = ''):
-    NOTIFY_API = os.environ.get("NOTIFY_API", "")
-    if NOTIFY_API != '':
+    GOV_UK_NOTIFY_API_KEY = os.environ.get("GOV_UK_NOTIFY_API_KEY", "")
+    if GOV_UK_NOTIFY_API_KEY != '':
         from notifications_python_client.notifications import NotificationsAPIClient
-        notifications_client = NotificationsAPIClient(NOTIFY_API)
+        notifications_client = NotificationsAPIClient(GOV_UK_NOTIFY_API_KEY)
 
         template_id = ''
         if subject == 'Access to the Ethnicity Facts and Figures content management system':

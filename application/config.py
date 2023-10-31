@@ -72,7 +72,7 @@ class Config:
 
     GOOGLE_ANALYTICS_ID = os.environ["GOOGLE_ANALYTICS_ID"]
 
-    NOTIFY_API = os.environ.get("NOTIFY_API", "")
+    GOV_UK_NOTIFY_API_KEY = os.environ.get("GOV_UK_NOTIFY_API_KEY", "")
     TOKEN_MAX_AGE_SECONDS = 60 * 60 * 48
     PREVIEW_TOKEN_MAX_AGE_DAYS = int(os.environ.get("PREVIEW_TOKEN_MAX_AGE_DAYS", 14))
     SURVEY_ENABLED = get_bool(os.environ.get("SURVEY_ENABLED", False))
