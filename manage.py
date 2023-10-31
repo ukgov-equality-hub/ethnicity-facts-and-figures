@@ -586,44 +586,5 @@ def unpublish_measure_version(topic_slug, subtopic_slug, measure_slug, version):
     )
 
 
-# Copy csv files from static to data lake bucket
-@manager.command
-def copy_data_to_lake():
-    import boto3
-    import os.path
-
-    s3 = boto3.resource("s3")
-
-    source_bucket = s3.Bucket(os.environ.get("S3_STATIC_SITE_BUCKET"))    # ethnicity-facts-and-figures-production
-    destination_bucket = s3.Bucket(os.environ.get("S3_EFF_LAKE_BUCKET"))  # eds-lake-prod1
-    # filenames = []
-
-    for obj in source_bucket.objects.all():
-        if obj.key[-1] == "/":
-            continue
-        elif (
-            obj.key[-3:] == "csv"
-            and obj.key.find("/downloads")
-            and obj.key.find("latest") == -1
-            and obj.key.find("table") == -1
-        ):
-
-            copy_source = {"Bucket": os.environ.get("S3_STATIC_SITE_BUCKET"), "Key": obj.key}
-
-            ################
-            # lake filename pattern
-            paths = obj.key.split("/")
-            filename = paths[2] + "_" + paths[5].replace(".csv", "") + "_v" + paths[3]
-            filename = slugify(filename).replace("-", "_")
-            filename = filename[-120:] if len(filename) >= 120 else filename
-            ###########
-
-            target = "public/eff/%s/%s.csv" % (filename, filename)
-
-            destination_bucket.copy(copy_source, target)
-
-            print(filename)
-
-
 if __name__ == "__main__":
     manager.run()
