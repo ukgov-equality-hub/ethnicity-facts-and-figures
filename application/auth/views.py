@@ -35,10 +35,10 @@ def forgot_password():
 
         html = render_template("auth/email/reset_instructions.html", confirmation_url=confirmation_url)
 
-        NOTIFY_API = os.environ.get("NOTIFY_API", "")
-        if NOTIFY_API != '':
+        GOV_UK_NOTIFY_API_KEY = os.environ.get("GOV_UK_NOTIFY_API_KEY", "")
+        if GOV_UK_NOTIFY_API_KEY != '':
             from notifications_python_client.notifications import NotificationsAPIClient
-            notifications_client = NotificationsAPIClient(NOTIFY_API)
+            notifications_client = NotificationsAPIClient(GOV_UK_NOTIFY_API_KEY)
 
             template_id = '3a3ef2d8-df35-4516-a4ee-fd2f4d989ea6'
 
