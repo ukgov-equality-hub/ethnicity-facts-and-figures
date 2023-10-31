@@ -29,7 +29,6 @@ class Config:
     STATIC_MODE = False
 
     GITHUB_ACCESS_TOKEN = os.environ["GITHUB_ACCESS_TOKEN"]
-    HTML_CONTENT_REPO = os.environ.get("HTML_CONTENT_REPO", "rd_html_dev")
     GITHUB_URL = os.environ.get("GITHUB_URL", "github.com/racedisparityaudit")
     STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(
         GITHUB_ACCESS_TOKEN, "/".join((GITHUB_URL, HTML_CONTENT_REPO))
@@ -81,11 +80,6 @@ class Config:
 
     GOOGLE_ANALYTICS_ID = os.environ["GOOGLE_ANALYTICS_ID"]
 
-    MAIL_SERVER = os.environ.get("MAILGUN_SMTP_SERVER")
-    MAIL_USE_SSL = True
-    MAIL_PORT = int(os.environ.get("MAILGUN_SMTP_PORT", 465))
-    MAIL_USERNAME = os.environ.get("MAILGUN_SMTP_LOGIN")
-    MAIL_PASSWORD = os.environ.get("MAILGUN_SMTP_PASSWORD")
     NOTIFY_API = os.environ.get("NOTIFY_API", "")
     TOKEN_MAX_AGE_SECONDS = 60 * 60 * 48
     PREVIEW_TOKEN_MAX_AGE_DAYS = int(os.environ.get("PREVIEW_TOKEN_MAX_AGE_DAYS", 14))
