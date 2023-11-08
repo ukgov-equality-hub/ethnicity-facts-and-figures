@@ -24,7 +24,6 @@ from application.config import Config, DevConfig
 from application.data.ethnicity_classification_synchroniser import EthnicityClassificationSynchroniser
 from application.factory import create_app
 from application.redirects.models import Redirect
-from application.sitebuilder.build import build_and_upload_error_pages
 from application.sitebuilder.exceptions import StalledBuildException
 from application.sitebuilder.models import Build, BuildStatus
 from application.utils import create_and_send_activation_email, send_email, TimedExecution
@@ -436,11 +435,6 @@ def delete_redirect_rule(from_uri):
         print("Redirect rule with from_uri", from_uri, "deleted")
     except NoResultFound:
         print("Could not delete a redirect rule with from_uri ", from_uri)
-
-
-@manager.command
-def refresh_error_pages():
-    build_and_upload_error_pages(app)
 
 
 @manager.command

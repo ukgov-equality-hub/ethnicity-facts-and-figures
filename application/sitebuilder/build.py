@@ -67,37 +67,6 @@ def do_it(application, build):
             clear_up(build_dir)
 
 
-def build_and_upload_error_pages(application):
-    """
-    We build and upload these separately from the main site build as they go into a separate bucket and need some
-    other tweaked configuration (different bucket, different directory structure on upload) that made it slightly
-    convoluted and confusing to integrate into the main site build.
-    """
-    with application.app_context():
-        # Build the pages in static mode
-        application.config["STATIC_MODE"] = True
-
-        build_dir = make_new_build_dir(application)
-
-        local_build = application.config["LOCAL_BUILD"]
-
-        build_error_pages(build_dir)
-
-        print("Deploy site (error pages) to S3: ", application.config["DEPLOY_SITE"])
-        if application.config["DEPLOY_SITE"]:
-            from application.sitebuilder.build_service import _upload_dir_to_s3
-            from application.cms.file_service import S3FileSystem
-
-            s3 = S3FileSystem(
-                application.config["S3_STATIC_SITE_ERROR_PAGES_BUCKET"], region=application.config["S3_REGION"]
-            )
-
-            _upload_dir_to_s3(build_dir, s3)
-
-        if not local_build:
-            clear_up(build_dir)
-
-
 def build_homepage_and_topic_hierarchy(build_dir, config):
 
     os.makedirs(build_dir, exist_ok=True)
@@ -404,26 +373,6 @@ def build_other_static_pages(build_dir):
             measure_versions_with_corrections=page_service.get_measure_versions_with_data_corrections(),
         ),
     )
-
-
-def build_error_pages(build_dir):
-    templates_path = "application/templates"
-    relative_error_pages_path = "static_site/error"
-    full_error_pages_path = os.path.join(templates_path, relative_error_pages_path)
-
-    output_dir = os.path.join(build_dir)
-
-    for error_page_path in glob.glob(os.path.join(full_error_pages_path, "**/*.html"), recursive=True):
-        # Lookup the source error file relative to the templates directory
-        source_file_path = os.path.relpath(error_page_path, templates_path)
-
-        # Save the rendered HTML with a filepath relative to its location inside `static_site/error`f
-        target_file_path = os.path.relpath(error_page_path, full_error_pages_path)
-
-        os.makedirs(os.path.join(build_dir, os.path.dirname(target_file_path)), exist_ok=True)
-
-        error_page_html = render_template(source_file_path)
-        write_html(os.path.join(output_dir, target_file_path), error_page_html)
 
 
 def delete_files_from_repo(build_dir):
