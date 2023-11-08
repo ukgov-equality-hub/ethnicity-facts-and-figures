@@ -39,7 +39,7 @@ manager = Manager(app)
 if os.environ.get("FLASK_ENV") == "docker":
     manager.add_command("server", Server(host="0.0.0.0", port=5000))
 else:
-    manager.add_command("server", Server())
+    manager.add_command("server", Server(host="0.0.0.0", port=8000))
 
 
 migrate = Migrate(app, db)
