@@ -46,7 +46,6 @@ class Config:
 
     S3_UPLOAD_BUCKET_NAME = os.environ["S3_UPLOAD_BUCKET_NAME"]
     S3_STATIC_SITE_BUCKET = os.environ["S3_STATIC_SITE_BUCKET"]
-    S3_STATIC_SITE_ERROR_PAGES_BUCKET = os.environ["S3_STATIC_SITE_ERROR_PAGES_BUCKET"]
     S3_REGION = os.environ.get("S3_REGION", "eu-west-2")
     LOCAL_ROOT = os.environ.get("LOCAL_ROOT", None)
 
