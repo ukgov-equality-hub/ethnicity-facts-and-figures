@@ -1,0 +1,35 @@
+name: 'Terraform, Build, Deploy (production)'
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+concurrency: ${{ github.workflow }}  # Prevents more than one instance of this workflow running at the same time
+
+jobs:
+  terraform_build_deploy:
+    uses: ./.github/workflows/_build-and-deploy-shared.yml
+    with:
+      GITHUB_ACTIONS_ENVIRONMENT: Prod
+      TERRAFORM_SERVICE_NAME: eff
+      TERRAFORM_SERVICE_NAME_HYPHENS: eff
+      TERRAFORM_ENVIRONMENT_NAME: Prod
+      TERRAFORM_STATE_BUCKET: uk-gov-equality-hub-terraform-state-bucket
+      TERRAFORM_STATE_FILE: eff_prod.tfstate
+      TERRAFORM_TFVARS_FILE: prod.tfvars
+    secrets:
+      TERRAFORM_AWS_ACCESS_KEY_ID: ${{ secrets.TERRAFORM_AWS_ACCESS_KEY_ID }}
+      TERRAFORM_AWS_SECRET_ACCESS_KEY: ${{ secrets.TERRAFORM_AWS_SECRET_ACCESS_KEY }}
+      ACCOUNT_WHITELIST: ${{ secrets.ACCOUNT_WHITELIST }}
+      ATTACHMENT_SCANNER_API_TOKEN: ${{ secrets.ATTACHMENT_SCANNER_API_TOKEN }}
+      ATTACHMENT_SCANNER_URL: ${{ secrets.ATTACHMENT_SCANNER_URL }}
+      BASIC_AUTH_USERNAME: ${{ secrets.BASIC_AUTH_USERNAME }}
+      BASIC_AUTH_PASSWORD: ${{ secrets.BASIC_AUTH_PASSWORD }}
+      GOV_UK_NOTIFY_API_KEY: ${{ secrets.GOV_UK_NOTIFY_API_KEY }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      TRELLO_API_KEY: ${{ secrets.TRELLO_API_KEY }}
+      TRELLO_API_TOKEN: ${{ secrets.TRELLO_API_TOKEN }}
