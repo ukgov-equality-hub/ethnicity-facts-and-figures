@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import glob
+import json
 
 import os
 import pathlib
@@ -8,13 +9,18 @@ import subprocess
 from datetime import datetime
 from uuid import uuid4
 
-from flask import current_app, render_template
+from flask import current_app, render_template, g
 
 from application.cms.upload_service import upload_service
 from application.data.dimensions import DimensionObjectBuilder
 from application.utils import get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv
 
 BUILD_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S.%f"
+
+
+def remove_old_build_dirs(application):
+    base_build_dir = application.config["STATIC_BUILD_DIR"]
+    subprocess.run(f'rm -rf {base_build_dir}/*', shell=True)
 
 
 def make_new_build_dir(application, build=None):
@@ -40,6 +46,7 @@ def do_it(application, build):
         application.config["STATIC_MODE"] = True
 
         print("DEBUG: do_it()")
+        remove_old_build_dirs(application)
         build_dir = make_new_build_dir(application, build=build)
 
         print("DEBUG do_it(): Deleting files from repo...")
@@ -405,7 +412,7 @@ def clear_up(build_dir):
 
 
 def create_versioned_assets(build_dir):
-    subprocess.run(["npx", "gulp", "make"])
+    # subprocess.run(["npx", "gulp", "make"])
     static_dir = os.path.join(build_dir, get_static_dir())
     if os.path.exists(static_dir):
         shutil.rmtree(static_dir)
