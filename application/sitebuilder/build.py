@@ -2,6 +2,7 @@
 import glob
 
 import os
+import pathlib
 import shutil
 import subprocess
 from datetime import datetime
@@ -33,6 +34,8 @@ def make_new_build_dir(application, build=None):
 
 def do_it(application, build):
     with application.app_context():
+        load_build_info()
+
         # Build the pages in static mode
         application.config["STATIC_MODE"] = True
 
@@ -65,6 +68,17 @@ def do_it(application, build):
         if not local_build:
             print("DEBUG do_it(): Clearing up build directory...")
             clear_up(build_dir)
+
+
+def load_build_info():
+    # Load build info from JSON file
+    current_file_path = pathlib.Path(__file__)
+    repo_root_dir = current_file_path.parent.parent.parent.resolve()
+    f = open(f'{repo_root_dir}/build-info.json')
+    build_info_string = f.read()
+    f.close()
+    build_info = json.loads(build_info_string)
+    g.build_info = build_info
 
 
 def build_homepage_and_topic_hierarchy(build_dir, config):
