@@ -7,7 +7,7 @@
         </div>
         <div class="middle">
           <div>
-            <span><a class="govuk-link" href="https://www.ethnicity-facts-figures.service.gov.uk">Live website</a></span>
+            <span><a class="govuk-link" href="{{ config.RDU_SITE }}">Live website</a></span>
 
             {% if not current_user.is_anonymous and (preview is undefined or not preview) %}
               <span><a class="govuk-link" href="{{ url_for('static_site.topic', topic_slug=TESTING_SPACE_SLUG) }}">Testing space</a></span>
