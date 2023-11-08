@@ -184,10 +184,6 @@ def create_app(config_object):
 
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
-    from flask_sslify import SSLify
-
-    SSLify(app)
-
     mail.init_app(app)
 
     def jinja_raise_exception(message):
