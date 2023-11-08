@@ -1,4 +1,5 @@
 import atexit
+import subprocess
 
 import traceback
 import uuid
@@ -12,7 +13,6 @@ from sqlalchemy import desc, func
 from sqlalchemy.orm import sessionmaker
 
 from application import db
-from application.cms.file_service import S3FileSystem
 from application.sitebuilder.models import Build, BuildStatus
 from application.sitebuilder.build import do_it, get_static_dir
 
@@ -114,38 +114,19 @@ def s3_deployer(app, build_dir):
     _delete_files_not_needed_for_deploy(build_dir)
 
     site_bucket_name = app.config["S3_STATIC_SITE_BUCKET"]
-    s3 = S3FileSystem(site_bucket_name, region=app.config["S3_REGION"])
 
     # Ensure static assets (css, JavaScripts, etc) are uploaded before the rest of the site
-    _upload_dir_to_s3(build_dir, s3, specific_subdirectory=get_static_dir())
+    _upload_dir_to_s3(build_dir, site_bucket_name, specific_subdirectory=get_static_dir())
 
     # Upload the whole site now the updated static assets are in place
-    _upload_dir_to_s3(build_dir, s3)
+    _upload_dir_to_s3(build_dir, site_bucket_name)
 
 
-def _upload_dir_to_s3(source_dir, s3, specific_subdirectory=None):
-    target_dir = os.path.join(source_dir, specific_subdirectory) if specific_subdirectory else source_dir
+def _upload_dir_to_s3(source_dir, site_bucket_name, specific_subdirectory=None):
+    target_dir_local = os.path.join(source_dir, specific_subdirectory) if specific_subdirectory else source_dir
+    target_dir_s3 = f'{specific_subdirectory}/' if specific_subdirectory else ''
 
-    for root, dirs, files in os.walk(target_dir):
-        for file_ in files:
-            file_path = os.path.join(root, file_)
-
-            # this is temp hack to work around that static site on s3 not
-            # actually enabled for hosting static site and therefore
-            # index files in sub directories do not work.
-            # therefore use directory name as bucket key and index file contents
-            # as bucket content
-            bucket_key = file_path.replace(source_dir + os.path.sep, "")
-            bucket_key = bucket_key.replace("/index.html", "")
-
-            print("Uploading: " + bucket_key)
-
-            if _is_versioned_asset(file_):
-                s3.write(file_path, bucket_key, max_age_seconds=YEAR_IN_SECONDS, strict=False)
-            elif _measure_related(file_):
-                s3.write(file_path, bucket_key, max_age_seconds=FIFTEEN_MINUTES_IN_SECONDS, strict=False)
-            else:
-                s3.write(file_path, bucket_key, max_age_seconds=HOUR_IN_SECONDS, strict=False)
+    subprocess.run(f'aws s3 sync --delete --only-show-errors "{target_dir_local}/" "s3://{site_bucket_name}/{target_dir_s3}"', shell=True)
 
 
 def _delete_files_not_needed_for_deploy(build_dir):
