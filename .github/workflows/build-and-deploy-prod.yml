@@ -31,5 +31,6 @@ jobs:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      STATIC_SITE_S3_SECRET_REFERER: ${{ secrets.STATIC_SITE_S3_SECRET_REFERER }}
       TRELLO_API_KEY: ${{ secrets.TRELLO_API_KEY }}
       TRELLO_API_TOKEN: ${{ secrets.TRELLO_API_TOKEN }}

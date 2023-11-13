@@ -47,6 +47,8 @@ on:
         required: true
       SENTRY_DSN:
         required: true
+      STATIC_SITE_S3_SECRET_REFERER:
+        required: true
       TRELLO_API_KEY:
         required: true
       TRELLO_API_TOKEN:
@@ -88,6 +90,7 @@ jobs:
           -var "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" \
           -var "SECRET_KEY=${{ secrets.SECRET_KEY }}" \
           -var "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" \
+          -var "STATIC_SITE_S3_SECRET_REFERER=${{ secrets.STATIC_SITE_S3_SECRET_REFERER }}" \
           -var "TRELLO_API_KEY=${{ secrets.TRELLO_API_KEY }}" \
           -var "TRELLO_API_TOKEN=${{ secrets.TRELLO_API_TOKEN }}" \
           -auto-approve

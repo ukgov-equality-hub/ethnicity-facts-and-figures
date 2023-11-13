@@ -8,26 +8,38 @@ resource "aws_s3_bucket_public_access_block" "static_website_s3_bucket_public_ac
   bucket = aws_s3_bucket.s3_bucket__static_site.id
 
   block_public_acls       = true
-  block_public_policy     = true
   ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_policy     = false  // We want to use a Bucket Policy to allow access (via CloudFront)
+  restrict_public_buckets = false  // We want to use a Bucket Policy to allow access (via CloudFront)
+}
+
+resource "aws_s3_bucket_website_configuration" "s3_bucket_website_configuration__static_site" {
+  bucket = aws_s3_bucket.s3_bucket__static_site.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  lifecycle {
+    ignore_changes = [routing_rule, routing_rules]
+  }
 }
 
 data "aws_iam_policy_document" "static_website_s3_policy" {
   statement {
-    principals {
-      type = "Service"
-      identifiers = ["cloudfront.amazonaws.com"]
-    }
     effect    = "Allow"
+    principals {
+      type = "*"
+      identifiers = ["*"]
+    }
     actions   = ["s3:GetObject"]
     resources = [
       "${aws_s3_bucket.s3_bucket__static_site.arn}/*"  // The files within the bucket
     ]
     condition {
-      test = "StringEquals"
-      values = [aws_cloudfront_distribution.distribution__static_site.arn]
-      variable = "AWS:SourceArn"
+      test = "StringEquals"                         // We would like the static website to be available ONLY via CLoudFront
+      variable = "aws:Referer"                      // e.g. so that Google doesn't index the *.s3-website.eu-west-2.amazonaws.com domain
+      values = [var.STATIC_SITE_S3_SECRET_REFERER]  // So CloudFront adds a secret "Referer" header and the S3 bucket policy checks for it
     }
   }
 }

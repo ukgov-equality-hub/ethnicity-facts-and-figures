@@ -29,9 +29,20 @@ resource "aws_cloudfront_distribution" "distribution__static_site" {
   comment = "${var.service_name_hyphens}--${var.environment_hyphens}--static-site"
 
   origin {
-    domain_name = aws_s3_bucket.s3_bucket__static_site.bucket_regional_domain_name
+    domain_name = aws_s3_bucket_website_configuration.s3_bucket_website_configuration__static_site.website_endpoint
     origin_id = local.distribution_for_static_site__origin_id
-    origin_access_control_id = aws_cloudfront_origin_access_control.oac__static_site.id
+
+    custom_origin_config {
+      http_port = 80
+      https_port = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols = ["TLSv1.2"]
+    }
+
+    custom_header {                              // We would like the static website to be available ONLY via CLoudFront
+      name = "Referer"                           // e.g. so that Google doesn't index the *.s3-website.eu-west-2.amazonaws.com domain
+      value = var.STATIC_SITE_S3_SECRET_REFERER  // So CloudFront adds a secret "Referer" header and the S3 bucket policy checks for it
+    }
   }
 
   price_class = "PriceClass_100"
@@ -74,13 +85,6 @@ resource "aws_cloudfront_distribution" "distribution__static_site" {
       locations = []
     }
   }
-}
-
-resource "aws_cloudfront_origin_access_control" "oac__static_site" {
-  name                              = "${var.service_name_hyphens}--${var.environment_hyphens}--oac_for_s3_bucket"
-  origin_access_control_origin_type = "s3"
-  signing_behavior                  = "always"
-  signing_protocol                  = "sigv4"
 }
 
 resource "aws_cloudfront_function" "http_basic_auth_function" {
