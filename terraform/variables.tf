@@ -93,6 +93,9 @@ variable "SECRET_KEY" {
 variable "SENTRY_DSN" {
   type = string
 }
+variable "STATIC_SITE_S3_SECRET_REFERER" {
+  type = string
+}
 variable "TRELLO_API_KEY" {
   type = string
 }
