@@ -222,7 +222,6 @@ def site_build():
     site_build_search_form = SiteBuildSearchForm(data={"q": q})
 
     if request.form.get("build", "") == "y":
-        from multiprocessing import Process
         import subprocess
 
         def build():
@@ -230,13 +229,14 @@ def site_build():
             repo_root_dir = current_file_path.parent.parent.parent.resolve()
             subprocess.call(f'{repo_root_dir}/scripts/build_site.sh')
 
-        msg = "Build requested"
         build()
         '''heavy_process = Process(
             target=build,
             daemon=True
         )
         heavy_process.start()'''
+
+        return render_template("admin/site_build_requested.html")
 
     return render_template(
         "admin/site_build.html",
