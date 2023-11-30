@@ -63,42 +63,54 @@ variable "GOOGLE_ANALYTICS_ID" {
 // Most of these are passed to the application via Elastic Beanstalk environment variables
 variable "POSTGRES_PASSWORD" {
   type = string
+  sensitive = true
 }
 
 variable "BASIC_AUTH_USERNAME" {
   type = string
   default = ""
+  sensitive = true
 }
 variable "BASIC_AUTH_PASSWORD" {
   type = string
   default = ""
+  sensitive = true
 }
 
 variable "ACCOUNT_WHITELIST" {
   type = string
   default = ""
+  sensitive = true
 }
 variable "ATTACHMENT_SCANNER_API_TOKEN" {
   type = string
+  sensitive = true
 }
 variable "ATTACHMENT_SCANNER_URL" {
   type = string
+  sensitive = true
 }
 variable "GOV_UK_NOTIFY_API_KEY" {
   type = string
+  sensitive = true
 }
 variable "SECRET_KEY" {
   type = string
+  sensitive = true
 }
 variable "SENTRY_DSN" {
   type = string
+  sensitive = true
 }
 variable "STATIC_SITE_S3_SECRET_REFERER" {
   type = string
+  sensitive = true
 }
 variable "TRELLO_API_KEY" {
   type = string
+  sensitive = true
 }
 variable "TRELLO_API_TOKEN" {
   type = string
+  sensitive = true
 }
