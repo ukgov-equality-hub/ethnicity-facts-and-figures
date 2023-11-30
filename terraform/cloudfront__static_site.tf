@@ -26,6 +26,8 @@ resource "aws_cloudfront_distribution" "distribution__static_site" {
   // CloudFront distributions have to be created in the us-east-1 region (for some reason!)
   provider = aws.us-east-1
 
+  count = var.create_dns_record__static_website ? 1 : 0  // Only create this DNS record if "var.create_dns_record__static_website" is true
+
   comment = "${var.service_name_hyphens}--${var.environment_hyphens}--static-site"
 
   origin {
