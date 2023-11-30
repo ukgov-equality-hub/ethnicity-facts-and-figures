@@ -12,8 +12,8 @@ resource "aws_route53_record" "dns_alias_record__static_website" {
 
   alias {
     evaluate_target_health = false
-    name = aws_cloudfront_distribution.distribution__static_site.domain_name
-    zone_id = aws_cloudfront_distribution.distribution__static_site.hosted_zone_id
+    name = aws_cloudfront_distribution.distribution__static_site[0].domain_name
+    zone_id = aws_cloudfront_distribution.distribution__static_site[0].hosted_zone_id
   }
 }
 
