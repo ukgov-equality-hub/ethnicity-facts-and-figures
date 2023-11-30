@@ -2,6 +2,7 @@
 locals {
   main_app_elastic_beanstalk_solution_stack_name = "64bit Amazon Linux 2023 v4.0.5 running Python 3.9"
   main_app_elastic_beanstalk_ec2_instance_type = "t4g.small"
+  main_app_elastic_beanstalk_root_volume_size = 64  // Disk space (in GB) to give each EC2 instance
 
   main_app_elastic_beanstalk_min_instances = 1
   main_app_elastic_beanstalk_max_instances = 2
@@ -89,6 +90,17 @@ resource "aws_elastic_beanstalk_environment" "main_app_elastic_beanstalk_environ
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "SecurityGroups"
     value     = aws_security_group.security_group_main_app_instances.id
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "RootVolumeType"
+    value     = "gp3"
+  }
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "RootVolumeSize"
+    value     = local.main_app_elastic_beanstalk_root_volume_size
   }
 
 
