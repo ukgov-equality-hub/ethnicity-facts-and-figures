@@ -30,6 +30,15 @@ variable "dns_record_subdomain_including_dot__static_website" {
   description = "The subdomain (including dot - e.g. 'dev.' or just '' for production) for the Route53 alias record - for the static website"
 }
 
+variable "create_redirect_from_root_domain" {
+  type = bool
+  description = "Should terraform create a CloudFront distribution to redirect the root domain to www. - for the static site"
+}
+variable "dns_record_root_domain_including_dot" {
+  type = string
+  description = "The root domain (including dot - e.g. 'dev.' or just '' for production) for the static site redirect"
+}
+
 variable "aws_region" {
   type = string
   description = "The AWS region used for the provider and resources."
