@@ -1,4 +1,5 @@
 version: "3"
+
 services:
   publisher_db:
     image: "postgres:10.10"
@@ -8,9 +9,9 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=rdcms
+      - POSTGRES_DB=rd_cms
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=
+      - POSTGRES_PASSWORD=password
       - POSTGRES_HOST=publisher_db
 
   publisher:

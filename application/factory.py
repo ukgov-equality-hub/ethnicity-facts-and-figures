@@ -1,5 +1,7 @@
 import datetime
+import json
 import os
+import pathlib
 import re
 import sys
 import logging
@@ -7,7 +9,7 @@ import logging
 from jinja2 import StrictUndefined
 from jinja2.ext import do as jinja_do
 
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory, g
 from flask_security import SQLAlchemyUserDatastore, Security, current_user
 from raven.contrib.flask import Sentry
 
@@ -101,6 +103,18 @@ def create_app(config_object):
         config_object.ETHNICITY_CLASSIFICATION_FINDER_CLASSIFICATIONS,
     )
 
+    # Load build info from JSON file
+    current_file_path = pathlib.Path(__file__)
+    repo_root_dir = current_file_path.parent.parent.resolve()
+    f = open(f'{repo_root_dir}/build-info.json')
+    build_info_string = f.read()
+    f.close()
+    build_info = json.loads(build_info_string)
+
+    @app.before_request
+    def make_before_request():
+        g.build_info = build_info
+
     # Note not using Flask-Security role model
     user_datastore = SQLAlchemyUserDatastore(db, User, None)
     Security(app, user_datastore, login_form=LoginForm)
@@ -169,10 +183,6 @@ def create_app(config_object):
     from werkzeug.middleware.proxy_fix import ProxyFix
 
     app.wsgi_app = ProxyFix(app.wsgi_app)
-
-    from flask_sslify import SSLify
-
-    SSLify(app)
 
     mail.init_app(app)
 

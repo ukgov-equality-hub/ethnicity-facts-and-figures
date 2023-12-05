@@ -28,13 +28,6 @@ class Config:
     SESSION_COOKIE_SECURE = True
     STATIC_MODE = False
 
-    GITHUB_ACCESS_TOKEN = os.environ["GITHUB_ACCESS_TOKEN"]
-    HTML_CONTENT_REPO = os.environ.get("HTML_CONTENT_REPO", "rd_html_dev")
-    GITHUB_URL = os.environ.get("GITHUB_URL", "github.com/racedisparityaudit")
-    STATIC_SITE_REMOTE_REPO = "https://{}:x-oauth-basic@{}.git".format(
-        GITHUB_ACCESS_TOKEN, "/".join((GITHUB_URL, HTML_CONTENT_REPO))
-    )
-
     SQLALCHEMY_DATABASE_URI = os.environ["DATABASE_URL"]
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=int(os.environ.get("PERMANENT_SESSION_LIFETIME_MINS", 360)))
     SECURITY_PASSWORD_SALT = SECRET_KEY
@@ -53,7 +46,6 @@ class Config:
 
     S3_UPLOAD_BUCKET_NAME = os.environ["S3_UPLOAD_BUCKET_NAME"]
     S3_STATIC_SITE_BUCKET = os.environ["S3_STATIC_SITE_BUCKET"]
-    S3_STATIC_SITE_ERROR_PAGES_BUCKET = os.environ["S3_STATIC_SITE_ERROR_PAGES_BUCKET"]
     S3_REGION = os.environ.get("S3_REGION", "eu-west-2")
     LOCAL_ROOT = os.environ.get("LOCAL_ROOT", None)
 
@@ -72,7 +64,6 @@ class Config:
     LOCAL_BUILD = get_bool(os.environ.get("LOCAL_BUILD", False))
 
     BUILD_SITE = get_bool(os.environ.get("BUILD_SITE", False))
-    PUSH_SITE = get_bool(os.environ.get("PUSH_SITE", False))
     DEPLOY_SITE = get_bool(os.environ.get("DEPLOY_SITE", False))
 
     ATTACHMENT_SCANNER_ENABLED = get_bool(os.environ.get("ATTACHMENT_SCANNER_ENABLED", False))
@@ -81,12 +72,7 @@ class Config:
 
     GOOGLE_ANALYTICS_ID = os.environ["GOOGLE_ANALYTICS_ID"]
 
-    MAIL_SERVER = os.environ.get("MAILGUN_SMTP_SERVER")
-    MAIL_USE_SSL = True
-    MAIL_PORT = int(os.environ.get("MAILGUN_SMTP_PORT", 465))
-    MAIL_USERNAME = os.environ.get("MAILGUN_SMTP_LOGIN")
-    MAIL_PASSWORD = os.environ.get("MAILGUN_SMTP_PASSWORD")
-    NOTIFY_API = os.environ.get("NOTIFY_API", "")
+    GOV_UK_NOTIFY_API_KEY = os.environ.get("GOV_UK_NOTIFY_API_KEY", "")
     TOKEN_MAX_AGE_SECONDS = 60 * 60 * 48
     PREVIEW_TOKEN_MAX_AGE_DAYS = int(os.environ.get("PREVIEW_TOKEN_MAX_AGE_DAYS", 14))
     SURVEY_ENABLED = get_bool(os.environ.get("SURVEY_ENABLED", False))

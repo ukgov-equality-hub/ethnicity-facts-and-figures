@@ -43,74 +43,70 @@ def test_static_site_build(db_session, single_use_app):
     also include refactoring the site builder to be more modular, less tightly-coupled, and more easy to test.
     """
     with patch.dict(single_use_app.config):
-        with patch("application.sitebuilder.build.push_site") as push_site_patch:
-            with patch("application.sitebuilder.build.pull_current_site") as pull_current_site_patch:
-                with patch("application.sitebuilder.build_service.S3FileSystem") as s3_fs_patch:
-                    with patch("application.dashboard.data_helpers.trello_service") as trello_service_patch:
-                        with patch("application.sitebuilder.build.create_versioned_assets"):
-                            with patch("application.sitebuilder.build.write_html"):
-                                single_use_app.config["PUSH_SITE"] = False
-                                single_use_app.config["DEPLOY_SITE"] = False
-                                pull_current_site_patch.side_effect = UnexpectedMockInvocationException
-                                push_site_patch.side_effect = UnexpectedMockInvocationException
-                                s3_fs_patch.side_effect = UnexpectedMockInvocationException
-                                trello_service_patch.get_measure_cards.return_value = []
+        with patch("application.sitebuilder.build_service.S3FileSystem") as s3_fs_patch:
+            with patch("application.dashboard.data_helpers.trello_service") as trello_service_patch:
+                with patch("application.sitebuilder.build.create_versioned_assets"):
+                    with patch("application.sitebuilder.build.write_html"):
+                        single_use_app.config["PUSH_SITE"] = False
+                        single_use_app.config["DEPLOY_SITE"] = False
+                        s3_fs_patch.side_effect = UnexpectedMockInvocationException
+                        trello_service_patch.get_measure_cards.return_value = []
 
-                                from tests.test_data.chart_and_table import chart, simple_table
+                        from tests.test_data.chart_and_table import chart, simple_table
 
-                                # Including these three versioned pages ensures the build test exercises the logic to
-                                # build multiple page versions
-                                measure = MeasureFactory()
-                                # Outdated version
-                                MeasureVersionWithDimensionFactory(
-                                    measure=measure,
-                                    status="APPROVED",
-                                    latest=False,
-                                    published_at=datetime.now().date(),
-                                    version="1.0",
-                                    dimensions__dimension_chart=None,
-                                    dimensions__dimension_table__table_object=simple_table(),
-                                )
-                                # Latest published version
-                                MeasureVersionWithDimensionFactory(
-                                    measure=measure,
-                                    status="APPROVED",
-                                    latest=False,
-                                    published_at=datetime.now().date(),
-                                    version="2.0",
-                                    dimensions__dimension_chart=None,
-                                    dimensions__dimension_table__table_object=simple_table(),
-                                )
-                                # Newer draft version
-                                MeasureVersionWithDimensionFactory(
-                                    measure=measure,
-                                    status="DRAFT",
-                                    published_at=None,
-                                    latest=True,
-                                    version="2.1",
-                                    dimensions__dimension_chart=None,
-                                    dimensions__dimension_table=None,
-                                )
+                        # Including these three versioned pages ensures the build test exercises the logic to
+                        # build multiple page versions
+                        measure = MeasureFactory()
+                        # Outdated version
+                        MeasureVersionWithDimensionFactory(
+                            measure=measure,
+                            status="APPROVED",
+                            latest=False,
+                            published_at=datetime.now().date(),
+                            version="1.0",
+                            dimensions__dimension_chart=None,
+                            dimensions__dimension_table__table_object=simple_table(),
+                        )
+                        # Latest published version
+                        MeasureVersionWithDimensionFactory(
+                            measure=measure,
+                            status="APPROVED",
+                            latest=False,
+                            published_at=datetime.now().date(),
+                            version="2.0",
+                            dimensions__dimension_chart=None,
+                            dimensions__dimension_table__table_object=simple_table(),
+                        )
+                        # Newer draft version
+                        MeasureVersionWithDimensionFactory(
+                            measure=measure,
+                            status="DRAFT",
+                            published_at=None,
+                            latest=True,
+                            version="2.1",
+                            dimensions__dimension_chart=None,
+                            dimensions__dimension_table=None,
+                        )
 
-                                # Publish another page with dimension, chart and table to ensure there's an item for
-                                # each of the dashboard views
-                                MeasureVersionWithDimensionFactory(
-                                    status="APPROVED",
-                                    latest=True,
-                                    published_at=datetime.now().date() - timedelta(weeks=1),
-                                    version="1.0",
-                                    measure__subtopics__topic__slug="topic",
-                                    measure__subtopics__slug="subtopic",
-                                    measure__slug="measure",
-                                    dimensions__guid="dimension-guid",
-                                    dimensions__dimension_chart__chart_object=chart,
-                                    dimensions__dimension_table__table_object=simple_table(),
-                                    uploads__guid="test-download",
-                                    uploads__title="Test measure page data",
-                                    uploads__file_name="test-measure-page-data.csv",
-                                )
+                        # Publish another page with dimension, chart and table to ensure there's an item for
+                        # each of the dashboard views
+                        MeasureVersionWithDimensionFactory(
+                            status="APPROVED",
+                            latest=True,
+                            published_at=datetime.now().date() - timedelta(weeks=1),
+                            version="1.0",
+                            measure__subtopics__topic__slug="topic",
+                            measure__subtopics__slug="subtopic",
+                            measure__slug="measure",
+                            dimensions__guid="dimension-guid",
+                            dimensions__dimension_chart__chart_object=chart,
+                            dimensions__dimension_table__table_object=simple_table(),
+                            uploads__guid="test-download",
+                            uploads__title="Test measure page data",
+                            uploads__file_name="test-measure-page-data.csv",
+                        )
 
-                                # Materialized views are initially empty - populate them with our fixture page data
-                                refresh_materialized_views()
+                        # Materialized views are initially empty - populate them with our fixture page data
+                        refresh_materialized_views()
 
-                                do_it(single_use_app, request_build())
+                        do_it(single_use_app, request_build())

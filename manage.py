@@ -24,7 +24,6 @@ from application.config import Config, DevConfig
 from application.data.ethnicity_classification_synchroniser import EthnicityClassificationSynchroniser
 from application.factory import create_app
 from application.redirects.models import Redirect
-from application.sitebuilder.build import build_and_upload_error_pages
 from application.sitebuilder.exceptions import StalledBuildException
 from application.sitebuilder.models import Build, BuildStatus
 from application.utils import create_and_send_activation_email, send_email, TimedExecution
@@ -40,7 +39,7 @@ manager = Manager(app)
 if os.environ.get("FLASK_ENV") == "docker":
     manager.add_command("server", Server(host="0.0.0.0", port=5000))
 else:
-    manager.add_command("server", Server())
+    manager.add_command("server", Server(host="0.0.0.0", port=8000))
 
 
 migrate = Migrate(app, db)
@@ -439,11 +438,6 @@ def delete_redirect_rule(from_uri):
 
 
 @manager.command
-def refresh_error_pages():
-    build_and_upload_error_pages(app)
-
-
-@manager.command
 def synchronise_classifications():
     synchroniser = EthnicityClassificationSynchroniser(classification_service=classification_service)
     synchroniser.synchronise_classifications(app.classification_finder.get_classification_collection())
@@ -590,45 +584,6 @@ def unpublish_measure_version(topic_slug, subtopic_slug, measure_slug, version):
         f"has been returned to 'DRAFT' state.\n\n"
         f"Remember to delete objects in S3, if applicable."
     )
-
-
-# Copy csv files from static to data lake bucket
-@manager.command
-def copy_data_to_lake():
-    import boto3
-    import os.path
-
-    s3 = boto3.resource("s3")
-
-    source_bucket = s3.Bucket(os.environ.get("S3_STATIC_SITE_BUCKET"))    # ethnicity-facts-and-figures-production
-    destination_bucket = s3.Bucket(os.environ.get("S3_EFF_LAKE_BUCKET"))  # eds-lake-prod1
-    # filenames = []
-
-    for obj in source_bucket.objects.all():
-        if obj.key[-1] == "/":
-            continue
-        elif (
-            obj.key[-3:] == "csv"
-            and obj.key.find("/downloads")
-            and obj.key.find("latest") == -1
-            and obj.key.find("table") == -1
-        ):
-
-            copy_source = {"Bucket": os.environ.get("S3_STATIC_SITE_BUCKET"), "Key": obj.key}
-
-            ################
-            # lake filename pattern
-            paths = obj.key.split("/")
-            filename = paths[2] + "_" + paths[5].replace(".csv", "") + "_v" + paths[3]
-            filename = slugify(filename).replace("-", "_")
-            filename = filename[-120:] if len(filename) >= 120 else filename
-            ###########
-
-            target = "public/eff/%s/%s.csv" % (filename, filename)
-
-            destination_bucket.copy(copy_source, target)
-
-            print(filename)
 
 
 if __name__ == "__main__":

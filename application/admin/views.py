@@ -1,3 +1,4 @@
+import pathlib
 from flask import abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 from sqlalchemy import desc, func
@@ -22,7 +23,6 @@ from application.sitebuilder.models import Build, BuildStatus
 from application.cms.page_service import page_service
 from application.utils import create_and_send_activation_email, user_can
 from application.cms.utils import get_form_errors
-from manage import force_build_static_site
 
 
 @admin_blueprint.route("")
@@ -222,19 +222,21 @@ def site_build():
     site_build_search_form = SiteBuildSearchForm(data={"q": q})
 
     if request.form.get("build", "") == "y":
-        from multiprocessing import Process
         import subprocess
 
         def build():
-            subprocess.call('/home/eff/ethnicity-facts-and-figures-publisher/scripts/build_site.sh')
+            current_file_path = pathlib.Path(__file__)
+            repo_root_dir = current_file_path.parent.parent.parent.resolve()
+            subprocess.call(f'{repo_root_dir}/scripts/build_site.sh')
 
-        msg = "Build requested"
         build()
         '''heavy_process = Process(
             target=build,
             daemon=True
         )
         heavy_process.start()'''
+
+        return render_template("admin/site_build_requested.html")
 
     return render_template(
         "admin/site_build.html",

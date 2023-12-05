@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "_shared/_breadcrumb.html" import breadcrumb %}
+
+{% set breadcrumbs =
+  [
+    {"url": url_for("static_site.index"), "text": "Home"},
+    {"url": url_for("admin.index"), "text": "Admin"},
+    {"url": url_for("admin.site_build"), "text": "Site builds"},
+  ]
+%}
+
+{% block pageTitle %}Site builds{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">Site build requested</h1>
+
+      <p class="govuk-body">
+          <a href="{{ url_for("admin.site_build") }}"
+             class="govuk-link">
+              Return to site builds page
+          </a>
+      </p>
+
+    </div>
+  </div>
+{% endblock %}

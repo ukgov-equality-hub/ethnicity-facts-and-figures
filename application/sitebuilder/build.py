@@ -1,20 +1,26 @@
 #! /usr/bin/env python
 import glob
+import json
 
 import os
+import pathlib
 import shutil
 import subprocess
 from datetime import datetime
 from uuid import uuid4
 
-from flask import current_app, render_template
-from git import Repo
+from flask import current_app, render_template, g
 
 from application.cms.upload_service import upload_service
 from application.data.dimensions import DimensionObjectBuilder
 from application.utils import get_csv_data_for_download, write_dimension_csv, write_dimension_tabular_csv
 
 BUILD_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S.%f"
+
+
+def remove_old_build_dirs(application):
+    base_build_dir = application.config["STATIC_BUILD_DIR"]
+    subprocess.run(f'rm -rf {base_build_dir}/*', shell=True)
 
 
 def make_new_build_dir(application, build=None):
@@ -34,14 +40,14 @@ def make_new_build_dir(application, build=None):
 
 def do_it(application, build):
     with application.app_context():
+        load_build_info()
+
         # Build the pages in static mode
         application.config["STATIC_MODE"] = True
 
         print("DEBUG: do_it()")
+        remove_old_build_dirs(application)
         build_dir = make_new_build_dir(application, build=build)
-
-        if application.config["PUSH_SITE"]:
-            pull_current_site(build_dir, application.config["STATIC_SITE_REMOTE_REPO"])
 
         print("DEBUG do_it(): Deleting files from repo...")
         delete_files_from_repo(build_dir)
@@ -59,10 +65,6 @@ def do_it(application, build):
         print("DEBUG do_it(): Building other static pages...")
         build_other_static_pages(build_dir)
 
-        print(f"{'Pushing' if application.config['PUSH_SITE'] else 'NOT pushing'} site to git")
-        if application.config["PUSH_SITE"]:
-            push_site(build_dir, _stringify_timestamp(build.created_at))
-
         print(f"{'Deploying' if application.config['DEPLOY_SITE'] else 'NOT deploying'} site to S3")
         if application.config["DEPLOY_SITE"]:
             from application.sitebuilder.build_service import s3_deployer
@@ -75,35 +77,15 @@ def do_it(application, build):
             clear_up(build_dir)
 
 
-def build_and_upload_error_pages(application):
-    """
-    We build and upload these separately from the main site build as they go into a separate bucket and need some
-    other tweaked configuration (different bucket, different directory structure on upload) that made it slightly
-    convoluted and confusing to integrate into the main site build.
-    """
-    with application.app_context():
-        # Build the pages in static mode
-        application.config["STATIC_MODE"] = True
-
-        build_dir = make_new_build_dir(application)
-
-        local_build = application.config["LOCAL_BUILD"]
-
-        build_error_pages(build_dir)
-
-        print("Deploy site (error pages) to S3: ", application.config["DEPLOY_SITE"])
-        if application.config["DEPLOY_SITE"]:
-            from application.sitebuilder.build_service import _upload_dir_to_s3
-            from application.cms.file_service import S3FileSystem
-
-            s3 = S3FileSystem(
-                application.config["S3_STATIC_SITE_ERROR_PAGES_BUCKET"], region=application.config["S3_REGION"]
-            )
-
-            _upload_dir_to_s3(build_dir, s3)
-
-        if not local_build:
-            clear_up(build_dir)
+def load_build_info():
+    # Load build info from JSON file
+    current_file_path = pathlib.Path(__file__)
+    repo_root_dir = current_file_path.parent.parent.parent.resolve()
+    f = open(f'{repo_root_dir}/build-info.json')
+    build_info_string = f.read()
+    f.close()
+    build_info = json.loads(build_info_string)
+    g.build_info = build_info
 
 
 def build_homepage_and_topic_hierarchy(build_dir, config):
@@ -414,40 +396,6 @@ def build_other_static_pages(build_dir):
     )
 
 
-def build_error_pages(build_dir):
-    templates_path = "application/templates"
-    relative_error_pages_path = "static_site/error"
-    full_error_pages_path = os.path.join(templates_path, relative_error_pages_path)
-
-    output_dir = os.path.join(build_dir)
-
-    for error_page_path in glob.glob(os.path.join(full_error_pages_path, "**/*.html"), recursive=True):
-        # Lookup the source error file relative to the templates directory
-        source_file_path = os.path.relpath(error_page_path, templates_path)
-
-        # Save the rendered HTML with a filepath relative to its location inside `static_site/error`f
-        target_file_path = os.path.relpath(error_page_path, full_error_pages_path)
-
-        os.makedirs(os.path.join(build_dir, os.path.dirname(target_file_path)), exist_ok=True)
-
-        error_page_html = render_template(source_file_path)
-        write_html(os.path.join(output_dir, target_file_path), error_page_html)
-
-
-def pull_current_site(build_dir, remote_repo):
-    current_app.logger.debug("Starting pull_current_site")
-    repo = Repo.init(build_dir)
-    current_app.logger.debug("Repo.init complete")
-    origin = repo.create_remote("origin", remote_repo)
-    current_app.logger.debug("repo.create_remote complete")
-    origin.fetch("--depth=1")
-    current_app.logger.debug("origin.fetch complete")
-    repo.create_head("master", origin.refs.master).set_tracking_branch(origin.refs.master).checkout()
-    current_app.logger.debug("repo.create_head complete")
-    origin.pull("--depth=1")
-    current_app.logger.debug("origin.pull complete")
-
-
 def delete_files_from_repo(build_dir):
     contents = [file for file in os.listdir(build_dir) if file not in [".git", ".gitignore", "README.md"]]
     for file in contents:
@@ -458,23 +406,13 @@ def delete_files_from_repo(build_dir):
             os.remove(path)
 
 
-def push_site(build_dir, build_timestamp):
-    repo = Repo(build_dir)
-    os.chdir(build_dir)
-    repo.git.add(A=True)
-    message = "Static site pushed with build timestamp %s" % build_timestamp
-    repo.index.commit(message)
-    repo.remotes.origin.push()
-    print(message)
-
-
 def clear_up(build_dir):
     if os.path.isdir(build_dir):
         shutil.rmtree(build_dir)
 
 
 def create_versioned_assets(build_dir):
-    subprocess.run(["npx", "gulp", "make"])
+    # subprocess.run(["npx", "gulp", "make"])
     static_dir = os.path.join(build_dir, get_static_dir())
     if os.path.exists(static_dir):
         shutil.rmtree(static_dir)
