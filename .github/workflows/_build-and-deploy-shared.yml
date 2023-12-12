@@ -130,7 +130,7 @@ jobs:
 
       - name: 'Zip up the code'
         run: |
-          zip -rq build.zip . -x *.git* *node_modules*
+          zip -rq build.zip . -x "*.git/*" "*node_modules/*"
 
       - name: 'Save build zip as GitHub Actions artifact'
         uses: actions/upload-artifact@v3
