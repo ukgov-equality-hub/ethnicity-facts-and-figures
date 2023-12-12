@@ -88,10 +88,14 @@ resource "aws_acm_certificate" "https_certificate__root_domain_redirect" {
 
 resource "aws_route53_record" "dns_records_for_https_certificate_verification__root_domain_redirect" {
   for_each = {
-    for dvo in aws_acm_certificate.https_certificate__root_domain_redirect[0].domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
+    for rdr in aws_acm_certificate.https_certificate__root_domain_redirect : rdr => {
+      for_each = {
+        for dvo in rdr.domain_validation_options : dvo.domain_name => {
+          name   = dvo.resource_record_name
+          record = dvo.resource_record_value
+          type   = dvo.resource_record_type
+        }
+      }
     }
   }
 
