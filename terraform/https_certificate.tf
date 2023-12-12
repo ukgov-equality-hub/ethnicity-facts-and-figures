@@ -86,17 +86,21 @@ resource "aws_acm_certificate" "https_certificate__root_domain_redirect" {
   validation_method = "DNS"
 }
 
+locals {
+  domain_validation_options = flatten([
+    for https_certificate in aws_acm_certificate.https_certificate__root_domain_redirect : [
+      for domain_validation_option in https_certificate.domain_validation_options : {
+        name   = domain_validation_option.resource_record_name
+        record = domain_validation_option.resource_record_value
+        type   = domain_validation_option.resource_record_type
+      }
+    ]
+  ])
+}
+
 resource "aws_route53_record" "dns_records_for_https_certificate_verification__root_domain_redirect" {
   for_each = {
-    for rdr in aws_acm_certificate.https_certificate__root_domain_redirect : rdr => {
-      for_each = {
-        for dvo in rdr.domain_validation_options : dvo.domain_name => {
-          name   = dvo.resource_record_name
-          record = dvo.resource_record_value
-          type   = dvo.resource_record_type
-        }
-      }
-    }
+    for domain_validation_option in local.domain_validation_options : domain_validation_option.name => domain_validation_option
   }
 
   allow_overwrite = true
