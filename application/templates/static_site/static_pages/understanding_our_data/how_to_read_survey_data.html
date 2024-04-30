@@ -26,7 +26,7 @@
 
     <h1 class="govuk-heading-xl">How to read survey data</h1>
 
-    <p class="govuk-body">Some of our data comes from surveys. Surveys take responses from a sample rather than the
+    <p class="govuk-body">Some of our data comes from surveys. Surveys take responses from a sample of people rather than the
       whole group. </p>
 
     <p class="govuk-body">For example, a survey might ask 10% of parents their opinion on changing the curriculum rather
@@ -51,6 +51,14 @@
 <p class="govuk-body">People are usually more honest when completing surveys about sensitive topics without an interviewer present, for example when giving details about smoking or drinking.</p>
 
 <p class="govuk-body">People are also more likely to make mistakes when responding to online or paper surveys. This is less likely with face-to-face or phone surveys because people can ask for things to be repeated.</p>
+
+	  <p class="govuk-body">People sometimes give inaccurate answers to surveys because they do not remember past events or experiences well. This is known as ‘recall bias’. For example, people do not always accurately remember what they ate, and this can affect the results of surveys about <a class="govuk-link"
+	                   href="{{ url_for('static_site.measure_version',
+	                                  topic_slug='health',
+	                                  subtopic_slug='diet-and-exercise',
+	                                  measure_slug='healthy-eating-of-5-a-day-among-adults',
+	    version='latest') }}">healthy eating among adults</a>.</p>
+
 
 
 
