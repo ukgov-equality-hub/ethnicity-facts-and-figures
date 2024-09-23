@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, current_app
 from flask_login import login_required
 
 from application.auth.models import VIEW_DASHBOARDS
@@ -105,11 +105,15 @@ def ethnicity_classification(classification_id):
     ) = get_ethnicity_classification_by_id_dashboard_data(  # noqa
         classification_id
     )
+
+    classification = current_app.classification_finder.get_classification_collection().get_classification_by_id(classification_id)
+
     return render_template(
         "dashboards/ethnicity_classification.html",
         classification_title=classification_title,
         page_count=page_count,
         nested_measures_and_dimensions=nested_measures_and_dimensions,
+        classification=classification,
     )
 
 

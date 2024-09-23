@@ -209,14 +209,12 @@ def get_ethnicity_classifications_dashboard_data():
         if link.includes_unknown:
             classifications[link.classification_id]["includes_unknown_count"] += 1
 
-    ordered_and_filtered_classifications = sorted(
-        filter(lambda x: x["dimension_count"] > 0, classifications.values()), key=lambda x: x["position"]
-    )
+    ordered_classifications = sorted(classifications.values(), key=lambda x: x["position"])
 
-    for classification in ordered_and_filtered_classifications:
+    for classification in ordered_classifications:
         classification["measure_count"] = len(classification["pages"])
 
-    return ordered_and_filtered_classifications
+    return ordered_classifications
 
 
 def get_ethnicity_classification_by_id_dashboard_data(classification_id):

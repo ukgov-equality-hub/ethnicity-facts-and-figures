@@ -167,11 +167,18 @@ class EthnicityClassification:
         return self.long_name
 
     def get_data_items(self):
-        return self.classification_data_items.values()
+        data_items = self.classification_data_items.values()
+        return list(data_items)
 
     def get_display_values(self):
         values = set([item.get_display_ethnicity() for item in self.get_data_items()])
         return list(values)
+
+    def get_parent_items(self):
+        parent_values = self.get_parent_values()
+        parent_items = [item for item in self.get_data_items() if item.display_ethnicity in parent_values]
+        parent_items.sort(key=lambda item: item.order)
+        return parent_items
 
     def get_parent_values(self):
         values = set([item.get_parent() for item in self.get_data_items()])
