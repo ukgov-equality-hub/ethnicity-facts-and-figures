@@ -439,3 +439,32 @@ Code,Classification short name,Classification long name,Standard,Display,Parent,
 19B,ONS 2021 - 19+1,ONS 2021 categories with re-named 'other' and 'mixed' categories,Arab,Arab,Arab,500,
 19B,ONS 2021 - 19+1,ONS 2021 categories with re-named 'other' and 'mixed' categories,Any other,Any other,Any other,9900,
 19B,ONS 2021 - 19+1,ONS 2021 categories with re-named 'other' and 'mixed' categories,White Roma,White Roma,White Roma,4340,
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Arab,Arab,Other,9100,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Bangladeshi,Bangladeshi,Asian,1100,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Chinese,Chinese,Asian,1200,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Indian,Indian,Asian,1300,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Pakistani,Pakistani,Asian,1400,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Asian other,Asian other,Asian,1900,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Black African,Black African,Black,2100,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Black Caribbean,Black Caribbean,Black,2200,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Black other,Black other,Black,2900,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed White/Asian,Mixed White/Asian,Mixed,3100,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed White/Black African,Mixed White/Black African,Mixed,3200,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed White/Black Caribbean,Mixed White/Black Caribbean,Mixed,3300,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed other,Mixed other,Mixed,3900,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White British,White British,White,4100,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White Irish,White Irish,White,4200,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White Gypsy/Traveller,White Gypsy/Traveller,White,4300,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Roma,Roma,White,4400,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White other,White other,White,4900,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Any other ethnic background,Any other,Other,9900,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,All,All,All,0,
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Asian,Asian,Asian,1000,
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Black,Black,Black,2000,
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed,Mixed,Mixed,3000,
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White,White,White,4000,
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Other,Other,Other,9000,
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Unknown,Unknown,Unknown,9980,
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Unclassified,Unclassified,Unclassified,9990,
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Unmatched,Unmatched,Unmatched,9991,
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Not applicable,Not applicable,Not applicable,9999,

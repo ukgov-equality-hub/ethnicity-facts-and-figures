@@ -65,4 +65,57 @@
       }
     })
   </script>
+
+    {% set all_ethnicities = classification.get_data_items() %}
+    {% set parent_ethnicities = classification.get_parent_items() %}
+    <table class="govuk-table">
+        <caption class="govuk-table__caption govuk-table__caption--m">
+            List of ethnicities in this classification
+        </caption>
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">
+                    Ethnicity name
+                </th>
+                <th scope="col" class="govuk-table__header">
+                    Required
+                </th>
+                <th scope="col" class="govuk-table__header">
+                    Display order
+                </th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            {% for parent_ethnicity in parent_ethnicities %}
+                <tr class="govuk-table__row" style="background-color: lightgrey">
+                    <th scope="row" class="govuk-table__header">
+                        {{ parent_ethnicity.display_ethnicity }}
+                    </th>
+                    <td class="govuk-table__cell">
+                        {{ parent_ethnicity.required }}
+                    </td>
+                    <td class="govuk-table__cell">
+                        {{ parent_ethnicity.order }}
+                    </td>
+                </tr>
+
+                {% for child_ethnicity in all_ethnicities %}
+                    {% if (child_ethnicity.parent == parent_ethnicity.display_ethnicity) and not (child_ethnicity.display_ethnicity == parent_ethnicity.display_ethnicity) %}
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header" style="padding-left: 20px;">
+                                {{ child_ethnicity.display_ethnicity }}
+                            </th>
+                            <td class="govuk-table__cell">
+                                {{ child_ethnicity.required }}
+                            </td>
+                            <td class="govuk-table__cell">
+                                {{ child_ethnicity.order }}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}
