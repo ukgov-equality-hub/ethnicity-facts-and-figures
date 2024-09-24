@@ -99,6 +99,7 @@ def ethnicity_classification_from_data(id, name, data_rows, long_name=None):
 def __classification_data_item_from_data(data_row):
     item_is_required = get_bool(data_row[EthnicityClassificationDataColumn.REQUIRED])
     return EthnicityClassificationDataItem(
+        standard_value=data_row[EthnicityClassificationDataColumn.STANDARD_VALUE],
         display_ethnicity=data_row[EthnicityClassificationDataColumn.DISPLAY_VALUE],
         parent=data_row[EthnicityClassificationDataColumn.PARENT],
         order=data_row[EthnicityClassificationDataColumn.ORDER],
@@ -125,6 +126,7 @@ def __classification_from_complete_data(classification_id, complete_data):
 def __classification_data_item_from_file_data_row(file_row):
     item_is_required = get_bool(file_row[EthnicityClassificationFileColumn.REQUIRED])
     return EthnicityClassificationDataItem(
+        standard_value=file_row[EthnicityClassificationFileColumn.STANDARD_VALUE],
         display_ethnicity=file_row[EthnicityClassificationFileColumn.DISPLAY_VALUE],
         parent=file_row[EthnicityClassificationFileColumn.PARENT],
         order=file_row[EthnicityClassificationFileColumn.ORDER],

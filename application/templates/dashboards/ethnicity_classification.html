@@ -89,7 +89,7 @@
             {% for parent_ethnicity in parent_ethnicities %}
                 <tr class="govuk-table__row" style="background-color: lightgrey">
                     <th scope="row" class="govuk-table__header">
-                        {{ parent_ethnicity.display_ethnicity }}
+                        {{ parent_ethnicity.standard_value }}
                     </th>
                     <td class="govuk-table__cell">
                         {{ parent_ethnicity.required }}
@@ -103,7 +103,7 @@
                     {% if (child_ethnicity.parent == parent_ethnicity.display_ethnicity) and not (child_ethnicity.display_ethnicity == parent_ethnicity.display_ethnicity) %}
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__header" style="padding-left: 20px;">
-                                {{ child_ethnicity.display_ethnicity }}
+                                {{ child_ethnicity.standard_value }}
                             </th>
                             <td class="govuk-table__cell">
                                 {{ child_ethnicity.required }}

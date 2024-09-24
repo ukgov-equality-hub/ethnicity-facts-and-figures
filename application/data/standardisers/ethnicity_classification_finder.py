@@ -122,7 +122,8 @@ class EthnicityClassificationDataItem:
     An ethnicity classification data item contains the return data for that
     """
 
-    def __init__(self, display_ethnicity, parent, order, required):
+    def __init__(self, standard_value, display_ethnicity, parent, order, required):
+        self.standard_value = standard_value
         self.display_ethnicity = display_ethnicity
         self.parent = parent
         self.order = order
@@ -291,7 +292,7 @@ class EthnicityClassification:
         unique_raw_values = EthnicityClassification.__order_preserving_remove_duplicates(raw_ethnicities)
         for ind, value in enumerate(unique_raw_values):
             classification_data_item = EthnicityClassificationDataItem(
-                display_ethnicity=value, parent=value, order=ind, required=True
+                standard_value=value, display_ethnicity=value, parent=value, order=ind, required=True
             )
             classification.add_data_item_to_classification(value, classification_data_item)
         return classification
