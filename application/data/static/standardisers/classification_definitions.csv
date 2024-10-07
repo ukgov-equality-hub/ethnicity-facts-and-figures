@@ -457,7 +457,7 @@ Code,Classification short name,Classification long name,Standard,Display,Parent,
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White Gypsy/Traveller,Gypsy or Irish Traveller,White,4300,TRUE
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Roma,Roma,White,4400,TRUE
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White other,White other,White,4900,TRUE
-19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Any other ethnic background,Any other,Other,9900,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Any Other Ethnic Background,Any other,Other,9900,TRUE
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,All,All,All,0,
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Asian,Asian,Asian,1000,
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Black,Black,Black,2000,
