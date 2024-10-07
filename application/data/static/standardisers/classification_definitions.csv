@@ -448,13 +448,13 @@ Code,Classification short name,Classification long name,Standard,Display,Parent,
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Black African,Black African,Black,2100,TRUE
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Black Caribbean,Black Caribbean,Black,2200,TRUE
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Black other,Black other,Black,2900,TRUE
-19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed White/Asian,Mixed White/Asian,Mixed,3100,TRUE
-19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed White/Black African,Mixed White/Black African,Mixed,3200,TRUE
-19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed White/Black Caribbean,Mixed White/Black Caribbean,Mixed,3300,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed White/Asian,Mixed White and Asian,Mixed,3100,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed White/Black African,Mixed White and Black African,Mixed,3200,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed White/Black Caribbean,Mixed White and Black Caribbean,Mixed,3300,TRUE
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Mixed other,Mixed other,Mixed,3900,TRUE
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White British,White British,White,4100,TRUE
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White Irish,White Irish,White,4200,TRUE
-19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White Gypsy/Traveller,White Gypsy/Traveller,White,4300,TRUE
+19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White Gypsy/Traveller,Gypsy or Irish Traveller,White,4300,TRUE
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Roma,Roma,White,4400,TRUE
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,White other,White other,White,4900,TRUE
 19A,ONS 2021 - 19+1 (new),Office for National Statistics detailed census categories 2021,Any other ethnic background,Any other,Other,9900,TRUE
