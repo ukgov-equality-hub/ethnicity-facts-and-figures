@@ -329,6 +329,7 @@ def build_dashboards(build_dir):
             classification_title=classification_title,
             page_count=page_count,
             nested_measures_and_dimensions=nested_measures_and_dimensions,
+            classification=current_app.classification_finder.get_classification_collection().get_classification_by_id(classification["id"])
         )
         dir_path = os.path.join(dashboards_dir, f'ethnicity-classifications/{classification["id"]}')
         os.makedirs(dir_path, exist_ok=True)
