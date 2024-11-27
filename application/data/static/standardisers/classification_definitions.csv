@@ -204,6 +204,34 @@ Code,Classification short name,Classification long name,Standard,Display,Parent,
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Unclassified,Unclassified,Unclassified,9990,
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Unmatched,Unmatched,Unmatched,9991,
 18B,DfE - 18+1,ONS detailed census categories 2001 plus Gypsy or Roma and Irish Traveller,Not applicable,Not applicable,Not applicable,9999,
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),All,All,All,0,
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Asian,Asian,Asian,1000,
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Bangladeshi,Bangladeshi,Asian,1100,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Chinese,Chinese,Asian,1200,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Indian,Indian,Asian,1300,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Pakistani,Pakistani,Asian,1400,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Asian other,Asian other,Asian,1900,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Black,Black,Black,2000,
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Black African,Black African,Black,2100,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Black Caribbean,Black Caribbean,Black,2200,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Black other,Black other,Black,2900,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Mixed,Mixed,Mixed,3000,
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Mixed White/Asian,Mixed white and Asian,Mixed,3100,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Mixed White/Black African,Mixed white and black African,Mixed,3200,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Mixed White/Black Caribbean,Mixed white and black Caribbean,Mixed,3300,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Mixed other,Mixed other,Mixed,3900,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),White,White,White,4000,
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),White British,White British,White,4100,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),White Irish,White Irish,White,4200,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Gypsy/Roma,Gypsy or Roma,White,4310,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Irish Traveller,Irish Traveller,White,4330,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),White other,White other,White,4900,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Other,Other,Other,9900,
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Any other,Other,Other,9900,TRUE
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Unknown,Unknown,Unknown,9980,
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Unclassified,Unclassified,Unclassified,9990,
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Unmatched,Unmatched,Unmatched,9991,
+18C,DfE - 18+1 (v2),DfE 18+1 (v2),Not applicable,Not applicable,Not applicable,9999,
 2A,White and Other than White,White and Other than White,White,White,White,4000,TRUE
 2A,White and Other than White,White and Other than White,Other,Other than White,Other than White,9100,TRUE
 2A,White and Other than White,White and Other than White,All,All,All,0,
