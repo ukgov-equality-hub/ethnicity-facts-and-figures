@@ -629,7 +629,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         for (var r in classification['data']) {
             var item = classification['data'][r];
-            var row = [item['display_value'], item['parent'], item['order']];
+            const classificationParent = getParentClassification(item['display_value'], lowHeaders, body, item['parent']);
+            var row = [item['display_value'], classificationParent, item['order']];
             row = row.concat(_.map(indices, function (index) {
                 return index === -1 ? '' : body[r][index]
             }));
@@ -637,6 +638,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         return rows;
+    }
+
+    function getParentClassification(ethnicityName, lowHeaders, dataRows, defaultParentEthnicity) {
+        if (lowHeaders.includes('ethnicity-parent')) {
+            const ethnicityColumnIndex = lowHeaders.indexOf('ethnicity');
+            const firstDataRowWithThisEthnicity = dataRows.find(row => row[ethnicityColumnIndex] === ethnicityName);
+
+            const ethnicityParentColumnIndex = lowHeaders.indexOf('ethnicity-parent');
+            return firstDataRowWithThisEthnicity[ethnicityParentColumnIndex];
+        } else {
+            return defaultParentEthnicity;
+        }
     }
 
     function getClassificationById(classification_id) {
