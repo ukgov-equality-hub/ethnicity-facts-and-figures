@@ -674,7 +674,7 @@ $(document).ready(function () {
 
         for (var r in classification['data']) {
             var item = classification['data'][r];
-            const classificationParent = getParentClassification(item['display_value'], lowHeaders, body, item['parent']);
+            var classificationParent = getParentClassification(item['display_value'], lowHeaders, body, item['parent']);
             var row = [item['display_value'], classificationParent, item['order']];
             row = row.concat(_.map(indices, function (index) {
                 return index === -1 ? '' : body[r][index]
@@ -687,10 +687,10 @@ $(document).ready(function () {
 
     function getParentClassification(ethnicityName, lowHeaders, dataRows, defaultParentEthnicity) {
         if (lowHeaders.includes('ethnicity-parent')) {
-            const ethnicityColumnIndex = lowHeaders.indexOf('ethnicity');
-            const firstDataRowWithThisEthnicity = dataRows.find(row => row[ethnicityColumnIndex] === ethnicityName);
+            var ethnicityColumnIndex = lowHeaders.indexOf('ethnicity');
+            var firstDataRowWithThisEthnicity = dataRows.find(function(row) { return row[ethnicityColumnIndex] === ethnicityName; });
 
-            const ethnicityParentColumnIndex = lowHeaders.indexOf('ethnicity-parent');
+            var ethnicityParentColumnIndex = lowHeaders.indexOf('ethnicity-parent');
             return firstDataRowWithThisEthnicity[ethnicityParentColumnIndex];
         } else {
             return defaultParentEthnicity;
