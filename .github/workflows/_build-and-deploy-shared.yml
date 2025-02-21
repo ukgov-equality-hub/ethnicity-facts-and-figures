@@ -70,7 +70,7 @@ jobs:
 
     steps:
       - name: 'Checkout Code'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 'Install Terraform'
         uses: hashicorp/setup-terraform@v3
@@ -117,7 +117,10 @@ jobs:
 
     steps:
       - name: 'Checkout Code'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: 'Install Node.JS'
+        uses: actions/setup-node@v4
 
       - name: 'Save build run info to JSON file'
         run: |
@@ -136,7 +139,7 @@ jobs:
           zip -rq build.zip . -x "*.git/*" "*node_modules/*"
 
       - name: 'Save build zip as GitHub Actions artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-zip
           path: build.zip
@@ -156,7 +159,7 @@ jobs:
 
     steps:
       - name: 'Download build zip from GitHub Actions artifacts'
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-zip
 
