@@ -53,12 +53,16 @@ ADD requirements.txt requirements.txt
 #ADD requirements-test.txt requirements-test.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-ADD . /app/
-
-RUN pip install pre-commit
-RUN pre-commit install --install-hooks
+#RUN pip install pre-commit
+#RUN pre-commit install --install-hooks
 
 RUN npm install -g gulp
+
+#ADD package.json /app/
+#ADD package-lock.json /app/
+#ADD gulpfile.js /app/
+ADD . /app/
+
 RUN npm ci
 RUN npm link gulp
 RUN npm rebuild node-sass
