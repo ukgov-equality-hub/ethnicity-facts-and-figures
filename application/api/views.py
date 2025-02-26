@@ -112,6 +112,12 @@ def subtopic_get(topic_slug, subtopic_slug):
 def measure_get(topic_slug, subtopic_slug, measure_slug):
     measure: Measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
 
+    next_major_version_id = measure.latest_published_version.next_major_version()
+    next_major_version = page_service.get_measure_version(topic_slug, subtopic_slug, measure_slug, next_major_version_id)
+
+    next_minor_version_id = measure.latest_published_version.next_minor_version()
+    next_minor_version = page_service.get_measure_version(topic_slug, subtopic_slug, measure_slug, next_minor_version_id)
+
     return jsonify({
         'slug': measure.slug,
         'position': measure.position,
@@ -160,6 +166,19 @@ def measure_get(topic_slug, subtopic_slug, measure_slug):
                 },
                 'title': measure.latest_published_version.title,
                 'urls': urls_for_measure_version(measure.latest_published_version),
+            },
+
+            'next_or_draft': {
+                'major': {
+                    'version': next_major_version_id,
+                    'exists': next_major_version is not None,
+                    'urls': urls_for_measure_version(next_major_version) if next_major_version is not None else None
+                },
+                'minor': {
+                    'version': next_minor_version_id,
+                    'exists': next_minor_version is not None,
+                    'urls': urls_for_measure_version(next_minor_version) if next_minor_version is not None else None
+                },
             },
         },
 
