@@ -42,10 +42,13 @@ def index():
     topics = page_service.get_topics(include_testing_space=False)
 
     return jsonify({
+        'api_url': url_for('api.index', _external=True),
+
         'topics': list(map(lambda topic: {
             'slug': topic.slug,
             'title': topic.title,
-            'url': url_for('api.topic_get', topic_slug=topic.slug, _external=True),
+            'api_url': url_for('api.topic_get', topic_slug=topic.slug, _external=True),
+            'publisher_url': url_for('static_site.topic', topic_slug=topic.slug, _external=True),
         }, topics)),
     })
 
@@ -62,11 +65,16 @@ def topic_get(topic_slug):
         'description': topic.description,
         'additional_description': topic.additional_description,
         'meta_description': topic.meta_description,
+
+        'api_url': url_for('api.topic_get', topic_slug=topic.slug, _external=True),
+        'publisher_url': url_for('static_site.topic', topic_slug=topic.slug, _external=True),
+
         'subtopics': list(map(lambda subtopic: {
             'slug': subtopic.slug,
             'title': subtopic.title,
             'position': subtopic.position,
-            'url': url_for('api.subtopic_get', topic_slug=topic.slug, subtopic_slug=subtopic.slug, _external=True),
+            'api_url': url_for('api.subtopic_get', topic_slug=topic.slug, subtopic_slug=subtopic.slug, _external=True),
+            'publisher_url': f"{url_for('static_site.topic', topic_slug=topic.slug, _external=True)}##accordion-{subtopic.slug}",
         }, sorted(topic.subtopics, key=lambda subtopic: subtopic.position))),
     })
 
@@ -76,23 +84,22 @@ def topic_get(topic_slug):
 def subtopic_get(topic_slug, subtopic_slug):
     subtopic = page_service.get_subtopic(topic_slug, subtopic_slug)
 
-    measures_json = []
-    for measure in sorted(subtopic.measures, key=lambda measure: measure.position):
-        measures_json.append({
-            'slug': measure.slug,
-            'position': measure.position,
-            'url': url_for('api.measure_get', topic_slug=subtopic.topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, _external=True),
-        })
-
     return jsonify({
         'slug': subtopic.slug,
         'title': subtopic.title,
         'position': subtopic.position,
-        'measures': measures_json,
+
+        'measures': list(map(lambda measure: {
+            'slug': measure.slug,
+            'position': measure.position,
+            'retired': measure.retired,
+            'api_url': url_for('api.measure_get', topic_slug=subtopic.topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, _external=True),
+        }, sorted(subtopic.measures, key=lambda measure: measure.position))),
+
         'topic': {
             'slug': subtopic.topic.slug,
             'title': subtopic.topic.title,
-            'url': url_for('api.topic_get', topic_slug=subtopic.topic.slug, _external=True),
+            'api_url': url_for('api.topic_get', topic_slug=subtopic.topic.slug, _external=True),
         },
     })
 
@@ -102,4 +109,34 @@ def subtopic_get(topic_slug, subtopic_slug):
 def measure_get(topic_slug, subtopic_slug, measure_slug):
     measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
 
-    return jsonify({'message': 'Hello, World!'})
+    return jsonify({
+        'slug': measure.slug,
+        'position': measure.position,
+
+        'retired': measure.retired,
+        'replaced_by_measure': ({
+            'slug': measure.replaced_by_measure.slug,
+            'api_url': url_for('api.measure_get', topic_slug=measure.replaced_by_measure.subtopic.topic.slug, subtopic_slug=measure.replaced_by_measure.subtopic.slug, measure_slug=measure.replaced_by_measure.slug, _external=True),
+        } if measure.replaced_by_measure is not None else None ),
+        'replaces_measures': list(map(lambda replaces_measure: {
+            'slug': replaces_measure.slug,
+            'api_url': url_for('api.measure_get', topic_slug=replaces_measure.subtopic.topic.slug, subtopic_slug=replaces_measure.subtopic.slug, measure_slug=replaces_measure.slug, _external=True),
+        }, measure.replaces_measures)),
+
+        # 'measures': list(map(lambda measure: {
+        #     'slug': measure.slug,
+        #     'position': measure.position,
+        #     'api_url': url_for('api.measure_get', topic_slug=subtopic.topic.slug, subtopic_slug=subtopic.slug, measure_slug=measure.slug, _external=True),
+        # }, sorted(subtopic.measures, key=lambda measure: measure.position))),
+
+        'subtopic': {
+            'slug': measure.subtopic.slug,
+            'title': measure.subtopic.title,
+            'api_url': url_for('api.subtopic_get', topic_slug=measure.subtopic.topic.slug, subtopic_slug=measure.subtopic.slug, _external=True),
+        },
+        'topic': {
+            'slug': measure.subtopic.topic.slug,
+            'title': measure.subtopic.topic.title,
+            'api_url': url_for('api.topic_get', topic_slug=measure.subtopic.topic.slug, _external=True),
+        },
+    })
