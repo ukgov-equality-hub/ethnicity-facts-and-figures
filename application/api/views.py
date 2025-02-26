@@ -113,10 +113,10 @@ def measure_get(topic_slug, subtopic_slug, measure_slug):
     measure: Measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
 
     next_major_version_id = measure.latest_published_version.next_major_version()
-    next_major_version = page_service.get_measure_version(topic_slug, subtopic_slug, measure_slug, next_major_version_id)
+    next_major_version = next(filter(lambda measure_version: measure_version.version == next_major_version_id, measure.versions), None)
 
     next_minor_version_id = measure.latest_published_version.next_minor_version()
-    next_minor_version = page_service.get_measure_version(topic_slug, subtopic_slug, measure_slug, next_minor_version_id)
+    next_minor_version = next(filter(lambda measure_version: measure_version.version == next_minor_version_id, measure.versions), None)
 
     return jsonify({
         'slug': measure.slug,
