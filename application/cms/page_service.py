@@ -26,7 +26,7 @@ from application.cms.models import (
     Topic,
     publish_status,
     NewVersionType,
-    TESTING_SPACE_SLUG,
+    TESTING_SPACE_SLUG, Upload,
 )
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
@@ -231,7 +231,7 @@ class PageService(Service):
 
         return measure_version
 
-    def create_measure_version(self, measure_version, update_type, user):
+    def create_measure_version(self, measure_version, update_type, user, created_by_api=False):
         next_version_number = measure_version.next_version_number_by_type(update_type)
 
         if update_type != NewVersionType.NEW_MEASURE and self.get_measure_version_by_measure_id_and_version(
@@ -265,7 +265,7 @@ class PageService(Service):
 
         new_version.version = next_version_number
         new_version.status = "DRAFT"
-        new_version.created_by = user.email
+        new_version.created_by = "API" if created_by_api else user.email
         new_version.created_at = datetime.utcnow()
         new_version.published_at = None
         new_version.internal_edit_summary = None
@@ -477,6 +477,16 @@ class PageService(Service):
             .order_by(desc(MeasureVersion.published_at))
             .all()
         )
+
+    @staticmethod
+    def get_upload(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
+        measure_version: MeasureVersion = PageService.get_measure_version(topic_slug, subtopic_slug, measure_slug, version)
+        upload: Upload = next(filter(lambda upload: upload.guid == upload_guid, measure_version.uploads), None)
+
+        if not upload:
+            raise PageNotFoundException()
+
+        return upload
 
     @staticmethod
     def valid_topic_title(title):

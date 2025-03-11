@@ -90,6 +90,8 @@ class Config:
 
     NEWSLETTER_SUBSCRIBE_URL = os.environ.get("NEWSLETTER_SUBSCRIBE_URL", "").replace('__AND__', '&')
 
+    EFF_API_TOKEN = os.environ.get("EFF_API_TOKEN", "")
+
 
 class DevConfig(Config):
     DEBUG = True

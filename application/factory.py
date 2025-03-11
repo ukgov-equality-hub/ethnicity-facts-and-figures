@@ -62,6 +62,7 @@ def create_app(config_object):
     from application.static_site import static_site_blueprint
     from application.cms import cms_blueprint
     from application.admin import admin_blueprint
+    from application.api import api_blueprint
     from application.register import register_blueprint
     from application.auth import auth_blueprint
     from application.dashboard import dashboard_blueprint
@@ -124,6 +125,7 @@ def create_app(config_object):
 
     app.register_blueprint(cms_blueprint)
     app.register_blueprint(static_site_blueprint)
+    app.register_blueprint(api_blueprint)
     app.register_blueprint(admin_blueprint)
     app.register_blueprint(register_blueprint)
     app.register_blueprint(auth_blueprint)

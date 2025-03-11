@@ -114,3 +114,7 @@ variable "TRELLO_API_TOKEN" {
   type = string
   sensitive = true
 }
+variable "EFF_API_TOKEN" {
+  type = string
+  sensitive = true
+}

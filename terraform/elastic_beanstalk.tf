@@ -502,6 +502,11 @@ resource "aws_elastic_beanstalk_environment" "main_app_elastic_beanstalk_environ
   }
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "EFF_API_TOKEN"
+    value     = var.EFF_API_TOKEN
+  }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
     name      = "WEB_CONCURRENCY"
     value     = 3
   }
