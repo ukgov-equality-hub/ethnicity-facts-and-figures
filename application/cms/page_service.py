@@ -26,7 +26,7 @@ from application.cms.models import (
     Topic,
     publish_status,
     NewVersionType,
-    TESTING_SPACE_SLUG,
+    TESTING_SPACE_SLUG, Upload,
 )
 from application.cms.service import Service
 from application.cms.upload_service import upload_service
@@ -477,6 +477,16 @@ class PageService(Service):
             .order_by(desc(MeasureVersion.published_at))
             .all()
         )
+
+    @staticmethod
+    def get_upload(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
+        measure_version: MeasureVersion = PageService.get_measure_version(topic_slug, subtopic_slug, measure_slug, version)
+        upload: Upload = next(filter(lambda upload: upload.guid == upload_guid, measure_version.uploads), None)
+
+        if not upload:
+            raise PageNotFoundException()
+
+        return upload
 
     @staticmethod
     def valid_topic_title(title):
