@@ -34,3 +34,4 @@ jobs:
       STATIC_SITE_S3_SECRET_REFERER: ${{ secrets.STATIC_SITE_S3_SECRET_REFERER }}
       TRELLO_API_KEY: ${{ secrets.TRELLO_API_KEY }}
       TRELLO_API_TOKEN: ${{ secrets.TRELLO_API_TOKEN }}
+      EFF_API_TOKEN: ${{ secrets.EFF_API_TOKEN }}
