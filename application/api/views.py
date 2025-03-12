@@ -235,7 +235,7 @@ def measure_get(topic_slug: str, subtopic_slug: str, measure_slug: str):
         'urls': urls_for_measure(measure),
 
         'subtopic': subtopic_summary(measure.subtopic),
-        'topic': topic_summary(measure.topic),
+        'topic': topic_summary(measure.subtopic.topic),
     })
 
 
