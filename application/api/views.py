@@ -45,21 +45,29 @@ def verify_token(token: str) -> bool:
     return token == current_app.config.get('EFF_API_TOKEN')
 
 
+def json_response(data: dict):
+    json_text = json.dumps(data, indent=4, sort_keys=False)
+    response = make_response(json_text)
+    response.headers['Content-Type'] = 'application/json'
+    response.status_code = 200
+    return response
+
+
 @api_blueprint.route("/", methods=["GET"])
 @auth.login_required
 def index():
     topics: List[Topic] = page_service.get_topics(include_testing_space=False)
 
-    return jsonify({
-        'urls': {
-            'api': url_for('api.index', _external=True),
-        },
-
+    return json_response({
         'topics': list(map(lambda topic: {
             'slug': topic.slug,
             'title': topic.title,
             'urls': urls_for_topic(topic),
         }, topics)),
+
+        'urls': {
+            'api': url_for('api.index', _external=True),
+        },
     })
 
 
@@ -68,7 +76,7 @@ def index():
 def data_sources_get():
     data_sources: List[DataSource] = DataSource.query.order_by(DataSource.id).all()
 
-    return jsonify({
+    return json_response({
         'data_sources': list(map(lambda data_source: get_data_source_json(data_source), data_sources)),
 
         'urls': {
@@ -83,7 +91,7 @@ def data_sources_get():
 def data_source_get(data_source_id: int):
     data_source: DataSource = DataSource.query.get(data_source_id)
 
-    return jsonify(get_data_source_json(data_source))
+    return json_response(get_data_source_json(data_source))
 
 
 def get_data_source_json(data_source: DataSource):
@@ -123,7 +131,7 @@ def get_data_source_json(data_source: DataSource):
 def topic_get(topic_slug: str):
     topic: Topic = page_service.get_topic_with_subtopics_and_measures(topic_slug)
 
-    return jsonify({
+    return json_response({
         'slug': topic.slug,
         'title': topic.title,
         'short_title': topic.short_title,
@@ -131,14 +139,14 @@ def topic_get(topic_slug: str):
         'additional_description': topic.additional_description,
         'meta_description': topic.meta_description,
 
-        'urls': urls_for_topic(topic),
-
         'subtopics': list(map(lambda subtopic: {
             'slug': subtopic.slug,
             'title': subtopic.title,
             'position': subtopic.position,
             'urls': urls_for_subtopic(subtopic),
         }, sorted(topic.subtopics, key=lambda subtopic: subtopic.position))),
+
+        'urls': urls_for_topic(topic),
     })
 
 
@@ -147,12 +155,10 @@ def topic_get(topic_slug: str):
 def subtopic_get(topic_slug: str, subtopic_slug: str):
     subtopic: Subtopic = page_service.get_subtopic(topic_slug, subtopic_slug)
 
-    return jsonify({
+    return json_response({
         'slug': subtopic.slug,
         'title': subtopic.title,
         'position': subtopic.position,
-
-        'urls': urls_for_subtopic(subtopic),
 
         'measures': list(map(lambda measure: {
             'slug': measure.slug,
@@ -161,9 +167,9 @@ def subtopic_get(topic_slug: str, subtopic_slug: str):
             'urls': urls_for_measure(measure),
         }, sorted(subtopic.measures, key=lambda measure: measure.position))),
 
-        'parent_entities': {
-            'topic': topic_summary(subtopic.topic),
-        },
+        'urls': urls_for_subtopic(subtopic),
+
+        'topic': topic_summary(subtopic.topic),
     })
 
 
@@ -188,11 +194,9 @@ def measure_get(topic_slug: str, subtopic_slug: str, measure_slug: str):
                     _external=True)
         return urls
 
-    return jsonify({
+    return json_response({
         'slug': measure.slug,
         'position': measure.position,
-
-        'urls': urls_for_measure(measure),
 
         'retired': measure.retired,
         'replaced_by_measure': ({
@@ -244,10 +248,10 @@ def measure_get(topic_slug: str, subtopic_slug: str, measure_slug: str):
             },
         },
 
-        'parent_entities': {
-            'subtopic': subtopic_summary(measure.subtopic),
-            'topic': topic_summary(measure.topic),
-        },
+        'urls': urls_for_measure(measure),
+
+        'subtopic': subtopic_summary(measure.subtopic),
+        'topic': topic_summary(measure.topic),
     })
 
 
@@ -259,7 +263,7 @@ def measure_next_version_post(topic_slug: str, subtopic_slug: str, measure_slug:
     measure: Measure = page_service.get_measure(topic_slug, subtopic_slug, measure_slug)
 
     if major_or_minor not in ["major", "minor"]:
-        return jsonify({
+        return json_response({
             'error': "Invalid URL - the last component (major_or_minor) must be either 'major' or 'minor'",
             'major_or_minor': major_or_minor,
             'request_url': request.url,
@@ -285,7 +289,7 @@ def measure_next_version_post(topic_slug: str, subtopic_slug: str, measure_slug:
     if new_measure_version is None:
         new_measure_version = page_service.create_measure_version(latest_published_version, NewVersionType(major_or_minor), user=None, created_by_api=True)
 
-    return jsonify({
+    return json_response({
         'version_ids': {
             'version': new_measure_version.version,
             'major': new_measure_version.major(),
@@ -311,7 +315,7 @@ def measure_version_get(topic_slug, subtopic_slug, measure_slug, version):
                                     _external=True)
         return urls
 
-    return jsonify({
+    return json_response({
         'template_version': measure_version.template_version,
 
         'title': measure_version.title,
@@ -373,11 +377,9 @@ def measure_version_get(topic_slug, subtopic_slug, measure_slug, version):
         'version_ids': version_ids_for_measure_version(measure_version),
         'urls': urls_for_measure_version(measure_version),
 
-        'parent_entities': {
-            'measure': measure_summary(measure_version.measure),
-            'subtopic': subtopic_summary(measure_version.measure.subtopic),
-            'topic': topic_summary(measure_version.measure.subtopic.topic),
-        },
+        'measure': measure_summary(measure_version.measure),
+        'subtopic': subtopic_summary(measure_version.measure.subtopic),
+        'topic': topic_summary(measure_version.measure.subtopic.topic),
     })
 
 
@@ -388,7 +390,7 @@ def upload_get(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
         topic_slug, subtopic_slug, measure_slug, version, upload_guid
     )
 
-    return jsonify({
+    return json_response({
         'guid': upload.guid,
         'title': upload.title,
         'file_name': upload.file_name,
@@ -397,12 +399,10 @@ def upload_get(topic_slug, subtopic_slug, measure_slug, version, upload_guid):
 
         'urls': urls_for_data_upload(upload),
 
-        'parent_entities': {
-            'measure_version': measure_version_summary(upload.measure_version),
-            'measure': measure_summary(upload.measure_version.measure),
-            'subtopic': subtopic_summary(upload.measure_version.measure.subtopic),
-            'topic': topic_summary(upload.measure_version.measure.subtopic.topic),
-        },
+        'measure_version': measure_version_summary(upload.measure_version),
+        'measure': measure_summary(upload.measure_version.measure),
+        'subtopic': subtopic_summary(upload.measure_version.measure.subtopic),
+        'topic': topic_summary(upload.measure_version.measure.subtopic.topic),
     })
 
 
@@ -437,7 +437,7 @@ def dimension_get(topic_slug, subtopic_slug, measure_slug, version, dimension_gu
     measure_version: MeasureVersion = page_service.get_measure_version(topic_slug, subtopic_slug, measure_slug, version)
     dimension: Dimension = next(filter(lambda dimension: dimension.guid == dimension_guid, measure_version.dimensions), None)
 
-    return jsonify({
+    return json_response({
         'guid': dimension.guid,
         'position': dimension.position,
 
@@ -459,12 +459,10 @@ def dimension_get(topic_slug, subtopic_slug, measure_slug, version, dimension_gu
 
         'urls': urls_for_dimension(dimension),
 
-        'parent_entities': {
-            'measure_version': measure_version_summary(dimension.measure_version),
-            'measure': measure_summary(dimension.measure_version.measure),
-            'subtopic': subtopic_summary(dimension.measure_version.measure.subtopic),
-            'topic': topic_summary(dimension.measure_version.measure.subtopic.topic),
-        },
+        'measure_version': measure_version_summary(dimension.measure_version),
+        'measure': measure_summary(dimension.measure_version.measure),
+        'subtopic': subtopic_summary(dimension.measure_version.measure.subtopic),
+        'topic': topic_summary(dimension.measure_version.measure.subtopic.topic),
     })
 
 
@@ -477,7 +475,7 @@ def dimension_chart_get(topic_slug, subtopic_slug, measure_slug, version, dimens
     if not dimension.dimension_chart:
         abort(404)
 
-    return jsonify({
+    return json_response({
         'ethnicity_classification': {
             'classification_id': dimension.dimension_chart.classification_id,
             'classification_title': (dimension.dimension_chart.classification.title
@@ -493,13 +491,11 @@ def dimension_chart_get(topic_slug, subtopic_slug, measure_slug, version, dimens
 
         'urls': urls_for_dimension_chart(dimension),
 
-        'parent_entities': {
-            'dimension': dimension_summary(dimension),
-            'measure_version': measure_version_summary(dimension.measure_version),
-            'measure': measure_summary(dimension.measure_version.measure),
-            'subtopic': subtopic_summary(dimension.measure_version.measure.subtopic),
-            'topic': topic_summary(dimension.measure_version.measure.subtopic.topic),
-        },
+        'dimension': dimension_summary(dimension),
+        'measure_version': measure_version_summary(dimension.measure_version),
+        'measure': measure_summary(dimension.measure_version.measure),
+        'subtopic': subtopic_summary(dimension.measure_version.measure.subtopic),
+        'topic': topic_summary(dimension.measure_version.measure.subtopic.topic),
     })
 
 
@@ -512,7 +508,7 @@ def dimension_table_get(topic_slug, subtopic_slug, measure_slug, version, dimens
     if not dimension.dimension_table:
         abort(404)
 
-    return jsonify({
+    return json_response({
         'ethnicity_classification': {
             'classification_id': dimension.dimension_table.classification_id,
             'classification_title': (dimension.dimension_table.classification.title
@@ -528,13 +524,11 @@ def dimension_table_get(topic_slug, subtopic_slug, measure_slug, version, dimens
 
         'urls': urls_for_dimension_table(dimension),
 
-        'parent_entities': {
-            'dimension': dimension_summary(dimension),
-            'measure_version': measure_version_summary(dimension.measure_version),
-            'measure': measure_summary(dimension.measure_version.measure),
-            'subtopic': subtopic_summary(dimension.measure_version.measure.subtopic),
-            'topic': topic_summary(dimension.measure_version.measure.subtopic.topic),
-        },
+        'dimension': dimension_summary(dimension),
+        'measure_version': measure_version_summary(dimension.measure_version),
+        'measure': measure_summary(dimension.measure_version.measure),
+        'subtopic': subtopic_summary(dimension.measure_version.measure.subtopic),
+        'topic': topic_summary(dimension.measure_version.measure.subtopic.topic),
     })
 
 
