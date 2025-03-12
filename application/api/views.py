@@ -1,38 +1,22 @@
+import json
 import os
-import pathlib
 from tempfile import NamedTemporaryFile
 from typing import List
 
 from botocore.exceptions import ClientError
-from flask import abort, current_app, flash, redirect, render_template, request, url_for, jsonify, send_file
-from flask_login import login_required, current_user
+from flask import abort, current_app, request, url_for, send_file, \
+    make_response
 from flask_httpauth import HTTPTokenAuth
 from slugify import slugify
-from sqlalchemy import desc, func
-from sqlalchemy.orm.exc import NoResultFound
-from datetime import date, datetime, timedelta
 
-from application import db, csrf
+from application import csrf
 from application.api import api_blueprint
-from application.admin.forms import AddUserForm, SiteBuildSearchForm, DataSourceSearchForm, DataSourceMergeForm
-from application.auth.models import (
-    User,
-    TypeOfUser,
-    CAPABILITIES,
-    MANAGE_SYSTEM,
-    MANAGE_USERS,
-    MANAGE_DATA_SOURCES,
-    MANAGE_TOPICS,
-)
 from application.cms.exceptions import UploadNotFoundException
-from application.cms.forms import SelectMultipleDataSourcesForm
-from application.cms.models import user_measure, DataSource, Topic, Subtopic, Measure, MeasureVersion, NewVersionType, \
+from application.cms.models import DataSource, Topic, Subtopic, Measure, MeasureVersion, NewVersionType, \
     Dimension, Upload
-from application.cms.upload_service import upload_service
-from application.sitebuilder.models import Build, BuildStatus
 from application.cms.page_service import page_service
-from application.utils import create_and_send_activation_email, user_can, get_csv_data_for_download
-from application.cms.utils import get_form_errors
+from application.cms.upload_service import upload_service
+from application.utils import get_csv_data_for_download
 
 auth = HTTPTokenAuth(scheme='Bearer')
 
