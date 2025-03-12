@@ -12,3 +12,5 @@ create_redirect_from_root_domain = true
 dns_record_root_domain_including_dot = ""
 
 GOOGLE_ANALYTICS_ID = "UA-100698377-1"
+
+prevent_email_spoofing = true
