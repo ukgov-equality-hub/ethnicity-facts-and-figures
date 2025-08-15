@@ -5,58 +5,41 @@ from trello import TrelloClient
 
 from application.cms.service import Service
 
-BOARD_ID = "K3A3MP7x"
+BOARD_ID = "xgPN2fMa"
 TRELLO_LISTS = {
-    "5a686d4076c5194520f1186c": {"name": "Planned", "id": "5a686d4076c5194520f1186c", "stage": "planned"},
-    "5b90ec017b538e7de152dbc0": {"name": "Data received", "id": "5b90ec017b538e7de152dbc0", "stage": "planned"},
-    "5cc705f5771ebd73cb216caa": {"name": "Departmental updates", "id": "5cc705f5771ebd73cb216caa", "stage": "planned"},
-    "5b90ec070793305d06d2b01f": {
-        "name": "Data checks in progress",
-        "id": "5b90ec070793305d06d2b01f",
-        "stage": "progress",
-    },
-    "5a686ce113786b932cf745b4": {
-        "name": "Content design backlog",
-        "id": "5a686ce113786b932cf745b4",
-        "stage": "progress",
-    },
-    "5a686ce113786b932cf745b5": {
-        "name": "Content design in progress",
-        "id": "5a686ce113786b932cf745b5",
-        "stage": "progress",
-    },
-    "5a686ce113786b932cf745b6": {
-        "name": "Needs senior analyst sign off",
-        "id": "5a686ce113786b932cf745b6",
-        "stage": "progress",
-    },
-    "5a686ce113786b932cf745b7": {"name": "Ready for upload", "id": "5a686ce113786b932cf745b7", "stage": "progress"},
-    "5a686ce113786b932cf745b8": {"name": "Uploaded", "id": "5a686ce113786b932cf745b8", "stage": "progress"},
-    "5a686ce113786b932cf745ba": {"name": "Department review", "id": "5a686ce113786b932cf745ba", "stage": "review"},
-    "5a686ce113786b932cf745bd": {"name": "Published", "id": "5a686ce113786b932cf745bd", "stage": "published"},
-    "5a686fb201a2b230f9de88cd": {"name": "Not being worked on", "id": "5a686fb201a2b230f9de88cd", "stage": "other"},
-}
+    "67ced83546e9a460b380ccdd": {"name": "Data received", "id": "67ced83546e9a460b380ccdd", "stage": "planned"},
 
-TYPE_OF_WORK_LABELS = {
-    "New measure": "New measure",
-    "Updated version": "Updated version",
-    "Updated version v3": "Updated version",
+    "67ced83546e9a460b380cce0": {"name": "Data processed by the analyst", "id": "67ced83546e9a460b380cce0", "stage": "progress"},
+    "67ced83546e9a460b380ccdb": {"name": "Charts, tables and text created by analyst", "id": "67ced83546e9a460b380ccdb", "stage": "progress"},
+    "67ced83546e9a460b380ccde": {"name": "Charts, tables and text created by analyst", "id": "67ced83546e9a460b380ccde", "stage": "progress"},
+    "67ced83546e9a460b380ccd4": {"name": "Preparing content", "id": "67ced83546e9a460b380ccd4", "stage": "progress"},
+    "67ced83546e9a460b380ccd5": {"name": "Preparing content", "id": "67ced83546e9a460b380ccd5", "stage": "progress"},
+    "67ced83546e9a460b380ccd6": {"name": "Quality assurance by senior analyst", "id": "67ced83546e9a460b380ccd6", "stage": "progress"},
+    "67ced83546e9a460b380ccda": {"name": "Quality assurance by senior analyst", "id": "67ced83546e9a460b380ccda", "stage": "progress"},
+    "67ced83546e9a460b380ccd7": {"name": "Uploading content on EFF", "id": "67ced83546e9a460b380ccd7", "stage": "progress"},
+    "67ced83546e9a460b380ccd8": {"name": "Uploading content on EFF", "id": "67ced83546e9a460b380ccd8", "stage": "progress"},
+
+    "67ced83546e9a460b380ccd9": {"name": "Quality assurance by the department", "id": "67ced83546e9a460b380ccd9", "stage": "review"},
+    "67ced83546e9a460b380cce3": {"name": "Quality assurance by the department", "id": "67ced83546e9a460b380cce3", "stage": "review"},
+
+    "67ced83546e9a460b380cce2": {"name": "Published", "id": "67ced83546e9a460b380cce2", "stage": "published"},
 }
 
 ORGANISATION_LABELS = {
-    "BEIS": "Department for Business, Energy & Industrial Strategy",
     "CO": "Cabinet Office",
     "DCMS": "Department for Digital, Culture, Media and Sport",
-    "DEFRA": "Department for Environment, Food & Rural Affairs",
+    "DESNZ": "Department for Energy Security and Net Zero",
     "DfE": "Department for Education",
     "DfT": "Department for Transport",
     "DHSC": "Department of Health and Social Care",
     "DWP": "Department for Work and Pensions",
-    "HESA": "Higher Education Statistics Agency",
     "HO": "Home Office",
     "MHCLG": "Ministry of Housing, Communities & Local Government",
     "MOD": "Ministry of Defence",
     "MoJ": "Ministry of Justice",
+    "Nature England": "Nature England",
+    "NHS B&T": "NHS Blood and Transplant",
+    "NHS Digital": "NHS Digital",
     "ONS": "Office for National Statistics",
 }
 
@@ -150,7 +133,6 @@ class TrelloService(Service):
             "id": card.id,
             "name": self._remove_internal_reference(card.name),
             "department": self._find_label_from_card(card, ORGANISATION_LABELS),
-            "type": self._find_label_from_card(card, TYPE_OF_WORK_LABELS),
             "list": "",
             "stage": "",
         }

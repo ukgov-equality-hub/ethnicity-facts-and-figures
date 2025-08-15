@@ -62,9 +62,8 @@
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th class="govuk-table__header column-width-40" aria-sort="none">Page</th>
-                <th class="govuk-table__header column-width-30" aria-sort="none">Organisation</th>
-                <th class="govuk-table__header column-width-15" aria-sort="none">Stage</th>
-                <th class="govuk-table__header column-width-15" aria-sort="none">Type</th>
+                <th class="govuk-table__header column-width-30" aria-sort="none">Department</th>
+                <th class="govuk-table__header column-width-30" aria-sort="none">Stage</th>
             </tr>
         </thead>
 
@@ -74,7 +73,6 @@
                 <td class="govuk-table__cell">{{ measure.name }}</td>
                 <td class="govuk-table__cell">{{ measure.department }}</td>
                 <td class="govuk-table__cell">{{ measure.list }}</td>
-                <td class="govuk-table__cell">{{ measure.type }}</td>
             </tr>
         {% endfor %}
         </tbody>
