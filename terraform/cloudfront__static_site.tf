@@ -57,7 +57,7 @@ resource "aws_cloudfront_distribution" "distribution__static_site" {
   viewer_certificate {
     acm_certificate_arn = aws_acm_certificate_validation.certificate_validation_waiter__static_site.certificate_arn
     cloudfront_default_certificate = false
-    minimum_protocol_version = "TLSv1"
+    minimum_protocol_version = "TLSv1.2_2021"
     ssl_support_method = "sni-only"
   }
 
